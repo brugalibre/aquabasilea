@@ -1,0 +1,5 @@
+!!com.aquabasilea.alerting.impl.AlertConfig
+apiKey: "abcdefgh1234567890"
+originator: "0041791234567"
+receivers:
+  - "0041799876543"
