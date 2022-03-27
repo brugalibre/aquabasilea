@@ -34,7 +34,12 @@ public enum CourseBookingState {
    /**
     * In this state the {@link AquabasileaCourseBooker} is going to terminate
     */
-   STOP;
+   STOP,
+
+   /**
+    * In this state, the {@link AquabasileaCourseBooker} is paused and does nothing until it's resumed
+    */
+   PAUSED;
 
    public static CourseBookingState getNextState(CourseBookingState courseBookingState) {
       switch (courseBookingState) {

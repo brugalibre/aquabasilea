@@ -3,6 +3,7 @@ package com.aquabasilea.coursebooker;
 import com.aquabasilea.course.Course;
 import com.aquabasilea.course.Course.CourseBuilder;
 import com.aquabasilea.course.WeeklyCourses;
+import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.util.YamlUtil;
@@ -26,6 +27,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 class AquabasileaCourseBookerTest {
    private static final String TEST_WEEKLY_COURSES_YML = "courses/testWeeklyCourses.yml";
@@ -83,6 +85,7 @@ class AquabasileaCourseBookerTest {
                       .withTimeOfTheDay(timeOfTheDay)
                       .build())
               .withAquabasileaWebNavigator(mock(AquabasileaWebNavigator.class))
+              .withCourseBookingStateChangedHandler(spy(CourseBookingStateChangedHandler.class))
               .build();
       AquabasileaCourseBooker aquabasileaCourseBooker = tcb.aquabasileaCourseBooker;
 
@@ -104,6 +107,7 @@ class AquabasileaCourseBookerTest {
       private AquabasileaCourseBooker aquabasileaCourseBooker;
       private Thread aquabasileaCourseBookerThread;
 
+      private CourseBookingStateChangedHandler courseBookingStateChangedHandler;
       private AquabasileaWebNavigator aquabasileaWebNavigator;
       private List<Course> courses;
       private java.time.Duration duration2StartBookerEarlier;
@@ -125,8 +129,13 @@ class AquabasileaCourseBookerTest {
             writeWeeklyCourses2File();
          }
          AquabasileaCourseBookerConfig config = new AquabasileaCourseBookerConfig();
-         this.aquabasileaCourseBooker = new AquabasileaCourseBooker(config, () -> aquabasileaWebNavigator, getPath2YmlFile());
+         this.aquabasileaCourseBooker = new AquabasileaCourseBooker(config, () -> aquabasileaWebNavigator, getPath2YmlFile(), Thread.currentThread());
          this.aquabasileaCourseBookerThread = new Thread(aquabasileaCourseBooker);
+         return this;
+      }
+
+      private TestCaseBuilder withCourseBookingStateChangedHandler(CourseBookingStateChangedHandler courseBookingStateChangedHandler) {
+         this.courseBookingStateChangedHandler = courseBookingStateChangedHandler;
          return this;
       }
 

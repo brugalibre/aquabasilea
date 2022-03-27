@@ -13,7 +13,7 @@ public class InitializationResult {
       return new InitializationResult(null, 0, CourseBookingState.STOP, 0);
    }
 
-   InitializationResult(Course currentCourse, long timeUtilDryRunOrBookingBegin, CourseBookingState nextCourseBookingState, int amountOfDaysPrior) {
+   public InitializationResult(Course currentCourse, long timeUtilDryRunOrBookingBegin, CourseBookingState nextCourseBookingState, int amountOfDaysPrior) {
       this.currentCourse = currentCourse;
       this.nextCourseBookingState = nextCourseBookingState;
       this.amountOfDaysPrior = amountOfDaysPrior;

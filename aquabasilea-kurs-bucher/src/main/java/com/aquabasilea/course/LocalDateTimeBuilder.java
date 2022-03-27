@@ -6,9 +6,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoField;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 public class LocalDateTimeBuilder {
@@ -27,7 +29,7 @@ public class LocalDateTimeBuilder {
     *
     * @param courseDateAsString the day when the course takes place as string value
     * @param timeOfTheDay       the time, when the course starts as string value
-    * @return
+    * @return a new {@link LocalDateTime} object from the given day-of-the-week and the time
     */
    public static LocalDateTime createCourseDate(String courseDateAsString, String timeOfTheDay) {
       return getLocalDateTimeWithReferenceDate(LocalDateTime.now(), courseDateAsString, timeOfTheDay);
@@ -35,7 +37,7 @@ public class LocalDateTimeBuilder {
 
    static LocalDateTime getLocalDateTimeWithReferenceDate(LocalDateTime refDateIn, String courseDateAsString, String timeOfTheDay) {
       validateInput(courseDateAsString, timeOfTheDay);
-      DayOfWeek courseDate = DayOfWeek.valueOf(courseDateAsString.toUpperCase());
+      DayOfWeek courseDate = getDayOfWeekFromInput(courseDateAsString);
       int courseHour = Integer.parseInt(timeOfTheDay.substring(0, timeOfTheDay.indexOf(':')));
       int courseMin = Integer.parseInt(timeOfTheDay.substring(timeOfTheDay.indexOf(':') + 1));
       LocalDateTime refDate = adjustReferenceDateIfCourseTimeIsBeyondRefDateTime(refDateIn, courseDate, courseHour, courseMin);
@@ -57,6 +59,14 @@ public class LocalDateTimeBuilder {
       return courseDate == refDate.getDayOfWeek()
               && courseHour < refDate.getHour() || (courseHour == refDate.getHour()
               && courseMin <= refDate.getMinute());
+   }
+
+   private static DayOfWeek getDayOfWeekFromInput(String courseDateAsString) {
+      DayOfWeek dayOfWeek = DateUtil.getDayOfWeekFromInput(courseDateAsString, Locale.GERMAN);
+      if (isNull(dayOfWeek)) {
+         throw new NullPointerException("No DayOfWeek could be evaluated for the input '" + courseDateAsString + "'! Make sure its in german");
+      }
+      return dayOfWeek;
    }
 
    /**
