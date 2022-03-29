@@ -1,0 +1,8 @@
+!!com.aquabasilea.alerting.impl.AlertConfig
+smsApiServiceName: "clicksend"
+username: "xxx"
+apiKey: "xxx"
+originatorName: "aquabasilea-kurs-bucher"
+originator: "xxx"
+receivers:
+  - "xxx"

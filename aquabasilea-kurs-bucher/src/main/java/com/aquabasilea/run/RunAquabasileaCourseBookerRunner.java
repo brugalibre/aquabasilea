@@ -1,5 +1,6 @@
 package com.aquabasilea.run;
 
+import com.aquabasilea.alerting.consumer.impl.CourseBookingEndResultConsumerImpl;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.systemtray.AquabasileaCourseBookerSystemTray;
 import com.aquabasilea.systemtray.icons.ImageLibrary;
@@ -19,6 +20,7 @@ public class RunAquabasileaCourseBookerRunner {
       AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(args[0], args[1], Thread.currentThread());
       AquabasileaCourseBookerSystemTray aquabasileaCourseBookerSystemTray = buildAquabasileaCourseBookerSystemTray(aquabasileaCourseBooker);
       aquabasileaCourseBooker.addCourseBookingStateChangedHandler(aquabasileaCourseBookerSystemTray);
+      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingEndResultConsumerImpl());
       aquabasileaCourseBooker.run();
    }
 

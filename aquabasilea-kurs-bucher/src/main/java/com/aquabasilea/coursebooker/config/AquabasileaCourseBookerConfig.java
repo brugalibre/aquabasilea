@@ -43,6 +43,14 @@ public class AquabasileaCourseBookerConfig {
       this.daysToBookCourseEarlier = daysToBookCourseEarlier;
    }
 
+   void setDurationToStartBookerEarlier(Duration durationToStartBookerEarlier) {
+      this.durationToStartBookerEarlier = durationToStartBookerEarlier;
+   }
+
+   void setDurationToStartDryRunEarlier(Duration durationToStartDryRunEarlier) {
+      this.durationToStartDryRunEarlier = durationToStartDryRunEarlier;
+   }
+
    private void init(String configFile) {
       this.courseConfigFile = configFile;
       this.durationToStartBookerEarlier = DURATION_TO_START_BOOKER_EARLIER;

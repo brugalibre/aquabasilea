@@ -4,6 +4,7 @@ import com.aquabasilea.course.AquabasileaWeeklyCourseConst;
 import com.aquabasilea.course.Course;
 import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
+import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitializationResult;
@@ -42,6 +43,7 @@ public class AquabasileaCourseBooker implements Runnable {
 
    private Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier;
    private List<CourseBookingStateChangedHandler> courseBookingStateChangedHandlers;
+   private List<CourseBookingEndResultConsumer> courseBookingEndResultConsumers;
 
    /**
     * Constructor only for testing purpose!
@@ -72,6 +74,7 @@ public class AquabasileaCourseBooker implements Runnable {
       this.courseBookerThread = courseBookerThread;
       this.infoString4StateEvaluator = new InfoString4StateEvaluator(bookerConfig);
       this.courseBookingStateChangedHandlers = new ArrayList<>();
+      this.courseBookingEndResultConsumers = new ArrayList<>();
       setState(PAUSED);
    }
 
@@ -127,6 +130,7 @@ public class AquabasileaCourseBooker implements Runnable {
          case BOOKING_DRY_RUN:
             CourseBookingEndResult courseBookingResult = bookCourse();
             LOG.info("Course booking done. Result is {}", courseBookingResult);
+            notifyResult2Consumers(courseBookingResult);
             getNextState();
             break;
          case STOP:
@@ -138,6 +142,10 @@ public class AquabasileaCourseBooker implements Runnable {
          default:
             throw new IllegalStateException("Unhandled state '" + this.state + "'");
       }
+   }
+
+   private void notifyResult2Consumers(CourseBookingEndResult courseBookingResult) {
+      courseBookingEndResultConsumers.forEach(courseBookingEndResultConsumer -> courseBookingEndResultConsumer.consumeResult(courseBookingResult, this.state));
    }
 
    private void pauseApp(){
@@ -210,6 +218,10 @@ public class AquabasileaCourseBooker implements Runnable {
 
    public void addCourseBookingStateChangedHandler(CourseBookingStateChangedHandler courseBookingStateChangedHandler) {
       this.courseBookingStateChangedHandlers.add(courseBookingStateChangedHandler);
+   }
+
+   public void addCourseBookingEndResultConsumer(CourseBookingEndResultConsumer courseBookingEndResultConsumer) {
+      this.courseBookingEndResultConsumers.add(courseBookingEndResultConsumer);
    }
 
    public Course getCurrentCourse() {
