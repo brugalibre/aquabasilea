@@ -8,7 +8,8 @@ apply from: 'test.gradle'
 group 'com.aquabasilea.coursebooker'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.9
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 mainClassName = 'com.aquabasilea.run.RunAquabasileaCourseBookerRunner'
 
@@ -31,6 +32,5 @@ dependencies {
 
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
     implementation group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
-    implementation files('libs/aquabasilea-web-kurs-bucher-1.0-SNAPSHOT.jar')
+    implementation files('libs/aquabasilea-web-navigator-1.0-SNAPSHOT-all.jar')
 }
-targetCompatibility = JavaVersion.VERSION_1_9

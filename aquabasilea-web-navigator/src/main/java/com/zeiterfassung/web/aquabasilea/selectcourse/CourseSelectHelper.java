@@ -81,8 +81,6 @@ public class CourseSelectHelper {
    }
 
    private boolean selectCourse(String courseName, ErrorHandler errorHandler) {
-      // yes again, we have to wait until the load-dialog disappears..
-      WebNavigateUtil.waitForMilliseconds(3000);
       this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE), 20000);
       WebElement courseArea = this.aquabasileaNavigatorHelper.findWebElementBy(null, WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE)).get();
       List<WebElement> courseButtons = this.aquabasileaNavigatorHelper.findAllWebElementsByPredicateAndBy(courseArea, By.tagName(HTML_BUTTON_TYPE), webElement -> true);
