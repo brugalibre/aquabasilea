@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'com.aquabasilea-kurs-bucher'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+mainClassName = 'com.zeiterfassung.web.aquabasilea.run.RunAquabasileaNavigator'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation files('libs/web-navigator-1.0-SNAPSHOT-all.jar')
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    implementation group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.0.3'
+    implementation('org.seleniumhq.selenium:selenium-java:4.0.0') {
+        exclude group: 'org.seleniumhq.selenium', module: 'selenium-android-driver'
+        exclude group: 'org.seleniumhq.selenium', module: 'selenium-iphone-driver'
+        exclude group: 'org.seleniumhq.selenium', module: 'selenium-safari-driver'
+        exclude group: 'org.webbitserver', module: 'webbit'
+        exclude group: 'commons-codec', module: 'commons-codec'
+        exclude group: 'cglib', module: 'cglib-node'
+    }
+    testImplementation group: 'junit', name: 'junit', version: '4.11'
+}
+
+test {
+    useJUnitPlatform()
+}
