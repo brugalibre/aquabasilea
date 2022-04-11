@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.openjfx.javafxplugin' version '0.0.12'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+apply from: '../aquabasilea.gradle'
+
+group 'com.ui-library'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+javafx {
+    version = "11"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing', 'javafx.base']
+}
+
+shadowJar{
+    archiveFileName.set("${project.name}-${project.version}.jar")
+}
