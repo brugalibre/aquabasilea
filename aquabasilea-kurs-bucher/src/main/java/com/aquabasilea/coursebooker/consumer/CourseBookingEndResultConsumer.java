@@ -1,7 +1,7 @@
 package com.aquabasilea.coursebooker.consumer;
 
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.zeiterfassung.web.aquabasilea.selectcourse.result.CourseBookingEndResult;
+import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
 
 public interface CourseBookingEndResultConsumer {
 

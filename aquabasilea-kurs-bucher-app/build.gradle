@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+    id 'application'
+    id 'maven-publish'
+    id 'org.openjfx.javafxplugin' version '0.0.12'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+apply from: '../aquabasilea.gradle'
+
+group 'com.aquabasilea'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+mainClassName = 'com.aquabasilea.app.AquabasileaAppStarter'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation (group: 'com.aquabasilea', name: 'aquabasilea-kurs-bucher', version: '1.0-SNAPSHOT') {
+        exclude group: 'com.aquabasilea', module: 'aquabasilea-web-navigator'
+    }
+    implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0-SNAPSHOT'
+    implementation group: 'com.ui-library', name: 'ui-library', version: '1.0-SNAPSHOT'
+
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.15.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.15.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.15.0'
+}
+
+javafx {
+    version = "11"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing', 'javafx.base']
+}
+
+shadowJar{
+    archiveFileName.set("${project.name}-${project.version}.jar")
+}

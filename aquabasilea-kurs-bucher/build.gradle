@@ -1,11 +1,14 @@
 plugins {
     id 'java-library'
     id 'application'
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 apply from: 'test.gradle'
-group 'com.aquabasilea.coursebooker'
+apply from: '../aquabasilea.gradle'
+
+group 'com.aquabasilea'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -14,11 +17,13 @@ targetCompatibility = JavaVersion.VERSION_11
 mainClassName = 'com.aquabasilea.run.RunAquabasileaCourseBookerRunner'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
 
+    implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0-SNAPSHOT'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
     implementation 'org.glassfish.jersey.core:jersey-client:2.8'
     implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.8'
@@ -26,11 +31,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.messagebird/messagebird-api
     implementation group: 'com.messagebird', name: 'messagebird-api', version: '3.2.1'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.15.0'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.15.0'
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.15.0'
 
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
     implementation group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
-    implementation files('libs/aquabasilea-web-navigator-1.0-SNAPSHOT-all.jar')
+}
+
+shadowJar{
+    archiveFileName.set("${project.name}-${project.version}.jar")
 }
