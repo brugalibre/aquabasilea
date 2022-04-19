@@ -73,8 +73,7 @@ class AquabasileaCourseBookerTest {
       tcb.aquabasileaCourseBookerThread.start();
       await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> nonNull(aquabasileaCourseBooker.getCurrentCourse()));
 
-      long millisLeftBeforeCourseBecomesBookable = aquabasileaCourseBooker.getTimeLeftBeforeCourseBecomesBookableSupplier();
-      long minutesBeforeCourseBecomesBookable = millisLeftBeforeCourseBecomesBookable / 1000 / 60;
+      long minutesBeforeCourseBecomesBookable = aquabasileaCourseBooker.getDurationLeftBeforeCourseBecomesBookableSupplier().toMinutes();
 
       // Then;
       assertThat(minutesBeforeCourseBecomesBookable, is (expectedMinutesLeft));

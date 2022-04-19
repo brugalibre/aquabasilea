@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,7 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    }
 
    private void createNewAquabasileaWebNavigatorSupplier(String username, String userPwd) {
-      this.aquabasileaWebNavigatorSupplier = () -> AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, userPwd, state == BOOKING_DRY_RUN, this::getTimeLeftBeforeCourseBecomesBookableSupplier);
+      this.aquabasileaWebNavigatorSupplier = () -> AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, userPwd, state == BOOKING_DRY_RUN, this::getDurationLeftBeforeCourseBecomesBookableSupplier);
    }
 
    private void init(AquabasileaCourseBookerConfig bookerConfig, String weeklyCoursesYmlFile, Thread courseBookerThread) {
@@ -194,10 +195,10 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
       return aquabasileaWebNavigatorSupplier.get().selectAndBookCourse(getCurrentCourse().getCourseName(), dayOfWeek);
    }
 
-   long getTimeLeftBeforeCourseBecomesBookableSupplier() {
+   Duration getDurationLeftBeforeCourseBecomesBookableSupplier() {
       long timeLeft = DateUtil.calcTimeLeftBeforeDate(getCurrentCourse().getCourseDate());
       LOG.info("getTimeLeftBeforeCourseBecomesBookableSupplier: {}ms ({}s) left", timeLeft, (timeLeft / 1000L));
-      return timeLeft;
+      return Duration.ofMillis(timeLeft);
    }
 
    private void getNextState() {

@@ -8,10 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 public class RunAquabasileaNavigator {
    private static final Logger LOG = LoggerFactory.getLogger(RunAquabasileaNavigator.class);
@@ -27,16 +28,16 @@ public class RunAquabasileaNavigator {
       if (args.length >= 4) {
          dryRun = Boolean.parseBoolean(args[3]);
       }
-      AquabasileaWebNavigator aquabasileaWebNavigator = AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getTimeUntilIsBookableSupplier());
+      AquabasileaWebNavigator aquabasileaWebNavigator = AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier());
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebNavigator.selectAndBookCourse(courseName, dayOfWeek);
       printErrors(courseBookingEndResult);
    }
 
-   private static LongSupplier getTimeUntilIsBookableSupplier() {
+   private static Supplier<Duration> getDurationUntilIsBookableSupplier() {
       final AtomicLong timeOut = new AtomicLong(13300);
       return () -> {
          timeOut.set(timeOut.get() - 3300);
-         return timeOut.get();
+         return Duration.ofMillis(timeOut.get());
       };
    }
 

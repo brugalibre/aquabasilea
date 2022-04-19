@@ -20,7 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
-import java.util.function.LongSupplier;
+import java.time.Duration;
+import java.util.function.Supplier;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.aquabasilea.web.selectcourse.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
@@ -42,10 +43,10 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
       this.coursePage = propertyReader.readValue(COURSE_PAGE);
    }
 
-   public static AquabasileaWebNavigator createAndInitAquabasileaWebNavigator(String userName, String userPassword, boolean dryRun, LongSupplier time2WaitUntilCourseBecomesBookable) {
+   public static AquabasileaWebNavigator createAndInitAquabasileaWebNavigator(String userName, String userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       AquabasileaWebNavigatorImpl aquabasileaWebNavigator = new AquabasileaWebNavigatorImpl(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
       aquabasileaWebNavigator.initWebDriver();
-      aquabasileaWebNavigator.init(dryRun, time2WaitUntilCourseBecomesBookable);
+      aquabasileaWebNavigator.init(dryRun, duration2WaitUntilCourseBecomesBookable);
       return aquabasileaWebNavigator;
    }
 
@@ -113,10 +114,10 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
       this.aquabasileaLoginHelper = new AquabasileaLoginHelper(this.webNavigatorHelper, this::login);
    }
 
-   private void init(boolean dryRun, LongSupplier time2WaitUntilCourseBecomesBookable) {
+   private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       this.courseFilterHelper = new CourseFilterHelper(this.webNavigatorHelper);
       this.courseBookerHelper = new CourseBookerHelper(this.webNavigatorHelper, dryRun);
-      this.courseSelectHelper = new CourseSelectHelper(this.courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, time2WaitUntilCourseBecomesBookable, dryRun, this::navigate2CoursePage);
+      this.courseSelectHelper = new CourseSelectHelper(this.courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun, this::navigate2CoursePage);
    }
 
    private static CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {
