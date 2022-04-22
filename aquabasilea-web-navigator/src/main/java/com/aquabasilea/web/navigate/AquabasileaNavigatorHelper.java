@@ -2,11 +2,10 @@ package com.aquabasilea.web.navigate;
 
 import com.aquabasilea.web.error.ErrorHandler;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigatorHelper;
-import org.openqa.selenium.ElementClickInterceptedException;
+import com.zeiterfassung.web.common.impl.navigate.button.ButtonClickHelper;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -15,9 +14,11 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
 
    public static final int MAX_RETRIES = 10;
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaNavigatorHelper.class);
+   private final ButtonClickHelper buttonClickHelper;
 
    public AquabasileaNavigatorHelper(WebDriver webDriver) {
       super(webDriver);
+      this.buttonClickHelper = new ButtonClickHelper(this);
    }
 
    /**
@@ -30,47 +31,12 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     * @param elementIdentifier the identifier of the button - for logging, if anything goes wrong
     */
    public void clickButtonOrHandleError(Optional<WebElement> webElementButtonOptional, Supplier<Optional<WebElement>> buttonWebElementSupplier, ErrorHandler errorHandler, String elementIdentifier) {
-      clickButtonOrHandleErrorRecursively(webElementButtonOptional, buttonWebElementSupplier, errorHandler, elementIdentifier, MAX_RETRIES);
+      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(webElementButtonOptional, buttonWebElementSupplier, errorHandler::handleError, elementIdentifier, MAX_RETRIES);
    }
 
-   private void clickButtonOrHandleErrorRecursively(Optional<WebElement> webElementButtonOptional, Supplier<Optional<WebElement>> buttonWebElementSupplier, ErrorHandler errorHandler, String elementIdentifier, int retriesLeft) {
-      if (webElementButtonOptional.isPresent()) {
-         WebElement buttonWebElement = webElementButtonOptional.get();
-         LOG.info("Button '{}' available. Waiting for it to become clickable", elementIdentifier);
-         try {
-            waitForElementToBeClickable(buttonWebElement);
-            buttonWebElement.click();
-            LOG.info("Button clicked '{}'", elementIdentifier);
-         } catch (ElementClickInterceptedException e) {
-            LOG.error("Error while clicking button", e);
-            LOG.error("Klick on button '{}' intercepted! Using script instead of direct click", elementIdentifier);
-            try {
-               executeClickButtonScript(buttonWebElement);
-            } catch (Exception ex) {
-               handleButtonClickException(buttonWebElementSupplier, errorHandler, elementIdentifier, retriesLeft, e);
-            }
-         } catch (Exception e) {
-            handleButtonClickException(buttonWebElementSupplier, errorHandler, elementIdentifier, retriesLeft, e);
-         }
-      } else {
-         LOG.warn("Button '{}' NOT available", elementIdentifier);
-         if (retriesLeft > 0) {
-            LOG.error("Do a retry. {} retries left", retriesLeft);
-            clickButtonOrHandleErrorRecursively(buttonWebElementSupplier.get(), buttonWebElementSupplier, errorHandler, elementIdentifier, retriesLeft - 1);
-         } else {
-            LOG.error("No retries left, abort!");
-            errorHandler.handleElementNotFound(elementIdentifier);
-         }
-      }
-   }
-
-   private void handleButtonClickException(Supplier<Optional<WebElement>> buttonWebElementSupplier, ErrorHandler errorHandler, String elementIdentifier, int retriesLeft, Exception e) {
-      LOG.error("Error while clicking button", e);
-      LOG.error("Klick on button '{}' failed!", elementIdentifier);
-      if (retriesLeft > 0) {
-         LOG.error("Do a retry. {} retries left", retriesLeft);
-         clickButtonOrHandleErrorRecursively(buttonWebElementSupplier.get(), buttonWebElementSupplier, errorHandler, elementIdentifier, retriesLeft - 1);
-      }
+   public void clickButton(WebElement webElement, ErrorHandler errorHandler) {
+      String identifier = StringUtils.isEmpty(webElement.getText()) ? "Unknown" : webElement.getText();
+      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(Optional.of(webElement), () -> Optional.of(webElement), errorHandler::handleError, identifier, 2);
    }
 }
 

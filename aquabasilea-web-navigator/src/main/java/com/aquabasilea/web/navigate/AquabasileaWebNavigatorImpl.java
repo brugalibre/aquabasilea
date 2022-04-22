@@ -30,7 +30,7 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
 public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNavigatorHelper> implements AquabasileaWebNavigator {
 
-   private final static Logger LOG = LoggerFactory.getLogger(AquabasileaWebNavigatorImpl.class);
+   private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebNavigatorImpl.class);
    private final String coursePage;
    private CourseSelectHelper courseSelectHelper;
    private CourseFilterHelper courseFilterHelper;
