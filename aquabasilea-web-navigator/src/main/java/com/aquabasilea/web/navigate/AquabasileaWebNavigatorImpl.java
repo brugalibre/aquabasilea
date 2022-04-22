@@ -34,7 +34,6 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
    private final String coursePage;
    private CourseSelectHelper courseSelectHelper;
    private CourseFilterHelper courseFilterHelper;
-   private CourseBookerHelper courseBookerHelper;
    private AquabasileaLoginHelper aquabasileaLoginHelper;
 
    public AquabasileaWebNavigatorImpl(String userName, String userPassword, String propertiesName) {
@@ -116,8 +115,8 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
 
    private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       this.courseFilterHelper = new CourseFilterHelper(this.webNavigatorHelper);
-      this.courseBookerHelper = new CourseBookerHelper(this.webNavigatorHelper, dryRun);
-      this.courseSelectHelper = new CourseSelectHelper(this.courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun, this::navigate2CoursePage);
+      CourseBookerHelper courseBookerHelper = new CourseBookerHelper(this.webNavigatorHelper, dryRun);
+      this.courseSelectHelper = new CourseSelectHelper(courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun, this::navigate2CoursePage);
    }
 
    private static CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {

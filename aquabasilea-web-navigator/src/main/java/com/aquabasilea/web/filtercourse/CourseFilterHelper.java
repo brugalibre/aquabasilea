@@ -38,23 +38,12 @@ public class CourseFilterHelper {
    }
 
    private void applyFilterCriteria(CourseFilter courseFilter, ErrorHandler errorHandler) {
-      WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
-      WebElement filterArea = aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
       for (CourseFilterCriterion courseFilterCriterion : courseFilter.getCourseFilterCriteria()) {
+         WebElement filterArea = aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
          applyFilterCriterion(errorHandler, filterArea, courseFilterCriterion);
+         aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
       }
-      clickApplyFilterButton(errorHandler);
-   }
-
-   private void clickApplyFilterButton(ErrorHandler errorHandler) {
-      // we have to get the filter-area again, since the underlying page may have been changed -> StaleElementReferenceException
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), 10000);
-      WebElement filterArea = aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
-      Optional<WebElement> applyFilterButtonOpt = aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(filterArea, HTML_TAG_SPAN, WEB_ELEMENT_APPLY_FILTER_BUTTON_TEXT, HTML_BUTTON_TYPE);
-      aquabasileaNavigatorHelper.clickButtonOrHandleError(applyFilterButtonOpt, () -> aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(null, HTML_TAG_SPAN, WEB_ELEMENT_APPLY_FILTER_BUTTON_TEXT, HTML_BUTTON_TYPE), errorHandler, WEB_ELEMENT_APPLY_FILTER_BUTTON_TEXT);
-
-      // wait until the filter is applied and the results displayed
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE), 20000);
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE), 20000);
    }
 
    /**
@@ -63,10 +52,14 @@ public class CourseFilterHelper {
     */
    private void applyFilterCriterion(ErrorHandler errorHandler, WebElement filterArea, CourseFilterCriterion courseFilterCriterion) {
       FilterType filterType = courseFilterCriterion.getFilterType();
-      Optional<WebElement> courseCriterionFilterButtonOpt = aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(null, HTML_TAG_SPAN, filterType.getUiElementText(), HTML_BUTTON_TYPE);
+      Optional<WebElement> courseCriterionFilterButtonOpt = aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(filterArea, HTML_TAG_SPAN, filterType.getUiElementText(), HTML_BUTTON_TYPE);
       aquabasileaNavigatorHelper.clickButtonOrHandleError(courseCriterionFilterButtonOpt, () -> aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(null, HTML_TAG_SPAN, filterType.getUiElementText(), HTML_BUTTON_TYPE), errorHandler, filterType.getUiElementText());
 
       Optional<WebElement> checkBoxForCourseNameOpt = aquabasileaNavigatorHelper.findWebElementBy(filterArea, WebNavigateUtil.createStartsWithXPathBy(HTML_TAG_INPUT, HTML_VALUE_ATTR, courseFilterCriterion.getFilterValue()));
       aquabasileaNavigatorHelper.clickButtonOrHandleError(checkBoxForCourseNameOpt, () -> aquabasileaNavigatorHelper.findWebElementBy(filterArea, filterType.createXPath(HTML_TAG_INPUT, HTML_VALUE_ATTR, courseFilterCriterion.getFilterValue())), errorHandler, courseFilterCriterion.getFilterValue());
+
+      // Click the filter-criterion button again -> collapse filter criteria and apply the filter
+      courseCriterionFilterButtonOpt = aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(filterArea, HTML_TAG_SPAN, filterType.getUiElementText(), HTML_BUTTON_TYPE);
+      aquabasileaNavigatorHelper.clickButtonOrHandleError(courseCriterionFilterButtonOpt, () -> aquabasileaNavigatorHelper.findParentWebElement4ChildTagNameAndInnerHtmlValue(null, HTML_TAG_SPAN, filterType.getUiElementText(), HTML_BUTTON_TYPE), errorHandler, filterType.getUiElementText());
    }
 }

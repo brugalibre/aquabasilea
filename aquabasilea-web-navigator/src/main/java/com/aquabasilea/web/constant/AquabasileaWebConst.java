@@ -14,7 +14,6 @@ public class AquabasileaWebConst {
 
    public static final String COURSE_PAGE = "coursePage";
    public static final String AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES = "config/aquabasilea-kurs-bucher-config.yml";
-   public static final String LOADING_ANIMATION_CSS_SELECTOR = "sc-eggMyH cVdiun sc-jLiVFv hsiZCm";
    public static final String HTML_VALUE_ATTR = "value";
 
    // Filter fields
@@ -22,10 +21,8 @@ public class AquabasileaWebConst {
     * The webpage appends the amount of matches for the given course name. Since we're striving for exact one result
     * append the (1) hard coded. So the customer doesn't have to add it manually
     */
-   public static final String COURSE_NAME_AMOUNT_OF_COURSES_REGEX = " [(]\\d{1}[)])";
    public static final String WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE = "filter";
    public static final String WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME = "data-test-id";
-   public static final String WEB_ELEMENT_APPLY_FILTER_BUTTON_TEXT = "Filter anwenden";
 
    // Course results field
    public static final String WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE = "course-table";
