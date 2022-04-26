@@ -1,14 +1,23 @@
 package com.aquabasilea.course;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 public class Course {
+   private String id;
    private String courseName;
    private String dayOfWeek;
    private String timeOfTheDay;
+   private boolean isPaused;
    private LocalDateTime courseDate;
+
+   public Course() {
+      this.id = UUID.randomUUID().toString();
+      this.isPaused = false;
+   }
 
    public String getTimeOfTheDay() {
       return timeOfTheDay;
@@ -44,16 +53,35 @@ public class Course {
       return dayOfWeek;
    }
 
+   public String getId() {
+      return id;
+   }
+
+   public void setId(String id) {
+      if (nonNull(id)) {
+         this.id = id;
+      }
+   }
+
+   public boolean getIsPaused() {
+      return isPaused;
+   }
+
+   public void setIsPaused(boolean isPaused) {
+      this.isPaused = isPaused;
+   }
+
    public void setDayOfWeek(String dayOfWeek) {
       this.dayOfWeek = dayOfWeek;
    }
 
-
    @Override
    public String toString() {
       return "Course{" +
-              "courseName='" + courseName + '\'' +
+              "id='" + id + '\'' +
+              ", courseName='" + courseName + '\'' +
               ", dayOfWeek='" + dayOfWeek + '\'' +
+              ", isPaused='" + isPaused + '\'' +
               ", timeOfTheDay='" + timeOfTheDay + '\'' +
               ", courseDate=" + courseDate +
               '}';
@@ -63,6 +91,8 @@ public class Course {
       private String dayOfWeek;
       private String courseName;
       private String timeOfTheDay;
+      private boolean isPaused;
+      private String id;
 
       private CourseBuilder() {
          // private
@@ -78,6 +108,16 @@ public class Course {
          return this;
       }
 
+      public CourseBuilder withId(String id) {
+         this.id = id;
+         return this;
+      }
+
+      public CourseBuilder withIsPaused(boolean isPaused) {
+         this.isPaused = isPaused;
+         return this;
+      }
+
       public CourseBuilder withDayOfWeek(String dayOfWeek) {
          this.dayOfWeek = dayOfWeek;
          return this;
@@ -88,6 +128,8 @@ public class Course {
          course.setCourseName(courseName);
          course.setTimeOfTheDay(timeOfTheDay);
          course.setDayOfWeek(dayOfWeek);
+         course.setId(id);
+         course.setIsPaused(isPaused);
          return course;
       }
 

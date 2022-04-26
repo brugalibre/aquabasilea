@@ -3,6 +3,7 @@ Rem Aquabasilea konstants
 set aquabasileaKursBucherJarName=aquabasilea-kurs-bucher-app-1.0-SNAPSHOT.jar
 set aquabasileaKursBuchenBaseDir=C:\Users\std\Documents\programmierung\IdeaProjects\aquabasilea\
 set aquabasileaKursBuchenBuildOutputDir=%aquabasileaKursBuchenBaseDir%aquabasilea-kurs-bucher-app\build\libs\%aquabasileaKursBucherJarName%
+set GRADLE_OPTS=-Dfile.encoding=utf-8
 
 Rem web-navigator konstants
 set webNavigatorBaseDir=C:\Users\std\Documents\programmierung\IdeaProjects\zeiterfassung-browser\web-navigator

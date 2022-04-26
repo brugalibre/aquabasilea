@@ -1,6 +1,8 @@
 package com.aquabasilea.coursebooker.config;
 
 import com.aquabasilea.util.YamlUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
@@ -8,6 +10,7 @@ import static java.util.Objects.nonNull;
 
 public class AquabasileaCourseBookerConfig {
 
+   private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseBookerConfig.class);
    /**
     * Offset in minutes when the booker starts earlier
     * We have to start the booker slightly earlier, so that we are ready to book, right when the course becomes bookable
@@ -30,6 +33,16 @@ public class AquabasileaCourseBookerConfig {
    private Duration durationToStartBookerEarlier;
    private String courseConfigFile;
    private int daysToBookCourseEarlier;
+
+   @Override
+   public String toString() {
+      return "AquabasileaCourseBookerConfig{" +
+              "durationToStartDryRunEarlier=" + durationToStartDryRunEarlier +
+              ", durationToStartBookerEarlier=" + durationToStartBookerEarlier +
+              ", courseConfigFile='" + courseConfigFile + '\'' +
+              ", daysToBookCourseEarlier=" + daysToBookCourseEarlier +
+              '}';
+   }
 
    public AquabasileaCourseBookerConfig() {
       init(AQUABASILEA_COURSE_BOOKER_CONFIG_FILE);
@@ -63,6 +76,7 @@ public class AquabasileaCourseBookerConfig {
       AquabasileaCourseBookerConfigImport configImport = YamlUtil.readYamlIgnoreMissingFile(this.courseConfigFile, AquabasileaCourseBookerConfigImport.class);
       if (nonNull(configImport.getMinutesToStartDryRunEarlier())) {
          this.durationToStartDryRunEarlier = Duration.ofMinutes(configImport.getMinutesToStartDryRunEarlier());
+         LOG.info("Override default value for 'durationToStartDryRunEarlier' with customized value {}", durationToStartDryRunEarlier);
       }
    }
 
@@ -71,7 +85,9 @@ public class AquabasileaCourseBookerConfig {
     * Note: The location of the configuration file must not change!
     */
    public void refresh() {
+      LOG.info("Refresh configuration..");
       readConfigFromFile();
+      LOG.info("Configuration refreshed: {}", this);
    }
 
    /**

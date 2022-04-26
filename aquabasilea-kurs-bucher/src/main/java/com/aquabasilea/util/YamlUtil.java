@@ -1,5 +1,6 @@
 package com.aquabasilea.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -64,10 +65,19 @@ public class YamlUtil {
       dumperOptions.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
       dumperOptions.setPrettyFlow(true);
       Yaml yaml = new Yaml(dumperOptions);
-      try (PrintWriter writer = new PrintWriter(ymlFile)) {
+      try (PrintWriter writer = getPrintWriter(ymlFile)) {
          yaml.dump(object, writer);
       } catch (FileNotFoundException e) {
          throw new IllegalStateException(e);
+      }
+   }
+
+   private static PrintWriter getPrintWriter(String ymlFile) throws FileNotFoundException {
+      try {
+         return new PrintWriter(ymlFile);
+      } catch (FileNotFoundException e) {
+         e.printStackTrace();
+         return new PrintWriter("/src/main/resources/" + ymlFile);
       }
    }
 

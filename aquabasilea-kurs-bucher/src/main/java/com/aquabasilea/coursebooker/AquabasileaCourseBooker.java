@@ -168,6 +168,7 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    private void handleInitializeState() {
       LOG.info("Handling state {}", INIT);
       this.initializationResult = initStateHandler.evaluateNextCourseAndState();
+      initStateHandler.resumeCoursesUntil(initializationResult.getCurrentCourse());
       setState(initializationResult.getNextCourseBookingState());
    }
 

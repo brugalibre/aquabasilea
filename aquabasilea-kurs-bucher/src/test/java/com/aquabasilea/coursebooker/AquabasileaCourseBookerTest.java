@@ -61,6 +61,12 @@ class AquabasileaCourseBookerTest {
       String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       TestCaseBuilder tcb = new TestCaseBuilder()
               .addWeeklyCourse(CourseBuilder.builder()
+                      .withCourseName("TestCourse1")
+                      .withDayOfWeek(dayOfTheWeek)
+                      .withTimeOfTheDay(DateUtil.getTimeAsString(LocalDateTime.now()))
+                      .withIsPaused(true)
+                      .build())
+              .addWeeklyCourse(CourseBuilder.builder()
                       .withCourseName("TestCourse")
                       .withDayOfWeek(dayOfTheWeek)
                       .withTimeOfTheDay(timeOfTheDay)
@@ -256,9 +262,9 @@ class AquabasileaCourseBookerTest {
       private Thread aquabasileaCourseBookerThread;
 
       private CourseBookingStateChangedHandler courseBookingStateChangedHandler;
-      private CourseBookingEndResultConsumer courseBookingEndResultConsumer;
+      private final CourseBookingEndResultConsumer courseBookingEndResultConsumer;
       private AquabasileaWebNavigator aquabasileaWebNavigator;
-      private List<Course> courses;
+      private final List<Course> courses;
       private java.time.Duration duration2StartBookerEarlier;
       private java.time.Duration duration2StartDryRunEarlier;
 
@@ -311,7 +317,7 @@ class AquabasileaCourseBookerTest {
          return this;
       }
 
-      private class AquabasileaCourseBookerSupplier {
+      private static class AquabasileaCourseBookerSupplier {
          private AquabasileaCourseBooker aquabasileaCourseBooker;
       }
    }
@@ -329,7 +335,7 @@ class AquabasileaCourseBookerTest {
    }
 
    private static class TestAquabasileaWebNavigator implements AquabasileaWebNavigator {
-      private CourseClickedResult courseClickedResult;
+      private final CourseClickedResult courseClickedResult;
       private boolean isDryRunDone;
       private boolean isBookingDone;
 
@@ -359,11 +365,11 @@ class AquabasileaCourseBookerTest {
       }
    }
 
-   private class TestCourseBookingStateChangedHandler implements CourseBookingStateChangedHandler {
+   private static class TestCourseBookingStateChangedHandler implements CourseBookingStateChangedHandler {
 
       private Runnable whenBookingIsDoneRunnable;
       private CourseBookingState prevBookingState;
-      private LinkedList<CourseBookingState> stateHistory;
+      private final LinkedList<CourseBookingState> stateHistory;
       private LocalDateTime bookingStartedAt;
       private LocalDateTime dryRunStartedAt;
 

@@ -1,7 +1,10 @@
 package com.aquabasilea.coursebooker.states.init;
 
 import com.aquabasilea.course.Course;
+import com.aquabasilea.course.CourseComparator;
 import com.aquabasilea.course.WeeklyCourses;
+import com.aquabasilea.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
@@ -13,35 +16,56 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.aquabasilea.coursebooker.states.CourseBookingState.IDLE_BEFORE_BOOKING;
 import static com.aquabasilea.coursebooker.states.CourseBookingState.IDLE_BEFORE_DRY_RUN;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.function.Predicate.not;
 
 /**
  * Contains the logic for handling the states {@link CourseBookingState#IDLE_BEFORE_BOOKING} and {@link CourseBookingState#IDLE_BEFORE_DRY_RUN}
  */
  public class InitStateHandler {
    private final static Logger LOG = LoggerFactory.getLogger(InitStateHandler.class);
-   private final String weeklyCoursesYmlFile;
+   private final WeeklyCoursesRepository weeklyCoursesRepository;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
    public InitStateHandler(String weeklyCoursesYmlFile, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
-      this.weeklyCoursesYmlFile = weeklyCoursesYmlFile;
+      this.weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(weeklyCoursesYmlFile);
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
+   }
+
+   /**
+    * All paused Courses which take place before the given <code>currentCourse</code> are resumed.
+    * The idea is to automatically resume all paused courses, as soon as they lie in the past regarding the given course
+    *
+    * @param currentCourse the course which marks the next {@link Course} to book
+    */
+   public void resumeCoursesUntil(Course currentCourse) {
+      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
+      List<Course> courses = new ArrayList<>(weeklyCourses.getCourses());
+      courses.sort(new CourseComparator());
+      for (Course course : courses) {
+         course.setIsPaused(false);
+         if (course.getId().equals(currentCourse.getId())) {
+            break;
+         }
+      }
+      weeklyCoursesRepository.save(weeklyCourses);
    }
 
    /**
     * Evaluates the next course and also, if there will be a dry run for this course
     * or if the dry-run is skipped and directly moved to the {@link CourseBookingState#BOOKING}
-    * If there is no next corse, {@link CourseBookingState#STOP} is returned as a default result
+    * If there is no next course, {@link CourseBookingState#STOP} is returned as a default result
     *
     * @return an {@link InitializationResult} containing the next {@link Course} as well as the next {@link CourseBookingState}
     */
    public InitializationResult evaluateNextCourseAndState() {
       aquabasileaCourseBookerConfig.refresh();
-      WeeklyCourses weeklyCourses = WeeklyCourses.readWeeklyCourses(weeklyCoursesYmlFile);
+      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
       return getCourseAndTimeUntilStart(weeklyCourses);
    }
 
@@ -64,12 +88,12 @@ import static java.util.Objects.nonNull;
    /**
     * Tries to find the next course. Normally, the booker starts one day and some minutes before the courses is scheduled (since
     * a course is closed for booking until 24h before)
-    *
+    * <p>
     * From all found Courses which may match, we take the one which is the closest from now
     */
    private InitializationResult checkAllCoursesAndGetEarliestCourseAndTimeUntilStart(WeeklyCourses weeklyCourses, LocalDateTime refDate) {
       List<InitializationResult> possibleCourses = new ArrayList<>();
-      for (Course course : weeklyCourses.getCourses()) {
+      for (Course course : getNonPausedCourses(weeklyCourses)) {
          InitializationResult initializationResult = getCourseAndTimeUntilStart(course, refDate);
          if (nonNull(initializationResult)) {
             possibleCourses.add(initializationResult);
@@ -86,7 +110,7 @@ import static java.util.Objects.nonNull;
     * and try again
     */
    private InitializationResult shiftCourseDateAWeekAheadAndTryAgain(WeeklyCourses weeklyCourses, LocalDateTime refDate) {
-      if (!weeklyCourses.getCourses().isEmpty()) {
+      if (!getNonPausedCourses(weeklyCourses).isEmpty()) {
          weeklyCourses.shiftCourseDateByDays(7);
          return checkAllCoursesAndGetEarliestCourseAndTimeUntilStart(weeklyCourses, refDate);
       }
@@ -121,5 +145,12 @@ import static java.util.Objects.nonNull;
       return DateUtil.getMillis(courseDateMinusOffset)
               - DateUtil.getMillis(refDate)
               - durationToStartEarlier.toMillis();
+   }
+
+   private static List<Course> getNonPausedCourses(WeeklyCourses weeklyCourses) {
+      return weeklyCourses.getCourses()
+              .stream()
+              .filter(not(Course::getIsPaused))
+              .collect(Collectors.toList());
    }
 }

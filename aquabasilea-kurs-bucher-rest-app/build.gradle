@@ -1,0 +1,52 @@
+import org.gradle.api.JavaVersion
+
+plugins {
+	id 'java-library'
+	id 'application'
+	id 'maven-publish'
+	id 'org.springframework.boot' version '2.5.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+group 'com.aquabasilea'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+mainClassName = 'com.aquabasilea.rest.AquabasileaCourseBookerRestApplication'
+
+application {
+	mainClass = mainClassName
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	implementation (group: 'com.aquabasilea', name: 'aquabasilea-kurs-bucher', version: '1.0-SNAPSHOT')
+	implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '2.1.0'
+	implementation group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.35'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.7'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
+	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+			artifact bootJar
+		}
+	}
+}
+
+publish {
+	dependsOn assemble
+}
