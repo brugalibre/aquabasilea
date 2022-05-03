@@ -5,6 +5,7 @@ import com.aquabasilea.course.Course.CourseBuilder;
 import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
+import com.aquabasilea.coursebooker.states.booking.BookingStateHandler;
 import com.aquabasilea.util.YamlUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-class InitStateHandlerTest {
+class BookingStateHandlerTest {
 
    public static final String COURSE_NAME = "Test";
 
@@ -30,7 +31,7 @@ class InitStateHandlerTest {
    void resumePrevCourses() {
       // Given
       WeeklyCoursesRepository weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(getPath2YmlFile());
-      InitStateHandler initStateHandler = new InitStateHandler(getPath2YmlFile(), null);
+      BookingStateHandler initStateHandler = new BookingStateHandler(getPath2YmlFile(), null);
       String currentCourse1Id = "1";
       String course2Id = "2";
       String course3Id = "3";

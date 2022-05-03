@@ -1,7 +1,6 @@
 package com.aquabasilea.coursebooker.states.init;
 
 import com.aquabasilea.course.Course;
-import com.aquabasilea.course.CourseComparator;
 import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
@@ -35,25 +34,6 @@ import static java.util.function.Predicate.not;
    public InitStateHandler(String weeklyCoursesYmlFile, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
       this.weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(weeklyCoursesYmlFile);
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
-   }
-
-   /**
-    * All paused Courses which take place before the given <code>currentCourse</code> are resumed.
-    * The idea is to automatically resume all paused courses, as soon as they lie in the past regarding the given course
-    *
-    * @param currentCourse the course which marks the next {@link Course} to book
-    */
-   public void resumeCoursesUntil(Course currentCourse) {
-      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
-      List<Course> courses = new ArrayList<>(weeklyCourses.getCourses());
-      courses.sort(new CourseComparator());
-      for (Course course : courses) {
-         course.setIsPaused(false);
-         if (course.getId().equals(currentCourse.getId())) {
-            break;
-         }
-      }
-      weeklyCoursesRepository.save(weeklyCourses);
    }
 
    /**

@@ -68,7 +68,7 @@
             <div style="display: flex">
               <button
                   class="pause-button table-button"
-                  v-on:click="pauseCourseRefresh(course)">
+                  v-on:click="pauseCourseAndRefresh(course)">
               </button>
             </div>
           </td>
@@ -78,7 +78,7 @@
                   class="delete-button"
                   :disabled="course.isPaused"
                   v-bind:class="{ 'table-button': !course.isPaused, 'inactive-table-button': course.isPaused}"
-                  v-on:click="deleteCourseRefresh(course)">
+                  v-on:click="deleteCourseAndRefresh(course)">
               </button>
             </div>
           </td>
@@ -112,11 +112,11 @@ export default {
       }
     },
     changeCourseAndRefreshCourseState: function (course) {
-      this.changeCourse(course);
       this.$store.dispatch('setIsLoading', true);
+      this.changeCourse(course);
       this.$emit('refreshCourseStateOverviewAndWeeklyCourses');// refresh since the order of the table-entries may have changed
     },
-    deleteCourseRefresh: function (course) {
+    deleteCourseAndRefresh: function (course) {
       this.$store.dispatch('setIsLoading', true);
       this.deleteCourse(course);
       if (course.isCurrentCourse) {
@@ -125,10 +125,10 @@ export default {
         this.$emit('refreshWeeklyCourses');
       }
     },
-    pauseCourseRefresh: function (course) {
+    pauseCourseAndRefresh: function (course) {
       this.$store.dispatch('setIsLoading', true);
       this.pauseResumeCourse(course);
-      this.$emit('refreshWeeklyCourses');
+      this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     },
   },
   mounted() {

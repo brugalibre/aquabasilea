@@ -7,6 +7,7 @@ import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.coursebooker.states.booking.BookingStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitializationResult;
 import com.aquabasilea.util.DateUtil;
@@ -16,14 +17,12 @@ import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Supplier;
 
+import static com.aquabasilea.course.AquabasileaWeeklyCourseConst.WEEKLY_COURSES_YML;
 import static com.aquabasilea.coursebooker.states.CourseBookingState.*;
 import static java.util.Objects.isNull;
 
@@ -39,11 +38,11 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    private CourseBookingState state;
    private InitializationResult initializationResult;
    private InitStateHandler initStateHandler;
+   private BookingStateHandler bookingStateHandler;
 
    private Thread courseBookerThread;
    private InfoString4StateEvaluator infoString4StateEvaluator;
 
-   private Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier;
    private List<CourseBookingStateChangedHandler> courseBookingStateChangedHandlers;
    private List<CourseBookingEndResultConsumer> courseBookingEndResultConsumers;
 
@@ -54,7 +53,7 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
     * @param courseBookerThread         the {@link Thread} which controls this {@link AquabasileaCourseBooker}
     */
    AquabasileaCourseBooker(AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig, Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSup, String testYmlFile, Thread courseBookerThread) {
-      this.aquabasileaWebNavigatorSupplier = aquabasileaWebNavigatorSup;
+      this.bookingStateHandler = new BookingStateHandler(testYmlFile, aquabasileaWebNavigatorSup);
       init(aquabasileaCourseBookerConfig, testYmlFile, courseBookerThread);
    }
 
@@ -67,11 +66,13 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
     */
    public AquabasileaCourseBooker(String username, String userPwd, Thread courseBookerThread) {
       createNewAquabasileaWebNavigatorSupplier(username, userPwd);
-      init(new AquabasileaCourseBookerConfig(), AquabasileaWeeklyCourseConst.WEEKLY_COURSES_YML, courseBookerThread);
+      init(new AquabasileaCourseBookerConfig(), WEEKLY_COURSES_YML, courseBookerThread);
    }
 
    private void createNewAquabasileaWebNavigatorSupplier(String username, String userPwd) {
-      this.aquabasileaWebNavigatorSupplier = () -> AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, userPwd, state == BOOKING_DRY_RUN, this::getDurationLeftBeforeCourseBecomesBookableSupplier);
+      this.bookingStateHandler = new BookingStateHandler(WEEKLY_COURSES_YML,
+              () -> AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, userPwd,
+                      state == BOOKING_DRY_RUN, this::getDurationLeftBeforeCourseBecomesBookableSupplier));
    }
 
    private void init(AquabasileaCourseBookerConfig bookerConfig, String weeklyCoursesYmlFile, Thread courseBookerThread) {
@@ -134,8 +135,7 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
             break;
          case BOOKING: // fall through
          case BOOKING_DRY_RUN:
-            CourseBookingEndResult courseBookingResult = bookCourse();
-            LOG.info("Course booking done. Result is {}", courseBookingResult);
+            CourseBookingEndResult courseBookingResult = bookingStateHandler.bookCourse(getCurrentCourse(), state);
             notifyResult2Consumers(courseBookingResult);
             getNextState();
             break;
@@ -168,7 +168,6 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    private void handleInitializeState() {
       LOG.info("Handling state {}", INIT);
       this.initializationResult = initStateHandler.evaluateNextCourseAndState();
-      initStateHandler.resumeCoursesUntil(initializationResult.getCurrentCourse());
       setState(initializationResult.getNextCourseBookingState());
    }
 
@@ -188,12 +187,6 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
             setState(INIT);
          }
       }
-   }
-
-   private CourseBookingEndResult bookCourse() {
-      LOG.info("About going to {} the course '{}' at {}", state == BOOKING ? "book" : "dry-run the booking", getCurrentCourse().getCourseName(), DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
-      DayOfWeek dayOfWeek = DateUtil.getDayOfWeekFromInput(getCurrentCourse().getDayOfWeek(), Locale.GERMAN);
-      return aquabasileaWebNavigatorSupplier.get().selectAndBookCourse(getCurrentCourse().getCourseName(), dayOfWeek);
    }
 
    Duration getDurationLeftBeforeCourseBecomesBookableSupplier() {
