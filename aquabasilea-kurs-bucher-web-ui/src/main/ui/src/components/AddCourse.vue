@@ -52,7 +52,7 @@ export default {
       this.dayOfWeek = null;
       this.timeOfTheDay = null;
       this.$refs.daysOfWeekSelector.reset();
-      this.$emit('refreshWeeklyCourses');
+      this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     }
   },
   computed: {

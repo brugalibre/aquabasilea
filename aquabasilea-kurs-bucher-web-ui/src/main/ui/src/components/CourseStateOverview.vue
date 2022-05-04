@@ -10,15 +10,9 @@
     <div>
       <button
           class="container-element-left"
-          :disabled="courseBookingStateDto.state === 'PAUSED' || courseBookingStateDto.state === 'BOOKING'"
+          :disabled="courseBookingStateDto.state === 'BOOKING'"
           v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
-        App pausieren
-      </button>
-      <button
-          class="container-element-right"
-          :disabled="courseBookingStateDto.state === 'IDLE' || courseBookingStateDto.state === 'BOOKING'"
-          v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
-        App reaktivieren
+        {{ courseBookingStateDto.pauseOrResumeButtonText }}
       </button>
     </div>
   </div>
@@ -77,14 +71,6 @@ export default {
   background-color: #ffcccb;
   margin-bottom: 5px;
   padding: 3px;
-}
-
-.container-element-left {
-  margin-right: 5px;
-}
-
-.container-element-right {
-  margin-left: 5px;
 }
 
 .isRunning {

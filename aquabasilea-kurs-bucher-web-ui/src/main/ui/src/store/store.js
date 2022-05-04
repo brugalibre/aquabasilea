@@ -5,6 +5,7 @@ export const store = createStore({
         isLoading: false,
         courseBookingStateDto: {
             stateMsg: '',
+            pauseOrResumeButtonText: '',
             state: '',
         },
         weeklyCourses: {

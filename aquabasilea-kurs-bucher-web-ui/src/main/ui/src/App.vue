@@ -13,7 +13,7 @@
         </course-state-overview>
         <add-course
             class="tile"
-            @refreshWeeklyCourses="refreshWeeklyCourses">
+            @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses">
         </add-course>
       </div>
       <weekly-courses-overview
