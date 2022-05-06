@@ -23,18 +23,26 @@ repositories {
 
 dependencies {
 
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.4.2.Final'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    implementation ('org.springframework.boot:spring-boot-starter-data-jpa:2.5.2')
+
     implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0-SNAPSHOT'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
     implementation group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.35'
 
     implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.8'
 
-    // https://mvnrepository.com/artifact/com.messagebird/messagebird-api
     implementation group: 'com.messagebird', name: 'messagebird-api', version: '3.2.1'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
     implementation group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
+
+    testImplementation 'org.hibernate:hibernate-core:5.0.1.Final'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.5.1'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 }
 
 shadowJar{

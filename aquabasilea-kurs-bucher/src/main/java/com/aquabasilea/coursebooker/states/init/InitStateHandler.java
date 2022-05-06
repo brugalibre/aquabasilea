@@ -3,7 +3,6 @@ package com.aquabasilea.coursebooker.states.init;
 import com.aquabasilea.course.Course;
 import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
@@ -28,18 +27,19 @@ import static java.util.function.Predicate.not;
  */
  public class InitStateHandler {
    private final static Logger LOG = LoggerFactory.getLogger(InitStateHandler.class);
+
    private final WeeklyCoursesRepository weeklyCoursesRepository;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
-   public InitStateHandler(String weeklyCoursesYmlFile, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
-      this.weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(weeklyCoursesYmlFile);
+   public InitStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
+      this.weeklyCoursesRepository = weeklyCoursesRepository;
    }
 
    /**
     * Evaluates the next course and also, if there will be a dry run for this course
     * or if the dry-run is skipped and directly moved to the {@link CourseBookingState#BOOKING}
-    * If there is no next course, {@link CourseBookingState#STOP} is returned as a default result
+    * If there is no next course, {@link CourseBookingState#PAUSED} is returned as a default result
     *
     * @return an {@link InitializationResult} containing the next {@link Course} as well as the next {@link CourseBookingState}
     */
@@ -54,7 +54,7 @@ import static java.util.function.Predicate.not;
       InitializationResult idleBeforeBookingResult = checkAllCoursesAndGetEarliestCourseAndTimeUntilStart(weeklyCourses, refDate);
       if (isNull(idleBeforeBookingResult)) {
          LOG.warn("No courses defined!");
-         return InitializationResult.stop();
+         return InitializationResult.pause();
       }
       InitializationResult idleBeforeDryRunResult = getDryRunInitializationResult(refDate, idleBeforeBookingResult);
       if (nonNull(idleBeforeDryRunResult)) {

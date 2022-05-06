@@ -20,4 +20,9 @@ public interface WeeklyCoursesRepository {
     * @return the instance of the saved {@link WeeklyCourses}
     */
    WeeklyCourses save(WeeklyCourses weeklyCourses);
+
+   /**
+    * Deletes all {@link WeeklyCourses}
+    */
+   void deleteAll();
 }

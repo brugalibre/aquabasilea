@@ -1,13 +1,9 @@
-package com.aquabasilea.coursebooker.states.init;
+package com.aquabasilea.coursebooker.states.booking;
 
 import com.aquabasilea.course.Course;
 import com.aquabasilea.course.Course.CourseBuilder;
 import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
-import com.aquabasilea.coursebooker.states.booking.BookingStateHandler;
-import com.aquabasilea.util.YamlUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -17,21 +13,16 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class BookingStateHandlerTest {
-
-   public static final String COURSE_NAME = "Test";
-
-   @AfterEach
-   public void cleanUp() {
-      YamlUtil.save2File(new WeeklyCourses(), getPath2YmlFile());
-   }
 
    @Test
    void resumePrevCourses() {
       // Given
-      WeeklyCoursesRepository weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(getPath2YmlFile());
-      BookingStateHandler initStateHandler = new BookingStateHandler(getPath2YmlFile(), null);
+      WeeklyCoursesRepository weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
+      BookingStateHandler initStateHandler = new BookingStateHandler(weeklyCoursesRepository, null);
       String currentCourse1Id = "1";
       String course2Id = "2";
       String course3Id = "3";
@@ -70,7 +61,7 @@ class BookingStateHandlerTest {
                       .withCourseName("Kurs-99")
                       .withId(course4Id)
                       .build()));
-      weeklyCoursesRepository.save(weeklyCourses);
+      when(weeklyCoursesRepository.findFirstWeeklyCourses()).thenReturn(weeklyCourses);
 
       // When
       initStateHandler.resumeCoursesUntil(currentCourse);

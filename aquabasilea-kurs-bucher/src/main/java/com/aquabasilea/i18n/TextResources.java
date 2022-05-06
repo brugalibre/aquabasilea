@@ -31,7 +31,8 @@ public class TextResources {
    public static final String COURSE_SUCCESSFULLY_BOOKED = "Kurs '%s' erfolgreich gebucht";
    public static final String COURSE_NOT_BOOKABLE = "Kurs '%s' konnte nicht gebucht werden!";
    public static final String COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT = "Kurs '%s' konnte nicht gebucht werden, da nicht eindeutig gefiltert werden konnte!";
-   public static final String COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";
+   public static final String
+           COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";
    public static final String COURSE_NOT_BOOKED_ABORTED = "Kurs '%s' nicht gebucht. Vorgang erfolgreich abgebrochen";
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";

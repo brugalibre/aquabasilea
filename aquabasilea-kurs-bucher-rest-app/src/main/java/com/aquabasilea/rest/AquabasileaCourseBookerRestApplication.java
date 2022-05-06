@@ -1,24 +1,19 @@
 package com.aquabasilea.rest;
 
-import com.aquabasilea.alerting.consumer.impl.CourseBookingEndResultConsumerImpl;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import static com.aquabasilea.rest.AquabasileaCourseBookerRestAppConfig.AQUABASILEA_COURSE_BOOKER_BEAN;
 
 @SpringBootApplication
 public class AquabasileaCourseBookerRestApplication {
 
-   static AquabasileaCourseBooker aquabasileaCourseBooker;
-
    public static void main(String[] args) {
-      AquabasileaCourseBookerRestApplication.aquabasileaCourseBooker = buildAquabasileaCourseBooker(args[0], args[1], Thread.currentThread());
-      SpringApplication.run(AquabasileaCourseBookerRestApplication.class, args);
-      aquabasileaCourseBooker.run();
-   }
-
-   public static AquabasileaCourseBooker buildAquabasileaCourseBooker(String username, String password, Thread thread) {
-      AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(username, password, thread);
-      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingEndResultConsumerImpl());
-      return aquabasileaCourseBooker;
+      ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(AquabasileaCourseBookerRestApplication.class, args);
+      AquabasileaCourseBooker aquabasileaCourseBooker = (AquabasileaCourseBooker) configurableApplicationContext.getBean(AQUABASILEA_COURSE_BOOKER_BEAN);
+      aquabasileaCourseBooker.onUserAuthenticated(args[0], () -> args[1].toCharArray());
+      aquabasileaCourseBooker.start();
    }
 }

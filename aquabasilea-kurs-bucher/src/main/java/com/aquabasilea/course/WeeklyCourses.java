@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.*;
 
 public class WeeklyCourses {
    private List<Course> courses;
+   private String id;
 
    public WeeklyCourses() {
       this.courses = new ArrayList<>();
@@ -29,6 +29,16 @@ public class WeeklyCourses {
 
    public List<Course> getCourses() {
       return Collections.unmodifiableList(courses);
+   }
+
+   public String getId() {
+      return id;
+   }
+
+   public void setId(String id) {
+      if (nonNull(id)) {
+         this.id = id;
+      }
    }
 
    /**

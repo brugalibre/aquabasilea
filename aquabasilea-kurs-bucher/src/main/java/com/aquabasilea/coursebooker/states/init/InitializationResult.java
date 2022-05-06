@@ -4,13 +4,13 @@ import com.aquabasilea.course.Course;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 
 public class InitializationResult {
-   private CourseBookingState nextCourseBookingState;
-   private Course currentCourse;
-   private long timeUtilDryRunOrBookingBegin;
+   private final CourseBookingState nextCourseBookingState;
+   private final Course currentCourse;
+   private final long timeUtilDryRunOrBookingBegin;
    int amountOfDaysPrior;
 
-   public static InitializationResult stop() {
-      return new InitializationResult(null, 0, CourseBookingState.STOP, 0);
+   public static InitializationResult pause() {
+      return new InitializationResult(null, 0, CourseBookingState.PAUSED, 0);
    }
 
    public InitializationResult(Course currentCourse, long timeUtilDryRunOrBookingBegin, CourseBookingState nextCourseBookingState, int amountOfDaysPrior) {

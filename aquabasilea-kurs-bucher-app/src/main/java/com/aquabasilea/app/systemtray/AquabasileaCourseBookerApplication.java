@@ -15,11 +15,12 @@ public class AquabasileaCourseBookerApplication {
     * @return the new created {@link AquabasileaCourseBooker}
     */
    public static AquabasileaCourseBooker createAquabasileaCourseBookerAndSystemTray(String username, String password) {
-      AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(username, password, Thread.currentThread());
-      AquabasileaCourseBookerSystemTray aquabasileaCourseBookerSystemTray = buildAquabasileaCourseBookerSystemTray(aquabasileaCourseBooker);
-      aquabasileaCourseBooker.addCourseBookingStateChangedHandler(aquabasileaCourseBookerSystemTray);
-      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingEndResultConsumerImpl());
-      return aquabasileaCourseBooker;
+//      AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(username, password, Thread.currentThread());
+//      AquabasileaCourseBookerSystemTray aquabasileaCourseBookerSystemTray = buildAquabasileaCourseBookerSystemTray(aquabasileaCourseBooker);
+//      aquabasileaCourseBooker.addCourseBookingStateChangedHandler(aquabasileaCourseBookerSystemTray);
+//      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingEndResultConsumerImpl());
+//      return aquabasileaCourseBooker;
+      return null;
    }
 
    private static AquabasileaCourseBookerSystemTray buildAquabasileaCourseBookerSystemTray(AquabasileaCourseBooker aquabasileaCourseBooker) {

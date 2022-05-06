@@ -9,6 +9,7 @@ import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.util.YamlUtil;
 import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,12 +95,19 @@ public class AlertSender implements CourseBookingEndResultConsumer {
          case COURSE_NOT_SELECTED_NO_SINGLE_RESULT:
             return String.format(TextResources.COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT, courseName);
          case COURSE_NOT_SELECTED_EXCEPTION_OCCURRED:
-            return String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, courseBookingEndResult.getException().getClass().getSimpleName());
+            String exceptionMsg = getExceptionMsg(courseBookingEndResult);
+            return String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
          case COURSE_BOOKING_ABORTED:
             return String.format(TextResources.COURSE_NOT_BOOKED_ABORTED, courseName);
          default:
             LOG.error("Warning! Unhandled state '{}'", courseBookingEndResult.getCourseClickedResult());
             return null;
       }
+   }
+
+   @NotNull
+   private static String getExceptionMsg(CourseBookingEndResult courseBookingEndResult) {
+      Exception exception = courseBookingEndResult.getException();
+      return exception.getClass().getSimpleName() + ":\n" + exception.getMessage();
    }
 }

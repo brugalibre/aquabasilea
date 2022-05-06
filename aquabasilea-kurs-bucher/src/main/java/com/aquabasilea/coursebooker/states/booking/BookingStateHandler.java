@@ -4,7 +4,6 @@ import com.aquabasilea.course.Course;
 import com.aquabasilea.course.CourseComparator;
 import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.navigate.AquabasileaWebNavigator;
@@ -27,13 +26,12 @@ import static com.aquabasilea.coursebooker.states.CourseBookingState.BOOKING;
  */
 public class BookingStateHandler {
    private static final Logger LOG = LoggerFactory.getLogger(BookingStateHandler.class);
+   private final Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier;
    private final WeeklyCoursesRepository weeklyCoursesRepository;
 
-   private Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier;
-
-   public BookingStateHandler(String weeklyCoursesYmlFile, Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier) {
+   public BookingStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier) {
       this.aquabasileaWebNavigatorSupplier = aquabasileaWebNavigatorSupplier;
-      this.weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(weeklyCoursesYmlFile);
+      this.weeklyCoursesRepository = weeklyCoursesRepository;
    }
 
    /**

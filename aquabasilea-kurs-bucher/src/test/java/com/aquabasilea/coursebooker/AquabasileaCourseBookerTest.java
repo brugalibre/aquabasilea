@@ -3,23 +3,24 @@ package com.aquabasilea.coursebooker;
 import com.aquabasilea.course.Course;
 import com.aquabasilea.course.Course.CourseBuilder;
 import com.aquabasilea.course.WeeklyCourses;
+import com.aquabasilea.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.config.TestAquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.util.DateUtil;
-import com.aquabasilea.util.YamlUtil;
 import com.aquabasilea.web.navigate.AquabasileaWebNavigator;
 import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
 import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.selectcourse.result.CourseClickedResult;
 import org.awaitility.Duration;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
@@ -38,13 +39,16 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest(classes = AquabasileaCourseBookerPersistenceConfig.class)
 class AquabasileaCourseBookerTest {
-   private static final String TEST_WEEKLY_COURSES_YML = "courses/testWeeklyCourses.yml";
-   public static final String COURSE_NAME = "Test";
+   private static final String COURSE_NAME = "Test";
 
-   @AfterEach
+   @Autowired
+   private WeeklyCoursesRepository weeklyCoursesRepository;
+
+   @BeforeEach
    public void cleanUp() {
-      YamlUtil.save2File(new WeeklyCourses(), getPath2YmlFile());
+      weeklyCoursesRepository.deleteAll();
    }
 
    @Test
@@ -76,15 +80,16 @@ class AquabasileaCourseBookerTest {
       AquabasileaCourseBooker aquabasileaCourseBooker = tcb.aquabasileaCourseBooker;
 
       // When
-      tcb.aquabasileaCourseBookerThread.start();
+      tcb.aquabasileaCourseBooker.start();
       await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> nonNull(aquabasileaCourseBooker.getCurrentCourse()));
 
       long minutesBeforeCourseBecomesBookable = aquabasileaCourseBooker.getDurationLeftBeforeCourseBecomesBookableSupplier().toMinutes();
 
       // Then;
-      assertThat(minutesBeforeCourseBecomesBookable, is (expectedMinutesLeft));
+      assertThat(minutesBeforeCourseBecomesBookable, is(expectedMinutesLeft));
 
    }
+
    @Test
    void testInitializeAndGoIdleBeforeDryRun() {
       // Given
@@ -105,7 +110,7 @@ class AquabasileaCourseBookerTest {
       AquabasileaCourseBooker aquabasileaCourseBooker = tcb.aquabasileaCourseBooker;
 
       // When
-      tcb.aquabasileaCourseBookerThread.start();
+      tcb.aquabasileaCourseBooker.start();
       await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> nonNull(aquabasileaCourseBooker.getCurrentCourse()));
 
       // Then
@@ -139,21 +144,19 @@ class AquabasileaCourseBookerTest {
       AquabasileaCourseBooker aquabasileaCourseBooker = tcb.aquabasileaCourseBooker;
 
       // When
-      tcb.aquabasileaCourseBookerThread.start();
+      tcb.aquabasileaCourseBooker.start();
       await().atMost(new Duration(10, TimeUnit.SECONDS)).until(() -> nonNull(aquabasileaCourseBooker.getCurrentCourse()));
 
       // Save new Course
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       assertThat(currentCourse.getCourseName(), is(COURSE_NAME));
-      writeWeeklyCourses2File(List.of(CourseBuilder.builder()
-              .withCourseName(newCourseName)
-              .withDayOfWeek(dayOfTheWeek)
-              .withTimeOfTheDay(timeOfTheDay)
-              .build()));
-
+      WeeklyCourses weeklyCourses = this.weeklyCoursesRepository.findFirstWeeklyCourses();
+      weeklyCourses.getCourses()
+              .get(0)
+              .setCourseName(newCourseName);
+      this.weeklyCoursesRepository.save(weeklyCourses);
       aquabasileaCourseBooker.refreshCourses();
       await().atMost(new Duration(10, TimeUnit.SECONDS)).until(() -> nonNull(aquabasileaCourseBooker.getCurrentCourse()));
-
 
       // Then
       currentCourse = aquabasileaCourseBooker.getCurrentCourse();
@@ -161,7 +164,7 @@ class AquabasileaCourseBookerTest {
    }
 
    @Test
-   void testInitializeButNoCoursesFoundSoStop() {
+   void testInitializeButNoCoursesFoundSoPause() {
       // Given
       AquabasileaWebNavigator aquabasileaWebNavigator = mock(AquabasileaWebNavigator.class);
       TestCourseBookingStateChangedHandler testCourseBookingStateChangedHandler = new TestCourseBookingStateChangedHandler();
@@ -170,13 +173,14 @@ class AquabasileaCourseBookerTest {
               .withCourseBookingStateChangedHandler(testCourseBookingStateChangedHandler)
               .build();
       AquabasileaCourseBooker aquabasileaCourseBooker = tcb.aquabasileaCourseBooker;
-      testCourseBookingStateChangedHandler.setWhenBookingIsDoneRunnable(aquabasileaCourseBooker::stop);
 
       // When
-      tcb.aquabasileaCourseBooker.run();
+      tcb.aquabasileaCourseBooker.start();
+      await().atMost(new Duration(10, TimeUnit.SECONDS)).until(aquabasileaCourseBooker::isPaused);
 
       // Then
-      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, STOP)));
+      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, PAUSED)));
+      assertThat(aquabasileaCourseBooker.getCurrentCourse(), is(nullValue()));
       verify(aquabasileaWebNavigator, never()).selectAndBookCourse(any(), any());
    }
 
@@ -206,7 +210,7 @@ class AquabasileaCourseBookerTest {
       testCourseBookingStateChangedHandler.setWhenBookingIsDoneRunnable(aquabasileaCourseBooker::stop);
 
       // When
-      tcb.aquabasileaCourseBookerThread.start();
+      tcb.aquabasileaCourseBooker.start();
       await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() -> aquabasileaWebNavigator.isBookingDone);
 
       // Then
@@ -245,7 +249,7 @@ class AquabasileaCourseBookerTest {
       testCourseBookingStateChangedHandler.setWhenBookingIsDoneRunnable(aquabasileaCourseBooker::stop);
 
       // When
-      tcb.aquabasileaCourseBookerThread.start();
+      tcb.aquabasileaCourseBooker.start();
       await().atMost(new Duration(210, TimeUnit.SECONDS)).until(() -> aquabasileaWebNavigator.isBookingDone);
 
       // Then
@@ -257,9 +261,8 @@ class AquabasileaCourseBookerTest {
       verify(aquabasileaWebNavigator).selectAndBookCourse(eq(currentCourse.getCourseName()), eq(DateUtil.getDayOfWeekFromInput(currentCourse.getDayOfWeek(), Locale.GERMAN)));
    }
 
-   private static class TestCaseBuilder {
+   private class TestCaseBuilder {
       private AquabasileaCourseBooker aquabasileaCourseBooker;
-      private Thread aquabasileaCourseBookerThread;
 
       private CourseBookingStateChangedHandler courseBookingStateChangedHandler;
       private final CourseBookingEndResultConsumer courseBookingEndResultConsumer;
@@ -284,13 +287,13 @@ class AquabasileaCourseBookerTest {
       }
 
       private TestCaseBuilder build() {
-         writeWeeklyCourses2File(courses);
+         saveCourses(courses);
 
          AquabasileaCourseBookerSupplier courseBookerSupplier = new AquabasileaCourseBookerSupplier();
          Runnable threadRunnable = () -> courseBookerSupplier.aquabasileaCourseBooker.run();
-         aquabasileaCourseBookerThread = new Thread(threadRunnable);
-         AquabasileaCourseBookerConfig config = new TestAquabasileaCourseBookerConfig(TEST_WEEKLY_COURSES_YML, duration2StartDryRunEarlier, duration2StartBookerEarlier);
-         this.aquabasileaCourseBooker = new AquabasileaCourseBooker(config, () -> aquabasileaWebNavigator, getPath2YmlFile(), aquabasileaCourseBookerThread);
+         Thread aquabasileaCourseBookerThread = new Thread(threadRunnable);
+         AquabasileaCourseBookerConfig config = new TestAquabasileaCourseBookerConfig("TEST_WEEKLY_COURSES_YML", duration2StartDryRunEarlier, duration2StartBookerEarlier);
+         this.aquabasileaCourseBooker = new AquabasileaCourseBooker(weeklyCoursesRepository, config, () -> aquabasileaWebNavigator, aquabasileaCourseBookerThread);
          this.aquabasileaCourseBooker.addCourseBookingStateChangedHandler(courseBookingStateChangedHandler);
          this.aquabasileaCourseBooker.addCourseBookingEndResultConsumer(courseBookingEndResultConsumer);
          courseBookerSupplier.aquabasileaCourseBooker = aquabasileaCourseBooker;
@@ -317,21 +320,15 @@ class AquabasileaCourseBookerTest {
          return this;
       }
 
-      private static class AquabasileaCourseBookerSupplier {
+      private class AquabasileaCourseBookerSupplier {
          private AquabasileaCourseBooker aquabasileaCourseBooker;
       }
    }
 
-   private static void writeWeeklyCourses2File(List<Course> courses) {
+   private void saveCourses(List<Course> courses) {
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       weeklyCourses.setCourses(courses);
-      String absolutePath = getPath2YmlFile();
-      YamlUtil.save2File(weeklyCourses, absolutePath);
-   }
-
-   private static String getPath2YmlFile() {
-      Path resourceDirectory = Paths.get("src", "test", "resources");
-      return resourceDirectory.toFile().getAbsolutePath() + "/" + TEST_WEEKLY_COURSES_YML;
+      this.weeklyCoursesRepository.save(weeklyCourses);
    }
 
    private static class TestAquabasileaWebNavigator implements AquabasileaWebNavigator {

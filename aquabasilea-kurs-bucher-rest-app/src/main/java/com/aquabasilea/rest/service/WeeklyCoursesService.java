@@ -1,9 +1,7 @@
 package com.aquabasilea.rest.service;
 
-import com.aquabasilea.course.AquabasileaWeeklyCourseConst;
 import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.course.repository.yaml.impl.YamlWeeklyCoursesRepositoryImpl;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.rest.model.course.CourseDto;
 import com.aquabasilea.rest.model.course.WeeklyCoursesDto;
@@ -22,9 +20,9 @@ public class WeeklyCoursesService {
    private final WeeklyCoursesRepository weeklyCoursesRepository;
 
    @Autowired
-   public WeeklyCoursesService(AquabasileaCourseBooker aquabasileaCourseBooker) {
+   public WeeklyCoursesService(WeeklyCoursesRepository weeklyCoursesRepository, AquabasileaCourseBooker aquabasileaCourseBooker) {
       this.aquabasileaCourseBooker = aquabasileaCourseBooker;
-      this.weeklyCoursesRepository = new YamlWeeklyCoursesRepositoryImpl(AquabasileaWeeklyCourseConst.WEEKLY_COURSES_YML);
+      this.weeklyCoursesRepository = weeklyCoursesRepository;
    }
 
    public void addCourse(CourseDto courseDto) {

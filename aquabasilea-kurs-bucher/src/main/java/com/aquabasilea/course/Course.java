@@ -15,7 +15,6 @@ public class Course {
    private LocalDateTime courseDate;
 
    public Course() {
-      this.id = UUID.randomUUID().toString();
       this.isPaused = false;
    }
 

@@ -1,7 +1,5 @@
 package com.aquabasilea.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
@@ -12,6 +10,10 @@ import java.lang.reflect.InvocationTargetException;
 import static java.util.Objects.isNull;
 
 public class YamlUtil {
+
+   private YamlUtil() {
+      // privé
+   }
 
    /**
     * Loads the given yml file and create a new class with the content
@@ -49,35 +51,6 @@ public class YamlUtil {
          } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
             throw new IllegalStateException(e);
          }
-      }
-   }
-
-   /**
-    * Stores the given object into the given yml-file
-    *
-    * @param object  the object to store
-    * @param ymlFile the yml-file to store in
-    * @param <T>     the type of the object
-    */
-   public static <T> void save2File(T object, String ymlFile) {
-      DumperOptions dumperOptions = new DumperOptions();
-      dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-      dumperOptions.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
-      dumperOptions.setPrettyFlow(true);
-      Yaml yaml = new Yaml(dumperOptions);
-      try (PrintWriter writer = getPrintWriter(ymlFile)) {
-         yaml.dump(object, writer);
-      } catch (FileNotFoundException e) {
-         throw new IllegalStateException(e);
-      }
-   }
-
-   private static PrintWriter getPrintWriter(String ymlFile) throws FileNotFoundException {
-      try {
-         return new PrintWriter(ymlFile);
-      } catch (FileNotFoundException e) {
-         e.printStackTrace();
-         return new PrintWriter("/src/main/resources/" + ymlFile);
       }
    }
 

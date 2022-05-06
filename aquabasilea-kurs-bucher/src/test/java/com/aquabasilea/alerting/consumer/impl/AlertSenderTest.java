@@ -119,9 +119,11 @@ class AlertSenderTest {
    @Test
    void consumeAndSendSmsBookingFailedNPE() throws AlertSendException {
       // Given
-      NullPointerException exception = new NullPointerException();
+      String exceptionDetailMsg = "hoppla da hats getschädderet";
+      NullPointerException exception = new NullPointerException(exceptionDetailMsg);
       String courseName = "courseName";
-      String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exception.getClass().getSimpleName());
+      String exceptionMsg = exception.getClass().getSimpleName() +":\n" + exceptionDetailMsg;
+      String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
