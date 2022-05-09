@@ -1,7 +1,7 @@
-package com.aquabasilea.web.bookcourse;
+package com.aquabasilea.web.bookcourse.impl.book;
 
 import com.aquabasilea.web.error.ErrorHandler;
-import com.aquabasilea.web.selectcourse.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import org.openqa.selenium.WebElement;
 
 import java.util.Optional;

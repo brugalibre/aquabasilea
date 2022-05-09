@@ -11,11 +11,11 @@ import com.aquabasilea.coursebooker.states.booking.BookingStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitializationResult;
 import com.aquabasilea.util.DateUtil;
-import com.aquabasilea.web.navigate.AquabasileaWebNavigator;
-import com.aquabasilea.web.navigate.AquabasileaWebNavigatorImpl;
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.selectcourse.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
+import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,13 +51,13 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    /**
     * Constructor only for testing purpose!
     *
-    * @param aquabasileaWebNavigatorSup the {@link Supplier} for a {@link AquabasileaWebNavigator}
+    * @param aquabasileaWebCourseBookerSupp the {@link Supplier} for a {@link AquabasileaWebCourseBooker}
     * @param courseBookerThread         the {@link Thread} which controls this {@link AquabasileaCourseBooker}
     */
    AquabasileaCourseBooker(WeeklyCoursesRepository weeklyCoursesRepository, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
-                           Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSup, Thread courseBookerThread) {
+                           Supplier<AquabasileaWebCourseBooker> aquabasileaWebCourseBookerSupp, Thread courseBookerThread) {
       this.weeklyCoursesRepository = weeklyCoursesRepository;
-      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaWebNavigatorSup);
+      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaWebCourseBookerSupp);
       init(aquabasileaCourseBookerConfig, courseBookerThread);
    }
 
@@ -74,7 +74,7 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    }
 
    private void createNewAquabasileaWebNavigatorSupplier(String username, String userPwd) {
-      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, () -> AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, userPwd,
+      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, () -> AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, userPwd,
               state == BOOKING_DRY_RUN, this::getDurationLeftBeforeCourseBecomesBookableSupplier));
    }
 
@@ -254,7 +254,7 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
       }
    }
 
-   private static Supplier<AquabasileaWebNavigator> getDummyAquabasileaWebNavigatorSupplier() {
+   private static Supplier<AquabasileaWebCourseBooker> getDummyAquabasileaWebNavigatorSupplier() {
       return () -> (courseName, dayOfWeek) -> CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)

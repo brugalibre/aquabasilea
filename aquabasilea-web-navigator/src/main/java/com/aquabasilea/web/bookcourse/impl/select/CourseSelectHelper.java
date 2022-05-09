@@ -1,11 +1,11 @@
-package com.aquabasilea.web.selectcourse;
+package com.aquabasilea.web.bookcourse.impl.select;
 
-import com.aquabasilea.web.bookcourse.CourseBookerHelper;
+import com.aquabasilea.web.bookcourse.impl.book.CourseBookerHelper;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.login.AquabasileaLoginHelper;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
-import com.aquabasilea.web.navigate.AquabasileaWebNavigatorImpl;
-import com.aquabasilea.web.selectcourse.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -23,7 +23,7 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
 /**
  * The {@link CourseSelectHelper} does the actual selecting of the course. Acourse becomes first bookable 24h before.
- * The {@link AquabasileaWebNavigatorImpl} starts a little earlier when
+ * The {@link AquabasileaWebCourseBookerImpl} starts a little earlier when
  * doing the final booking
  *
  * First we try to select and book a course, after we entered the filter criteria and applied the filter.
@@ -47,7 +47,7 @@ public class CourseSelectHelper {
    private final AquabasileaLoginHelper aquabasileaLoginHelper;
    private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
    private final Runnable pageRefresher;
-   private BookingAndCloseButtonMissingCallbackHandler missingBookingAndCloseButtonCallbackHandler;
+   private final BookingAndCloseButtonMissingCallbackHandler missingBookingAndCloseButtonCallbackHandler;
 
    public CourseSelectHelper(CourseBookerHelper courseBookerHelper, AquabasileaLoginHelper aquabasileaLoginHelper,
                              AquabasileaNavigatorHelper aquabasileaNavigatorHelper, Supplier<Duration> duration2WaitUntilCourseBecomesBookable,

@@ -1,4 +1,4 @@
-package com.aquabasilea.web.selectcourse.result;
+package com.aquabasilea.web.bookcourse.impl.select.result;
 
 public enum CourseClickedResult {
    /**

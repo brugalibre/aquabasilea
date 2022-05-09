@@ -1,12 +1,12 @@
-package com.aquabasilea.web.selectcourse.result;
+package com.aquabasilea.web.bookcourse.impl.select.result;
 
 import java.util.List;
 
 public class CourseBookingEndResult {
-   private List<String> errors;
-   private Exception exception;
-   private String courseName;
-   private CourseClickedResult courseClickedResult;
+   private final List<String> errors;
+   private final Exception exception;
+   private final String courseName;
+   private final CourseClickedResult courseClickedResult;
 
    private CourseBookingEndResult(String courseName, CourseClickedResult courseClickedResult, List<String> errors, Exception exception) {
       this.errors = errors;

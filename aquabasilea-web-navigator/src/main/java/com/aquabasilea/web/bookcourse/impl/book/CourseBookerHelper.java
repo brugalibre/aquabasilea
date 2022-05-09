@@ -1,8 +1,8 @@
-package com.aquabasilea.web.bookcourse;
+package com.aquabasilea.web.bookcourse.impl.book;
 
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
-import com.aquabasilea.web.selectcourse.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.WebElement;
 
@@ -15,7 +15,7 @@ public class CourseBookerHelper {
 
    public static final int RETRIES = 2;
    private final SelectedCourseButtonClicker selectedCourseButtonClicker;
-   private AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
+   private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
 
    public CourseBookerHelper(AquabasileaNavigatorHelper aquabasileaNavigatorHelper, boolean dryRun) {
       this.aquabasileaNavigatorHelper = aquabasileaNavigatorHelper;

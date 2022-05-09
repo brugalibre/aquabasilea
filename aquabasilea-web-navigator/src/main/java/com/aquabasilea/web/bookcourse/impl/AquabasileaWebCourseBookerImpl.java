@@ -1,15 +1,17 @@
-package com.aquabasilea.web.navigate;
+package com.aquabasilea.web.bookcourse.impl;
 
-import com.aquabasilea.web.bookcourse.CourseBookerHelper;
+import com.aquabasilea.web.bookcourse.impl.book.CourseBookerHelper;
 import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.error.ErrorHandlerImpl;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
 import com.aquabasilea.web.login.AquabasileaLoginHelper;
-import com.aquabasilea.web.selectcourse.CourseSelectHelper;
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.selectcourse.result.CourseClickedResult;
+import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
+import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
+import com.aquabasilea.web.bookcourse.impl.select.CourseSelectHelper;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.util.ErrorUtil;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigator;
 import com.zeiterfassung.web.common.inout.PropertyReader;
@@ -25,28 +27,28 @@ import java.time.Duration;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.aquabasilea.web.selectcourse.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
+import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
-public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNavigatorHelper> implements AquabasileaWebNavigator {
+public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<AquabasileaNavigatorHelper> implements AquabasileaWebCourseBooker {
 
-   private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebNavigatorImpl.class);
+   private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebCourseBookerImpl.class);
    private int timeOutRetries;
    private final String coursePage;
    private CourseSelectHelper courseSelectHelper;
    private CourseFilterHelper courseFilterHelper;
    private AquabasileaLoginHelper aquabasileaLoginHelper;
 
-   public AquabasileaWebNavigatorImpl(String userName, String userPassword, String propertiesName) {
+   public AquabasileaWebCourseBookerImpl(String userName, String userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
       PropertyReader propertyReader = new PropertyReader(propertiesName);
       this.coursePage = propertyReader.readValue(COURSE_PAGE);
       this.timeOutRetries = 4;
    }
 
-   public static AquabasileaWebNavigator createAndInitAquabasileaWebNavigator(String userName, String userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
-      AquabasileaWebNavigatorImpl aquabasileaWebNavigator = new AquabasileaWebNavigatorImpl(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
+   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, String userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
+      AquabasileaWebCourseBookerImpl aquabasileaWebNavigator = new AquabasileaWebCourseBookerImpl(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
       aquabasileaWebNavigator.initWebDriver();
       aquabasileaWebNavigator.init(dryRun, duration2WaitUntilCourseBecomesBookable);
       return aquabasileaWebNavigator;

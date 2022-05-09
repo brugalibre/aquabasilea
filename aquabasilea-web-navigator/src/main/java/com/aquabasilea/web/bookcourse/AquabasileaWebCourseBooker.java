@@ -1,14 +1,14 @@
-package com.aquabasilea.web.navigate;
+package com.aquabasilea.web.bookcourse;
 
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 
 import java.time.DayOfWeek;
 
 /**
- * The {@link AquabasileaWebNavigator} navigates the aquabasilea webpage in order to
+ * The {@link AquabasileaWebCourseBooker} navigates the aquabasilea webpage in order to
  * select and book one of their sport courses
  */
-public interface AquabasileaWebNavigator {
+public interface AquabasileaWebCourseBooker {
    /**
     * Selects and books a course for the given name at the given day of the week
     *

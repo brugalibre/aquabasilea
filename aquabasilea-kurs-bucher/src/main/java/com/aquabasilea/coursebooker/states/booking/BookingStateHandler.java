@@ -6,8 +6,8 @@ import com.aquabasilea.course.WeeklyCourses;
 import com.aquabasilea.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
-import com.aquabasilea.web.navigate.AquabasileaWebNavigator;
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +26,11 @@ import static com.aquabasilea.coursebooker.states.CourseBookingState.BOOKING;
  */
 public class BookingStateHandler {
    private static final Logger LOG = LoggerFactory.getLogger(BookingStateHandler.class);
-   private final Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier;
+   private final Supplier<AquabasileaWebCourseBooker> aquabasileaWebCourseBookerSupp;
    private final WeeklyCoursesRepository weeklyCoursesRepository;
 
-   public BookingStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, Supplier<AquabasileaWebNavigator> aquabasileaWebNavigatorSupplier) {
-      this.aquabasileaWebNavigatorSupplier = aquabasileaWebNavigatorSupplier;
+   public BookingStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, Supplier<AquabasileaWebCourseBooker> aquabasileaWebCourseBookerSupp) {
+      this.aquabasileaWebCourseBookerSupp = aquabasileaWebCourseBookerSupp;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
    }
 
@@ -45,7 +45,7 @@ public class BookingStateHandler {
       LOG.info("About going to {} the course '{}' at {}", state == BOOKING ? "book" : "dry-run the booking",
               currentCourse.getCourseName(), DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
       DayOfWeek dayOfWeek = DateUtil.getDayOfWeekFromInput(currentCourse.getDayOfWeek(), Locale.GERMAN);
-      CourseBookingEndResult courseBookingEndResult = aquabasileaWebNavigatorSupplier.get().selectAndBookCourse(currentCourse.getCourseName(), dayOfWeek);
+      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(currentCourse.getCourseName(), dayOfWeek);
       LOG.info("Course booking done. Result is {}", courseBookingEndResult);
       resumeCoursesUntil(currentCourse);
       return courseBookingEndResult;

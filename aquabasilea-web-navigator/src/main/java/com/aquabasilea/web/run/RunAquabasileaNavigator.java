@@ -1,8 +1,8 @@
 package com.aquabasilea.web.run;
 
-import com.aquabasilea.web.navigate.AquabasileaWebNavigator;
-import com.aquabasilea.web.navigate.AquabasileaWebNavigatorImpl;
-import com.aquabasilea.web.selectcourse.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
+import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,8 @@ public class RunAquabasileaNavigator {
       if (args.length >= 4) {
          dryRun = Boolean.parseBoolean(args[3]);
       }
-      AquabasileaWebNavigator aquabasileaWebNavigator = AquabasileaWebNavigatorImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier());
-      CourseBookingEndResult courseBookingEndResult = aquabasileaWebNavigator.selectAndBookCourse(courseName, dayOfWeek);
+      AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier());
+      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(courseName, dayOfWeek);
       printErrors(courseBookingEndResult);
    }
 

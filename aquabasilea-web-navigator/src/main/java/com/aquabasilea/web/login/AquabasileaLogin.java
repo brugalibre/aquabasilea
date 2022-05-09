@@ -1,11 +1,11 @@
 package com.aquabasilea.web.login;
 
-import com.aquabasilea.web.navigate.AquabasileaWebNavigatorImpl;
+import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES;
 import static com.aquabasilea.web.constant.AquabasileaWebConst.LOGIN_FAILED_ERROR_MSG_ID;
 
-public class AquabasileaLogin extends AquabasileaWebNavigatorImpl {
+public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
 
    public AquabasileaLogin(String userName, String userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
