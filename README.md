@@ -35,3 +35,16 @@ In der linken unteren Kachel k�nnen neue Kurse hinzugef�gt werden
 
 Jeweils nach dem Test,- sowie dem scharfen Lauf wird ein sms versendet, mit Informationen �ber den Ausgang. Die
 Konfiguration dazu erfolgt im File 'config/alert/aquabasilea-alert-notification.yml'.
+
+# Authentifizierung
+
+Damit die Authentifizierung des Aquabasilea-Benutzers funktioniert, müssen zwei key-stores angelegt werden:
+- aquabasilea.keystore
+- aquabasilea-keystore.keystore
+
+Letzter ist quasi der Super-Keystore, welcher die Passwörter für den eigentlichen Keystore enthält. Dieser kann mit einem eigenen Password geschützt werden.
+Zum Erstellen siehe auch AquabasileaKeyStore.java bzw. KeyUtils.java.
+
+Die Klasse WriteSecretToKeyStore.java bietet Methoden, um für einen Benutzer (=alias) sein Password sowie den API-Key für den sms-Dienst zu speichern. Als Argument muss dasselbe Password
+Passwort verwendet werden, welches schon zur Erstellung vom KeyStore verwendet wurde.
+D.h. Der WriteSecretToKeyStore muss zweimal eingesetzt werden, einmal um das Passwort des Aquabasilea-Benutzers zu speichern und ein weiteres Mal für den API-Token des sms-Send Services

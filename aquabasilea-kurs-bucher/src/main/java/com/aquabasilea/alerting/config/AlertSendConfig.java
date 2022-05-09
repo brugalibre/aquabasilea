@@ -1,13 +1,16 @@
 package com.aquabasilea.alerting.config;
 
+import com.aquabasilea.security.securestorage.SecretStorage;
+import com.aquabasilea.security.securestorage.util.KeyUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class AlertSendConfig {
-   private String apiKey;
    private String originatorName;
    private String alertServiceName;
    private String username;
@@ -39,11 +42,8 @@ public class AlertSendConfig {
    }
 
    public String getApiKey() {
-      return apiKey;
-   }
-
-   public void setApiKey(String apiKey) {
-      this.apiKey = apiKey;
+      Supplier<char[]> apiKeyProvider = new SecretStorage(KeyUtils.AQUABASILEA_KEYSTORAGE).getSecretSupplier4Alias(alertServiceName, "".toCharArray());
+      return String.valueOf(apiKeyProvider.get());
    }
 
    public String getOriginator() {

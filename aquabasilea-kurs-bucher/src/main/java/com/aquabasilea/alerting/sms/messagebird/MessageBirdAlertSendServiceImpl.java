@@ -22,10 +22,6 @@ import java.util.stream.Collectors;
 public class MessageBirdAlertSendServiceImpl implements AlertSendService {
    private static final Logger LOG = LoggerFactory.getLogger(MessageBirdAlertSendServiceImpl.class);
 
-   public static void main(String[] args) {
-
-   }
-
    @Override
    public String sendAlert(AlertSendConfig alertSendConfig, String msg) throws AlertSendException {
       LOG.info("Sending text {} to {} receivers", msg, alertSendConfig.getReceivers().size());

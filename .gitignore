@@ -4,6 +4,7 @@
 /data
 .gradle
 .idea
+*.keystore
 # Log file
 *.log
 

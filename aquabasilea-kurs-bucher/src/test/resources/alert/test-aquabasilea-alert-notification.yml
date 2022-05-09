@@ -1,5 +1,4 @@
 !!com.aquabasilea.alerting.config
-apiKey: "abcdefgh1234567890"
 originator: "0041791234567"
 alertServiceName: "clicksend"
 receivers:
