@@ -139,13 +139,14 @@ public class CourseSelectHelper {
       errorHandler.handleError(errorMsg);
    }
 
-   private static void handleCourseNotFound(ErrorHandler errorHandler, List<WebElement> courseButtons, String courseName) {
+   private void handleCourseNotFound(ErrorHandler errorHandler, List<WebElement> courseButtons, String courseName) {
       String errorMsg;
       if (courseButtons.isEmpty()) {
          errorMsg = String.format("No courses found for course name '%s'", courseName);
       } else {
          errorMsg = String.format("Course '%s' could not be found! Filter result contains %s results!", courseName, courseButtons.size());
       }
+      this.aquabasileaNavigatorHelper.takeScreenshot(String.format("course '%s' selection", courseName));
       errorHandler.handleError(errorMsg);
    }
 

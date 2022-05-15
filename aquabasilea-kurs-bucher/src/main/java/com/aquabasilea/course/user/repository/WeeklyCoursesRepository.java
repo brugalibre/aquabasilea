@@ -1,6 +1,6 @@
-package com.aquabasilea.course.repository;
+package com.aquabasilea.course.user.repository;
 
-import com.aquabasilea.course.WeeklyCourses;
+import com.aquabasilea.course.user.WeeklyCourses;
 
 /**
  * The {@link WeeklyCoursesRepository} is responsible for loading and saving a {@link WeeklyCourses}

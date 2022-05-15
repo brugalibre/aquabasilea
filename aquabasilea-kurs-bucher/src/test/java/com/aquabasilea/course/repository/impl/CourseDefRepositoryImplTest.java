@@ -1,10 +1,11 @@
 package com.aquabasilea.course.repository.impl;
 
-import com.aquabasilea.course.Course.CourseBuilder;
-import com.aquabasilea.course.WeeklyCourses;
-import com.aquabasilea.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.persistence.entity.course.WeeklyCoursesEntity;
-import com.aquabasilea.persistence.entity.course.dao.WeeklyCoursesDao;
+import com.aquabasilea.course.user.Course.CourseBuilder;
+import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
+import com.aquabasilea.course.user.repository.impl.WeeklyCoursesRepositoryImpl;
+import com.aquabasilea.persistence.entity.course.user.WeeklyCoursesEntity;
+import com.aquabasilea.persistence.entity.course.user.dao.WeeklyCoursesDao;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
-class WeeklyCoursesRepositoryImplTest {
+class CourseDefRepositoryImplTest {
 
    @Test
    void saveWeeklyCourses() {

@@ -1,9 +1,9 @@
 package com.aquabasilea.coursebooker.states.booking;
 
-import com.aquabasilea.course.Course;
-import com.aquabasilea.course.Course.CourseBuilder;
-import com.aquabasilea.course.WeeklyCourses;
-import com.aquabasilea.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.course.user.Course;
+import com.aquabasilea.course.user.Course.CourseBuilder;
+import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

@@ -1,11 +1,11 @@
-package com.aquabasilea.course.repository.impl;
+package com.aquabasilea.course.user.repository.impl;
 
-import com.aquabasilea.course.WeeklyCourses;
-import com.aquabasilea.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.course.repository.mapping.WeeklyCoursesEntityMapper;
-import com.aquabasilea.course.repository.mapping.WeeklyCoursesEntityMapperImpl;
-import com.aquabasilea.persistence.entity.course.WeeklyCoursesEntity;
-import com.aquabasilea.persistence.entity.course.dao.WeeklyCoursesDao;
+import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
+import com.aquabasilea.course.user.repository.mapping.WeeklyCoursesEntityMapper;
+import com.aquabasilea.course.user.repository.mapping.WeeklyCoursesEntityMapperImpl;
+import com.aquabasilea.persistence.entity.course.user.WeeklyCoursesEntity;
+import com.aquabasilea.persistence.entity.course.user.dao.WeeklyCoursesDao;
 
 import java.util.Iterator;
 

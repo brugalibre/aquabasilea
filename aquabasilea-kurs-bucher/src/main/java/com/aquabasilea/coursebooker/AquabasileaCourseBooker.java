@@ -1,7 +1,7 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.course.Course;
-import com.aquabasilea.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.course.user.Course;
+import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.callback.AuthenticationCallbackHandler;
 import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;

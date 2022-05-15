@@ -1,7 +1,10 @@
 package com.aquabasilea.web.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class DateUtil {
@@ -25,5 +28,20 @@ public class DateUtil {
          }
       }
       return null;
+   }
+
+   /**
+    * Returns <code>true</code> if the given String starts with a day of the week and <code>false</code> if not
+    *
+    * @param value the value to test if it starts with a day of the week
+    * @return <code>true</code> if the given String starts with a day of the week and <code>false</code> if not
+    */
+   public static boolean isStartsWithDayOfWeek(String value, Locale locale) {
+      if (StringUtils.isEmpty(value)) {
+         return false;
+      }
+      return Arrays.stream(DayOfWeek.values())
+              .map(dayOfWeek -> dayOfWeek.getDisplayName(TextStyle.FULL, locale))
+              .anyMatch(value::startsWith);
    }
 }

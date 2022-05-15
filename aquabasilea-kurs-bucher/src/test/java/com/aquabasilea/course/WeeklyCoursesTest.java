@@ -1,6 +1,8 @@
 package com.aquabasilea.course;
 
-import com.aquabasilea.course.Course.CourseBuilder;
+import com.aquabasilea.course.user.Course;
+import com.aquabasilea.course.user.Course.CourseBuilder;
+import com.aquabasilea.course.user.WeeklyCourses;
 import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 

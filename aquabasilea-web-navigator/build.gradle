@@ -9,9 +9,6 @@ apply from: '../aquabasilea.gradle'
 group 'com.aquabasilea'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
 repositories {
     mavenLocal()
     mavenCentral()

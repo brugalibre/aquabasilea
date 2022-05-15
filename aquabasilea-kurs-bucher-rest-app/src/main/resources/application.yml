@@ -8,7 +8,7 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: password
-    url: jdbc:h2:file:./data/application;AUTO_SERVER=TRUE;
+    url: jdbc:h2:file:./data/application;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false

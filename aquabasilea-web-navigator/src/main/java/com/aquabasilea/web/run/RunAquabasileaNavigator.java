@@ -19,7 +19,7 @@ public class RunAquabasileaNavigator {
 
    public static void main(String[] args) {
 
-      String courseName = "Indoor Cycling";
+      String courseName = "myPOWER";
       String username = args[0];
       String password = args[1];
       DayOfWeek dayOfWeek = getDayOfWeekFromInput(args[2]);

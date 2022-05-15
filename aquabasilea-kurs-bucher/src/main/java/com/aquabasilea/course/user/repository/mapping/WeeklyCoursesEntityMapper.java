@@ -1,7 +1,7 @@
-package com.aquabasilea.course.repository.mapping;
+package com.aquabasilea.course.user.repository.mapping;
 
-import com.aquabasilea.course.WeeklyCourses;
-import com.aquabasilea.persistence.entity.course.WeeklyCoursesEntity;
+import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.persistence.entity.course.user.WeeklyCoursesEntity;
 import org.mapstruct.*;
 
 @Mapper(uses = CoursesEntityMapper.class)

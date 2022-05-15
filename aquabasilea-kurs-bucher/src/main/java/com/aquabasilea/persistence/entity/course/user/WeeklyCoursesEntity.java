@@ -1,4 +1,4 @@
-package com.aquabasilea.persistence.entity.course;
+package com.aquabasilea.persistence.entity.course.user;
 
 import com.aquabasilea.persistence.entity.base.BaseEntity;
 import org.springframework.lang.NonNull;

@@ -42,7 +42,7 @@ public class CourseBookerHelper {
          };
       } else {
          return (abortButton, bookButton, errorHandler) -> {
-            this.aquabasileaNavigatorHelper.clickButtonOrHandleError(bookButton, () -> bookButton, errorHandler, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
+            this.aquabasileaNavigatorHelper.clickButtonOrHandleError(() -> bookButton, errorHandler, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
             bookButton.ifPresent(webElement ->  waitForCancelButtonToAppear(RETRIES));
             abortButton.click();
             return CourseClickedResult.COURSE_BOOKED;

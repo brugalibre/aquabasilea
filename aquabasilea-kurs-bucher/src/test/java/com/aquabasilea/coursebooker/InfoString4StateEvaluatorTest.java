@@ -1,14 +1,12 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.course.Course;
+import com.aquabasilea.course.user.Course;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.coursebooker.states.init.InitializationResult;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.DayOfWeek;
 import java.time.Duration;

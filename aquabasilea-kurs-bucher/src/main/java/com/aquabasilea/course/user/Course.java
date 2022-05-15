@@ -1,7 +1,9 @@
-package com.aquabasilea.course;
+package com.aquabasilea.course.user;
+
+import com.aquabasilea.course.CourseLocation;
+import com.aquabasilea.course.LocalDateTimeBuilder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -11,6 +13,8 @@ public class Course {
    private String courseName;
    private String dayOfWeek;
    private String timeOfTheDay;
+   private CourseLocation courseLocation;
+
    private boolean isPaused;
    private LocalDateTime courseDate;
 
@@ -74,14 +78,23 @@ public class Course {
       this.dayOfWeek = dayOfWeek;
    }
 
+   public CourseLocation getCourseLocation() {
+      return courseLocation;
+   }
+
+   public void setCourseLocation(CourseLocation courseLocation) {
+      this.courseLocation = courseLocation;
+   }
+
    @Override
    public String toString() {
       return "Course{" +
               "id='" + id + '\'' +
               ", courseName='" + courseName + '\'' +
               ", dayOfWeek='" + dayOfWeek + '\'' +
-              ", isPaused='" + isPaused + '\'' +
               ", timeOfTheDay='" + timeOfTheDay + '\'' +
+              ", courseLocation=" + courseLocation +
+              ", isPaused=" + isPaused +
               ", courseDate=" + courseDate +
               '}';
    }
@@ -91,10 +104,16 @@ public class Course {
       private String courseName;
       private String timeOfTheDay;
       private boolean isPaused;
+      private CourseLocation courseLocation;
       private String id;
 
       private CourseBuilder() {
-         // private
+         this.courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA; // default
+      }
+
+      public CourseBuilder withCourseLocation(CourseLocation courseLocation) {
+         this.courseLocation = courseLocation;
+         return this;
       }
 
       public CourseBuilder withCourseName(String courseName) {
@@ -129,6 +148,7 @@ public class Course {
          course.setDayOfWeek(dayOfWeek);
          course.setId(id);
          course.setIsPaused(isPaused);
+         course.courseLocation = courseLocation;
          return course;
       }
 

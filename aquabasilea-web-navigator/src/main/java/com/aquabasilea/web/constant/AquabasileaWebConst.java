@@ -7,6 +7,7 @@ public class AquabasileaWebConst {
    // Time outs
    public static final int DEFAULT_TIMEOUT = 400;
    public static final Duration WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR = Duration.ofMillis(150000);
+   public static final Duration WAIT_FOR_CRITERIA_FILTER_TO_BE_APPLIED = Duration.ofMillis(7000);
    /**
     * The time a refresh of the page takes
     */
@@ -17,12 +18,15 @@ public class AquabasileaWebConst {
    public static final String HTML_VALUE_ATTR = "value";
 
    // Filter fields
-   /**
-    * The webpage appends the amount of matches for the given course name. Since we're striving for exact one result
-    * append the (1) hard coded. So the customer doesn't have to add it manually
-    */
    public static final String WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE = "filter";
    public static final String WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME = "data-test-id";
+
+   public static final String WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_BUTTON_VALUE = "Migros Fitnesscenter Aquabasilea";
+   public static final String WEB_BUTTON_FILTER_RESULTS_SHOW_MORE_VALUE = "Mehr anzeigen";
+   public static final String WEB_BUTTON_COURSE_LOCATION_FILTER_BUTTON_VALUE = "Center";
+   public static final String WEB_BUTTON_FITNESSCENTER_FILTER_BUTTON_VALUE = "Fitnesscenter";
+   public static final String WEB_BUTTON_FITNESSPARK_FILTER_BUTTON_VALUE = "Fitnesspark";
+   public static final String WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_CRITERION_BUTTON_VALUE = "Migros Fitnesscenter Aquabasilea";
 
    // Course results field
    public static final String WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE = "course-table";

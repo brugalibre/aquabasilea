@@ -1,7 +1,7 @@
-package com.aquabasilea.course.repository.mapping;
+package com.aquabasilea.course.user.repository.mapping;
 
-import com.aquabasilea.course.Course;
-import com.aquabasilea.persistence.entity.course.CourseEntity;
+import com.aquabasilea.course.user.Course;
+import com.aquabasilea.persistence.entity.course.user.CourseEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,4 +1,4 @@
-package com.aquabasilea.course;
+package com.aquabasilea.course.user;
 
 import java.util.ArrayList;
 import java.util.Collections;

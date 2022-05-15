@@ -1,6 +1,6 @@
-package com.aquabasilea.persistence.entity.course.dao;
+package com.aquabasilea.persistence.entity.course.user.dao;
 
-import com.aquabasilea.persistence.entity.course.WeeklyCoursesEntity;
+import com.aquabasilea.persistence.entity.course.user.WeeklyCoursesEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.UUID;
