@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.rest.model.course.CourseDto;
-import com.aquabasilea.rest.model.course.WeeklyCoursesDto;
+import com.aquabasilea.rest.model.course.user.CourseDto;
+import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
 import com.aquabasilea.rest.service.WeeklyCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,12 +35,6 @@ public class WeeklyCoursesController {
    @PostMapping(path = "/addCourse")
    public int addCourse(@Valid @NonNull @RequestBody CourseDto courseDto) {
       weeklyCoursesService.addCourse(courseDto);
-      return HttpStatus.OK.value();
-   }
-
-   @PostMapping(path = "/changeCourse")
-   public int changeCourse(@Valid @NonNull @RequestBody CourseDto courseDto) {
-      weeklyCoursesService.changeCourse(courseDto);
       return HttpStatus.OK.value();
    }
 

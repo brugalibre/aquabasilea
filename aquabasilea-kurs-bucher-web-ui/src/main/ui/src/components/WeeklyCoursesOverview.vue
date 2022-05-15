@@ -2,67 +2,34 @@
   <div class="weekly-courses-overview">
     <h2>Kurse verwalten</h2>
     <div class="table">
-      <loading v-model:active="isLoading"
-               :is-full-page="true"/>
       <table>
         <tr>
           <th id="courseName">Kurs Name</th>
           <th id="dayOfWeek">Wochentag</th>
           <th id="timeOfTheDay">Uhrzeit</th>
+          <th id="courseLocation">Kurs Ort</th>
           <th id="pause">Kurs pausieren</th>
           <th id="delete">Kurs löschen</th>
         </tr>
         <tr v-for="course in weeklyCourses.courseDtos" :key="course.id"
-            v-bind:class="{ isPaused: course.isPaused}">
+            v-bind:class="{ isPaused: course.isPaused, isAppPaused: (this.courseBookingStateDto.state === 'PAUSED' && !course.isPaused)}">
           <td class="table-cell">
-            <div v-show="!course.isCourseNameEditable">
-              <span v-show="course.isCurrentCourse" class="current-course-star"/>
-              <label
-                  @click="onCourseClick(course, () => course.isCourseNameEditable = true)">
-                {{ course.courseName }}
-              </label>
-            </div>
-            <input v-show="course.isCourseNameEditable"
-                   v-model="course.courseName"
-                   name="courseName"
-                   v-on:blur="course.isCourseNameEditable=false;"
-                   @keyup.esc="course.isDurationRepEditable=false"
-                   @keyup.enter="course.isCourseNameEditable=false;changeCourseAndRefreshCourseState(course)"
-            />
+              <span v-show="course.isCurrentCourse && this.courseBookingStateDto.state !== 'PAUSED'"
+                    class="current-course-star"/>
+            <label>{{ course.courseName }}</label>
           </td>
           <td class="table-cell">
-            <div v-show="!course.isDayOfWeekEditable">
-              <label
-                  @click="onCourseClick(course, () => course.isDayOfWeekEditable = true)">
-                {{ course.dayOfWeek }}
-              </label>
-            </div>
-            <days-of-week-selector
-                name="dayOfWeek"
-                v-show="course.isDayOfWeekEditable"
-                v-model="course.dayOfWeek"
-                v-bind:init-course-name="course.courseName"
-                v-bind:init-day-of-the-week="course.dayOfWeek"
-                v-on:blur="course.isDayOfWeekEditable=false;"
-                @dayOfTheWeekChanged="course.isDayOfWeekEditable=false;changeCourseAndRefreshCourseState(course)"
-                @keyup.esc="course.isDayOfWeekEditable=false"
-                @keyup.enter="course.isDayOfWeekEditable=false;changeCourseAndRefreshCourseState(course)"
-            />
+            <label>
+              {{ course.dayOfWeek }}
+            </label>
           </td>
           <td class="table-cell">
-            <div v-show="!course.isTimeOfTheDayEditable">
-              <label
-                  @click="onCourseClick(course, () => course.isTimeOfTheDayEditable = true)">
-                {{ course.timeOfTheDay }}
-              </label>
-            </div>
-            <input v-show="course.isTimeOfTheDayEditable"
-                   v-model="course.timeOfTheDay"
-                   name="timeOfTheDay"
-                   type="time"
-                   @keydown.esc="course.isTimeOfTheDayEditable=false"
-                   @keyup.enter="course.isTimeOfTheDayEditable=false;changeCourseAndRefreshCourseState(course)"
-            />
+            <label>{{ course.timeOfTheDay }}</label>
+          </td>
+          <td class="table-cell">
+            <label>
+              {{ course.courseLocationDto.courseLocationName }}
+            </label>
           </td>
           <td>
             <div style="display: flex">
@@ -85,36 +52,31 @@
         </tr>
       </table>
     </div>
-    <a href="https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm" target="_blank">Aquabasilea
+    <div class="placeholder"></div>
+    <a class="course-programm-link" href="https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm"
+       target="_blank">Aquabasilea
       kursprogramm</a>
   </div>
 </template>
 <script>
 import WeeklyCoursesApi from '../mixins/WeeklyCoursesApi';
-import DaysOfWeekSelector from "@/components/DaysOfWeekSelector";
 
 export default {
   name: 'WeeklyCoursesOverview',
-  components: {DaysOfWeekSelector},
   mixins: [WeeklyCoursesApi],
   computed: {
+    courseBookingStateDto: function () {
+      return this.$store.getters.courseBookingStateDto
+    },
     weeklyCourses: function () {
       return this.$store.getters.weeklyCourses;
     },
-    isLoading: function () {
-      return this.$store.getters.isLoading;
-    }
   },
   methods: {
     onCourseClick: function (course, setAttrEditableFunction) {
       if (!course.isPaused) {
         setAttrEditableFunction.apply(course);
       }
-    },
-    changeCourseAndRefreshCourseState: function (course) {
-      this.$store.dispatch('setIsLoading', true);
-      this.changeCourse(course);
-      this.$emit('refreshCourseStateOverviewAndWeeklyCourses');// refresh since the order of the table-entries may have changed
     },
     deleteCourseAndRefresh: function (course) {
       this.$store.dispatch('setIsLoading', true);
@@ -139,25 +101,31 @@ export default {
 <style scoped>
 
 .weekly-courses-overview {
-  width: auto;
-  overflow: hidden;
+  overflow-y: hidden;
   display: flex;
+  height: auto;
+  justify-content: space-between;
   flex-direction: column;
-  align-items: center;
 }
 
 .table {
-  width: auto;
-  overflow-x: hidden;
-  padding-bottom: 10px;
+  overflow-x: auto;
 }
 
 .table-cell {
-  padding-left: 15px;
+  padding-left: 8px;
+}
+
+label {
+  word-break: break-all;
 }
 
 .isPaused {
   background: lightslategray;
+}
+
+.isAppPaused {
+  background: lightgrey;
 }
 
 .pause-button {
@@ -196,4 +164,11 @@ export default {
   margin-right: 5px;
 }
 
+.placeholder {
+  flex-grow: 2;
+}
+
+.course-programm-link {
+  align-self: center;
+}
 </style>

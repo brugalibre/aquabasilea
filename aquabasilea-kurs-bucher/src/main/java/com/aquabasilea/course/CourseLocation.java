@@ -31,7 +31,7 @@ public enum CourseLocation {
 
    private final String courseLocationName;
 
-   private CourseLocation(String name) {
+   CourseLocation(String name) {
       this.courseLocationName = name;
    }
 

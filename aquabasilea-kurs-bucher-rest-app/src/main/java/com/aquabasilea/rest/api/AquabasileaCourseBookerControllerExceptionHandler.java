@@ -26,7 +26,7 @@ public class AquabasileaCourseBookerControllerExceptionHandler {
 
    @ExceptionHandler({NullPointerException.class, IllegalStateException.class})
    protected ResponseEntity<Object> handleOtherExceptions(Exception ex) {
-      Map<String, String> errors = Map.of("Unexpected application error:", ex.getMessage());
+      Map<String, String> errors = Map.of("Unexpected application error:", ex.getLocalizedMessage());
       return new ResponseEntity<>(errors, HttpStatus.UNPROCESSABLE_ENTITY);
    }
 

@@ -1,76 +1,99 @@
 <template>
   <div id=addCourseForm>
     <h2>Neuen Kurs hinzufügen</h2>
-    <div class="add-course-form">
+    <h4>Kurs auswählen</h4>
+    <div class="grid-container">
       <input
-          id="courseName"
-          v-model="courseName"
+          id="courseDefFilter"
+          v-model="courseDefFilter"
           type="text"
-          name="courseName"
-          placeholder="Name des Kurses"
+          name="courseDefFilter"
+          placeholder="Kurs-filter"
       >
-      <days-of-week-selector
-          ref="daysOfWeekSelector"
-          v-model="dayOfWeek"
-          v-bind:init-course-name="courseName"
-          v-bind:initDayOfTheWeek="dayOfWeek"
-      />
-      <input
-          id="timeOfTheDay"
-          v-model="timeOfTheDay"
-          type="time"
-          name="timeOfTheDay"
-      >
-    </div>
-    <p>
+      <select
+          id="courseDefDtosSelector"
+          name="courseDefDtos"
+          v-model="selectedCourseDef">
+        <option
+            v-for="courseDef in courseDefDtos" :key="courseDef"
+            v-bind:value="courseDef"> {{ courseDef.courseRepresentation }}
+        </option>
+      </select>
+      <div></div>
       <button :disabled="isSubmitButtonDisabled" v-on:click="addCourseAndRefresh">Kurs hinzufügen</button>
-    </p>
-    <div class="errorMsg" v-if="postErrorDetails"> Fehler beim Hinzufügen des Kurses: {{ postErrorDetails }}</div>
+    </div>
+    <update-course-def
+        ref="courseDefSelector"
+        @refreshAddCourse="refreshAddCourse">
+    </update-course-def>
+    <div class="error-msg" v-if="postErrorDetails"> Fehler beim Hinzufügen des Kurses: {{ postErrorDetails }}</div>
   </div>
 </template>
 
 <script>
 import weeklyCoursesApi from '../mixins/WeeklyCoursesApi';
-import DaysOfWeekSelector from "@/components/DaysOfWeekSelector";
+import UpdateCourseDef from "@/components/UpdateCourseDef";
+import CourseDefApi from "@/mixins/CourseDefApi";
 
 export default {
   name: 'AddCourse',
-  components: {DaysOfWeekSelector},
-  mixins: [weeklyCoursesApi],
+  components: {UpdateCourseDef},
+  mixins: [weeklyCoursesApi, CourseDefApi],
   data() {
     return {
+      selectedCourseDef: '',
+      courseDefFilter: '',
       postErrorDetails: null,
-      courseName: null,
-      dayOfWeek: null,
-      timeOfTheDay: '10:15',
+    }
+  },
+  watch: {
+    courseDefFilter: {
+      handler: function (newCourseDefFilter) {
+        this.fetchCourseDefDtos(newCourseDefFilter);
+      },
+    },
+    courseDefDtos: {
+      handler: function (newCourseDefDtos) {
+        this.selectedCourseDef = newCourseDefDtos[0];
+      },
     }
   },
   methods: {
+    refreshAddCourse: function () {
+      this.$emit('refreshAddCourse');
+    },
     addCourseAndRefresh: function () {
-      this.addCourse();
-      this.courseName = null;
-      this.dayOfWeek = null;
-      this.timeOfTheDay = null;
-      this.$refs.daysOfWeekSelector.reset();
+      const courseBody = JSON.stringify({
+        courseName: this.selectedCourseDef.courseName,
+        dayOfWeek: this.selectedCourseDef.dayOfWeek,
+        courseLocationDto: this.selectedCourseDef.courseLocationDto,
+        timeOfTheDay: this.selectedCourseDef.timeOfTheDay,
+        isPaused: false,
+        isCurrentCourse: false
+      });
+      this.addCourse(courseBody);
+      this.selectedCourseDef = null;
+      this.courseDefFilter = null;
       this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     }
   },
   computed: {
     isSubmitButtonDisabled: function () {
-      return !this.courseName || !this.dayOfWeek || !this.timeOfTheDay;
-    }
+      return !this.selectedCourseDef;
+    },
+    courseDefDtos: function () {
+      return this.$store.getters.courseDefDtos
+    },
+  },
+  mounted() {
+    this.fetchCourseDefDtos("");
   }
 }
 </script>
 
 <style scoped>
 
-.add-course-form {
-  display: flex;
-  justify-content: space-between;
-}
-
-.errorMsg {
+.error-msg {
   font-weight: bold;
   color: red
 }

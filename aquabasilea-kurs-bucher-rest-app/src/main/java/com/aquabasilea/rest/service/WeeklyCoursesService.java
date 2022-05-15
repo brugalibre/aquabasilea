@@ -1,10 +1,10 @@
 package com.aquabasilea.rest.service;
 
-import com.aquabasilea.course.WeeklyCourses;
-import com.aquabasilea.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.rest.model.course.CourseDto;
-import com.aquabasilea.rest.model.course.WeeklyCoursesDto;
+import com.aquabasilea.rest.model.course.user.CourseDto;
+import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,6 @@ public class WeeklyCoursesService {
       LOG.info("Add course {}", courseDto);
       WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
       weeklyCourses.addCourse(CourseDto.map2Course(courseDto));
-      changeWeeklyCourseAndRefreshCourseBooker(weeklyCourses);
-   }
-
-   public void changeCourse(CourseDto courseDto2Change) {
-      LOG.info("Change course {}", courseDto2Change);
-      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
-      weeklyCourses.changeCourse(CourseDto.map2Course(courseDto2Change));
       changeWeeklyCourseAndRefreshCourseBooker(weeklyCourses);
    }
 

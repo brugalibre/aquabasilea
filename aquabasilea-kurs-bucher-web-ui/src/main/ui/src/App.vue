@@ -13,11 +13,13 @@
         </course-state-overview>
         <add-course
             class="tile"
+            :key="addCourseRefreshKey"
+            @refreshAddCourse="refreshAddCourse()"
             @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses">
         </add-course>
       </div>
       <weekly-courses-overview
-          class="tile"
+          class="tile content-right-side"
           :key="weeklyCoursesRefreshKey"
           @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
           @refreshWeeklyCourses="refreshWeeklyCourses()">
@@ -47,6 +49,7 @@ export default {
       stagingMsg: 'Aquabasilea-Kurs-Bucher Webapplikation',
       courseStateOverviewRefreshKey: 0,
       weeklyCoursesRefreshKey: 0,
+      addCourseRefreshKey: 0,
     };
   },
   computed: {
@@ -85,6 +88,14 @@ export default {
       }, 1000);
       console.log('weeklyCourses & courseStateOverview refreshed: ' + this.weeklyCoursesRefreshKey + ', ' + this.courseStateOverviewRefreshKey);
     },
+    refreshAddCourse: function () {
+      this.$store.dispatch('setIsLoading', true);
+      setTimeout(() => {
+        console.log('refreshAddCourse refreshed: ' + this.addCourseRefreshKey);
+        this.addCourseRefreshKey += 1;
+        this.$store.dispatch('setIsLoading', false);
+      }, 2500);
+    },
   }
 }
 </script>
@@ -96,6 +107,7 @@ export default {
 
 .content {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 }
 
@@ -105,6 +117,10 @@ export default {
   display: flex;
   flex-direction: column;
   height: auto;
+}
+
+.content-right-side {
+  min-width: 410px;
 }
 
 .course-state-overview {
@@ -182,4 +198,13 @@ h1, h2, h3, label {
 h1, h2 {
   text-align: center;
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  column-gap: 10px;
+  row-gap: 10px;
+  padding-right: 10px;
+}
+
 </style>

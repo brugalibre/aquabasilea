@@ -1,8 +1,9 @@
 package com.aquabasilea.rest.model.course;
 
-import com.aquabasilea.course.Course;
-import com.aquabasilea.course.Course.CourseBuilder;
-import com.aquabasilea.course.WeeklyCourses;
+import com.aquabasilea.course.user.Course;
+import com.aquabasilea.course.user.Course.CourseBuilder;
+import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -42,9 +43,9 @@ class WeeklyCoursesDtoTest {
       WeeklyCoursesDto weeklyCoursesDto = WeeklyCoursesDto.of(weeklyCourses, currentCourse);
 
       // Then
-      assertThat(weeklyCoursesDto.getCourseDtos().get(0).getId(), is(firstCourseId));
-      assertThat(weeklyCoursesDto.getCourseDtos().get(1).getId(), is(secondCourseId));
-      assertThat(weeklyCoursesDto.getCourseDtos().get(2).getId(), is(thirdCourseId));
-      assertThat(weeklyCoursesDto.getCourseDtos().get(2).getIsCurrentCourse(), is(true));
+      assertThat(weeklyCoursesDto.courseDtos().get(0).id(), is(firstCourseId));
+      assertThat(weeklyCoursesDto.courseDtos().get(1).id(), is(secondCourseId));
+      assertThat(weeklyCoursesDto.courseDtos().get(2).id(), is(thirdCourseId));
+      assertThat(weeklyCoursesDto.courseDtos().get(2).isCurrentCourse(), is(true));
    }
 }

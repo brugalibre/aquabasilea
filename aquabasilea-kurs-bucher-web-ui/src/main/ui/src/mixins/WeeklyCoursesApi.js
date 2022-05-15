@@ -6,11 +6,13 @@ export default {
         return {
             // the possible days of the week
             daysOfTheWeek: [],
+            postErrorDetails: '',
         };
     },
     methods: {
         logError: function (text, error) {
             this.$store.dispatch('setIsLoading', false);
+            this.postErrorDetails = error;
             console.error(text, error);
         },
         handleResponseNok: function (response) {
@@ -36,17 +38,11 @@ export default {
                 })
                 .catch(error => this.logError('Error occurred while fetching WeeklyCourses', error));
         },
-        addCourse: function () {
+        addCourse: function (courseBody) {
             const requestOptions = {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    courseName: this.courseName,
-                    dayOfWeek: this.dayOfWeek,
-                    isPaused: false,
-                    isCurrentCourse: false,
-                    timeOfTheDay: this.timeOfTheDay
-                })
+                body: courseBody
             };
 
             // Call finally the api in order to add the new user
@@ -58,26 +54,6 @@ export default {
                     }
                     return response;
                 }).catch(error => this.logError('There was an error!', error));
-        },
-        changeCourse: function (course) {
-            const requestOptions = {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    courseName: course.courseName,
-                    id: course.id,
-                    dayOfWeek: course.dayOfWeek,
-                    timeOfTheDay: course.timeOfTheDay,
-                })
-            };
-            this.postErrorDetails = null;
-            // Call finally the api in order to change the course
-            fetch(weeklyCoursesApiUrl + '/changeCourse', requestOptions)
-                .then(response => {
-                    if (!response.ok) {
-                        return handleResponseNok.call(this, response);
-                    }
-                }).catch(error => this.logError('Error occurred while changing a course\'' + JSON.stringify(course) + '\'', error));
         },
         deleteCourse: function (course) {
             fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/weekly-courses/' + course.id, {method: 'DELETE'})
