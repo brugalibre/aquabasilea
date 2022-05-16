@@ -1,15 +1,11 @@
 package com.aquabasilea.web.error;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ErrorHandlerImpl implements ErrorHandler {
 
-   private static final Logger LOG = LoggerFactory.getLogger(ErrorHandlerImpl.class);
-   private List<String> errors;
+   private final List<String> errors;
 
    public ErrorHandlerImpl() {
       this.errors = new ArrayList<>();
@@ -23,7 +19,6 @@ public class ErrorHandlerImpl implements ErrorHandler {
 
    @Override
    public void handleError(String errorMsg) {
-      LOG.error(errorMsg);
       this.errors.add(errorMsg);
    }
 

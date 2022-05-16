@@ -14,6 +14,7 @@ import com.aquabasilea.web.util.ErrorUtil;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigator;
 import com.zeiterfassung.web.common.inout.PropertyReader;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNavigatorHelper> implements AquabasileaWebNavigator {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebNavigatorImpl.class);
+   private int timeOutRetries;
    private final String coursePage;
    private CourseSelectHelper courseSelectHelper;
    private CourseFilterHelper courseFilterHelper;
@@ -40,6 +42,7 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
       super(userName, userPassword, propertiesName);
       PropertyReader propertyReader = new PropertyReader(propertiesName);
       this.coursePage = propertyReader.readValue(COURSE_PAGE);
+      this.timeOutRetries = 4;
    }
 
    public static AquabasileaWebNavigator createAndInitAquabasileaWebNavigator(String userName, String userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
@@ -54,10 +57,20 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
       ErrorHandler errorHandler = new ErrorHandlerImpl();
       try {
          return selectAndBookCourse(courseName, dayOfWeek, errorHandler);
+      } catch (TimeoutException e) {
+         if (timeOutRetries > 0) {
+            return handleTimeOutException(courseName, dayOfWeek, errorHandler, e);
+         }
+         return handleExceptionAndBuildResult(courseName, errorHandler, e);
       } catch (Exception e) {
-         LOG.error("Error during course booking!", e);
          return handleExceptionAndBuildResult(courseName, errorHandler, e);
       }
+   }
+
+   private CourseBookingEndResult handleTimeOutException(String courseName, DayOfWeek dayOfWeek, ErrorHandler errorHandler, TimeoutException e) {
+      this.timeOutRetries--;
+      logError(String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseName, timeOutRetries), errorHandler, e);
+      return selectAndBookCourse(courseName, dayOfWeek);
    }
 
    private CourseBookingEndResult selectAndBookCourse(String courseName, DayOfWeek dayOfWeek, ErrorHandler errorHandler) {
@@ -120,6 +133,7 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
    }
 
    private static CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {
+      LOG.error("Error during course booking!", e);
       errorHandler.handleError(ErrorUtil.getErrorMsgWithException(e));
       return buildCourseBookingEndResult(courseName, errorHandler, e, COURSE_NOT_SELECTED_EXCEPTION_OCCURRED);
    }
@@ -131,5 +145,10 @@ public class AquabasileaWebNavigatorImpl extends BaseWebNavigator<AquabasileaNav
               .withErrors(errorHandler.getErrors())
               .withCourseClickedResult(courseClickedResult)
               .build();
+   }
+
+   private static void logError(String errorMsg, ErrorHandler errorHandler, Exception e) {
+      errorHandler.handleError(errorMsg);
+      LOG.error(errorMsg, e);
    }
 }

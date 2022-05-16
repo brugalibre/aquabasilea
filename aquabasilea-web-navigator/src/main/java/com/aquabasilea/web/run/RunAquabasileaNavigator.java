@@ -43,10 +43,12 @@ public class RunAquabasileaNavigator {
 
    private static void printErrors(CourseBookingEndResult courseBookingEndResult) {
       if (!courseBookingEndResult.getErrors().isEmpty()) {
+         System.err.println("===================");
          System.err.println("There where errors:");
          for (String error : courseBookingEndResult.getErrors()) {
             System.err.println(error);
          }
+         System.err.println("===================");
       } else {
          System.out.println("App completed normally");
       }
