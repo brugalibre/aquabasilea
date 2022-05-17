@@ -255,8 +255,8 @@ public class AquabasileaCourseBooker implements Runnable, AuthenticationCallback
    }
 
    private static Supplier<AquabasileaWebCourseBooker> getDummyAquabasileaWebNavigatorSupplier() {
-      return () -> (courseName, dayOfWeek) -> CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
+      return () -> (courseBookDetails) -> CourseBookingEndResultBuilder.builder()
+              .withCourseName(courseBookDetails.courseName())
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)
               .withException(new AquabaslieaUserNotAuthenticatedException("No aquabasliea-user authentication was done!\nCall AquabasileaCourseBooker.onUserAuthenticated first!"))
               .build();

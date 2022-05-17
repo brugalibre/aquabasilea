@@ -1,17 +1,18 @@
 package com.aquabasilea.web.bookcourse.impl;
 
+import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.book.CourseBookerHelper;
+import com.aquabasilea.web.bookcourse.impl.select.CourseSelectHelper;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.error.ErrorHandlerImpl;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
 import com.aquabasilea.web.login.AquabasileaLoginHelper;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
-import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
-import com.aquabasilea.web.bookcourse.impl.select.CourseSelectHelper;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.util.ErrorUtil;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigator;
 import com.zeiterfassung.web.common.inout.PropertyReader;
@@ -22,12 +23,11 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.util.function.Supplier;
 
-import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
+import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
@@ -55,33 +55,34 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    }
 
    @Override
-   public CourseBookingEndResult selectAndBookCourse(String courseName, DayOfWeek dayOfWeek) {
+   public CourseBookingEndResult selectAndBookCourse(CourseBookDetails courseBookDetails) {
       ErrorHandler errorHandler = new ErrorHandlerImpl();
       try {
-         return selectAndBookCourse(courseName, dayOfWeek, errorHandler);
+         return selectAndBookCourse(courseBookDetails, errorHandler);
       } catch (TimeoutException e) {
          if (timeOutRetries > 0) {
-            return handleTimeOutException(courseName, dayOfWeek, errorHandler, e);
+            aquabasileaLoginHelper.clickLogoutButton();
+            return handleTimeOutException(courseBookDetails, errorHandler, e);
          }
-         return handleExceptionAndBuildResult(courseName, errorHandler, e);
+         return handleExceptionAndBuildResult(courseBookDetails.courseName(), errorHandler, e);
       } catch (Exception e) {
-         return handleExceptionAndBuildResult(courseName, errorHandler, e);
+         return handleExceptionAndBuildResult(courseBookDetails.courseName(), errorHandler, e);
       }
    }
 
-   private CourseBookingEndResult handleTimeOutException(String courseName, DayOfWeek dayOfWeek, ErrorHandler errorHandler, TimeoutException e) {
+   private CourseBookingEndResult handleTimeOutException(CourseBookDetails courseBookDetails, ErrorHandler errorHandler, TimeoutException e) {
       this.timeOutRetries--;
-      logError(String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseName, timeOutRetries), errorHandler, e);
-      return selectAndBookCourse(courseName, dayOfWeek);
+      logError(String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseBookDetails.courseName(), timeOutRetries), errorHandler, e);
+      return selectAndBookCourse(courseBookDetails);
    }
 
-   private CourseBookingEndResult selectAndBookCourse(String courseName, DayOfWeek dayOfWeek, ErrorHandler errorHandler) {
+   private CourseBookingEndResult selectAndBookCourse(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
       navigateToPageAndLogin();
       navigate2CoursePageInternal(true);
-      courseFilterHelper.applyCriteriaFilter(courseName, dayOfWeek, errorHandler);
-      CourseClickedResult courseClickedResult = courseSelectHelper.selectCourseAndBook(courseName, errorHandler);
+      courseFilterHelper.applyCriteriaFilter(courseBookDetails, errorHandler);
+      CourseClickedResult courseClickedResult = courseSelectHelper.selectCourseAndBook(courseBookDetails.courseName(), errorHandler);
       logout();
-      return buildCourseBookingEndResult(courseName, errorHandler, null, courseClickedResult);
+      return buildCourseBookingEndResult(courseBookDetails.courseName(), errorHandler, null, courseClickedResult);
    }
 
    @Override

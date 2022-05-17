@@ -1,5 +1,6 @@
 package com.aquabasilea.web.filtercourse;
 
+import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.filtercourse.filter.CourseFilter;
 import com.aquabasilea.web.filtercourse.filter.CourseFilter.CourseFilterBuilder;
@@ -10,8 +11,6 @@ import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.time.DayOfWeek;
-import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,7 +33,6 @@ public class CourseFilterHelper {
    public void applyCriteriaFilter(List<CourseFilterCriterion> courseFilterCriteria, ErrorHandler errorHandler) {
       CourseFilterBuilder courseFilterBuilder = CourseFilterBuilder.builder();
       courseFilterCriteria.forEach(courseFilterBuilder::addCourseFilterCriterion);
-      removeDefaultCourseLocationFilter(errorHandler);
       applyFilterCriteria(courseFilterBuilder
               .build(), errorHandler);
    }
@@ -42,18 +40,19 @@ public class CourseFilterHelper {
    /**
     * Builds a {@link CourseFilter} and applies those filters to the aquabasilea-course filter
     *
-    * @param courseName   the name of the course
-    * @param dayOfWeek    the day, on which the course takes place
+    * @param courseBookDetails the {@link CourseBookDetails} with the details for the course to book
     * @param errorHandler the {@link ErrorHandler} to handle errors
     */
-   public void applyCriteriaFilter(String courseName, DayOfWeek dayOfWeek, ErrorHandler errorHandler) {
+   public void applyCriteriaFilter(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
       applyFilterCriteria(CourseFilterBuilder.builder()
-              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.COURSE_NAME, courseName))
-              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.DAY_OF_WEEK, dayOfWeek.getDisplayName(TextStyle.FULL, Locale.GERMAN)))
+              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.COURSE_LOCATION, courseBookDetails.courseLocationName()))
+              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.COURSE_NAME, courseBookDetails.courseName()))
+              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.DAY_OF_WEEK, courseBookDetails.getDayOfWeekName(Locale.GERMAN)))
               .build(), errorHandler);
    }
 
    private void applyFilterCriteria(CourseFilter courseFilter, ErrorHandler errorHandler) {
+      removeDefaultCourseLocationFilter(errorHandler);
       for (CourseFilterCriterion courseFilterCriterion : courseFilter.getCourseFilterCriteria()) {
          WebElement filterArea = aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
          applyFilterCriterion(errorHandler, filterArea, courseFilterCriterion);

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-status">
     <h2>Status der App</h2>
     <div
         v-bind:class="{ isRunning: courseBookingStateDto.state === 'IDLE',
@@ -7,14 +7,12 @@
         }">
       <label class="state-label"> {{ courseBookingStateDto.stateMsg }} </label>
     </div>
-    <div>
-      <button
-          class="container-element-left"
-          :disabled="courseBookingStateDto.state === 'BOOKING'"
-          v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
-        {{ courseBookingStateDto.pauseOrResumeButtonText }}
-      </button>
-    </div>
+    <button
+        class="container-element-left"
+        :disabled="courseBookingStateDto.state === 'BOOKING'"
+        v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
+      {{ courseBookingStateDto.pauseOrResumeButtonText }}
+    </button>
   </div>
 </template>
 
@@ -33,7 +31,7 @@ export default {
       return this.getCurrentCourse === null || this.getCurrentCourse === undefined
           && this.courseBookingStateDto.state === 'PAUSED'
           && this.weeklyCourses.courseDtos
-              .filter(courseDto =>courseDto.isPaused !== undefined && courseDto.isPaused !== true).length > 0;
+              .filter(courseDto => courseDto.isPaused !== undefined && courseDto.isPaused !== true).length > 0;
     },
     getCurrentCourse: function () {
       return this.weeklyCourses.courseDtos
@@ -78,4 +76,5 @@ export default {
   margin-bottom: 5px;
   padding: 3px;
 }
+
 </style>

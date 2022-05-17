@@ -113,7 +113,7 @@ export default {
 }
 
 .table-cell {
-  padding-left: 8px;
+  padding-left: 13px;
 }
 
 label {

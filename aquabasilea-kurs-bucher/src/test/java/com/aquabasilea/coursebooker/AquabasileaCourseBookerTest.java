@@ -15,6 +15,7 @@ import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import org.awaitility.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -181,7 +182,7 @@ class AquabasileaCourseBookerTest {
       // Then
       assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, PAUSED)));
       assertThat(aquabasileaCourseBooker.getCurrentCourse(), is(nullValue()));
-      verify(aquabasileaWebNavigator, never()).selectAndBookCourse(any(), any());
+      verify(aquabasileaWebNavigator, never()).selectAndBookCourse(any());
    }
 
    @Test
@@ -220,7 +221,8 @@ class AquabasileaCourseBookerTest {
       assertThat(testCourseBookingStateChangedHandler.bookingStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - duration2StartBookerEarlier.toMinutes())));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - duration2StartDryRunEarlier.toMinutes())));
       assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_DRY_RUN, BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, STOP, INIT)));
-      verify(aquabasileaWebNavigator, times(2)).selectAndBookCourse(eq(currentCourse.getCourseName()), eq(DateUtil.getDayOfWeekFromInput(currentCourse.getDayOfWeek(), Locale.GERMAN)));
+      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), actualCourseDate.getDayOfWeek(), currentCourse.getCourseLocation().getWebCourseLocation());
+      verify(aquabasileaWebNavigator, times(2)).selectAndBookCourse(eq(courseBookDetails));
    }
 
    @Test
@@ -233,7 +235,6 @@ class AquabasileaCourseBookerTest {
       String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(TestAquabasileaWebCourseBooker.noDryRun());
       TestCourseBookingStateChangedHandler testCourseBookingStateChangedHandler = new TestCourseBookingStateChangedHandler();
-      java.time.Duration duration2StartBookerEarlier = java.time.Duration.ofMinutes(2);
       TestCaseBuilder tcb = new TestCaseBuilder()
               .addWeeklyCourse(CourseBuilder.builder()
                       .withCourseName("Zumba")
@@ -258,7 +259,8 @@ class AquabasileaCourseBookerTest {
       assertThat(actualCourseDate, is(notNullValue()));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt, is(nullValue()));
       assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_BOOKING, BOOKING, STOP, INIT)));
-      verify(aquabasileaWebNavigator).selectAndBookCourse(eq(currentCourse.getCourseName()), eq(DateUtil.getDayOfWeekFromInput(currentCourse.getDayOfWeek(), Locale.GERMAN)));
+      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), actualCourseDate.getDayOfWeek(), currentCourse.getCourseLocation().getWebCourseLocation());
+      verify(aquabasileaWebNavigator).selectAndBookCourse(eq(courseBookDetails));
    }
 
    private class TestCaseBuilder {
@@ -349,14 +351,14 @@ class AquabasileaCourseBookerTest {
       }
 
       @Override
-      public CourseBookingEndResult selectAndBookCourse(String courseName, DayOfWeek dayOfWeek) {
+      public CourseBookingEndResult selectAndBookCourse(CourseBookDetails courseBookDetails) {
          if (!this.isDryRunDone) {
             this.isDryRunDone = true;
          } else {
             this.isBookingDone = true;
          }
          return CourseBookingEndResultBuilder.builder()
-                 .withCourseName(courseName)
+                 .withCourseName(courseBookDetails.courseName())
                  .withCourseClickedResult(courseClickedResult)
                  .build();
       }

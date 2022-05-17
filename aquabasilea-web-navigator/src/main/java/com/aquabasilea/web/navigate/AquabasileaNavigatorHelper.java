@@ -1,5 +1,6 @@
 package com.aquabasilea.web.navigate;
 
+import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigatorHelper;
 import com.zeiterfassung.web.common.impl.navigate.button.ButtonClickHelper;
@@ -11,16 +12,20 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.DEFAULT_TIMEOUT;
+import static com.aquabasilea.web.constant.AquabasileaWebConst.WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 
 public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
 
-   public static final int MAX_RETRIES = 10;
+   private static final int CLICK_BUTTON_RETRIES_IF_ERROR = 10;
+   private static final int RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE = 3;
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaNavigatorHelper.class);
+   private static final Duration WAIT_UNTIL_BUTTON_BECOMES_CLICKABLE_INTERVAL = Duration.ofMillis(10000);
    private final ButtonClickHelper buttonClickHelper;
 
    public AquabasileaNavigatorHelper(WebDriver webDriver) {
@@ -32,7 +37,7 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     * Evaluates a html-button which displays a text, contained in a child element of this very button
     * Clicks the button or handles an error, if the button is not clickable
     * Note: This method was getting out of hand.. Right now, if a button is either not clickable, available or if there is a stale-exception
-    * we retry up to MAX_RETRIES times, until we finally give up
+    * we retry up to CLICK_BUTTON_RETRIES_IF_ERROR times, until we finally give up
     *
     * @param searchContext       the {@link WebElement} in which the button is located
     * @param buttonInnerHtmlText the text which is displayed on the button (indirectly through an inner html-tag)
@@ -42,14 +47,14 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     */
    public void clickButtonOrHandleError(WebElement searchContext, String buttonInnerHtmlText, String buttonInnerHtmlTag, ErrorHandler errorHandler, String elementIdentifier) {
       Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContext, buttonInnerHtmlTag, buttonInnerHtmlText, HTML_BUTTON_TYPE);
-      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, MAX_RETRIES);
+      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, CLICK_BUTTON_RETRIES_IF_ERROR);
    }
 
    /**
     * Evaluates a html-button which displays a text, contained in a child element of this very button
     * Clicks the button or handles an error, if the button is not clickable
     * Note: This method was getting out of hand.. Right now, if a button is either not clickable, available or if there is a stale-exception
-    * we retry up to MAX_RETRIES times, until we finally give up
+    * we retry up to CLICK_BUTTON_RETRIES_IF_ERROR times, until we finally give up
     *
     * @param searchContext     the {@link WebElement} which is used to locate the desired {@link WebElement}
     * @param by                the {@link By} to filter the button element
@@ -58,20 +63,20 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     */
    public void clickButtonOrHandleError(WebElement searchContext, By by, ErrorHandler errorHandler, String elementIdentifier) {
       Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findWebElementBy(searchContext, by);
-      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, MAX_RETRIES);
+      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, CLICK_BUTTON_RETRIES_IF_ERROR);
    }
 
    /**
     * Clicks the button or handles an error, if the button (which is retrieved by the given {@link Supplier}) is not clickable
     * Note: This method was getting out of hand.. Right now, if a button is either not clickable, available or if there is a stale-exception
-    * we retry up to MAX_RETRIES times, until we finally give up
+    * we retry up to CLICK_BUTTON_RETRIES_IF_ERROR times, until we finally give up
     *
     * @param buttonWebElementSupplier the {@link Supplier} which provides a new instance of an optional button
     * @param errorHandler             the {@link ErrorHandler}, if anything goes wrong
     * @param elementIdentifier        the identifier of the button - for logging, if anything goes wrong
     */
    public void clickButtonOrHandleError(Supplier<Optional<WebElement>> buttonWebElementSupplier, ErrorHandler errorHandler, String elementIdentifier) {
-      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, MAX_RETRIES);
+      this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, CLICK_BUTTON_RETRIES_IF_ERROR);
    }
 
    public void clickButton(WebElement webElement, ErrorHandler errorHandler) {
@@ -99,27 +104,30 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     * @param by            the {@link By} to locate the {@link WebElement}
     */
    public void waitUntilButtonBecameClickable(WebElement searchContext, By by) {
-      Optional<WebElement> buttonWebElement = findWebElementBy(searchContext, by);
-      String childHtmlTag = buttonWebElement.map(WebElement::getText).orElse("unknown inner html");
-      String childInnerHtmlText = buttonWebElement.map(WebElement::getTagName).orElse("unknown tag-name");
-      findAndWaitUntilButtonBecameClickableInternal(searchContext, buttonWebElement, childHtmlTag, childInnerHtmlText, 3);
+      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findWebElementBy(searchContext, by);
+      String childHtmlTag = buttonWebElementSupplier.get().map(WebElement::getText).orElse("unknown inner html");
+      String childInnerHtmlText = buttonWebElementSupplier.get().map(WebElement::getTagName).orElse("unknown tag-name");
+      findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, childHtmlTag, childInnerHtmlText, RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
    }
 
    private void findAndWaitUntilButtonBecameClickable(WebElement searchContext, String childHtmlTag, String childInnerHtmlText) {
-      Optional<WebElement> buttonWebElement = findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContext, childHtmlTag, childInnerHtmlText, HTML_BUTTON_TYPE);
-      findAndWaitUntilButtonBecameClickableInternal(searchContext, buttonWebElement, childHtmlTag, childInnerHtmlText, 3);
+      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContext, childHtmlTag, childInnerHtmlText, HTML_BUTTON_TYPE);
+      findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, childHtmlTag, childInnerHtmlText, RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
    }
 
-   private void findAndWaitUntilButtonBecameClickableInternal(WebElement searchContext, Optional<WebElement> buttonWebElement, String childHtmlTag, String childInnerHtmlText, int retries) {
+   private void findAndWaitUntilButtonBecameClickableInternal(Supplier<Optional<WebElement>> buttonWebElementSupplier, String childHtmlTag, String childInnerHtmlText, int retries) {
+      // Wait until the loading animation disappears (maybe it's not shown at all, but maybe it is. You never know)
+      waitForInvisibilityOfElementBy(By.cssSelector(AquabasileaWebConst.LOADING_ANIMATION_CLASS_NAME), WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS.toMillis());
+      Optional<WebElement> buttonWebElement = buttonWebElementSupplier.get();
       if (buttonWebElement.isPresent()) {
-         waitForElementToBeClickable(buttonWebElement.get());
+         waitForElementToBeClickable(buttonWebElement.get(), WAIT_UNTIL_BUTTON_BECOMES_CLICKABLE_INTERVAL);
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
          LOG.info("Button found which contains an inner child from type {} and with text {}. Retries left {}", childHtmlTag, childInnerHtmlText, retries);
       } else if (retries > 0) {
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
          retries--;
          LOG.warn("No button found which contains an inner child from type {} and with text {}! Let's retry - retries left {}", childHtmlTag, childInnerHtmlText, retries);
-         findAndWaitUntilButtonBecameClickableInternal(searchContext, buttonWebElement, childHtmlTag, childInnerHtmlText, retries);
+         findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, childHtmlTag, childInnerHtmlText, retries);
       } else {
          LOG.error("No button found which contains an inner child from type {} and with text {}!", childHtmlTag, childInnerHtmlText);
       }

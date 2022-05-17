@@ -3,6 +3,7 @@ package com.aquabasilea.web.login;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
@@ -12,7 +13,7 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 public class AquabasileaLoginHelper {
 
    private final LoginCallback loginCallback;
-   private AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
+   private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
 
    public AquabasileaLoginHelper(AquabasileaNavigatorHelper aquabasileaNavigatorHelper, LoginCallback loginCallback) {
       this.aquabasileaNavigatorHelper = aquabasileaNavigatorHelper;
@@ -41,5 +42,15 @@ public class AquabasileaLoginHelper {
       WebElement nowLogInButton = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
       nowLogInButton.click();
       aquabasileaNavigatorHelper.waitForInvisibilityOfElement(nowLogInButton);
+   }
+
+   /**
+    * After a {@link TimeoutException} bevor we can do whole retry, we have to make sure we log out
+    */
+   public void clickLogoutButton() {
+      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT), 20000);
+      WebElement logoutButton = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT);
+      logoutButton.click();
+      aquabasileaNavigatorHelper.waitForInvisibilityOfElement(logoutButton);
    }
 }

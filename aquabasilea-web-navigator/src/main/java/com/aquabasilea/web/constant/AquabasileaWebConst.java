@@ -13,6 +13,9 @@ public class AquabasileaWebConst {
     */
    public static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(10);
 
+   public static final Duration WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS = Duration.ofSeconds(10);
+   public static final String LOADING_ANIMATION_CLASS_NAME = "sc-dkmKIT iBFRfU";
+
    public static final String COURSE_PAGE = "coursePage";
    public static final String AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES = "config/aquabasilea-kurs-bucher-config.yml";
    public static final String HTML_VALUE_ATTR = "value";
@@ -48,6 +51,7 @@ public class AquabasileaWebConst {
 
    // on select-course page
    public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT = "Jetzt einloggen";
+   public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT = "Abmelden";
    public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID = "aria-label";
 
    private AquabasileaWebConst() {
