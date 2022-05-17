@@ -1,39 +1,52 @@
 # aquabasilea
 
-Automatisches Buchen von Sportkursen von Aquabasilea / Migros
+Dies ist eine App, welche zeitgesteuert und voll  automatische das Buchen von Sportkursen von Aquabasilea / Migros übernimmt. Dabei handelt es sich um eine Standalone Java-Applikation mit einer Rest-API
 
-Die gew�nschten Kurse sowie ihre Startzeit k�nnen in der Datei 'weeklyCourses.yml' konfiguriert werden. Das File
-befindet sich im Ordner 'courses' Der Kurs wird dann jeweils 24h vorher gebucht. Vor dem "scharfen" Buchen findet
-jeweils ein Testlauf statt. Es kann konfiguriert werden, wie viel Minuten der Testlauf fr�her stattfindet
+## Funktionsweise
+
+Kurse werden hinzugefügt, in dem sie aus einer Liste mit vordefinierten "Aquabasliea-Kursen" gewählt werden. Diese vordefinierten "Aquabasilea-Kurse" müssen vorgängig anhand der Aquabasilea-Kursseite aktualisiert bzw. initial geladen werden.
+
+Hinzugefügte Kurse, die nicht pausiert sind, werden automatisch der Reihe nach abgearbeitet. Ist der letzte Kurs gebucht, fängt es wieder von neuem an. Der aktuelle Kurs wird jeweils 24h bevor er stattfindet gebucht. Vor diesem "scharfen" Buchen findet jeweils ein Testlauf statt. Es kann konfiguriert werden, wie viel Minuten der Testlauf früher stattfindet. 
+
+Das Hinzfügen von Kursen bzw. das Laden von Kurs-Vorlagen findet über das web-ui statt, s. auch Abschnitt 'Kurse verwalten'. Das UI kann standardmässig im Browser über die Adresse 127.0.0.1:8080 abgerufen werden
 
 # Konfiguration:
 
-Die Konfiguration wird in der Datei 'config/aquabasilea-kurs-bucher-config.yml' vorgenommen. Ebenfalls k�nnen dort die
-URL der Login-Seite und der Seite mit der Kurs-�bersicht konfiguriert werden
+Der Testlauf findet jeweils vor der Buchung statt. Viele Minuten er vorher starten soll, kann in der Datei 'config/aquabasilea-kurs-bucher-config.yml' definiert werden. Ebenfalls können dort die URL der Login-Seite und der Seite mit der Kurs-Übersicht konfiguriert werden
 
 # Web-Ui
+<img width="1385" alt="image" src="https://user-images.githubusercontent.com/29772244/168870640-d960afd9-49c2-4b35-acd9-1116a8c06873.png">
 
 ## Status
 
-Die linke Kachel zeigt den Status der app an. D.h. wann findet der n�chste Testlauf bzw. die n�chste Buchung statt.
-Ebenfall kann dort die App pausiert bzw. reaktiviert werden
+Die Kachel links oben zeigt den Status der App an. D.h. wann findet der nächste Testlauf bzw. die nächste Buchung statt.
+Ebenfall kann dort die App pausiert bzw. reaktiviert werden. 
+
+## Hinzufügen von Kursen
+
+In der linken unteren Kachel können neue Kurse aus einer Liste von definierten Aquabasilea-Kursen ausgewählt und hinzugefügt werden. Dazu müssen diese auswählbaren
+Kurse erstmal aktualisiert werden. Dies wird erreicht, in dem in der Sektion 'Auswählbare Kurse aktualisieren' die gewünschten Kursorte ausgewählt werden, für welche Kurse geladen werden sollen. Sind alle Kursorte gewählt, kann der Button 'Aquabasilea Kurse aktualiseren' gedrückt werden.
+Daraufhin wird der Knopf ausgegraut und im Hintergrund startet die Aktualisierung.
+
+Dieser Vorgang kann einige Minuten dauern. Aktualisiere daher nach ein paar Minuten den Browser, bis der Aktualisieren-Button wieder aktiv und die 
+Liste mit vordefinierten Aquabasilea-Kursen abgefüllt ist. 
+
+Aus dieser Liste wird nun der zu hinzufügende Kurs ausgewählt und durch einen Klick auf den Button 'Kurs hinzufügen' hinzugefügt. 
+
+Das Eingabefeld, welches links von den auszuwählenden Kursen platziert ist, ist eine Volltextsuche. Z.B. kann mit der Eingabe 'Funct Mittwoch 1815' nach dem Kurs 'Functional Training', welche jeweils am Mittwoch um 18:5 Uhr stattfindet. In der Dropdown-Liste werden die Treffer bzw. Kurse, welcher mit der Eingabe am Besten über einstimmen, zu oberst aufgeführt. Es kann jeweils nur ein Kurs auf einmal ausgewählt werden.
+
 
 ## Kurse verwalten
 
-Die Kurse k�nnen im web-ui in der Kachel 'Kurse verwalten' via rest-api entfernt, ge�ndert oder pausiert werden.
-Pausierte Kurse sind inaktiv und werden nicht f�r die Ermittlung des n�chsten Kurses herangezogen. Der aktuelle Kurs,
-d.h. derjenige auf den die App wartet und welcher als n�chstes Gebucht wird, wird durch eine blaue Glocke signalisiert.
+Hinzugefügte Kurse können im web-ui in der rechten Kachel 'Kurse verwalten' entfernt oder pausiert werden. Pausierte Kurse sind inaktiv und werden grau dargestellt.
+Pausierte Kurse werden nur für eine einzige Iteration nicht gebucht. D.h. sobald der Kurs welcher anstelle des pausierten Kurses gebucht wurde, wird der übersprungene Kurs wieder reaktiviert. So ist es möglich, einen oder mehrere Kurse für eine bestimmte Woche auszusetzen, wobei sie für die kommende Woche automatisch wieder gebucht werden. Werden alle Kurse entfernt so pausiert sich die App automatisch. Nach dem hinzufügen von neuen Kursen muss die App manuell reaktiviert werden.
 
-Werden alle Kurse entfernt pausiert sich die App automatisch. Werden dann wieder Kurse hinzugef�gt, muss die App manuell
-wieder reaktiviert werden
+Der aktuelle Kurs, d.h. derjenige auf den die App wartet und welcher als nächstes Gebucht wird, wird durch eine blaue Glocke signalisiert.
 
-## Hinzuf�gen von Kursen
-
-In der linken unteren Kachel k�nnen neue Kurse hinzugef�gt werden
 
 # SMS-Alerting:
 
-Jeweils nach dem Test,- sowie dem scharfen Lauf wird ein sms versendet, mit Informationen �ber den Ausgang. Die
+Jeweils nach dem Test,- sowie dem scharfen Buchen wird ein sms versendet, mit Informationen über den Ausgang. Die
 Konfiguration dazu erfolgt im File 'config/alert/aquabasilea-alert-notification.yml'.
 
 # Authentifizierung

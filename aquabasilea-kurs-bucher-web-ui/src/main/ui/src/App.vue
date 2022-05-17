@@ -19,7 +19,7 @@
         </add-course>
       </div>
       <weekly-courses-overview
-          class="tile content-right-side"
+          class="tile"
           :key="weeklyCoursesRefreshKey"
           @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
           @refreshWeeklyCourses="refreshWeeklyCourses()">
@@ -103,6 +103,7 @@ export default {
 <style>
 * {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 15px;
 }
 
 .content {
@@ -113,14 +114,9 @@ export default {
 
 .content-left-side {
   max-width: 410px;
-  min-width: 410px;
   display: flex;
   flex-direction: column;
   height: auto;
-}
-
-.content-right-side {
-  min-width: 410px;
 }
 
 .course-state-overview {
@@ -195,16 +191,22 @@ h1, h2, h3, label {
   word-wrap: break-word;
 }
 
+button {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
 h1, h2 {
   text-align: center;
 }
 
-.grid-container {
+.grid-container-40-60 {
   display: grid;
   grid-template-columns: 40% 60%;
   column-gap: 10px;
   row-gap: 10px;
   padding-right: 10px;
+  padding-top: 10px;
 }
 
 </style>

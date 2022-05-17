@@ -2,25 +2,34 @@
   <div id=addCourseForm>
     <h2>Neuen Kurs hinzufügen</h2>
     <h4>Kurs auswählen</h4>
-    <div class="grid-container">
+    <div>
       <input
           id="courseDefFilter"
           v-model="courseDefFilter"
           type="text"
           name="courseDefFilter"
           placeholder="Kurs-filter"
+          style="margin-bottom: 10px"
       >
-      <select
+      <multiselect
+          class="course-def-selector"
+          ref="courseDefDtosSelector"
           id="courseDefDtosSelector"
-          name="courseDefDtos"
-          v-model="selectedCourseDef">
-        <option
-            v-for="courseDef in courseDefDtos" :key="courseDef"
-            v-bind:value="courseDef"> {{ courseDef.courseRepresentation }}
-        </option>
-      </select>
-      <div></div>
-      <button :disabled="isSubmitButtonDisabled" v-on:click="addCourseAndRefresh">Kurs hinzufügen</button>
+          mode="single"
+          v-model="selectedCourseDef"
+          :options="courseDefDtos"
+          :label="'courseRepresentation'"
+          :valueProp="'courseRepresentation'"
+          noOptionsText="Keine Kurse verfügbar"
+          :placeholder="'Kurs auswählen..'"
+          :maxHeight=900
+          :object=true
+          @select="addCourseAndRefresh"
+      >
+        <template v-slot:option="{ option }">
+          <span class="course-def-option">{{ option.courseRepresentation }}</span>
+        </template>
+      </multiselect>
     </div>
     <update-course-def
         ref="courseDefSelector"
@@ -48,15 +57,13 @@ export default {
   },
   watch: {
     courseDefFilter: {
-      handler: function (newCourseDefFilter) {
-        this.fetchCourseDefDtos(newCourseDefFilter);
+      handler: function (newCourseDefFilter, oldCourseDefFilter) {
+        if (oldCourseDefFilter !== newCourseDefFilter) {
+          this.fetchCourseDefDtos(newCourseDefFilter);
+          this.$refs.courseDefDtosSelector.open();
+        }
       },
     },
-    courseDefDtos: {
-      handler: function (newCourseDefDtos) {
-        this.selectedCourseDef = newCourseDefDtos[0];
-      },
-    }
   },
   methods: {
     refreshAddCourse: function () {
@@ -78,9 +85,6 @@ export default {
     }
   },
   computed: {
-    isSubmitButtonDisabled: function () {
-      return !this.selectedCourseDef;
-    },
     courseDefDtos: function () {
       return this.$store.getters.courseDefDtos
     },
@@ -91,11 +95,23 @@ export default {
 }
 </script>
 
-<style scoped>
+<style src="@vueform/multiselect/themes/default.css">
+
+.course-def-selector {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 2;
+  font-size: 15px;
+}
+
+.course-def-option {
+  height: auto;
+  font-size: 14px;
+}
 
 .error-msg {
   font-weight: bold;
   color: red
 }
-
 </style>

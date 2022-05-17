@@ -1,6 +1,7 @@
 package com.aquabasilea.web.bookcourse;
 
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 
 import java.time.DayOfWeek;
 
@@ -12,9 +13,9 @@ public interface AquabasileaWebCourseBooker {
    /**
     * Selects and books a course for the given name at the given day of the week
     *
-    * @param courseName the name of the course
-    * @param dayOfWeek  the {@link DayOfWeek}
+    * @param courseBookDetails the {@link CourseBookDetails} which contains details like the name of the course,
+    *                         the course location, day of the week and so on
     * @return a {@link CourseBookingEndResult} with details about what happened
     */
-   CourseBookingEndResult selectAndBookCourse(String courseName, DayOfWeek dayOfWeek);
+   CourseBookingEndResult selectAndBookCourse(CourseBookDetails courseBookDetails);
 }
