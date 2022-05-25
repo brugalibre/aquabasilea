@@ -24,7 +24,7 @@ public class TextResources {
    public static final String COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT = "Kurs '%s' konnte nicht gebucht werden, da nicht eindeutig gefiltert werden konnte!";
    public static final String
            COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";
-   public static final String COURSE_NOT_BOOKED_ABORTED = "Kurs '%s' nicht gebucht. Vorgang erfolgreich abgebrochen";
+   public static final String COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF = "Kurs '%s' wurde nicht gebucht, da kein entsprechender aquababasilea kurs existiert";
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";
 }

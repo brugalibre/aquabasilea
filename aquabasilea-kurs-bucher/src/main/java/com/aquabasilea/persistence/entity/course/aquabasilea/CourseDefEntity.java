@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -18,9 +18,8 @@ public class CourseDefEntity extends BaseEntity {
    @NonNull
    private String courseName;
 
-   @Enumerated(EnumType.STRING)
    @NonNull
-   private DayOfWeek dayOfWeek;
+   private LocalDate courseDate;
 
    @NonNull
    private String timeOfTheDay;
@@ -38,7 +37,7 @@ public class CourseDefEntity extends BaseEntity {
    public String toString() {
       return "CourseDefEntity{" +
               "courseName='" + courseName + '\'' +
-              ", dayOfWeek='" + dayOfWeek + '\'' +
+              ", courseDate='" + courseDate + '\'' +
               ", timeOfTheDay='" + timeOfTheDay + '\'' +
               ", courseLocation=" + courseLocation +
               '}';
@@ -54,12 +53,12 @@ public class CourseDefEntity extends BaseEntity {
    }
 
    @NonNull
-   public DayOfWeek getDayOfWeek() {
-      return dayOfWeek;
+   public LocalDate getCourseDate() {
+      return courseDate;
    }
 
-   public void setDayOfWeek(@NonNull DayOfWeek dayOfWeek) {
-      this.dayOfWeek = dayOfWeek;
+   public void setCourseDate(@NonNull LocalDate courseDate) {
+      this.courseDate = courseDate;
    }
 
    @NonNull
@@ -86,12 +85,12 @@ public class CourseDefEntity extends BaseEntity {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
       CourseDefEntity that = (CourseDefEntity) o;
-      return courseName.equals(that.courseName) && dayOfWeek.equals(that.dayOfWeek) && timeOfTheDay.equals(that.timeOfTheDay) && courseLocation == that.courseLocation;
+      return courseName.equals(that.courseName) && courseDate.equals(that.courseDate) && timeOfTheDay.equals(that.timeOfTheDay) && courseLocation == that.courseLocation;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), courseName, dayOfWeek, timeOfTheDay, courseLocation);
+      return Objects.hash(super.hashCode(), courseName, courseDate, timeOfTheDay, courseLocation);
    }
 
 }

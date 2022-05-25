@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -24,7 +24,6 @@ import static java.util.Objects.isNull;
 public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNavigatorHelper,
                                                ErrorHandler errorHandler) {
    private static final String PLACES_AVAILABLE_PATTERN = "(([\\d]{1,2})[\\/]([\\d]{1,2}))\\s?(?:.)+";
-   private static final String DAY_OF_THE_WEEK_SEPARATOR = " ";
    private static final String TIME_OF_DAY_SEPARATOR = " - ";
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseExtractorHelper.class);
 
@@ -59,18 +58,17 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
    private static AquabasileaCourse createAquabasileaCourse(String courseName, List<String> courseDetailsText) {
       String timeOfTheDay = null;
       CourseLocation courseLocation = null;
-      DayOfWeek dayOfWeek = null;
+      LocalDate courseDate = null;
       for (String courseDetailSpanText : courseDetailsText) {
          if (courseDetailSpanText.contains(TIME_OF_DAY_SEPARATOR)) {
             timeOfTheDay = courseDetailSpanText.substring(0, courseDetailSpanText.indexOf(TIME_OF_DAY_SEPARATOR));
          } else if (DateUtil.isStartsWithDayOfWeek(courseDetailSpanText, Locale.GERMAN)) {
-            String dayOfWeekAsString = courseDetailSpanText.substring(0, courseDetailSpanText.indexOf(DAY_OF_THE_WEEK_SEPARATOR));
-            dayOfWeek = DateUtil.getDayOfWeekFromInput(dayOfWeekAsString, Locale.GERMAN);
+            courseDate = DateUtil.getLocalDateFromInput(courseDetailSpanText, Locale.GERMAN);
          } else if (isNull(courseLocation)) {
             courseLocation = CourseLocation.forCourseLocationName(courseDetailSpanText);
          }
       }
-      return new AquabasileaCourse(dayOfWeek, timeOfTheDay, courseLocation, courseName);
+      return new AquabasileaCourse(courseDate, timeOfTheDay, courseLocation, courseName);
    }
 
    private void openCourseDetailDialogAndAwaitReadiness(WebElement courseDetails) {

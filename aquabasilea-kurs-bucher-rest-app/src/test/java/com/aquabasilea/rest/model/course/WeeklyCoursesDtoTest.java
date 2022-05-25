@@ -6,7 +6,9 @@ import com.aquabasilea.course.user.WeeklyCourses;
 import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,24 +25,24 @@ class WeeklyCoursesDtoTest {
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       Course currentCourse = CourseBuilder.builder()
               .withTimeOfTheDay("10:15")
-              .withDayOfWeek("Sonntag")
+              .withDayOfWeek(DayOfWeek.SUNDAY)
               .withCourseName("Kurs-abc")
               .withId(thirdCourseId)
               .build();
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withTimeOfTheDay("15:15")
-              .withDayOfWeek("Mittwoch")
+              .withDayOfWeek(DayOfWeek.WEDNESDAY)
               .withCourseName("Kurs-abc")
               .withId(secondCourseId)
               .build(), currentCourse, CourseBuilder.builder()
               .withTimeOfTheDay("10:15")
-              .withDayOfWeek("Mittwoch")
+              .withDayOfWeek(DayOfWeek.WEDNESDAY)
               .withCourseName("Kurs-abc")
               .withId(firstCourseId)
               .build()));
 
       // When
-      WeeklyCoursesDto weeklyCoursesDto = WeeklyCoursesDto.of(weeklyCourses, currentCourse);
+      WeeklyCoursesDto weeklyCoursesDto = WeeklyCoursesDto.of(weeklyCourses, currentCourse, Locale.GERMAN);
 
       // Then
       assertThat(weeklyCoursesDto.courseDtos().get(0).id(), is(firstCourseId));

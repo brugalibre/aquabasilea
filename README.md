@@ -4,7 +4,14 @@ Dies ist eine App, welche zeitgesteuert und voll  automatische das Buchen von Sp
 
 ## Funktionsweise
 
-Kurse werden hinzugefügt, in dem sie aus einer Liste mit vordefinierten "Aquabasliea-Kursen" gewählt werden. Diese vordefinierten "Aquabasilea-Kurse" müssen vorgängig anhand der Aquabasilea-Kursseite aktualisiert bzw. initial geladen werden.
+Kurse werden hinzugefügt, in dem sie aus einer Liste mit vordefinierten "Aquabasliea-Kursen" gewählt werden. Diese vordefinierten "Aquabasilea-Kurse" werden jeweils beim initialen Start der Applikation und anschliessend jeweils am Sonntag um 23:00 Uhr automatisch aktualisiert. Die gewünschten Kursorte können in der Datei 'config\aquabasilea-kurs-bucher-config.yml' definiert werden. z.B. mit dem Eintrag 
+`defaultCourses:`
+
+ `- "Migros Fitnesscenter Aquabasilea"`
+
+ `- "Fitnesspark Heuwaage"`
+
+werden Kurse für die Fitnesscentren Migros Fitnesscenter Aquabasilea & Fitnesspark Heuwaage aktualisiert. Bei Bedarf kann diese Aktualisierung auch manuell erfolgen, s. Abschnitt 'Hinzufügen von Kursen'
 
 Hinzugefügte Kurse, die nicht pausiert sind, werden automatisch der Reihe nach abgearbeitet. Ist der letzte Kurs gebucht, fängt es wieder von neuem an. Der aktuelle Kurs wird jeweils 24h bevor er stattfindet gebucht. Vor diesem "scharfen" Buchen findet jeweils ein Testlauf statt. Es kann konfiguriert werden, wie viel Minuten der Testlauf früher stattfindet. 
 
@@ -20,21 +27,22 @@ Der Testlauf findet jeweils vor der Buchung statt. Viele Minuten er vorher start
 ## Status
 
 Die Kachel links oben zeigt den Status der App an. D.h. wann findet der nächste Testlauf bzw. die nächste Buchung statt.
-Ebenfall kann dort die App pausiert bzw. reaktiviert werden. 
+Ebenfalls kann dort die App pausiert bzw. reaktiviert werden. 
 
 ## Hinzufügen von Kursen
+In der linken unteren Kachel können neue Kurse aus einer Liste von definierten Aquabasilea-Kursen ausgewählt und hinzugefügt werden. Grundsätzlich werden die auswählbaren Kurse automatisch aktualisiert (s. Abschnitt 'Funktionsweise'). Aus der Liste mit Aquabasilea-Kursen kann der zu hinzufügende Kurs ausgewählt werden.
+Das anklicken eines Kurses in der Dropdown fügt ihn automatisch hinzu.
+Das Eingabefeld, welches links von den auszuwählenden Kursen platziert ist, ist eine Volltextsuche. Z.B. kann mit der Eingabe 'Funct Mittwoch 1815' nach dem Kurs 'Functional Training', welche jeweils am Mittwoch um 18:15 Uhr stattfindet. In der Dropdown-Liste werden die Treffer bzw. Kurse, welcher mit der Eingabe am besten übereinstimmen, zu oberst aufgeführt. Es kann jeweils nur ein Kurs auf einmal ausgewählt werden.
 
-In der linken unteren Kachel können neue Kurse aus einer Liste von definierten Aquabasilea-Kursen ausgewählt und hinzugefügt werden. Dazu müssen diese auswählbaren
-Kurse erstmal aktualisiert werden. Dies wird erreicht, in dem in der Sektion 'Auswählbare Kurse aktualisieren' die gewünschten Kursorte ausgewählt werden, für welche Kurse geladen werden sollen. Sind alle Kursorte gewählt, kann der Button 'Aquabasilea Kurse aktualiseren' gedrückt werden.
-Daraufhin wird der Knopf ausgegraut und im Hintergrund startet die Aktualisierung.
+## Aktualisieren der Kursorte
+
+Die konfigurierten standard Kursorte können geändert werden, in dem in der Sektion 'Auswählbare Kurse aktualisieren' die gewünschten Kursorte ausgewählt werden. Sind alle Kursorte gewählt, kann der Button 'Aquabasilea Kurse aktualisieren' gedrückt werden.
+
+Daraufhin wird der Knopf ausgegraut und im Hintergrund startet die Aktualisierung der Kurse, anhand der ausgewählten Kursorte. Zudem wird in der Konfiguration unter 'config\aquabasilea-kurs-bucher-config.yml' 
+die definierten standard Kursorte mit der aktuellen Auswahl überschrieben.
 
 Dieser Vorgang kann einige Minuten dauern. Aktualisiere daher nach ein paar Minuten den Browser, bis der Aktualisieren-Button wieder aktiv und die 
 Liste mit vordefinierten Aquabasilea-Kursen abgefüllt ist. 
-
-Aus dieser Liste wird nun der zu hinzufügende Kurs ausgewählt und durch einen Klick auf den Button 'Kurs hinzufügen' hinzugefügt. 
-
-Das Eingabefeld, welches links von den auszuwählenden Kursen platziert ist, ist eine Volltextsuche. Z.B. kann mit der Eingabe 'Funct Mittwoch 1815' nach dem Kurs 'Functional Training', welche jeweils am Mittwoch um 18:5 Uhr stattfindet. In der Dropdown-Liste werden die Treffer bzw. Kurse, welcher mit der Eingabe am Besten über einstimmen, zu oberst aufgeführt. Es kann jeweils nur ein Kurs auf einmal ausgewählt werden.
-
 
 ## Kurse verwalten
 

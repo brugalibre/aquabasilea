@@ -83,12 +83,12 @@ class AlertSenderTest {
    void consumeAndSendSmsBookingFailed_Aborted() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKED_ABORTED, courseName);
+      String expectedMsg = String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
+              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
               .build();
 
       // When
@@ -230,6 +230,7 @@ class AlertSenderTest {
       // Then
       verify(alertSendService, never()).sendAlert(any(), any());
    }
+
    @Test
    void consumeAndSendErrorDuringSending() {
       // Given
@@ -245,7 +246,7 @@ class AlertSenderTest {
               .build();
 
       // When
-      courseBookingEndResultConsumer.consumeResult(courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       assertThat(wasThrown.get(), is(true));

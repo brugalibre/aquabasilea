@@ -7,6 +7,7 @@ import com.aquabasilea.course.user.WeeklyCourses;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -16,11 +17,11 @@ import static java.util.Objects.nonNull;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public record WeeklyCoursesDto (List<CourseDto> courseDtos){
 
-   public static WeeklyCoursesDto of(WeeklyCourses weeklyCourses, Course currentCourse) {
+   public static WeeklyCoursesDto of(WeeklyCourses weeklyCourses, Course currentCourse, Locale locale) {
       return new WeeklyCoursesDto(weeklyCourses.getCourses()
               .stream()
               .sorted(new CourseComparator())
-              .map(course -> CourseDto.of(course, isCurrentCourse(weeklyCourses, currentCourse, course)))
+              .map(course -> CourseDto.of(course, isCurrentCourse(weeklyCourses, currentCourse, course), locale))
               .collect(Collectors.toList()));
    }
 

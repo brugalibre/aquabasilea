@@ -3,6 +3,10 @@ import {createStore} from 'vuex'
 export const store = createStore({
     state: {
         isLoading: false,
+        statisticsDto: {
+            lastCourseDefUpdate: '',
+            nextCourseDefUpdate: '',
+        },
         courseBookingStateDto: {
             stateMsg: '',
             pauseOrResumeButtonText: '',
@@ -27,6 +31,9 @@ export const store = createStore({
         courseLocationsDtos: state => {
             return state.courseLocationsDtos;
         },
+        statisticsDto: state => {
+            return state.statisticsDto;
+        },
         isLoading: state => {
             return state.isLoading;
         }
@@ -44,6 +51,9 @@ export const store = createStore({
         setCourseLocationsDtos(state, courseLocationsDtos) {
             state.courseLocationsDtos = courseLocationsDtos;
         },
+        setStatisticsDto(state, statisticsDto) {
+            state.statisticsDto = statisticsDto;
+        },
         setIsLoading(state, isLoading) {
             state.isLoading = isLoading;
         },
@@ -60,6 +70,9 @@ export const store = createStore({
         },
         setCourseLocationsDtos(context, courseLocationsDtos) {
             context.commit("setCourseLocationsDtos", courseLocationsDtos);
+        },
+        setStatisticsDto(context, statisticsDto) {
+            context.commit("setStatisticsDto", statisticsDto);
         },
         setIsLoading(context, isLoading) {
             context.commit("setIsLoading", isLoading);

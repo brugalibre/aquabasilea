@@ -76,6 +76,7 @@ export default {
         courseLocationDto: this.selectedCourseDef.courseLocationDto,
         timeOfTheDay: this.selectedCourseDef.timeOfTheDay,
         isPaused: false,
+        hasCourseDef: true,
         isCurrentCourse: false
       });
       this.addCourse(courseBody);

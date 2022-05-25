@@ -1,5 +1,6 @@
 package com.aquabasilea.util;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
@@ -54,6 +55,26 @@ public class YamlUtil {
       }
    }
 
+   /**
+    * Stores the given object into the given yml-file
+    *
+    * @param object  the object to store
+    * @param ymlFile the yml-file to store in
+    * @param <T>     the type of the object
+    */
+   public static <T> void save2File(T object, String ymlFile, ObjectStoreErrorHandler objectStoreErrorHandler) {
+      DumperOptions dumperOptions = new DumperOptions();
+      dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+      dumperOptions.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
+      dumperOptions.setPrettyFlow(true);
+      Yaml yaml = new Yaml(dumperOptions);
+      try (PrintWriter writer = new PrintWriter(ymlFile)) {
+         yaml.dump(object, writer);
+      } catch (FileNotFoundException e) {
+         objectStoreErrorHandler.handleObjectStoreException(e, object);
+      }
+   }
+
    private static InputStream getInputStream(String ymlFile) throws IOException {
       InputStream resourceStreamFromResource = YamlUtil.class.getClassLoader().getResourceAsStream(ymlFile);
       if (isNull(resourceStreamFromResource)) {
@@ -66,5 +87,10 @@ public class YamlUtil {
       Representer representer = new Representer();
       representer.getPropertyUtils().setSkipMissingProperties(true);
       return representer;
+   }
+
+   @FunctionalInterface
+   public interface ObjectStoreErrorHandler {
+      void handleObjectStoreException(Exception exception, Object object);
    }
 }

@@ -7,6 +7,8 @@ import com.aquabasilea.search.ObjectTextSearch.WeightedObject;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +20,16 @@ class ObjectTextSearchTest {
    @Test
    void testFilterCoursesWithSameCourseNameButDifferentLocation() {
       // Given
-
+      LocalDate friday = LocalDate.of(2021, Month.NOVEMBER, 19);
       String filter = "functional";
       String filterWith2Words = "functional aqua";
       String functionalTraining = "Functional training";
       TestCaseBuilder tcb = new TestCaseBuilder()
-              .withCourseDef(new CourseDef(DayOfWeek.FRIDAY, "13:15", CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
-              .withCourseDef(new CourseDef(DayOfWeek.FRIDAY, "13:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, functionalTraining))
-              .withCourseDef(new CourseDef(DayOfWeek.FRIDAY, "13:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "BeBo Fit (Beckenboden Fit)"))
-              .withCourseDef(new CourseDef(DayOfWeek.MONDAY, "16:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2"))
-              .withCourseDef(new CourseDef(DayOfWeek.THURSDAY, "09:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant"))
+              .withCourseDef(new CourseDef(friday, "13:15", CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
+              .withCourseDef(new CourseDef(friday, "13:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, functionalTraining))
+              .withCourseDef(new CourseDef(friday, "13:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "BeBo Fit (Beckenboden Fit)"))
+              .withCourseDef(new CourseDef(friday.minusDays(4), "16:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2"))
+              .withCourseDef(new CourseDef(friday.minusDays(1), "09:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant"))
               .build();
 
       // When
@@ -44,15 +46,16 @@ class ObjectTextSearchTest {
    @Test
    void testFilterCoursesWithSameCourseNameLocationButDifferentTimes() {
       // Given
+      LocalDate friday = LocalDate.of(2021, Month.NOVEMBER, 19);
       String filter = "16:15 aqua functional";// 'aqua' should not mislead the best search result..
       String functionalTraining = "Functional training";
       String timeOfTheDayOfBestMatch = "16:15";
       String timeOfTheDayOfSecondBestMatch = "13:15";
       TestCaseBuilder tcb = new TestCaseBuilder()
-              .withCourseDef(new CourseDef(DayOfWeek.FRIDAY, timeOfTheDayOfBestMatch, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
-              .withCourseDef(new CourseDef(DayOfWeek.FRIDAY, timeOfTheDayOfSecondBestMatch, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
-              .withCourseDef(new CourseDef(DayOfWeek.MONDAY, "10:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2"))
-              .withCourseDef(new CourseDef(DayOfWeek.THURSDAY, "09:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant"))
+              .withCourseDef(new CourseDef(friday, timeOfTheDayOfBestMatch, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
+              .withCourseDef(new CourseDef(friday, timeOfTheDayOfSecondBestMatch, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
+              .withCourseDef(new CourseDef(friday.minusDays(4), "10:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2"))
+              .withCourseDef(new CourseDef(friday.minusDays(1), "09:15", CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant"))
               .build();
 
       // When

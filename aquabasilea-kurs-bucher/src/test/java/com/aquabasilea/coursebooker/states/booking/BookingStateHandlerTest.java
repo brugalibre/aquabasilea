@@ -4,13 +4,19 @@ import com.aquabasilea.course.user.Course;
 import com.aquabasilea.course.user.Course.CourseBuilder;
 import com.aquabasilea.course.user.WeeklyCourses;
 import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.time.DayOfWeek;
 import java.util.Optional;
 
+import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_ABORTED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -19,10 +25,30 @@ import static org.mockito.Mockito.when;
 class BookingStateHandlerTest {
 
    @Test
+   void testBookCourseWithoutCourseDef() {
+
+      // Given
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withCourse(CourseBuilder.builder()
+                      .withTimeOfTheDay("15:15")
+                      .withDayOfWeek(DayOfWeek.WEDNESDAY)
+                      .withIsPaused(true)
+                      .withHasCourseDef(false)
+                      .withCourseName("Kurs-99")
+                      .withId("1")
+                      .build())
+              .build();
+
+      // When
+      CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(tcb.weeklyCourses.getCourses().get(0), tcb.currentBookingState);
+
+      // When
+      assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKING_ABORTED));
+   }
+
+   @Test
    void resumePrevCourses() {
       // Given
-      WeeklyCoursesRepository weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
-      BookingStateHandler initStateHandler = new BookingStateHandler(weeklyCoursesRepository, null);
       String currentCourse1Id = "1";
       String course2Id = "2";
       String course3Id = "3";
@@ -30,44 +56,51 @@ class BookingStateHandlerTest {
       String course6Id = "6";
       Course currentCourse = CourseBuilder.builder()
               .withTimeOfTheDay("15:15")
-              .withDayOfWeek("Freitag")
+              .withDayOfWeek(DayOfWeek.FRIDAY)
               .withCourseName("Kurs-abcd")
               .withId(currentCourse1Id)
               .build();
-      WeeklyCourses weeklyCourses = new WeeklyCourses(List.of(CourseBuilder.builder()
+
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withCourse(CourseBuilder.builder()
                       .withTimeOfTheDay("15:15")
-                      .withDayOfWeek("Montag")
+                      .withDayOfWeek(DayOfWeek.MONDAY)
                       .withIsPaused(true)
+                      .withHasCourseDef(true)
                       .withCourseName("Kurs-11")
                       .withId(course2Id)
-                      .build(), currentCourse,
-              CourseBuilder.builder()
+                      .build())
+              .withCourse(CourseBuilder.builder()
                       .withTimeOfTheDay("15:15")
-                      .withDayOfWeek("Sonntag")
+                      .withDayOfWeek(DayOfWeek.SUNDAY)
                       .withCourseName("Kurs-1")
+                      .withHasCourseDef(true)
                       .withId(course3Id)
-                      .build(),
-              CourseBuilder.builder()
+                      .build())
+              .withCourse(CourseBuilder.builder()
                       .withTimeOfTheDay("15:15")
-                      .withDayOfWeek("Samstag")
+                      .withDayOfWeek(DayOfWeek.SATURDAY)
                       .withCourseName("Kurs-1")
                       .withIsPaused(true)
+                      .withHasCourseDef(true)
                       .withId(course6Id)
-                      .build(),
-              CourseBuilder.builder()
+                      .build())
+              .withCourse(CourseBuilder.builder()
                       .withTimeOfTheDay("15:15")
-                      .withDayOfWeek("Mittwoch")
+                      .withDayOfWeek(DayOfWeek.WEDNESDAY)
                       .withIsPaused(true)
+                      .withHasCourseDef(true)
                       .withCourseName("Kurs-99")
                       .withId(course4Id)
-                      .build()));
-      when(weeklyCoursesRepository.findFirstWeeklyCourses()).thenReturn(weeklyCourses);
+                      .build())
+              .withCourse(currentCourse)
+              .build();
 
       // When
-      initStateHandler.resumeCoursesUntil(currentCourse);
+      tcb.bookingStateHandler.resumeCoursesUntil(currentCourse);
 
       // Then
-      weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
+      WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.findFirstWeeklyCourses();
       Optional<Course> course4Id1 = getCourse4Id(course4Id, weeklyCourses);
       Optional<Course> course2Id1 = getCourse4Id(course2Id, weeklyCourses);
       Optional<Course> course6Id1 = getCourse4Id(course6Id, weeklyCourses);
@@ -89,5 +122,33 @@ class BookingStateHandlerTest {
    private static String getPath2YmlFile() {
       Path resourceDirectory = Paths.get("src", "test", "resources");
       return resourceDirectory.toFile().getAbsolutePath() + "/courses/testWeeklyCourses.yml";
+   }
+
+   private static class TestCaseBuilder {
+      private final WeeklyCoursesRepository weeklyCoursesRepository;
+      private final BookingStateHandler bookingStateHandler;
+      private final WeeklyCourses weeklyCourses;
+      private final CourseBookingState currentBookingState;
+
+      private TestCaseBuilder() {
+         this.weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
+         this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, null);
+         this.weeklyCourses = new WeeklyCourses();
+         this.currentBookingState = CourseBookingState.BOOKING;
+      }
+
+      private TestCaseBuilder withCourse(Course course) {
+         this.weeklyCourses.addCourse(course);
+         return this;
+      }
+
+      private TestCaseBuilder build() {
+         mockWeeklyCoursesRepository();
+         return this;
+      }
+
+      private void mockWeeklyCoursesRepository() {
+         when(weeklyCoursesRepository.findFirstWeeklyCourses()).thenReturn(weeklyCourses);
+      }
    }
 }

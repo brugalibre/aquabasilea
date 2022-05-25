@@ -1,0 +1,7 @@
+!!com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfigImport
+minutesToStartDryRunEarlier: 34
+loginPage: https://login.migros.ch/login
+coursePage: https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm
+defaultCourses:
+  - "Migros Fitnesscenter Aquabasilea"
+  - "Fitnesspark Heuwaage"

@@ -3,7 +3,7 @@ package com.aquabasilea.rest.api;
 import com.aquabasilea.course.CourseLocation;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.rest.model.course.aquabasilea.CourseDefDto;
-import com.aquabasilea.rest.service.CourseDefService;
+import com.aquabasilea.rest.service.coursedef.CourseDefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;

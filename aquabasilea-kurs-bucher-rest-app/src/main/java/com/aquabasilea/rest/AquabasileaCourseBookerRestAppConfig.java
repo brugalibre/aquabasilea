@@ -7,6 +7,9 @@ import com.aquabasilea.course.aquabasilea.update.CourseDefUpdater;
 import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
+import com.aquabasilea.persistence.entity.statistic.StatisticsHelper;
+import com.aquabasilea.rest.service.WeeklyCoursesService;
+import com.aquabasilea.statistics.repository.StatisticsRepository;
 import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -34,8 +37,11 @@ public class AquabasileaCourseBookerRestAppConfig {
    }
 
    @Bean(name = COURSE_DEF_UPDATER_BEAN)
-   public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository) {
-      return new CourseDefUpdater(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator, courseDefRepository, new CoursesDefEntityMapperImpl());
+   public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository, @Autowired StatisticsRepository statisticsRepository, @Autowired WeeklyCoursesService weeklyCoursesService) {
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator,
+              new StatisticsHelper(statisticsRepository), courseDefRepository, new CoursesDefEntityMapperImpl());
+      courseDefUpdater.addCourseDefUpdatedNotifier(weeklyCoursesService::updateCoursesAfterCourseDefUpdate);
+      return courseDefUpdater;
    }
 
    private AquabasileaCourseBooker createAquabasileaCourseBooker(WeeklyCoursesRepository weeklyCoursesRepository) {

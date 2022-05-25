@@ -2,18 +2,8 @@ package com.aquabasilea.web.bookcourse.impl.select.result;
 
 import java.util.List;
 
-public class CourseBookingEndResult {
-   private final List<String> errors;
-   private final Exception exception;
-   private final String courseName;
-   private final CourseClickedResult courseClickedResult;
-
-   private CourseBookingEndResult(String courseName, CourseClickedResult courseClickedResult, List<String> errors, Exception exception) {
-      this.errors = errors;
-      this.exception = exception;
-      this.courseName = courseName;
-      this.courseClickedResult = courseClickedResult;
-   }
+public record CourseBookingEndResult(String courseName, CourseClickedResult courseClickedResult, List<String> errors,
+                                     Exception exception) {
 
    public List<String> getErrors() {
       return errors;
@@ -29,16 +19,6 @@ public class CourseBookingEndResult {
 
    public Exception getException() {
       return exception;
-   }
-
-   @Override
-   public String toString() {
-      return "CourseBookingEndResult{" +
-              "errors=" + errors +
-              ", exception=" + exception +
-              ", courseName='" + courseName + '\'' +
-              ", courseClickedResult=" + courseClickedResult +
-              '}';
    }
 
    public static class CourseBookingEndResultBuilder {

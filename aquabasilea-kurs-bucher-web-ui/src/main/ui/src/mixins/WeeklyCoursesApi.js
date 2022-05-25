@@ -23,12 +23,6 @@ export default {
             this.postErrorDetails = data;
             return Promise.reject(error);
         },
-        fetchDaysOfTheWeek4Course: function (courseName) {
-            fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/weekly-courses/getDaysOfTheWeek4Course/' + courseName)
-                .then(response => response.json())
-                .then(data => this.daysOfTheWeek = data)
-                .catch(error => this.logError('Error occurred while fetching WeeklyCourses', error));
-        },
         fetchWeeklyCourses: function () {
             fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/weekly-courses/getWeeklyCourses')
                 .then(response => response.json())

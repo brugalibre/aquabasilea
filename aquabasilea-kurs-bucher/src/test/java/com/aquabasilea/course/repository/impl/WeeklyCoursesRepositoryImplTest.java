@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
-class CourseDefRepositoryImplTest {
+class WeeklyCoursesRepositoryImplTest {
 
    @Test
    void saveWeeklyCourses() {
@@ -29,6 +29,7 @@ class CourseDefRepositoryImplTest {
               .withCourseName("Test")
               .withTimeOfTheDay("10:15")
               .withIsPaused(true)
+              .withHasCourseDef(true)
               .build()));
 
       // When
@@ -41,7 +42,7 @@ class CourseDefRepositoryImplTest {
 
 
    private static class TestWeeklyCoursesDao implements WeeklyCoursesDao {
-      private List<WeeklyCoursesEntity> weeklyCoursesEntities;
+      private final List<WeeklyCoursesEntity> weeklyCoursesEntities;
 
       private TestWeeklyCoursesDao() {
          this.weeklyCoursesEntities = new ArrayList<>();
