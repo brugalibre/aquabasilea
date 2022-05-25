@@ -1,5 +1,7 @@
 package com.aquabasilea.course;
 
+import java.util.Arrays;
+
 public enum CourseLocation {
    MIGROS_FITNESSCENTER_AQUABASILEA("Migros Fitnesscenter Aquabasilea"),
 
@@ -33,6 +35,13 @@ public enum CourseLocation {
 
    CourseLocation(String name) {
       this.courseLocationName = name;
+   }
+
+   public static CourseLocation of(String courseLocationName) {
+      return Arrays.stream(CourseLocation.values())
+              .filter(courseLocation -> courseLocation.courseLocationName.equals(courseLocationName))
+              .findFirst()
+              .orElseThrow(() -> new IllegalStateException("There is no CourseLocation with course location name '" + courseLocationName + "'!"));
    }
 
    public String getCourseLocationName() {

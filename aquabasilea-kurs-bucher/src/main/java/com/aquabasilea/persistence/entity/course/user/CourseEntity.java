@@ -6,6 +6,7 @@ import com.aquabasilea.persistence.entity.course.aquabasilea.CourseDefEntity;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,10 +22,13 @@ public class CourseEntity extends BaseEntity {
    private String courseName;
 
    @NonNull
-   private String dayOfWeek;
+   @Enumerated(EnumType.STRING)
+   private DayOfWeek dayOfWeek;
 
    @NonNull
    private String timeOfTheDay;
+
+   private boolean hasCourseDef;
 
    @Enumerated(EnumType.STRING)
    @NonNull
@@ -36,18 +40,6 @@ public class CourseEntity extends BaseEntity {
       // private constructor for JPA
       super(null);
       this.isPaused = false;
-   }
-
-   public CourseEntity(WeeklyCoursesEntity weeklyCoursesEntity, @NonNull UUID id, @NonNull String courseName,
-                       @NonNull String dayOfWeek, @NonNull String timeOfTheDay,
-                       @NonNull CourseLocation courseLocation, boolean isPaused) {
-      super(id);
-      this.weeklyCoursesEntity = weeklyCoursesEntity;
-      this.courseName = courseName;
-      this.dayOfWeek = dayOfWeek;
-      this.timeOfTheDay = timeOfTheDay;
-      this.courseLocation = courseLocation;
-      this.isPaused = isPaused;
    }
 
    public WeeklyCoursesEntity getWeeklyCoursesEntity() {
@@ -77,11 +69,11 @@ public class CourseEntity extends BaseEntity {
    }
 
    @NonNull
-   public String getDayOfWeek() {
+   public DayOfWeek getDayOfWeek() {
       return dayOfWeek;
    }
 
-   public void setDayOfWeek(@NonNull String dayOfWeek) {
+   public void setDayOfWeek(@NonNull DayOfWeek dayOfWeek) {
       this.dayOfWeek = dayOfWeek;
    }
 
@@ -102,14 +94,23 @@ public class CourseEntity extends BaseEntity {
       this.isPaused = isPaused;
    }
 
+   public boolean getHasCourseDef() {
+      return hasCourseDef;
+   }
+
+   public void setHasCourseDef(boolean hasCourseDef) {
+      this.hasCourseDef = hasCourseDef;
+   }
+
    @Override
    public String toString() {
       return "CourseEntity{" +
               "weeklyCoursesEntity=" + weeklyCoursesEntity +
-              ", id='" + id + '\'' +
               ", courseName='" + courseName + '\'' +
               ", dayOfWeek='" + dayOfWeek + '\'' +
               ", timeOfTheDay='" + timeOfTheDay + '\'' +
+              ", hasCourseDef=" + hasCourseDef +
+              ", courseLocation=" + courseLocation +
               ", isPaused=" + isPaused +
               '}';
    }
@@ -120,11 +121,11 @@ public class CourseEntity extends BaseEntity {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
       CourseEntity that = (CourseEntity) o;
-      return isPaused == that.isPaused && Objects.equals(weeklyCoursesEntity, that.weeklyCoursesEntity) && courseName.equals(that.courseName) && dayOfWeek.equals(that.dayOfWeek) && timeOfTheDay.equals(that.timeOfTheDay) && courseLocation == that.courseLocation;
+      return hasCourseDef == that.hasCourseDef && isPaused == that.isPaused && Objects.equals(weeklyCoursesEntity, that.weeklyCoursesEntity) && courseName.equals(that.courseName) && dayOfWeek.equals(that.dayOfWeek) && timeOfTheDay.equals(that.timeOfTheDay) && courseLocation == that.courseLocation;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), weeklyCoursesEntity, courseName, dayOfWeek, timeOfTheDay, courseLocation, isPaused);
+      return Objects.hash(super.hashCode(), weeklyCoursesEntity, courseName, dayOfWeek, timeOfTheDay, hasCourseDef, courseLocation, isPaused);
    }
 }

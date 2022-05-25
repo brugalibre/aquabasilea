@@ -9,7 +9,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RequestMapping("/api/v1/aquabasilea-course-booker/weekly-courses")
 @RestController
@@ -25,11 +24,6 @@ public class WeeklyCoursesController {
    @GetMapping(path = "/getWeeklyCourses")
    public WeeklyCoursesDto getWeeklyCourses() {
       return weeklyCoursesService.getWeeklyCoursesDto();
-   }
-
-   @GetMapping(path = "/getDaysOfTheWeek4Course/{courseName}")
-   public List<String> getDaysOfTheWeek4Course(@NonNull @PathVariable String courseName) {
-      return weeklyCoursesService.getDaysOfTheWeek4Course(courseName);
    }
 
    @PostMapping(path = "/addCourse")

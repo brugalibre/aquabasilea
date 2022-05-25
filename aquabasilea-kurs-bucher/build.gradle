@@ -5,7 +5,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-apply from: 'test.gradle'
+apply from: '../test.gradle'
 apply from: '../aquabasilea.gradle'
 
 group 'com.aquabasilea'

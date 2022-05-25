@@ -15,10 +15,11 @@
             v-bind:value="courseLocationDto"> {{ courseLocationDto.courseLocationName }}
         </option>
       </select>
-      <label v-show="isCourseDefUpdateRunning">
-        Aktualisierung der Kurse läuft...
-      </label>
-      <div></div>
+      <div>
+        <label v-show="isCourseDefUpdateRunning">
+          Aktualisierung der Kurse läuft...
+        </label>
+      </div>
       <button :disabled="isUpdateCourseDefButtonDisabled" v-on:click="updateCourseDefsAndRefresh()">Aquabasilea Kurse
         aktualisieren
       </button>

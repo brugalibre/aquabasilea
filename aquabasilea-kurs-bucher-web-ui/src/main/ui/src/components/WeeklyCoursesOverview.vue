@@ -12,11 +12,18 @@
           <th id="delete">Kurs löschen</th>
         </tr>
         <tr v-for="course in weeklyCourses.courseDtos" :key="course.id"
-            v-bind:class="{ isPaused: course.isPaused, isAppPaused: (this.courseBookingStateDto.state === 'PAUSED' && !course.isPaused)}">
+            v-bind:class="{ isPaused: course.isPaused, isAppPaused: (this.courseBookingStateDto.state === 'PAUSED' && !course.isPaused),
+             hasNoCourseDef: !course.hasCourseDef}"
+        >
           <td class="table-cell">
-              <span v-show="course.isCurrentCourse && this.courseBookingStateDto.state !== 'PAUSED'"
-                    class="current-course-star"/>
-            <label>{{ course.courseName }}</label>
+            <div style="display: grid">
+              <div>
+                <span v-show="!course.hasCourseDef" class="no-course-def-warning cell-icon"></span>
+                <span v-show="course.isCurrentCourse && this.courseBookingStateDto.state !== 'PAUSED'"
+                    class="current-course-star cell-icon"/>
+                <label>{{ course.courseName }}</label>
+              </div>
+            </div>
           </td>
           <td class="table-cell">
             <label>
@@ -128,6 +135,12 @@ label {
   background: lightgrey;
 }
 
+.hasNoCourseDef {
+  background: #ffcccb;
+  border: firebrick solid 2px;
+  border-radius: 5px;
+}
+
 .pause-button {
   background: url("../assets/pause.svg") transparent no-repeat center;
   background-size: 90% 90%;
@@ -157,11 +170,18 @@ label {
 
 .current-course-star {
   background: url('../assets/glocke.png') transparent no-repeat center;
+}
+
+.cell-icon {
   height: 15px;
   width: 15px;
   padding-right: 25px;
   background-size: 90% 90%;
   margin-right: 5px;
+}
+
+.no-course-def-warning {
+  background: url('../assets/warning.svg') transparent no-repeat center;
 }
 
 .placeholder {

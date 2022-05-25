@@ -6,8 +6,7 @@ import com.aquabasilea.course.user.repository.mapping.WeeklyCoursesEntityMapper;
 import com.aquabasilea.course.user.repository.mapping.WeeklyCoursesEntityMapperImpl;
 import com.aquabasilea.persistence.entity.course.user.WeeklyCoursesEntity;
 import com.aquabasilea.persistence.entity.course.user.dao.WeeklyCoursesDao;
-
-import java.util.Iterator;
+import com.aquabasilea.persistence.repository.SingleEntityRepositoryUtil;
 
 import static java.util.Objects.isNull;
 
@@ -22,7 +21,7 @@ public class WeeklyCoursesRepositoryImpl implements WeeklyCoursesRepository {
 
    @Override
    public WeeklyCourses findFirstWeeklyCourses() {
-      WeeklyCoursesEntity weeklyCoursesEntity = findFirstWeeklyCoursesInternal();
+      WeeklyCoursesEntity weeklyCoursesEntity = SingleEntityRepositoryUtil.findFirstEntity(weeklyCoursesDao);
       if (isNull(weeklyCoursesEntity)) {
          WeeklyCourses weeklyCourses = new WeeklyCourses();
          return save(weeklyCourses);
@@ -40,14 +39,5 @@ public class WeeklyCoursesRepositoryImpl implements WeeklyCoursesRepository {
    @Override
    public void deleteAll() {
       weeklyCoursesDao.deleteAll();
-   }
-
-   private WeeklyCoursesEntity findFirstWeeklyCoursesInternal() {
-      Iterable<WeeklyCoursesEntity> weeklyCoursesDaoAll = weeklyCoursesDao.findAll();
-      Iterator<WeeklyCoursesEntity> iterator = weeklyCoursesDaoAll.iterator();
-      if (iterator.hasNext()) {
-         return iterator.next();
-      }
-      return null;
    }
 }

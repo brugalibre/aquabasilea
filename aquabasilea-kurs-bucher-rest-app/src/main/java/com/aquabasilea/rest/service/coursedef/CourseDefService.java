@@ -1,13 +1,20 @@
-package com.aquabasilea.rest.service;
+package com.aquabasilea.rest.service.coursedef;
 
 import com.aquabasilea.course.CourseLocation;
 import com.aquabasilea.course.aquabasilea.repository.CourseDefRepository;
 import com.aquabasilea.course.aquabasilea.update.CourseDefUpdater;
+import com.aquabasilea.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.coursedef.update.notify.CourseDefUpdatedNotifier;
+import com.aquabasilea.model.course.CourseLocation;
+import com.aquabasilea.model.course.coursedef.CourseDef;
+import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.rest.model.course.aquabasilea.CourseDefDto;
 import com.aquabasilea.search.ObjectTextSearch;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,7 +25,7 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @Service
-public class CourseDefService {
+public class CourseDefService implements ApplicationListener<ContextRefreshedEvent>, CourseDefUpdatedNotifier {
 
    private final ObjectTextSearch objectTextSearch;
    private final CourseDefUpdater courseDefUpdater;
@@ -28,9 +35,20 @@ public class CourseDefService {
    @Autowired
    public CourseDefService(CourseDefUpdater courseDefUpdater, CourseDefRepository courseDefRepository, ObjectTextSearch objectTextSearch) {
       this.courseDefUpdater = courseDefUpdater;
+      this.courseDefUpdater.addCourseDefUpdatedNotifier(this);
       this.courseDefRepository = courseDefRepository;
       this.objectTextSearch = objectTextSearch;
       this.cachedCourseDefDtos = new ArrayList<>();
+   }
+
+   /**
+    * Calls {@link CourseDefUpdater#startScheduler()}
+    *
+    * @param contextRefreshedEvent the {@link ContextRefreshedEvent}
+    */
+   @Override
+   public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+      this.courseDefUpdater.startScheduler();
    }
 
    public boolean isCourseDefUpdateRunning() {
@@ -70,6 +88,13 @@ public class CourseDefService {
    private List<CourseDefDto> getAllCourseDefDtosFromRepository() {
       return courseDefRepository.findAllCourseDefs()
               .stream()
+              .map(CourseDefDto::of)
+              .toList();
+   }
+
+   @Override
+   public void courseDefsUpdated(List<CourseDef> courseDefs) {
+      this.cachedCourseDefDtos = courseDefs.stream()
               .map(CourseDefDto::of)
               .toList();
    }

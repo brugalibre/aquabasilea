@@ -1,5 +1,6 @@
 package com.aquabasilea.coursebooker.states.booking;
 
+import com.aquabasilea.course.aquabasilea.CourseDef;
 import com.aquabasilea.course.user.Course;
 import com.aquabasilea.course.user.CourseComparator;
 import com.aquabasilea.course.user.WeeklyCourses;
@@ -8,11 +9,12 @@ import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +38,20 @@ public class BookingStateHandler {
    }
 
    /**
-    * Does the actual booking or dry-run of the current Course
+    * Does the actual booking or dry-run of the current Course but only, if there is a {@link CourseDef}
+    * for the given course.
     *
     * @param currentCourse the {@link Course} to book
     * @param state         the current {@link CourseBookingState}
     * @return a {@link CourseBookingEndResult} with details about the booking
     */
    public CourseBookingEndResult bookCourse(Course currentCourse, CourseBookingState state) {
+      if (!currentCourse.getHasCourseDef()) {
+         return handleCourseWithoutCourseDef(currentCourse);
+      }
       LOG.info("About going to {} the course '{}' at {}", state == BOOKING ? "book" : "dry-run the booking",
               currentCourse.getCourseName(), DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
-      DayOfWeek dayOfWeek = DateUtil.getDayOfWeekFromInput(currentCourse.getDayOfWeek(), Locale.GERMAN);
-      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), dayOfWeek, currentCourse.getCourseLocation().getWebCourseLocation());
+      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getDayOfWeek(), currentCourse.getCourseLocation().getWebCourseLocation());
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(courseBookDetails);
       LOG.info("Course booking done. Result is {}", courseBookingEndResult);
       resumeCoursesUntil(currentCourse);
@@ -71,5 +76,13 @@ public class BookingStateHandler {
          }
       }
       weeklyCoursesRepository.save(weeklyCourses);
+   }
+
+   private static CourseBookingEndResult handleCourseWithoutCourseDef(Course currentCourse) {
+      LOG.warn("Course {} not booked, because there exist no real aquabasilea-course counterpart!", currentCourse.getCourseName());
+      return CourseBookingEndResultBuilder.builder()
+              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
+              .withCourseName(currentCourse.getCourseName())
+              .build();
    }
 }

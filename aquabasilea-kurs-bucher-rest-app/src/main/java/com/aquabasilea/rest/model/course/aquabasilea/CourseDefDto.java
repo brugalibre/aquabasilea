@@ -11,7 +11,6 @@ import java.util.Locale;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAttribute String dayOfWeek,
-                           @SearchableAttribute boolean gagg,
                            @SearchableAttribute String timeOfTheDay, @SearchableAttribute CourseLocationDto courseLocationDto) {
 
    /**
@@ -21,8 +20,11 @@ public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAt
     * @return a new {@link CourseDefDto}
     */
    public static CourseDefDto of(CourseDef courseDef) {
+      String dayOfWeekName = courseDef.courseDate()
+              .getDayOfWeek()
+              .getDisplayName(TextStyle.FULL, Locale.GERMAN);
       return new CourseDefDto(courseDef.courseName(),
-              courseDef.dayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN), false,
+              dayOfWeekName,
               courseDef.timeOfTheDay(),
               CourseLocationDto.of(courseDef.courseLocation()));
    }

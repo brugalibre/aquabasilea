@@ -13,15 +13,22 @@
         v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
       {{ courseBookingStateDto.pauseOrResumeButtonText }}
     </button>
+    <div class="grid-container-60-40">
+      <label>Letztes Aquabasilea-Kurs-Update</label>
+      <span>{{ statisticsDto.lastCourseDefUpdate }}</span>
+      <label>Nächstes Aquabasilea-Kurs-Update</label>
+      <span>{{ statisticsDto.nextCourseDefUpdate }}</span>
+    </div>
   </div>
 </template>
 
 <script>
 import aquabasileaCourseBookerApi from '../mixins/AquabasileaCourseBookerApi';
+import statisticsApi from '../mixins/StatisticsDefApi';
 
 export default {
   name: 'CourseStateOverview',
-  mixins: [aquabasileaCourseBookerApi],
+  mixins: [aquabasileaCourseBookerApi, statisticsApi],
   computed: {
     /**
      * If we are reactivating the app, and we have at least one non-paused course and none of those courses
@@ -43,6 +50,9 @@ export default {
     courseBookingStateDto: function () {
       return this.$store.getters.courseBookingStateDto
     },
+    statisticsDto: function () {
+      return this.$store.getters.statisticsDto
+    },
   },
   methods: {
     pauseOrResumeAquabasileaCourseBookerAndRefresh: function () {
@@ -56,6 +66,7 @@ export default {
   },
   mounted() {
     this.fetchCourseBookingStateDto();
+    this.fetchStatisticsDto();
   }
 }
 </script>
@@ -67,12 +78,16 @@ export default {
 
 .isNotRunning {
   background-color: #ffcccb;
+  border: firebrick solid 2px;
+  border-radius: 5px;
   margin-bottom: 5px;
   padding: 3px;
 }
 
 .isRunning {
   background-color: #90EE90;
+  border: green solid 2px;
+  border-radius: 5px;
   margin-bottom: 5px;
   padding: 3px;
 }

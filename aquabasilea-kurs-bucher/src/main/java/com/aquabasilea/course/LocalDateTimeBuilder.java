@@ -27,17 +27,16 @@ public class LocalDateTimeBuilder {
     * Note: The <code>timeOfTheDay</code> must be formatted like hh:mm whereas the <code>dayOfTheWeek</code>
     * is a string literal, describing the current day in english
     *
-    * @param courseDateAsString the day when the course takes place as string value
+    * @param courseDate the day when the course takes place as string value
     * @param timeOfTheDay       the time, when the course starts as string value
     * @return a new {@link LocalDateTime} object from the given day-of-the-week and the time
     */
-   public static LocalDateTime createCourseDate(String courseDateAsString, String timeOfTheDay) {
-      return getLocalDateTimeWithReferenceDate(LocalDateTime.now(), courseDateAsString, timeOfTheDay);
+   public static LocalDateTime createCourseDate(DayOfWeek courseDate, String timeOfTheDay) {
+      return getLocalDateTimeWithReferenceDate(LocalDateTime.now(), courseDate, timeOfTheDay);
    }
 
-   static LocalDateTime getLocalDateTimeWithReferenceDate(LocalDateTime refDateIn, String courseDateAsString, String timeOfTheDay) {
-      validateInput(courseDateAsString, timeOfTheDay);
-      DayOfWeek courseDate = getDayOfWeekFromInput(courseDateAsString);
+   static LocalDateTime getLocalDateTimeWithReferenceDate(LocalDateTime refDateIn, DayOfWeek courseDate, String timeOfTheDay) {
+      validateInput(courseDate, timeOfTheDay);
       int courseHour = Integer.parseInt(timeOfTheDay.substring(0, timeOfTheDay.indexOf(':')));
       int courseMin = Integer.parseInt(timeOfTheDay.substring(timeOfTheDay.indexOf(':') + 1));
       LocalDateTime refDate = adjustReferenceDateIfCourseTimeIsBeyondRefDateTime(refDateIn, courseDate, courseHour, courseMin);
@@ -59,14 +58,6 @@ public class LocalDateTimeBuilder {
       return courseDate == refDate.getDayOfWeek()
               && courseHour < refDate.getHour() || (courseHour == refDate.getHour()
               && courseMin <= refDate.getMinute());
-   }
-
-   private static DayOfWeek getDayOfWeekFromInput(String courseDateAsString) {
-      DayOfWeek dayOfWeek = DateUtil.getDayOfWeekFromInput(courseDateAsString, Locale.GERMAN);
-      if (isNull(dayOfWeek)) {
-         throw new NullPointerException("No DayOfWeek could be evaluated for the input '" + courseDateAsString + "'! Make sure its in german");
-      }
-      return dayOfWeek;
    }
 
    /**
@@ -107,7 +98,7 @@ public class LocalDateTimeBuilder {
       return newMonth;
    }
 
-   private static void validateInput(String dayOfWeek, String timeOfTheDay) {
+   private static void validateInput(DayOfWeek dayOfWeek, String timeOfTheDay) {
       requireNonNull(dayOfWeek, "Attribut 'dayOfWeek' must be set!");
       requireNonNull(timeOfTheDay, "Attribut 'timeOfTheDay' must be set!");
       Pattern pattern = Pattern.compile(TIME_OF_THE_DAY_REGEX);

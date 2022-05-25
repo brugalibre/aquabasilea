@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
+apply from: '../test.gradle'
 apply from: '../aquabasilea.gradle'
 
 group 'com.aquabasilea'
@@ -28,7 +29,6 @@ dependencies {
         exclude group: 'commons-codec', module: 'commons-codec'
         exclude group: 'cglib', module: 'cglib-node'
     }
-    testImplementation group: 'junit', name: 'junit', version: '4.11'
 }
 
 shadowJar{

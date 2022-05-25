@@ -2,24 +2,27 @@ package com.aquabasilea.course.user;
 
 import com.aquabasilea.course.CourseLocation;
 import com.aquabasilea.course.LocalDateTimeBuilder;
+import com.aquabasilea.model.AbstractDomainModel;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-public class Course {
-   private String id;
+public class Course extends AbstractDomainModel {
    private String courseName;
-   private String dayOfWeek;
+   private DayOfWeek dayOfWeek;
    private String timeOfTheDay;
    private CourseLocation courseLocation;
 
    private boolean isPaused;
+   private boolean hasCourseDef;
    private LocalDateTime courseDate;
 
    public Course() {
       this.isPaused = false;
+      this.hasCourseDef = false;
    }
 
    public String getTimeOfTheDay() {
@@ -52,18 +55,8 @@ public class Course {
       this.courseName = courseName;
    }
 
-   public String getDayOfWeek() {
+   public DayOfWeek getDayOfWeek() {
       return dayOfWeek;
-   }
-
-   public String getId() {
-      return id;
-   }
-
-   public void setId(String id) {
-      if (nonNull(id)) {
-         this.id = id;
-      }
    }
 
    public boolean getIsPaused() {
@@ -74,7 +67,7 @@ public class Course {
       this.isPaused = isPaused;
    }
 
-   public void setDayOfWeek(String dayOfWeek) {
+   public void setDayOfWeek(DayOfWeek dayOfWeek) {
       this.dayOfWeek = dayOfWeek;
    }
 
@@ -95,15 +88,25 @@ public class Course {
               ", timeOfTheDay='" + timeOfTheDay + '\'' +
               ", courseLocation=" + courseLocation +
               ", isPaused=" + isPaused +
+              ", hasCourseDef=" + hasCourseDef +
               ", courseDate=" + courseDate +
               '}';
    }
 
+   public boolean getHasCourseDef() {
+      return hasCourseDef;
+   }
+
+   public void setHasCourseDef(boolean hasCourseDef) {
+      this.hasCourseDef = hasCourseDef;
+   }
+
    public static class CourseBuilder {
-      private String dayOfWeek;
+      private DayOfWeek dayOfWeek;
       private String courseName;
       private String timeOfTheDay;
       private boolean isPaused;
+      private boolean hasCourseDef;
       private CourseLocation courseLocation;
       private String id;
 
@@ -136,7 +139,12 @@ public class Course {
          return this;
       }
 
-      public CourseBuilder withDayOfWeek(String dayOfWeek) {
+      public CourseBuilder withHasCourseDef(boolean hasCourseDef) {
+         this.hasCourseDef = hasCourseDef;
+         return this;
+      }
+
+      public CourseBuilder withDayOfWeek(DayOfWeek dayOfWeek) {
          this.dayOfWeek = dayOfWeek;
          return this;
       }
@@ -149,6 +157,7 @@ public class Course {
          course.setId(id);
          course.setIsPaused(isPaused);
          course.courseLocation = courseLocation;
+         course.hasCourseDef = hasCourseDef;
          return course;
       }
 

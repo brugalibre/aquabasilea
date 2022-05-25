@@ -97,8 +97,8 @@ public class AlertSender implements CourseBookingEndResultConsumer {
          case COURSE_NOT_SELECTED_EXCEPTION_OCCURRED:
             String exceptionMsg = getExceptionMsg(courseBookingEndResult);
             return String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
-         case COURSE_BOOKING_ABORTED:
-            return String.format(TextResources.COURSE_NOT_BOOKED_ABORTED, courseName);
+         case COURSE_BOOKING_SKIPPED:
+            return String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
             LOG.error("Warning! Unhandled state '{}'", courseBookingEndResult.getCourseClickedResult());
             return null;

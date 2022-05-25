@@ -209,4 +209,13 @@ h1, h2 {
   padding-top: 10px;
 }
 
+.grid-container-60-40 {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  column-gap: 10px;
+  row-gap: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+}
+
 </style>

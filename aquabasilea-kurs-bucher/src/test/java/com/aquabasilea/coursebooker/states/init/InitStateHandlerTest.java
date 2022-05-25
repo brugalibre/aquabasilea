@@ -9,9 +9,7 @@ import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -31,7 +29,7 @@ class InitStateHandlerTest {
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withWeeklyCourses(new WeeklyCourses(List.of(Course.CourseBuilder.builder()
                       .withTimeOfTheDay(courseTime)
-                      .withDayOfWeek(now.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN))
+                      .withDayOfWeek(now.getDayOfWeek())
                       .withCourseName("Kurs-11")
                       .withId(courseId)
                       .build())))

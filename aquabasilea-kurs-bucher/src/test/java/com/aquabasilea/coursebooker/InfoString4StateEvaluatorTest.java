@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -21,20 +20,13 @@ import static org.mockito.Mockito.when;
 
 class InfoString4StateEvaluatorTest {
 
-   private static Course currentCourse;
-
-   @BeforeEach
-   public void setUp() {
-      currentCourse = buildCourse("test", "22", "00");
-   }
-
    @Test
    void getInfoString4StateInit() {
 
       // Given
       Course currentCourse = new Course();
       currentCourse.setCourseName("test");
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.GERMAN));
+      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
 
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.INIT, currentCourse);
@@ -49,7 +41,7 @@ class InfoString4StateEvaluatorTest {
       // Given
       Course currentCourse = new Course();
       currentCourse.setCourseName("test");
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.GERMAN));
+      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
 
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.PAUSED, currentCourse);
@@ -104,7 +96,7 @@ class InfoString4StateEvaluatorTest {
       Course currentCourse = new Course();
       String courseName = "test";
       currentCourse.setCourseName(courseName);
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.GERMAN));
+      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
 
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.BOOKING, currentCourse);
@@ -120,7 +112,7 @@ class InfoString4StateEvaluatorTest {
       Course currentCourse = new Course();
       String courseName = "test";
       currentCourse.setCourseName(courseName);
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY.getDisplayName(TextStyle.FULL, Locale.GERMAN));
+      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
       
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.BOOKING_DRY_RUN, currentCourse);
@@ -133,7 +125,7 @@ class InfoString4StateEvaluatorTest {
       Course currentCourse = new Course();
       currentCourse.setCourseName(courseName);
       currentCourse.setTimeOfTheDay(hour + ":" + min);
-      currentCourse.setDayOfWeek(LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN));
+      currentCourse.setDayOfWeek(LocalDate.now().getDayOfWeek());
       return currentCourse;
    }
 }

@@ -6,6 +6,7 @@ import com.aquabasilea.course.user.WeeklyCourses;
 import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -22,12 +23,11 @@ class WeeklyCoursesTest {
       // Given
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       LocalDateTime courseDate = LocalDateTime.now();
-      String timeOfTheDay = DateUtil.getTimeAsString(courseDate);
       String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName("course1")
-              .withDayOfWeek(timeOfTheDay)
+              .withDayOfWeek(courseDate.getDayOfWeek())
               .withTimeOfTheDay(dayOfTheWeek)
               .withId(courseId)
               .build()));
@@ -35,7 +35,7 @@ class WeeklyCoursesTest {
       // When
       weeklyCourses.addCourse(CourseBuilder.builder()
               .withCourseName("course1")
-              .withDayOfWeek(timeOfTheDay)
+              .withDayOfWeek(courseDate.getDayOfWeek())
               .withTimeOfTheDay(dayOfTheWeek)
               .withId(courseId)
               .build());
@@ -54,7 +54,7 @@ class WeeklyCoursesTest {
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName("course1")
-              .withDayOfWeek(timeOfTheDay)
+              .withDayOfWeek(courseDate.getDayOfWeek())
               .withTimeOfTheDay(dayOfTheWeek)
               .withId(courseId)
               .build()));
@@ -77,7 +77,7 @@ class WeeklyCoursesTest {
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName("course1")
-              .withDayOfWeek(timeOfTheDay)
+              .withDayOfWeek(courseDate.getDayOfWeek())
               .withTimeOfTheDay(dayOfTheWeek)
               .withId(courseId)
               .build()));
@@ -85,7 +85,7 @@ class WeeklyCoursesTest {
       // When
       weeklyCourses.changeCourse(CourseBuilder.builder()
               .withCourseName(newCourseName)
-              .withDayOfWeek(timeOfTheDay)
+              .withDayOfWeek(courseDate.getDayOfWeek())
               .withTimeOfTheDay(dayOfTheWeek)
               .withId(courseId)
               .build());
@@ -102,7 +102,7 @@ class WeeklyCoursesTest {
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       Course course = CourseBuilder.builder()
               .withTimeOfTheDay("15:15")
-              .withDayOfWeek("Mittwoch")
+              .withDayOfWeek(DayOfWeek.WEDNESDAY)
               .withCourseName("Kurs-abc")
               .withId(courseId)
               .build();
