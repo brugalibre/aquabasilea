@@ -3,27 +3,34 @@
     <h1> {{ stagingMsg }} </h1>
     <loading v-model:active="isLoading"
              :is-full-page="true"/>
-    <div class="content">
-      <div class="content-left-side">
-        <course-state-overview
-            class="tile course-state-overview"
-            :key="courseStateOverviewRefreshKey"
-            @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
-            @refreshCourseStateOverview="refreshCourseStateOverview()">
-        </course-state-overview>
-        <add-course
+    <div>
+      <div class="centered-flex">
+        <div class="content-left-side">
+          <course-booker-state-overview
+              class="tile course-state-overview"
+              :key="courseStateOverviewRefreshKey"
+              @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
+              @refreshCourseStateOverview="refreshCourseStateOverview()">
+          </course-booker-state-overview>
+          <add-course
+              class="tile"
+              :key="addCourseRefreshKey"
+              @error-occurred="errorOccurred"
+              @refreshAddCourse="refreshAddCourse()"
+              @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses">
+          </add-course>
+        </div>
+        <weekly-courses-overview
             class="tile"
-            :key="addCourseRefreshKey"
-            @refreshAddCourse="refreshAddCourse()"
-            @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses">
-        </add-course>
+            :key="weeklyCoursesRefreshKey"
+            @error-occurred="errorOccurred"
+            @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
+            @refreshWeeklyCourses="refreshWeeklyCourses()">
+        </weekly-courses-overview>
       </div>
-      <weekly-courses-overview
-          class="tile"
-          :key="weeklyCoursesRefreshKey"
-          @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
-          @refreshWeeklyCourses="refreshWeeklyCourses()">
-      </weekly-courses-overview>
+      <CAlert v-show="this.errorDetails" color="danger" class="error-details tile" style="justify-self: center">
+        {{ this.errorDetails }}
+      </CAlert>
     </div>
   </div>
 </template>
@@ -31,20 +38,23 @@
 <script>
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-import CourseStateOverview from "@/components/CourseStateOverview";
+import CourseBookerStateOverview from "@/components/CourseBookerStateOverview";
 import WeeklyCoursesOverview from "@/components/WeeklyCoursesOverview";
 import AddCourse from "@/components/AddCourse";
+import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
 
 export default {
   name: 'App',
+  mixins: [CommonAquabasileaRestApi],
   components: {
     AddCourse,
     Loading,
     WeeklyCoursesOverview,
-    CourseStateOverview
+    CourseBookerStateOverview
   },
   data() {
     return {
+      errorDetails: '',
       applicationTitle: 'Aquabasilea-Kurs Bucher',
       stagingMsg: 'Aquabasilea-Kurs-Bucher Webapplikation',
       courseStateOverviewRefreshKey: 0,
@@ -70,7 +80,7 @@ export default {
       this.$store.dispatch('setIsLoading', true);
       setTimeout(() => {
         this.courseStateOverviewRefreshKey += 1;
-        }, 1000);
+      }, 1000);
       console.log('courseStateOverview refreshed: ' + this.courseStateOverviewRefreshKey);
     },
     refreshWeeklyCourses: function () {
@@ -79,6 +89,10 @@ export default {
         this.weeklyCoursesRefreshKey += 1;
       }, 1000);
       console.log('weeklyCourses refreshed: ' + this.weeklyCoursesRefreshKey);
+    },
+    errorOccurred: function (error) {
+      console.log('App.vue: errorOccurred : ' + error);
+      this.errorDetails = error;
     },
     refreshCourseStateOverviewAndWeeklyCourses: function () {
       this.$store.dispatch('setIsLoading', true);
@@ -96,6 +110,9 @@ export default {
         this.$store.dispatch('setIsLoading', false);
       }, 2500);
     },
+  },
+  mounted() {
+    this.errorDetails = null;
   }
 }
 </script>
@@ -103,10 +120,9 @@ export default {
 <style>
 * {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 15px;
 }
 
-.content {
+.centered-flex {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -156,39 +172,44 @@ table, th, td {
   white-space: nowrap;
 }
 
+/**
+Somehow the @coreui/coreui/dist/css/coreui.css styles override the table styles here - and somehow
+I couldn't import the coreui-style scoped. So thats why we use !important here
+*/
+
 tr {
-  border-bottom: #0095c9 thin solid;
+  border-bottom: #0095c9 thin solid !important;
 }
 
 tr:last-child {
-  border-bottom: transparent;
+  border-bottom: transparent !important;
 }
 
 th {
-  color: white;
-  padding: 0.5vw 1.5vh;
-  background-color: #0095c9;
+  color: white !important;
+  padding: 0.5vw 1.5vh !important;
+  background-color: #0095c9 !important;
 }
 
 th:first-child {
-  border-top-left-radius: 7px;
+  border-top-left-radius: 7px !important;
 }
 
 th:last-child {
-  border-top-right-radius: 7px;
+  border-top-right-radius: 7px !important;
 }
 
-table {
-  background-color: white;
-  border-radius: 7px;
+h1, h2, h3, h4, label {
+  word-wrap: anywhere;
 }
 
-th {
-  background-color: #0095c9;
+h1, h2, h3 {
+  text-align: center;
 }
 
-h1, h2, h3, label {
-  word-wrap: break-word;
+h5 {
+  padding-top: 10px;
+  word-wrap: anywhere;
 }
 
 button {
@@ -196,8 +217,9 @@ button {
   word-wrap: break-word;
 }
 
-h1, h2 {
-  text-align: center;
+.grid-container {
+  display: grid;
+  row-gap: 10px;
 }
 
 .grid-container-40-60 {
@@ -206,7 +228,6 @@ h1, h2 {
   column-gap: 10px;
   row-gap: 10px;
   padding-right: 10px;
-  padding-top: 10px;
 }
 
 .grid-container-60-40 {
@@ -215,7 +236,10 @@ h1, h2 {
   column-gap: 10px;
   row-gap: 10px;
   padding-right: 10px;
-  padding-top: 10px;
+}
+
+.error-details {
+  border-radius: 10px;
 }
 
 </style>

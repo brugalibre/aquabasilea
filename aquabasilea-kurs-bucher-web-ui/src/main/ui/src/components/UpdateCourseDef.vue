@@ -1,6 +1,6 @@
 <template>
-  <div id=selectCourseDef>
-    <h4>Auswählbare Kurse aktualisieren</h4>
+  <div id=selectCourseDef class="select-course-def-container">
+    <h5>Auswählbare Kurse aktualisieren</h5>
     <div class="grid-container-40-60">
       <label>Gewünschte Kursorte wählen</label>
       <select
@@ -20,20 +20,19 @@
           Aktualisierung der Kurse läuft...
         </label>
       </div>
-      <button :disabled="isUpdateCourseDefButtonDisabled" v-on:click="updateCourseDefsAndRefresh()">Aquabasilea Kurse
+      <CButton color="info" :disabled="isUpdateCourseDefButtonDisabled" v-on:click="updateCourseDefsAndRefresh()">
+        Aquabasilea Kurse
         aktualisieren
-      </button>
+      </CButton>
     </div>
   </div>
 </template>
 
 <script>
 import CourseDefApi from "@/mixins/CourseDefApi";
-import Multiselect from '@vueform/multiselect';
 
 export default {
   name: 'UpdateCourseDef',
-  components: [Multiselect],
   mixins: [CourseDefApi],
   data() {
     return {

@@ -16,7 +16,7 @@ import java.util.UUID;
 import static java.util.Objects.isNull;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record CourseDto(String id, String courseName, String dayOfWeek, String timeOfTheDay,
+public record CourseDto(String id, String courseName, String dayOfWeek, String timeOfTheDay, String courseDateAsString,
                         CourseLocationDto courseLocationDto, boolean isPaused, boolean hasCourseDef, boolean isCurrentCourse) {
 
    public static Course map2Course(CourseDto courseDto, Locale locale) {
@@ -35,7 +35,7 @@ public record CourseDto(String id, String courseName, String dayOfWeek, String t
 
    public static CourseDto of(Course course, boolean isCurrentCourse, Locale locale) {
       return new CourseDto(course.getId(), course.getCourseName(), course.getDayOfWeek().getDisplayName(TextStyle.FULL, locale),
-              course.getTimeOfTheDay(), CourseLocationDto.of(course.getCourseLocation()),
+              course.getTimeOfTheDay(), DateUtil.toString(course.getCourseDate(), locale), CourseLocationDto.of(course.getCourseLocation()),
               course.getIsPaused(), course.getHasCourseDef(), isCurrentCourse);
    }
 }

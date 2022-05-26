@@ -22,7 +22,7 @@ Das Hinzfügen von Kursen bzw. das Laden von Kurs-Vorlagen findet über das web-
 Der Testlauf findet jeweils vor der Buchung statt. Viele Minuten er vorher starten soll, kann in der Datei 'config/aquabasilea-kurs-bucher-config.yml' definiert werden. Ebenfalls können dort die URL der Login-Seite und der Seite mit der Kurs-Übersicht konfiguriert werden
 
 # Web-Ui
-<img width="1385" alt="image" src="https://user-images.githubusercontent.com/29772244/168870640-d960afd9-49c2-4b35-acd9-1116a8c06873.png">
+![image](https://user-images.githubusercontent.com/29772244/171997138-54a79ac4-c9d1-43df-8d0d-f0634755b9d7.png)
 
 ## Status
 

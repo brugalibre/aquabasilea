@@ -1,16 +1,17 @@
 <template>
   <div id=addCourseForm>
     <h2>Neuen Kurs hinzufügen</h2>
-    <h4>Kurs auswählen</h4>
-    <div>
-      <input
+    <h5>Kurs auswählen</h5>
+    <div class="grid-container">
+      <CFormInput
           id="courseDefFilter"
           v-model="courseDefFilter"
           type="text"
           name="courseDefFilter"
           placeholder="Kurs-filter"
-          style="margin-bottom: 10px"
-      >
+          style="max-width: 50%"
+      />
+
       <multiselect
           class="course-def-selector"
           ref="courseDefDtosSelector"
@@ -30,12 +31,11 @@
           <span class="course-def-option">{{ option.courseRepresentation }}</span>
         </template>
       </multiselect>
+      <update-course-def
+          ref="courseDefSelector"
+          @refreshAddCourse="refreshAddCourse">
+      </update-course-def>
     </div>
-    <update-course-def
-        ref="courseDefSelector"
-        @refreshAddCourse="refreshAddCourse">
-    </update-course-def>
-    <div class="error-msg" v-if="postErrorDetails"> Fehler beim Hinzufügen des Kurses: {{ postErrorDetails }}</div>
   </div>
 </template>
 
@@ -52,7 +52,6 @@ export default {
     return {
       selectedCourseDef: '',
       courseDefFilter: '',
-      postErrorDetails: null,
     }
   },
   watch: {
@@ -109,10 +108,5 @@ export default {
 .course-def-option {
   height: auto;
   font-size: 14px;
-}
-
-.error-msg {
-  font-weight: bold;
-  color: red
 }
 </style>

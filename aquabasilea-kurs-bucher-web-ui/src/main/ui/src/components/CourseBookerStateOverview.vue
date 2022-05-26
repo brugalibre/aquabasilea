@@ -1,33 +1,44 @@
 <template>
-  <div class="app-status">
+  <div class="grid-container">
     <h2>Status der App</h2>
     <div
-        v-bind:class="{ isRunning: courseBookingStateDto.state === 'IDLE',
+        v-bind:class="{ isRunning: courseBookingStateDto.state === 'IDLE' || courseBookingStateDto.state === 'BOOKING',
         isNotRunning: courseBookingStateDto.state !== 'IDLE'
         }">
-      <label class="state-label"> {{ courseBookingStateDto.stateMsg }} </label>
+      <label> {{ courseBookingStateDto.stateMsg }} </label>
     </div>
-    <button
+    <CButton
+        color="info"
         class="container-element-left"
-        :disabled="courseBookingStateDto.state === 'BOOKING'"
+        :disabled="courseBookingStateDto.state === 'BOOKING' || courseBookingStateDto.state === 'OFFLINE'"
         v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
       {{ courseBookingStateDto.pauseOrResumeButtonText }}
-    </button>
-    <div class="grid-container-60-40">
-      <label>Letztes Aquabasilea-Kurs-Update</label>
-      <span>{{ statisticsDto.lastCourseDefUpdate }}</span>
-      <label>Nächstes Aquabasilea-Kurs-Update</label>
-      <span>{{ statisticsDto.nextCourseDefUpdate }}</span>
-    </div>
+    </CButton>
+    <CAccordion>
+      <CAccordionItem :item-key="1">
+        <CAccordionHeader>
+          <label class="statistic-title">Statistik</label>
+        </CAccordionHeader>
+        <CAccordionBody>
+          <div class="grid-container-60-40">
+            <label class="statistic-attr">Letztes Aquabasilea-Kurs-Update</label>
+            <span>{{ statisticsDto.lastCourseDefUpdate }}</span>
+            <label class="statistic-attr">Nächstes Aquabasilea-Kurs-Update</label>
+            <span>{{ statisticsDto.nextCourseDefUpdate }}</span>
+          </div>
+        </CAccordionBody>
+      </CAccordionItem>
+    </CAccordion>
   </div>
 </template>
 
 <script>
 import aquabasileaCourseBookerApi from '../mixins/AquabasileaCourseBookerApi';
 import statisticsApi from '../mixins/StatisticsDefApi';
+import '@coreui/coreui/dist/css/coreui.css';
 
 export default {
-  name: 'CourseStateOverview',
+  name: 'CourseBookerStateOverview',
   mixins: [aquabasileaCourseBookerApi, statisticsApi],
   computed: {
     /**
@@ -72,15 +83,10 @@ export default {
 </script>
 <style scoped>
 
-.state-label {
-  line-break: auto;
-}
-
 .isNotRunning {
   background-color: #ffcccb;
   border: firebrick solid 2px;
   border-radius: 5px;
-  margin-bottom: 5px;
   padding: 3px;
 }
 
@@ -88,8 +94,16 @@ export default {
   background-color: #90EE90;
   border: green solid 2px;
   border-radius: 5px;
-  margin-bottom: 5px;
   padding: 3px;
+}
+
+.statistic-attr {
+  font-weight: bold;
+  word-wrap: anywhere;
+}
+
+.statistic-title {
+  font-weight: bold;
 }
 
 </style>
