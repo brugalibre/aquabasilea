@@ -1,5 +1,6 @@
 import {createStore} from 'vuex'
 
+const APP_OFFLINE_TXT = 'Application offline';
 export const store = createStore({
     state: {
         isLoading: false,
@@ -8,9 +9,9 @@ export const store = createStore({
             nextCourseDefUpdate: '',
         },
         courseBookingStateDto: {
-            stateMsg: '',
-            pauseOrResumeButtonText: '',
-            state: '',
+            stateMsg: APP_OFFLINE_TXT,
+            pauseOrResumeButtonText: APP_OFFLINE_TXT,
+            state: 'OFFLINE',
         },
         weeklyCourses: {
             courseDtos: [],

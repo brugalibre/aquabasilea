@@ -1,5 +1,5 @@
 <template>
-  <div class="weekly-courses-overview">
+  <div class="weekly-courses-overview grid-container">
     <h2>Kurse verwalten</h2>
     <div class="table">
       <table>
@@ -17,16 +17,19 @@
         >
           <td class="table-cell">
             <div style="display: grid">
-              <div>
+              <div
+                  v-c-tooltip="{content: getToolTipText(course), placement: 'top', visible: hasToolTipText(course)}">
                 <span v-show="!course.hasCourseDef" class="no-course-def-warning cell-icon"></span>
                 <span v-show="course.isCurrentCourse && this.courseBookingStateDto.state !== 'PAUSED'"
-                    class="current-course-star cell-icon"/>
+                      class="current-course-star cell-icon"/>
                 <label>{{ course.courseName }}</label>
               </div>
             </div>
           </td>
           <td class="table-cell">
-            <label>
+            <label
+              v-c-tooltip="{content: course.courseDateAsString, placement: 'top'}"
+            >
               {{ course.dayOfWeek }}
             </label>
           </td>
@@ -49,8 +52,7 @@
           <td>
             <div style="display: flex">
               <button
-                  class="delete-button"
-                  :disabled="course.isPaused"
+                  class="delete-button table-button"
                   v-bind:class="{ 'table-button': !course.isPaused, 'inactive-table-button': course.isPaused}"
                   v-on:click="deleteCourseAndRefresh(course)">
               </button>
@@ -59,7 +61,7 @@
         </tr>
       </table>
     </div>
-    <div class="placeholder"></div>
+    <div class="weekly-courses-placeholder"></div>
     <a class="course-programm-link" href="https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm"
        target="_blank">Aquabasilea
       kursprogramm</a>
@@ -80,10 +82,18 @@ export default {
     },
   },
   methods: {
-    onCourseClick: function (course, setAttrEditableFunction) {
-      if (!course.isPaused) {
-        setAttrEditableFunction.apply(course);
+    getToolTipText: function (course) {
+      if (!course.hasCourseDef) {
+        return 'Achtung! Für diesen Kurs gibt es keinen Aquabasilea Kurs!';
+      } else if (course.isPaused) {
+        return 'Dieser Kurs ist pausiert';
+      } else if (course.isCurrentCourse) {
+        return 'Dieser Kurs wird als nächstes gebucht';
       }
+      return '';
+    },
+    hasToolTipText: function (course) {
+      return this.getToolTipText(course) !== '';
     },
     deleteCourseAndRefresh: function (course) {
       this.$store.dispatch('setIsLoading', true);
@@ -137,7 +147,7 @@ label {
 
 .hasNoCourseDef {
   background: #ffcccb;
-  border: firebrick solid 2px;
+  border: firebrick solid 2px !important;
   border-radius: 5px;
 }
 
@@ -164,6 +174,7 @@ label {
   margin: auto;
   height: 25px;
   width: 25px;
+  cursor: auto;
   border-radius: 5px;
   box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.16), 0 4px 6px rgba(0, 0, 0, 0.45);
 }
@@ -184,7 +195,7 @@ label {
   background: url('../assets/warning.svg') transparent no-repeat center;
 }
 
-.placeholder {
+.weekly-courses-placeholder {
   flex-grow: 2;
 }
 
