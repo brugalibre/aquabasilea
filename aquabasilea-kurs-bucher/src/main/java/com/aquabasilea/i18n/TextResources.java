@@ -11,6 +11,11 @@ public class TextResources {
    public static final String PAUSE_APP = "Pausiere Kurs-Bucher";
    public static final String RESUME_APP = "Reaktiviere Kurs-Bucher";
 
+   // Statistics
+   public static final String UPTIME_YEARS_AND_MONTH = "%s Jahre, %s Monate";
+   public static final String UPTIME_DAYS_HOURS_MINUTES= "%s Tage, %s Stunden, %s Minuten";
+   public static final String NEXT_LAST_AQUABASILEA_COURSE_DEF_UPDATE= "%s Uhr";
+
    public static final String INFO_TEXT_INIT = "Ermittlung des nächsten Kurses läuft..";
    public static final String INFO_TEXT_IDLE_BEFORE_DRY_RUN = "Kurs '%s' am %s. Testlauf startet um %s Uhr";
    public static final String INFO_TEXT_IDLE_BEFORE_BOOKING = "Kurs '%s' am %s. Buchung startet um %s Uhr";

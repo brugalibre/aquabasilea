@@ -5,8 +5,12 @@ export const store = createStore({
     state: {
         isLoading: false,
         statisticsDto: {
-            lastCourseDefUpdate: '',
-            nextCourseDefUpdate: '',
+            lastCourseDefUpdate: ' - ',
+            nextCourseDefUpdate: ' - ',
+            uptimeRepresentation: ' - ',
+            totalBookingCounter: 0,
+            bookingSuccessRate: 0,
+
         },
         courseBookingStateDto: {
             stateMsg: APP_OFFLINE_TXT,

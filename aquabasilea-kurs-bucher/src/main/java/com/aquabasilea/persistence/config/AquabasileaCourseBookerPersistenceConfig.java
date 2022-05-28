@@ -6,7 +6,7 @@ import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.course.user.repository.impl.WeeklyCoursesRepositoryImpl;
 import com.aquabasilea.persistence.entity.course.aquabasilea.dao.CoursesDefDao;
 import com.aquabasilea.persistence.entity.course.user.dao.WeeklyCoursesDao;
-import com.aquabasilea.persistence.entity.statistic.dato.StatisticsDao;
+import com.aquabasilea.persistence.entity.statistic.dao.StatisticsDao;
 import com.aquabasilea.statistics.repository.StatisticsRepository;
 import com.aquabasilea.statistics.repository.impl.StatisticsRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;

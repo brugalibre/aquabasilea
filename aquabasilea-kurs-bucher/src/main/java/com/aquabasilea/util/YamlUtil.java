@@ -94,3 +94,4 @@ public class YamlUtil {
       void handleObjectStoreException(Exception exception, Object object);
    }
 }
+

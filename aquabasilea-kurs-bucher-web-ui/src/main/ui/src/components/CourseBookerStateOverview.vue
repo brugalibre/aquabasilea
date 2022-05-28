@@ -25,6 +25,12 @@
             <span>{{ statisticsDto.lastCourseDefUpdate }}</span>
             <label class="statistic-attr">Nächstes Aquabasilea-Kurs-Update</label>
             <span>{{ statisticsDto.nextCourseDefUpdate }}</span>
+            <label class="statistic-attr">Uptime</label>
+            <span>{{ statisticsDto.uptimeRepresentation }}</span>
+            <label class="statistic-attr">Anzahl Buchungen</label>
+            <span>{{ statisticsDto.totalBookingCounter }}</span>
+            <label class="statistic-attr">Erfolgsrate</label>
+            <span>{{ statisticsDto.bookingSuccessRate }}%</span>
           </div>
         </CAccordionBody>
       </CAccordionItem>

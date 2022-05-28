@@ -9,6 +9,7 @@ import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.persistence.entity.statistic.StatisticsHelper;
 import com.aquabasilea.rest.service.WeeklyCoursesService;
+import com.aquabasilea.statistics.BookingStatisticsUpdater;
 import com.aquabasilea.statistics.repository.StatisticsRepository;
 import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,26 +28,36 @@ public class AquabasileaCourseBookerRestAppConfig {
 
    public static final String AQUABASILEA_COURSE_BOOKER_BEAN = "aquabasileaCourseBooker";
    public static final String COURSE_DEF_UPDATER_BEAN = "courseDefUpdater";
+   public static final String STATISTICS_HELPER_BEAN = "statisticsHelper";
 
    private final AquabasileaCourseBookerSupplier aquabasileaCourseBookerSupplier = new AquabasileaCourseBookerSupplier();
 
-   @DependsOn(WEEKLY_COURSES_REPOSITORY_BEAN)
-   @Bean(name = AQUABASILEA_COURSE_BOOKER_BEAN)
-   public AquabasileaCourseBooker getAquabasileaCourseBooker(@Autowired WeeklyCoursesRepository weeklyCoursesRepository) {
-      return createAquabasileaCourseBooker(weeklyCoursesRepository);
+   @Bean(STATISTICS_HELPER_BEAN)
+   public StatisticsHelper getStatisticsHelper(@Autowired StatisticsRepository statisticsRepository) {
+      return new StatisticsHelper(statisticsRepository);
    }
 
+   @DependsOn({WEEKLY_COURSES_REPOSITORY_BEAN, STATISTICS_HELPER_BEAN})
+   @Bean(name = AQUABASILEA_COURSE_BOOKER_BEAN)
+   public AquabasileaCourseBooker getAquabasileaCourseBooker(@Autowired WeeklyCoursesRepository weeklyCoursesRepository,
+                                                             @Autowired StatisticsHelper statisticsHelper) {
+      return createAquabasileaCourseBooker(weeklyCoursesRepository, statisticsHelper);
+   }
+
+   @DependsOn(STATISTICS_HELPER_BEAN)
    @Bean(name = COURSE_DEF_UPDATER_BEAN)
-   public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository, @Autowired StatisticsRepository statisticsRepository, @Autowired WeeklyCoursesService weeklyCoursesService) {
+   public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository, @Autowired StatisticsHelper statisticsHelper,
+                                               @Autowired WeeklyCoursesService weeklyCoursesService) {
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator,
-              new StatisticsHelper(statisticsRepository), courseDefRepository, new CoursesDefEntityMapperImpl());
+              statisticsHelper, courseDefRepository, new CoursesDefEntityMapperImpl());
       courseDefUpdater.addCourseDefUpdatedNotifier(weeklyCoursesService::updateCoursesAfterCourseDefUpdate);
       return courseDefUpdater;
    }
 
-   private AquabasileaCourseBooker createAquabasileaCourseBooker(WeeklyCoursesRepository weeklyCoursesRepository) {
+   private AquabasileaCourseBooker createAquabasileaCourseBooker(WeeklyCoursesRepository weeklyCoursesRepository, StatisticsHelper statisticsHelper) {
       AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(weeklyCoursesRepository, createAquabasileaCourseBookerThread());
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new AlertSender());
+      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new BookingStatisticsUpdater(statisticsHelper));
       aquabasileaCourseBookerSupplier.aquabasileaCourseBooker = aquabasileaCourseBooker;
       return aquabasileaCourseBooker;
    }

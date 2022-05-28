@@ -28,6 +28,12 @@ public enum CourseClickedResult {
    COURSE_BOOKING_ABORTED,
 
    /**
+    * The attempt to book a course was skipped.
+    * Possible reason is, that the Course is not bookable since there is no CourseDef
+    */
+   COURSE_BOOKING_SKIPPED,
+
+   /**
     * No course selected, since an exception has occurred
     */
    COURSE_NOT_SELECTED_EXCEPTION_OCCURRED,

@@ -81,7 +81,7 @@ public class BookingStateHandler {
    private static CourseBookingEndResult handleCourseWithoutCourseDef(Course currentCourse) {
       LOG.warn("Course {} not booked, because there exist no real aquabasilea-course counterpart!", currentCourse.getCourseName());
       return CourseBookingEndResultBuilder.builder()
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
+              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
               .withCourseName(currentCourse.getCourseName())
               .build();
    }

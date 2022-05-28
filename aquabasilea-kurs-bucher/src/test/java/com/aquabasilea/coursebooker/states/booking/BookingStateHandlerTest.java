@@ -6,17 +6,12 @@ import com.aquabasilea.course.user.WeeklyCourses;
 import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.util.Optional;
 
-import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_ABORTED;
+import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_SKIPPED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -43,7 +38,7 @@ class BookingStateHandlerTest {
       CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(tcb.weeklyCourses.getCourses().get(0), tcb.currentBookingState);
 
       // When
-      assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKING_ABORTED));
+      assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKING_SKIPPED));
    }
 
    @Test
@@ -117,11 +112,6 @@ class BookingStateHandlerTest {
               .stream()
               .filter(course -> course.getId().equals(course4Id))
               .findFirst();
-   }
-
-   private static String getPath2YmlFile() {
-      Path resourceDirectory = Paths.get("src", "test", "resources");
-      return resourceDirectory.toFile().getAbsolutePath() + "/courses/testWeeklyCourses.yml";
    }
 
    private static class TestCaseBuilder {
