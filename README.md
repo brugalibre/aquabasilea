@@ -28,6 +28,7 @@ Der Testlauf findet jeweils vor der Buchung statt. Viele Minuten er vorher start
 
 Die Kachel links oben zeigt den Status der App an. D.h. wann findet der nächste Testlauf bzw. die nächste Buchung statt.
 Ebenfalls kann dort die App pausiert bzw. reaktiviert werden. 
+Ein Klick auf den Button 'Statistik' klappt die eine Sektion mit statistischen Informationen über die App aus. D.h Informationen wann das letzte Mal die Kurse anhand der Aquabasilea-Kursseite aktualisiert wurden, wann das nächste Update erfolgen wird oder wie lange die Applikation bereits läuft, wie viele Buchungen erfolgt sind und wie viele davon erfolgreich waren.
 
 ## Hinzufügen von Kursen
 In der linken unteren Kachel können neue Kurse aus einer Liste von definierten Aquabasilea-Kursen ausgewählt und hinzugefügt werden. Grundsätzlich werden die auswählbaren Kurse automatisch aktualisiert (s. Abschnitt 'Funktionsweise'). Aus der Liste mit Aquabasilea-Kursen kann der zu hinzufügende Kurs ausgewählt werden.

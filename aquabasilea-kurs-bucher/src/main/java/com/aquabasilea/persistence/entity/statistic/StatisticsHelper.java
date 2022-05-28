@@ -37,6 +37,24 @@ public class StatisticsHelper {
       statisticsRepository.saveOrUpdate(statistics);
    }
 
+   /**
+    * Increments the counter for the failed bookings by one
+    */
+  public void incrementFailedBookings() {
+      Statistics statistics = getStatisticsDto();
+      statistics.setBookingFailedCounter(statistics.getBookingFailedCounter() + 1);
+      statisticsRepository.saveOrUpdate(statistics);
+   }
+
+   /**
+    * Increments the counter for the successful bookings by one
+    */
+  public void incrementSuccessfulBookings() {
+      Statistics statistics = getStatisticsDto();
+      statistics.setBookingSuccessfulCounter(statistics.getBookingSuccessfulCounter() + 1);
+      statisticsRepository.saveOrUpdate(statistics);
+   }
+
    public Statistics getStatisticsDto() {
       return statisticsRepository.findFirstStatisticsDto();
    }

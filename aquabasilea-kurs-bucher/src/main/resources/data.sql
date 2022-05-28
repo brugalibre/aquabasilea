@@ -25,5 +25,7 @@ CREATE TABLE IF NOT EXISTS coursedef (
 CREATE TABLE IF NOT EXISTS statistics (
     id VARCHAR(250) PRIMARY KEY,
     last_course_def_update TIMESTAMP,
-    next_course_def_update TIMESTAMP
+    next_course_def_update TIMESTAMP,
+    booking_failed_counter INTEGER NOT NULL DEFAULT 0,
+    booking_successful_counter INTEGER NOT NULL DEFAULT 0
 );

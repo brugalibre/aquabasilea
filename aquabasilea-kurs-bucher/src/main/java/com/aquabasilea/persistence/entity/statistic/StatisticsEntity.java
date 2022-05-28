@@ -13,8 +13,9 @@ import java.util.UUID;
 public class StatisticsEntity extends BaseEntity {
 
    private LocalDateTime lastCourseDefUpdate;
-
    private LocalDateTime nextCourseDefUpdate;
+   private int bookingFailedCounter;
+   private int bookingSuccessfulCounter;
 
    public StatisticsEntity(UUID id) {
       super(id);
@@ -40,5 +41,21 @@ public class StatisticsEntity extends BaseEntity {
 
    public void setNextCourseDefUpdate(@NonNull LocalDateTime nextCourseDefUpdate) {
       this.nextCourseDefUpdate = nextCourseDefUpdate;
+   }
+
+   public int getBookingFailedCounter() {
+      return bookingFailedCounter;
+   }
+
+   public void setBookingFailedCounter(int bookingFailedCounter) {
+      this.bookingFailedCounter = bookingFailedCounter;
+   }
+
+   public int getBookingSuccessfulCounter() {
+      return bookingSuccessfulCounter;
+   }
+
+   public void setBookingSuccessfulCounter(int bookingSuccessfulCounter) {
+      this.bookingSuccessfulCounter = bookingSuccessfulCounter;
    }
 }

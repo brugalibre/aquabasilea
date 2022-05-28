@@ -1,10 +1,10 @@
 package com.aquabasilea.statistics.repository.impl;
 
+import com.aquabasilea.statistics.mapping.StatisticsEntityMapperImpl;
 import com.aquabasilea.persistence.entity.statistic.StatisticsEntity;
-import com.aquabasilea.persistence.entity.statistic.dato.StatisticsDao;
+import com.aquabasilea.persistence.entity.statistic.dao.StatisticsDao;
 import com.aquabasilea.persistence.repository.SingleEntityRepositoryUtil;
 import com.aquabasilea.statistics.mapping.StatisticsEntityMapper;
-import com.aquabasilea.statistics.mapping.StatisticsEntityMapperImpl;
 import com.aquabasilea.statistics.model.Statistics;
 import com.aquabasilea.statistics.repository.StatisticsRepository;
 
