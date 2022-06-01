@@ -1,6 +1,6 @@
 # aquabasilea
 
-Dies ist eine App, welche zeitgesteuert und voll  automatische das Buchen von Sportkursen von Aquabasilea / Migros übernimmt. Dabei handelt es sich um eine Standalone Java-Applikation mit einer Rest-API
+Dies ist eine App, welche zeitgesteuert und voll automatisch das Buchen von Sportkursen von Aquabasilea / Migros übernimmt. Dabei handelt es sich um eine Standalone Java-Applikation mit einer Rest-API
 
 ## Funktionsweise
 
@@ -11,11 +11,11 @@ Kurse werden hinzugefügt, in dem sie aus einer Liste mit vordefinierten "Aquaba
 
  `- "Fitnesspark Heuwaage"`
 
-werden Kurse für die Fitnesscentren Migros Fitnesscenter Aquabasilea & Fitnesspark Heuwaage aktualisiert. Bei Bedarf kann diese Aktualisierung auch manuell erfolgen, s. Abschnitt 'Hinzufügen von Kursen'
+werden Kurse für die Fitnesszentren Migros Fitnesscenter Aquabasilea & Fitnesspark Heuwaage aktualisiert. Bei Bedarf kann diese Aktualisierung auch manuell erfolgen, s. Abschnitt 'Hinzufügen von Kursen'
 
 Hinzugefügte Kurse, die nicht pausiert sind, werden automatisch der Reihe nach abgearbeitet. Ist der letzte Kurs gebucht, fängt es wieder von neuem an. Der aktuelle Kurs wird jeweils 24h bevor er stattfindet gebucht. Vor diesem "scharfen" Buchen findet jeweils ein Testlauf statt. Es kann konfiguriert werden, wie viel Minuten der Testlauf früher stattfindet. 
 
-Das Hinzfügen von Kursen bzw. das Laden von Kurs-Vorlagen findet über das web-ui statt, s. auch Abschnitt 'Kurse verwalten'. Das UI kann standardmässig im Browser über die Adresse 127.0.0.1:8080 abgerufen werden
+Das Hinzufügen von Kursen bzw. das Laden von Kurs-Vorlagen findet über das web-ui statt, s. auch Abschnitt 'Kurse verwalten'. Das UI kann standardmässig im Browser über die Adresse 127.0.0.1:8080 abgerufen werden
 
 # Konfiguration:
 

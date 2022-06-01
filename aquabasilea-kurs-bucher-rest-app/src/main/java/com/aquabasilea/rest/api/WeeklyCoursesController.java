@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.rest.model.course.user.CourseDto;
-import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
+import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
+import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
 import com.aquabasilea.rest.service.WeeklyCoursesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

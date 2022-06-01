@@ -1,9 +1,8 @@
 package com.aquabasilea.search;
 
-import com.aquabasilea.course.CourseLocation;
-import com.aquabasilea.course.aquabasilea.CourseDef;
-import com.aquabasilea.rest.model.course.aquabasilea.CourseDefDto;
-import com.aquabasilea.search.ObjectTextSearch.WeightedObject;
+import com.aquabasilea.model.course.CourseLocation;
+import com.aquabasilea.model.course.coursedef.CourseDef;
+import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;

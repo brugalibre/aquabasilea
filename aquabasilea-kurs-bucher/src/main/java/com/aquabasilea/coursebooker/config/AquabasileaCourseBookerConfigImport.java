@@ -1,14 +1,14 @@
 package com.aquabasilea.coursebooker.config;
 
-import com.aquabasilea.course.CourseLocation;
+import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static com.aquabasilea.course.CourseLocation.FITNESSPARK_HEUWAAGE;
-import static com.aquabasilea.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
+import static com.aquabasilea.model.course.CourseLocation.FITNESSPARK_HEUWAAGE;
+import static com.aquabasilea.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static java.util.Objects.nonNull;
 
 public class AquabasileaCourseBookerConfigImport {

@@ -1,11 +1,11 @@
 package com.aquabasilea.rest;
 
 import com.aquabasilea.alerting.consumer.impl.AlertSender;
-import com.aquabasilea.course.aquabasilea.repository.CourseDefRepository;
-import com.aquabasilea.course.aquabasilea.repository.mapping.CoursesDefEntityMapperImpl;
-import com.aquabasilea.course.aquabasilea.update.CourseDefUpdater;
-import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
+import com.aquabasilea.model.course.coursedef.repository.mapping.CoursesDefEntityMapperImpl;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.persistence.entity.statistic.StatisticsHelper;
 import com.aquabasilea.rest.service.WeeklyCoursesService;

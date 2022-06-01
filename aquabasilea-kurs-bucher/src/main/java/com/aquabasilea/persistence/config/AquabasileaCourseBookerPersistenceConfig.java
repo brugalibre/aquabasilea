@@ -1,11 +1,11 @@
 package com.aquabasilea.persistence.config;
 
-import com.aquabasilea.course.aquabasilea.repository.CourseDefRepository;
-import com.aquabasilea.course.aquabasilea.repository.impl.CourseDefRepositoryImpl;
-import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
-import com.aquabasilea.course.user.repository.impl.WeeklyCoursesRepositoryImpl;
+import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
+import com.aquabasilea.model.course.coursedef.repository.impl.CourseDefRepositoryImpl;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.model.course.weeklycourses.repository.impl.WeeklyCoursesRepositoryImpl;
 import com.aquabasilea.persistence.entity.course.aquabasilea.dao.CoursesDefDao;
-import com.aquabasilea.persistence.entity.course.user.dao.WeeklyCoursesDao;
+import com.aquabasilea.persistence.entity.course.weeklycourses.dao.WeeklyCoursesDao;
 import com.aquabasilea.persistence.entity.statistic.dao.StatisticsDao;
 import com.aquabasilea.statistics.repository.StatisticsRepository;
 import com.aquabasilea.statistics.repository.impl.StatisticsRepositoryImpl;

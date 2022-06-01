@@ -1,12 +1,14 @@
 package com.aquabasilea.rest.model.course;
 
-import com.aquabasilea.course.user.Course;
-import com.aquabasilea.course.user.Course.CourseBuilder;
-import com.aquabasilea.course.user.WeeklyCourses;
-import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
+import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
+import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
+import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,21 +24,25 @@ class WeeklyCoursesDtoTest {
       String firstCourseId = "1";
       String secondCourseId = "2";
       String thirdCourseId = "3";
+      LocalDateTime now = LocalDateTime.now();
+      DayOfWeek dayOfWeek4CoursesWithSameDayOfWeek = now.getDayOfWeek();
+      DayOfWeek otherDayOfWeek = now.plusDays(1).getDayOfWeek();
       WeeklyCourses weeklyCourses = new WeeklyCourses();
+      String todaysTimeOfTheDay = DateUtil.getTimeAsString(now.plusMinutes(10));
       Course currentCourse = CourseBuilder.builder()
-              .withTimeOfTheDay("10:15")
-              .withDayOfWeek(DayOfWeek.SUNDAY)
+              .withTimeOfTheDay(todaysTimeOfTheDay)
+              .withDayOfWeek(otherDayOfWeek)
               .withCourseName("Kurs-abc")
               .withId(thirdCourseId)
               .build();
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withTimeOfTheDay("15:15")
-              .withDayOfWeek(DayOfWeek.WEDNESDAY)
+              .withDayOfWeek(dayOfWeek4CoursesWithSameDayOfWeek)
               .withCourseName("Kurs-abc")
               .withId(secondCourseId)
               .build(), currentCourse, CourseBuilder.builder()
-              .withTimeOfTheDay("10:15")
-              .withDayOfWeek(DayOfWeek.WEDNESDAY)
+              .withTimeOfTheDay(todaysTimeOfTheDay)
+              .withDayOfWeek(dayOfWeek4CoursesWithSameDayOfWeek)
               .withCourseName("Kurs-abc")
               .withId(firstCourseId)
               .build()));
