@@ -1,6 +1,6 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.course.user.Course;
+import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.coursebooker.states.init.InitializationResult;

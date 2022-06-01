@@ -1,9 +1,9 @@
 package com.aquabasilea.coursebooker.states.booking;
 
-import com.aquabasilea.course.user.Course;
-import com.aquabasilea.course.user.Course.CourseBuilder;
-import com.aquabasilea.course.user.WeeklyCourses;
-import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
+import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
+import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.junit.jupiter.api.Test;

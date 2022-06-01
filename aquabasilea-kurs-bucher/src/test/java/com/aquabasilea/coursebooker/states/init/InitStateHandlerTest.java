@@ -1,8 +1,8 @@
 package com.aquabasilea.coursebooker.states.init;
 
-import com.aquabasilea.course.user.Course;
-import com.aquabasilea.course.user.WeeklyCourses;
-import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
+import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;

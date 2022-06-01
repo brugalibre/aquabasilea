@@ -1,15 +1,12 @@
 package com.aquabasilea.rest.service.coursedef;
 
-import com.aquabasilea.course.CourseLocation;
-import com.aquabasilea.course.aquabasilea.repository.CourseDefRepository;
-import com.aquabasilea.course.aquabasilea.update.CourseDefUpdater;
 import com.aquabasilea.coursedef.update.CourseDefUpdater;
 import com.aquabasilea.coursedef.update.notify.CourseDefUpdatedNotifier;
 import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.rest.model.CourseLocationDto;
-import com.aquabasilea.rest.model.course.aquabasilea.CourseDefDto;
+import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import com.aquabasilea.search.ObjectTextSearch;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

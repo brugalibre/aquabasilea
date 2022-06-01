@@ -1,15 +1,15 @@
 package com.aquabasilea.coursebooker;
 
 import com.aquabasilea.alerting.consumer.impl.AlertSender;
-import com.aquabasilea.course.user.Course;
-import com.aquabasilea.course.user.Course.CourseBuilder;
-import com.aquabasilea.course.user.WeeklyCourses;
-import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.config.TestAquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
+import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;

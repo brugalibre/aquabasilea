@@ -1,6 +1,6 @@
 package com.aquabasilea.persistence.entity.course.aquabasilea;
 
-import com.aquabasilea.course.CourseLocation;
+import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.persistence.entity.base.BaseEntity;
 import org.springframework.lang.NonNull;
 

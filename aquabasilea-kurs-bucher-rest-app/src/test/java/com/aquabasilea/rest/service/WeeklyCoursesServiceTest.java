@@ -1,17 +1,17 @@
 package com.aquabasilea.rest.service;
 
-import com.aquabasilea.course.aquabasilea.CourseDef;
-import com.aquabasilea.course.user.Course;
-import com.aquabasilea.course.user.WeeklyCourses;
-import com.aquabasilea.course.user.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.model.course.coursedef.CourseDef;
+import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.aquabasilea.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
+import static com.aquabasilea.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;

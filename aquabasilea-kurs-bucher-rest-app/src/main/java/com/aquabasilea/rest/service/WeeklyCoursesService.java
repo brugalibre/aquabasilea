@@ -1,12 +1,13 @@
 package com.aquabasilea.rest.service;
 
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.course.user.Course;
-import com.aquabasilea.course.user.CourseComparator;
-import com.aquabasilea.course.user.WeeklyCourses;
+import com.aquabasilea.model.course.coursedef.CourseDef;
+import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.rest.i18n.LocalProvider;
-import com.aquabasilea.rest.model.course.user.CourseDto;
-import com.aquabasilea.rest.model.course.user.WeeklyCoursesDto;
+import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
+import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.model;
 
-import com.aquabasilea.course.CourseLocation;
+import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.search.SearchableAttribute;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 

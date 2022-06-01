@@ -1,6 +1,6 @@
 package com.aquabasilea.persistence.entity.statistic;
 
-import com.aquabasilea.course.aquabasilea.CourseDef;
+import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.statistics.model.Statistics;
 import com.aquabasilea.statistics.repository.StatisticsRepository;
 
