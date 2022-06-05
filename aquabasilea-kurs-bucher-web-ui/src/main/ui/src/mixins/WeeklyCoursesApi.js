@@ -3,10 +3,10 @@ import {AQUABASILEA_COURSE_BOOKER_API_URL} from '@/mixins/CommonAquabasileaRestA
 export default {
     name: 'WeeklyCoursesApi',
     methods: {
-        logError: function (text, error) {
+        logError: function (errorMsg) {
             this.$store.dispatch('setIsLoading', false);
-            console.error(text, error);
-            this.$emit('error-occurred', 'Unerwarteter Fehler: ' + text);
+            console.error(errorMsg);
+            this.$emit('error-occurred', errorMsg);
         },
         fetchWeeklyCourses: function () {
             fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/weekly-courses/getWeeklyCourses')
@@ -34,11 +34,11 @@ export default {
                     // check for error response
                     if (!response.ok) {
                         // get error message from body or default to response status
-                        const error = (data && data.message) || response.status;
-                        this.$emit('error-occurred', 'Fehler beim Hinzufügen des Kurses \'' + courseBody.courseName +  '\' (Fehlercode ' + error + ')');
-                        return Promise.reject(error);
+                        const errorDetails = data ? data.error : 'upsidupsi, fehler nicht gefunden';
+                        const errorMsg = 'Fehler beim Hinzufügen des Kurses \'' + courseBody.courseName + '\': ' + errorDetails + ' (Fehlercode ' + response.status + ')';
+                        return Promise.reject(errorMsg);
                     }
-                }).catch(error => this.logError('There was an error!', error));
+                }).catch(error => this.logError(error));
         },
         deleteCourse: function (course) {
             fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/weekly-courses/' + course.id, {method: 'DELETE'})
@@ -50,12 +50,12 @@ export default {
                     // check for error response
                     if (!response.ok) {
                         // get error message from body or default to response status
-                        const error = (data && data.message) || response.status;
-                        this.$emit('error-occurred', 'Fehler beim Löschen des Kurses \'' + course.courseName + '\' (Fehlercode ' + error + ')');
-                        return Promise.reject(error);
+                        const errorDetails = data ? data.error : 'upsidupsi, fehler nicht gefunden';
+                        const errorMsg = 'Fehler beim Löschen des Kurses \'' + course.courseName + '\': ' + errorDetails + ' (Fehlercode ' + response.status + ')';
+                        return Promise.reject(errorMsg);
                     }
                 })
-                .catch(error => this.logError('Error occurred during deleting course\'' + course + '\'', error));
+                .catch(error => this.logError(error));
         },
         pauseResumeCourse: function (course) {
             this.$emit('error-occurred', null);
@@ -67,12 +67,12 @@ export default {
                     // check for error response
                     if (!response.ok) {
                         // get error message from body or default to response status
-                        const error = (data && data.message) || response.status;
-                        this.$emit('error-occurred', 'Fehler beim pausieren des Kurses \'' + course.courseName + '\' (Fehlercode ' + error + ')');
-                        return Promise.reject(error);
+                        const errorDetails = data ? data.error : 'upsidupsi, fehler nicht gefunden';
+                        const errorMsg = 'Fehler beim pausieren des Kurses \'' + course.courseName + '\': ' + errorDetails + ' (Fehlercode ' + response.status + ')';
+                        return Promise.reject(errorMsg);
                     }
                 })
-                .catch(error => this.logError('Error occurred during pausing/resuming course\'' + course.courseName + '\'', error));
+                .catch(error => this.logError(error));
         },
     }
 }

@@ -28,6 +28,6 @@ public class CourseDefUpdateDate {
    }
 
    public LocalDateTime calculateCourseDefUpdateLocalDateTime() {
-      return LocalDateTimeBuilder.createCourseDate(this.dayOfWeek, this.timeOfTheDay);
+      return LocalDateTimeBuilder.createLocalDateTime(this.dayOfWeek, this.timeOfTheDay);
    }
 }

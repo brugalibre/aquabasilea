@@ -1,6 +1,6 @@
 package com.aquabasilea.model.course;
 
-import com.aquabasilea.model.course.LocalDateTimeBuilder;
+import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -30,6 +30,22 @@ public class LocalDateTimeBuilderTest {
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
       assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
       assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
+   }
+
+   @Test
+   void testGetLocalDateTimeWithReferenceDateIsNow() {
+      // Given
+      LocalDateTime refDate = LocalDateTime.now();
+      String timeOfTheDay = DateUtil.getTimeAsString(refDate);
+
+      // When
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, refDate.getDayOfWeek(), timeOfTheDay);
+
+      // Then
+      assertThat(actualCreateLDTime.getYear(), is(refDate.getYear()));
+      assertThat(actualCreateLDTime.getMonthValue(), is(refDate.getMonthValue()));
+      assertThat(actualCreateLDTime.getDayOfWeek(), is(refDate.getDayOfWeek()));
+      assertThat(actualCreateLDTime.getDayOfMonth(), is(refDate.getDayOfMonth() + 7));
    }
 
    @Test
@@ -97,6 +113,7 @@ public class LocalDateTimeBuilderTest {
       assertThat(actualCreateLDTime.getDayOfWeek().getValue(), is(expectedDayOfWeek));
       assertThat(actualCreateLDTime.getDayOfMonth(), is(expectedDayOfTheMonth));
    }
+
    @Test
    void testGetLocalDateTimeCourseTimeIsOneHourBeforeNow() {
       // Given

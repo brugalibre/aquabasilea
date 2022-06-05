@@ -91,8 +91,8 @@ export default {
       console.log('weeklyCourses refreshed: ' + this.weeklyCoursesRefreshKey);
     },
     errorOccurred: function (error) {
-      console.log('App.vue: errorOccurred : ' + error);
       this.errorDetails = error;
+      console.log('App.vue: errorOccurred : \'' + this.errorDetails + '\'');
     },
     refreshCourseStateOverviewAndWeeklyCourses: function () {
       this.$store.dispatch('setIsLoading', true);
