@@ -1,8 +1,8 @@
 package com.aquabasilea.model.course.weeklycourses;
 
+import com.aquabasilea.model.AbstractDomainModel;
 import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.model.course.LocalDateTimeBuilder;
-import com.aquabasilea.model.AbstractDomainModel;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ public class Course extends AbstractDomainModel {
 
    public LocalDateTime getCourseDate() {
       if (isNull(courseDate)) {
-         this.courseDate = LocalDateTimeBuilder.createCourseDate(this.dayOfWeek, this.timeOfTheDay);
+         this.courseDate = LocalDateTimeBuilder.createLocalDateTime(this.dayOfWeek, this.timeOfTheDay);
       }
       return courseDate;
    }

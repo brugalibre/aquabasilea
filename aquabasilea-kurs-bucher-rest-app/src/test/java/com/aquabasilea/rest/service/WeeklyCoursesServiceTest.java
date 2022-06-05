@@ -25,7 +25,7 @@ class WeeklyCoursesServiceTest {
    void updateCoursesAfterCourseDefUpdate() {
       // Given
       LocalDateTime now = LocalDateTime.now();
-      LocalDateTime tomorrow = now.plusDays(1);
+      LocalDateTime dayAfterTomorrow = now.plusDays(2);
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withCourse(Course.CourseBuilder.builder()
                       .withTimeOfTheDay(TIME_OF_THE_DAY_15_15)
@@ -38,7 +38,7 @@ class WeeklyCoursesServiceTest {
                       .build())
               .withCourse(Course.CourseBuilder.builder()
                       .withTimeOfTheDay(TIME_OF_THE_DAY_15_15)
-                      .withDayOfWeek(tomorrow.getDayOfWeek())
+                      .withDayOfWeek(dayAfterTomorrow.getDayOfWeek())
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withCourseName(COURSE_NAME_WITH_COURSE_DEF)
@@ -46,7 +46,7 @@ class WeeklyCoursesServiceTest {
                       .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
               .withUpdatedCourseDef(new CourseDef(now.toLocalDate(), " - ", MIGROS_FITNESSCENTER_AQUABASILEA, ""))
-              .withUpdatedCourseDef(new CourseDef(tomorrow.toLocalDate(), TIME_OF_THE_DAY_15_15, MIGROS_FITNESSCENTER_AQUABASILEA, COURSE_NAME_WITH_COURSE_DEF))
+              .withUpdatedCourseDef(new CourseDef(dayAfterTomorrow.toLocalDate(), TIME_OF_THE_DAY_15_15, MIGROS_FITNESSCENTER_AQUABASILEA, COURSE_NAME_WITH_COURSE_DEF))
               .build();
 
       // When

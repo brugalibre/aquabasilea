@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Service
 public class WeeklyCoursesService {
@@ -25,7 +24,8 @@ public class WeeklyCoursesService {
    private final LocalProvider localProvider;
 
    @Autowired
-   public WeeklyCoursesService(WeeklyCoursesRepository weeklyCoursesRepository, AquabasileaCourseBooker aquabasileaCourseBooker, LocalProvider localProvider) {
+   public WeeklyCoursesService(WeeklyCoursesRepository weeklyCoursesRepository, AquabasileaCourseBooker aquabasileaCourseBooker,
+                               LocalProvider localProvider) {
       this.aquabasileaCourseBooker = aquabasileaCourseBooker;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
       this.localProvider = localProvider;
@@ -65,10 +65,7 @@ public class WeeklyCoursesService {
     */
    public void updateCoursesAfterCourseDefUpdate(List<CourseDef> courseDefs) {
       WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
-      weeklyCourses.getCourses()
-              .stream()
-              .map(setHasCourseDef(courseDefs))
-              .forEach(weeklyCourses::changeCourse);
+      weeklyCourses.updateCoursesHasCourseDef(courseDefs);
       changeWeeklyCourseAndRefreshCourseBooker(weeklyCourses);
    }
 
@@ -76,25 +73,4 @@ public class WeeklyCoursesService {
       weeklyCoursesRepository.save(weeklyCourses);
       aquabasileaCourseBooker.refreshCourses();
    }
-
-   private static Function<Course, Course> setHasCourseDef(List<CourseDef> courseDefs) {
-      return course -> {
-         course.setHasCourseDef(existsCourseDef4Course(course, courseDefs));
-         if (!course.getHasCourseDef()) {
-            course.shiftCourseDateByDays(7);
-            course.setHasCourseDef(existsCourseDef4Course(course, courseDefs));
-         }
-         return course;
-      };
-   }
-
-   private static boolean existsCourseDef4Course(Course course, List<CourseDef> courseDefs) {
-      return courseDefs.stream()
-              .anyMatch(courseDef -> courseDef.courseName().equals(course.getCourseName())
-                      && courseDef.courseLocation().equals(course.getCourseLocation())
-                      && courseDef.courseDate().equals(course.getCourseDate().toLocalDate())
-                      && courseDef.timeOfTheDay().equals(course.getTimeOfTheDay())
-              );
-   }
-
 }

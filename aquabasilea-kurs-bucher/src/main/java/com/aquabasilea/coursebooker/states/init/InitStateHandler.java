@@ -1,10 +1,11 @@
 package com.aquabasilea.coursebooker.states.init;
 
+import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
+import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
-import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +26,18 @@ import static java.util.function.Predicate.not;
 /**
  * Contains the logic for handling the states {@link CourseBookingState#IDLE_BEFORE_BOOKING} and {@link CourseBookingState#IDLE_BEFORE_DRY_RUN}
  */
- public class InitStateHandler {
+public class InitStateHandler {
    private final static Logger LOG = LoggerFactory.getLogger(InitStateHandler.class);
 
    private final WeeklyCoursesRepository weeklyCoursesRepository;
+   private final CourseDefRepository courseDefRepository;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
-   public InitStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
+   public InitStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
+                           AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
+      this.courseDefRepository = courseDefRepository;
    }
 
    /**
@@ -58,10 +62,10 @@ import static java.util.function.Predicate.not;
       }
       InitializationResult idleBeforeDryRunResult = getDryRunInitializationResult(refDate, idleBeforeBookingResult);
       if (nonNull(idleBeforeDryRunResult)) {
-         LOG.info("Found next course '{}' for dry run. Starting {}s earlier", idleBeforeDryRunResult.getCurrentCourse(), idleBeforeDryRunResult.getTimeUtilDryRunOrBookingBegin());
+         LOG.info("Found next course '{}' for dry run. Starting {}s earlier", idleBeforeDryRunResult.getCurrentCourse(), idleBeforeDryRunResult.getDurationUtilDryRunOrBookingBegin());
          return idleBeforeDryRunResult;
       }
-      LOG.info("Found next course '{}' for booking. Starting {}s earlier", idleBeforeBookingResult.getCurrentCourse(), idleBeforeBookingResult.getTimeUtilDryRunOrBookingBegin());
+      LOG.info("Found next course '{}' for booking. Starting {}s earlier", idleBeforeBookingResult.getCurrentCourse(), idleBeforeBookingResult.getDurationUtilDryRunOrBookingBegin());
       return idleBeforeBookingResult;
    }
 
@@ -80,7 +84,7 @@ import static java.util.function.Predicate.not;
          }
       }
       return possibleCourses.stream()
-              .min(Comparator.comparing(InitializationResult::getTimeUtilDryRunOrBookingBegin))
+              .min(Comparator.comparing(InitializationResult::getDurationUtilDryRunOrBookingBegin))
               .orElseGet(() -> shiftCourseDateAWeekAheadAndTryAgain(weeklyCourses, refDate));
    }
 
@@ -132,5 +136,11 @@ import static java.util.function.Predicate.not;
               .stream()
               .filter(not(Course::getIsPaused))
               .collect(Collectors.toList());
+   }
+
+   public void updateCoursesHasCourseDef() {
+      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
+      weeklyCourses.updateCoursesHasCourseDef(courseDefRepository.findAllCourseDefs());
+      weeklyCoursesRepository.save(weeklyCourses);
    }
 }

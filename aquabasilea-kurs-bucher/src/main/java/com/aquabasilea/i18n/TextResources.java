@@ -1,6 +1,7 @@
 package com.aquabasilea.i18n;
 
 public class TextResources {
+
    private TextResources(){
       // private
    }
@@ -32,4 +33,7 @@ public class TextResources {
    public static final String COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF = "Kurs '%s' wurde nicht gebucht, da kein entsprechender aquababasilea kurs existiert";
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";
+
+   // Errors
+   public static final String ERROR_COURSE_ALREADY_EXISTS = "Kurs %s existiert bereits und kann nicht erneut hinzugefügt werden";
 }

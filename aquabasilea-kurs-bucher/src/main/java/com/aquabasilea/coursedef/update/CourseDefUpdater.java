@@ -115,7 +115,7 @@ public class CourseDefUpdater {
       List<com.aquabasilea.web.model.CourseLocation> webCourseLocations = map2WebCourseLocation(courseLocations);
       ExtractedAquabasileaCourses extractedAquabasileaCourses = aquabasileaCourseExtractorSupplier.get().extractAquabasileaCourses(webCourseLocations);
       courseDefRepository.deleteAll();
-      List<CourseDef> courseDefs = mapAquabasileaCourse2CourseDefs(extractedAquabasileaCourses);
+      List<CourseDef> courseDefs = coursesDefEntityMapper.mapAquabasileaCourse2CourseDefs(extractedAquabasileaCourses.getAquabasileaCourses());
       courseDefRepository.saveAll(courseDefs);
       courseDefUpdatedNotifiers.forEach(courseDefUpdatedNotifier -> courseDefUpdatedNotifier.courseDefsUpdated(courseDefs));
    }
@@ -126,13 +126,6 @@ public class CourseDefUpdater {
 
    public void addCourseDefUpdatedNotifier(CourseDefUpdatedNotifier courseDefUpdatedNotifier) {
       courseDefUpdatedNotifiers.add(Objects.requireNonNull(courseDefUpdatedNotifier));
-   }
-
-   private List<CourseDef> mapAquabasileaCourse2CourseDefs(ExtractedAquabasileaCourses extractedAquabasileaCourses) {
-      return coursesDefEntityMapper.mapAquabasileaCourse2CourseDefs(extractedAquabasileaCourses.getAquabasileaCourses())
-              .stream()
-              .distinct()
-              .toList();
    }
 
    @NotNull

@@ -6,11 +6,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoField;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 public class LocalDateTimeBuilder {
@@ -23,16 +21,17 @@ public class LocalDateTimeBuilder {
    }
 
    /**
-    * Creates a new {@link LocalDateTime} object from the given day-of-the-week and the time
-    * Note: The <code>timeOfTheDay</code> must be formatted like hh:mm whereas the <code>dayOfTheWeek</code>
-    * is a string literal, describing the current day in english
+    * Creates a new {@link LocalDateTime} object from the given {@link DayOfWeek} and the time of the day.
+    * If the calculated {@link LocalDateTime} is already in the past (compared <code>{@link LocalDateTime#now()}</code>) then the reference
+    * day is shifted one day into the future, this results in a calculated {@link LocalDateTime} which lays 7 day into
+    * the futur from <code>{@link LocalDateTime#now()}</code>
     *
-    * @param courseDate the day when the course takes place as string value
-    * @param timeOfTheDay       the time, when the course starts as string value
+    * @param dayOfWeek    the day when the course takes place as string value
+    * @param timeOfTheDay the time, when the course starts as string value
     * @return a new {@link LocalDateTime} object from the given day-of-the-week and the time
     */
-   public static LocalDateTime createCourseDate(DayOfWeek courseDate, String timeOfTheDay) {
-      return getLocalDateTimeWithReferenceDate(LocalDateTime.now(), courseDate, timeOfTheDay);
+   public static LocalDateTime createLocalDateTime(DayOfWeek dayOfWeek, String timeOfTheDay) {
+      return getLocalDateTimeWithReferenceDate(LocalDateTime.now(), dayOfWeek, timeOfTheDay);
    }
 
    static LocalDateTime getLocalDateTimeWithReferenceDate(LocalDateTime refDateIn, DayOfWeek courseDate, String timeOfTheDay) {
@@ -56,8 +55,8 @@ public class LocalDateTimeBuilder {
 
    private static boolean isSameDayOfTheWeekAndCourseTimeIsEarlierThanRefTime(LocalDateTime refDate, DayOfWeek courseDate, int courseHour, int courseMin) {
       return courseDate == refDate.getDayOfWeek()
-              && courseHour < refDate.getHour() || (courseHour == refDate.getHour()
-              && courseMin <= refDate.getMinute());
+              && (courseHour < refDate.getHour() || (courseHour == refDate.getHour()
+              && courseMin <= refDate.getMinute()));
    }
 
    /**

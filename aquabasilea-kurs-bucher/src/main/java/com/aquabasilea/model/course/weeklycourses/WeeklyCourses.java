@@ -1,13 +1,19 @@
 package com.aquabasilea.model.course.weeklycourses;
 
+import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.model.AbstractDomainModel;
+import com.aquabasilea.model.course.coursedef.CourseDef;
+import com.aquabasilea.model.course.exception.CourseAlreadyExistsException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 
 public class WeeklyCourses extends AbstractDomainModel {
    private List<Course> courses;
@@ -22,7 +28,7 @@ public class WeeklyCourses extends AbstractDomainModel {
 
    public void setCourses(List<Course> courses) {
       // list is null, if there are no entries defined in the yml-file -> no empty list :(
-      if (isNull(courses)){
+      if (isNull(courses)) {
          courses = new ArrayList<>();
       }
       this.courses = new ArrayList<>(requireNonNull(courses));
@@ -30,6 +36,28 @@ public class WeeklyCourses extends AbstractDomainModel {
 
    public List<Course> getCourses() {
       return Collections.unmodifiableList(courses);
+   }
+
+   /**
+    * Adds the given {@link Course}
+    *
+    * @param course the course to add
+    */
+   public void addCourse(Course course) {
+      if (!existsCourseAlready(course)) {
+         courses.add(course);
+      } else {
+         // exception-handling in web-ui
+         throw new CourseAlreadyExistsException(TextResources.ERROR_COURSE_ALREADY_EXISTS.formatted(course.getCourseName()));
+      }
+   }
+
+   private boolean existsCourseAlready(Course newCourse) {
+      return courses.stream()
+              .anyMatch(course -> course.getCourseName().equals(newCourse.getCourseName())
+                      && course.getDayOfWeek().equals(newCourse.getDayOfWeek())
+                      && course.getTimeOfTheDay().equals(newCourse.getTimeOfTheDay())
+                      && course.getCourseLocation().equals(newCourse.getCourseLocation()));
    }
 
    /**
@@ -41,15 +69,6 @@ public class WeeklyCourses extends AbstractDomainModel {
       this.courses = courses.stream()
               .map(course -> course.shiftCourseDateByDays(days))
               .collect(Collectors.toList());
-   }
-
-   /**
-    * Adds the given {@link Course}
-    *
-    * @param course the course to add
-    */
-   public void addCourse(Course course) {
-      courses.add(course);
    }
 
    /**
@@ -103,5 +122,37 @@ public class WeeklyCourses extends AbstractDomainModel {
       course2Change.setTimeOfTheDay(changedCourse.getTimeOfTheDay());
       course2Change.setDayOfWeek(changedCourse.getDayOfWeek());
       course2Change.setIsPaused(changedCourse.getIsPaused());
+   }
+
+   /**
+    * This Method checks for each {@link Course} if it has an equivalent aquabasilea course aka
+    * {@link CourseDef} and updates the attribute {@link Course#getHasCourseDef()}
+    *
+    * @param courseDefs the new {@link CourseDef} which are extracted from the aquabasilea course page
+    */
+   public void updateCoursesHasCourseDef(List<CourseDef> courseDefs) {
+      getCourses().stream()
+              .map(setHasCourseDef(courseDefs))
+              .forEach(this::changeCourse);
+   }
+
+   private static Function<Course, Course> setHasCourseDef(List<CourseDef> courseDefs) {
+      return course -> {
+         course.setHasCourseDef(courseDefs.stream()
+                 .anyMatch(existCourseDefPredicate(course)));
+         if (!course.getHasCourseDef()) {
+            course.shiftCourseDateByDays(7);
+            course.setHasCourseDef(courseDefs.stream()
+                    .anyMatch(existCourseDefPredicate(course)));
+         }
+         return course;
+      };
+   }
+
+   private static Predicate<CourseDef> existCourseDefPredicate(Course course) {
+      return courseDef -> courseDef.courseName().equals(course.getCourseName())
+              && courseDef.courseLocation().equals(course.getCourseLocation())
+              && courseDef.courseDate().equals(course.getCourseDate().toLocalDate())
+              && courseDef.timeOfTheDay().equals(course.getTimeOfTheDay());
    }
 }
