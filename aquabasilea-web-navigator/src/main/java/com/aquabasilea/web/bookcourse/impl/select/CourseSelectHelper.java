@@ -83,8 +83,7 @@ public class CourseSelectHelper {
    }
 
    private boolean selectCourse(String courseName, ErrorHandler errorHandler) {
-      WebElement courseArea = this.aquabasileaNavigatorHelper.findWebElementBy(null, WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE)).get();
-      List<WebElement> courseButtons = this.aquabasileaNavigatorHelper.findAllWebElementsByPredicateAndBy(courseArea, By.tagName(HTML_BUTTON_TYPE), webElement -> true);
+      List<WebElement> courseButtons = getCourseButtons();
       if (courseButtons.size() == 1) {
          this.aquabasileaNavigatorHelper.clickButton(courseButtons.get(0), errorHandler);
          return true;
@@ -94,13 +93,30 @@ public class CourseSelectHelper {
       }
    }
 
+   private List<WebElement> getCourseButtons() {
+      Optional<WebElement> courseTableOpt = getCourseTableWebElement();
+      if (courseTableOpt.isPresent()) {
+         return this.aquabasileaNavigatorHelper.findAllWebElementsByPredicateAndBy(courseTableOpt.get(), By.tagName(HTML_BUTTON_TYPE), webElement -> true);
+      }
+      LOG.error("course-area not visible, no selected courses available!");
+      this.aquabasileaNavigatorHelper.takeScreenshot("no-course-table");
+      return List.of();
+   }
+
+   private Optional<WebElement> getCourseTableWebElement() {
+      LOG.info("Waiting {}s for the course-table to appear..", WAIT_FOR_COURSE_TABLE_TO_APPEAR.toSeconds());
+      By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis());
+      return this.aquabasileaNavigatorHelper.findWebElementBy(null, courseTableBy);
+   }
+
    private CourseClickedResult clickSelectedCourseLoginIfNecessaryAndBook(boolean courseSelected, String courseName, ErrorHandler errorHandler) {
       if (courseSelected) {
          this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), 10000);
          LOG.info("Course selected..");
          WebElement courseDetails = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE);
          Optional<WebElement> loginButton = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
-         Optional<WebElement> bookCourseButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
+         Optional<WebElement> bookCourseButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
          if (bookCourseButtonOpt.isPresent()) {
             return courseBookerHelper.cancelOrBookCourse(bookCourseButtonOpt, errorHandler);
          } else if (loginButton.isPresent()) {
@@ -135,6 +151,7 @@ public class CourseSelectHelper {
    private void handleBookButtonNotAvailable(String courseName, ErrorHandler errorHandler, WebElement courseDetails) {
       WebElement closeBookingDialogButton = this.aquabasileaNavigatorHelper.getWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_CLOSE_BOOK_COURSE_BUTTON_TEXT);
       closeBookingDialogButton.click();
+      this.aquabasileaNavigatorHelper.takeScreenshot("no-booking-button");
       String errorMsg = String.format("Booking Button not found! The course '%s' is not bookable", courseName);
       errorHandler.handleError(errorMsg);
    }

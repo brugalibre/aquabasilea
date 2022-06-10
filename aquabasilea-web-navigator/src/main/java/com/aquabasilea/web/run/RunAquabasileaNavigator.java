@@ -16,17 +16,17 @@ public class RunAquabasileaNavigator {
 
    public static void main(String[] args) {
 
-      String courseName = "TRX 45 Min.";
+      String courseName = "Rückenpower G1";
       String username = args[0];
       String password = args[1];
-      DayOfWeek dayOfWeek = DayOfWeek.SUNDAY;
+      DayOfWeek dayOfWeek = DayOfWeek.MONDAY;
 
       boolean dryRun = false;
       if (args.length >= 3) {
          dryRun = Boolean.parseBoolean(args[2]);
       }
       AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier());
-      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, dayOfWeek, CourseLocation.FITNESSPARK_HEUWAAGE));
+      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, dayOfWeek, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA));
       printErrors(dryRun, courseBookingEndResult);
    }
 
