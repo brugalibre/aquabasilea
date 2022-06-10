@@ -7,7 +7,8 @@ public class AquabasileaWebConst {
    // Time outs
    public static final int DEFAULT_TIMEOUT = 400;
    public static final Duration WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR = Duration.ofMillis(150000);
-   public static final Duration WAIT_FOR_CRITERIA_FILTER_TO_BE_APPLIED = Duration.ofMillis(7000);
+   public static final Duration WAIT_FOR_COURSE_TABLE_TO_APPEAR = Duration.ofSeconds(10);
+
    /**
     * The time a refresh of the page takes
     */

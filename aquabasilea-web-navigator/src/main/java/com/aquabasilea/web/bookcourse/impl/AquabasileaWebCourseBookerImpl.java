@@ -135,9 +135,10 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       this.courseSelectHelper = new CourseSelectHelper(courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun, this::navigate2CoursePage);
    }
 
-   private static CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {
+   private CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {
       LOG.error("Error during course booking!", e);
       errorHandler.handleError(ErrorUtil.getErrorMsgWithException(e));
+      webNavigatorHelper.takeScreenshot(e.getClass().getSimpleName());
       return buildCourseBookingEndResult(courseName, errorHandler, e, COURSE_NOT_SELECTED_EXCEPTION_OCCURRED);
    }
 
