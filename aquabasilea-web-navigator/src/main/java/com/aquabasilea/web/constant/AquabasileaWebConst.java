@@ -12,7 +12,7 @@ public class AquabasileaWebConst {
    /**
     * The time a refresh of the page takes
     */
-   public static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(10);
+   public static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(13);
 
    public static final Duration WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS = Duration.ofSeconds(10);
    public static final String LOADING_ANIMATION_CLASS_NAME = "sc-dkmKIT iBFRfU";
@@ -27,6 +27,7 @@ public class AquabasileaWebConst {
 
    public static final String WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_BUTTON_VALUE = "Migros Fitnesscenter Aquabasilea";
    public static final String WEB_BUTTON_FILTER_RESULTS_SHOW_MORE_VALUE = "Mehr anzeigen";
+   public static final String WEB_BUTTON_CLEAR_ALL_FILTERS = "Alle Filter zurücksetzen";
    public static final String WEB_BUTTON_COURSE_LOCATION_FILTER_BUTTON_VALUE = "Center";
    public static final String WEB_BUTTON_FITNESSCENTER_FILTER_BUTTON_VALUE = "Fitnesscenter";
    public static final String WEB_BUTTON_FITNESSPARK_FILTER_BUTTON_VALUE = "Fitnesspark";

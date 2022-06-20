@@ -1,11 +1,11 @@
 package com.aquabasilea.web.bookcourse.impl.select;
 
 import com.aquabasilea.web.bookcourse.impl.book.CourseBookerHelper;
+import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.login.AquabasileaLoginHelper;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
-import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -22,17 +22,20 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYP
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
 /**
- * The {@link CourseSelectHelper} does the actual selecting of the course. Acourse becomes first bookable 24h before.
- * The {@link AquabasileaWebCourseBookerImpl} starts a little earlier when
- * doing the final booking
- *
- * First we try to select and book a course, after we entered the filter criteria and applied the filter.
- * If it is not yet bookable, but we are too early anyway, we sleep until the course is bookable (
- * minus the time required to reload the entire page).
- *
- * After that, if the course is still not yet bookable
- * we try again and again, after a certain timeout. After this time, we can safely assume, that the course we want
- * to book is already booked
+ * The {@link CourseSelectHelper} does the actual selecting and booking of a course.
+ * This helper assumes, that the courses to select were filtered in a previous step. It then gets all course-buttons from the web-element
+ * 'course-table' ({@link AquabasileaWebConst#WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE}). If is exactly one result, this
+ * result is clicked. However, if not an error is written in the {@link ErrorHandler}.
+ * <p>
+ * The click opens a detail dialog for the desired course. This course is then booked, if there is a booking-button.
+ * If there is no booking button but a login button, then a login is done and then the course is booked.
+ * <p>
+ * If there is neither a login button nor a booking button, the returned {@link CourseClickedResult} depends on the current booking run.
+ * If it's a dry run, then {@link CourseClickedResult#COURSE_BOOKING_ABORTED} is returned.
+ * For a non-dry run the returned result depends on the time which remains, until the course becomes bookable. If this time
+ * is greater than zero, {@link CourseClickedResult#COURSE_NOT_BOOKED_RETRY} is returned, indicating that this course is not yet bookable
+ * and the selecting should be retried later.
+ * If the remaining time is zero or below, then {@link CourseClickedResult#COURSE_NOT_BOOKABLE} is returned.
  */
 public class CourseSelectHelper {
 
@@ -46,18 +49,16 @@ public class CourseSelectHelper {
    private final CourseBookerHelper courseBookerHelper;
    private final AquabasileaLoginHelper aquabasileaLoginHelper;
    private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
-   private final Runnable pageRefresher;
    private final BookingAndCloseButtonMissingCallbackHandler missingBookingAndCloseButtonCallbackHandler;
 
    public CourseSelectHelper(CourseBookerHelper courseBookerHelper, AquabasileaLoginHelper aquabasileaLoginHelper,
                              AquabasileaNavigatorHelper aquabasileaNavigatorHelper, Supplier<Duration> duration2WaitUntilCourseBecomesBookable,
-                             boolean dryRun, Runnable pageRefresher) {
+                             boolean dryRun) {
       this.aquabasileaNavigatorHelper = aquabasileaNavigatorHelper;
       this.aquabasileaLoginHelper = aquabasileaLoginHelper;
       // It may happen, that the AquabasileaWebNavigator was started slightly to early and has to wait, until the booking button becomes available
       this.duration2WaitUntilCourseBecomesBookable = duration2WaitUntilCourseBecomesBookable;
       this.courseBookerHelper = courseBookerHelper;
-      this.pageRefresher = pageRefresher;
       missingBookingAndCloseButtonCallbackHandler = (courseName, errorHandler, courseDetails) -> {
          if (dryRun) {
             return CourseClickedResult.COURSE_BOOKING_ABORTED;
@@ -68,22 +69,27 @@ public class CourseSelectHelper {
 
    ////////////////////////// Select A Curse //////////////////////////////////
 
+   /**
+    * Tries to retrieve the {@link WebElement}-buttons for the filtered courses and select the course for the given name.
+    * If there is only such button, this button is clicked. and the course booked if possible.
+    * For a dry-run, {@link CourseClickedResult#COURSE_BOOKING_ABORTED} is then returned.
+    * For a real booking the course is booked and {@link CourseClickedResult#COURSE_BOOKED} is returned if there is a booking button.
+    * If there is a logging-button, the booking is done after the logging and {@link CourseClickedResult#COURSE_BOOKED} is returned as well.
+    * This method returns {@link CourseClickedResult#COURSE_NOT_BOOKABLE} if there is neither of the two buttons.
+    *
+    * @param courseName   the name of the course to book
+    * @param errorHandler the {@link ErrorHandler} to handle missing {@link WebElement}
+    * @return a {@link CourseClickedResult} describing the outcome of the selecting procedure
+    */
    public CourseClickedResult selectCourseAndBook(String courseName, ErrorHandler errorHandler) {
+      LOG.info("Trying to select course '{}'", courseName);
       boolean courseSelected = selectCourse(courseName, errorHandler);
-      CourseClickedResult courseClickedResult = clickSelectedCourseLoginIfNecessaryAndBook(courseSelected, courseName, errorHandler);
-      if (courseClickedResult == CourseClickedResult.COURSE_NOT_BOOKED_RETRY) {
-         long millis2Wait = duration2WaitUntilCourseBecomesBookable.get().toMillis();
-         LOG.info("Course '{}' not yet available, {}ms left until course becomes bookable, Refresh page and do retry..", courseName, millis2Wait);
-         WebNavigateUtil.waitForMilliseconds((int) (millis2Wait - PAGE_REFRESH_DURATION.toMillis()));
-         this.pageRefresher.run();
-         LOG.info("Page refreshed, try to select course again");
-         courseClickedResult = selectCourseAndBook(courseName, errorHandler);
-      }
-      return courseClickedResult;
+      return clickSelectedCourseLoginIfNecessaryAndBook(courseSelected, courseName, errorHandler);
    }
 
    private boolean selectCourse(String courseName, ErrorHandler errorHandler) {
       List<WebElement> courseButtons = getCourseButtons();
+      LOG.info("Course '{}' selected, found {} results", courseName, courseButtons.size());
       if (courseButtons.size() == 1) {
          this.aquabasileaNavigatorHelper.clickButton(courseButtons.get(0), errorHandler);
          return true;

@@ -2,6 +2,7 @@ package com.aquabasilea.web.bookcourse.impl;
 
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.book.CourseBookerHelper;
+import com.aquabasilea.web.bookcourse.impl.book.CourseSelectWithRetryHelper;
 import com.aquabasilea.web.bookcourse.impl.select.CourseSelectHelper;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
@@ -36,7 +37,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebCourseBookerImpl.class);
    private int timeOutRetries;
    private final String coursePage;
-   private CourseSelectHelper courseSelectHelper;
+   private CourseSelectWithRetryHelper courseSelectWithRetryHelper;
    private CourseFilterHelper courseFilterHelper;
    private AquabasileaLoginHelper aquabasileaLoginHelper;
 
@@ -80,7 +81,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       navigateToPageAndLogin();
       navigate2CoursePageInternal(true);
       courseFilterHelper.applyCriteriaFilter(courseBookDetails, errorHandler);
-      CourseClickedResult courseClickedResult = courseSelectHelper.selectCourseAndBook(courseBookDetails.courseName(), errorHandler);
+      CourseClickedResult courseClickedResult = courseSelectWithRetryHelper.selectAndBookCourseWithRetry(courseBookDetails, errorHandler);
       logout();
       return buildCourseBookingEndResult(courseBookDetails.courseName(), errorHandler, null, courseClickedResult);
    }
@@ -132,7 +133,8 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       this.courseFilterHelper = new CourseFilterHelper(this.webNavigatorHelper);
       CourseBookerHelper courseBookerHelper = new CourseBookerHelper(this.webNavigatorHelper, dryRun);
-      this.courseSelectHelper = new CourseSelectHelper(courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun, this::navigate2CoursePage);
+      CourseSelectHelper courseSelectHelper = new CourseSelectHelper(courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun);
+      this.courseSelectWithRetryHelper = new CourseSelectWithRetryHelper(courseSelectHelper, this.courseFilterHelper, this::navigate2CoursePage, duration2WaitUntilCourseBecomesBookable);
    }
 
    private CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {
