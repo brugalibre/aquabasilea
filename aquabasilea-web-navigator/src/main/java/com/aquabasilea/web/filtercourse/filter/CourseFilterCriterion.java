@@ -1,6 +1,5 @@
 package com.aquabasilea.web.filtercourse.filter;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,14 +7,7 @@ import java.util.List;
  * This includes the specific attribute of the course which has to be filtered, defined by a {@link FilterType}
  * as well as the value which is applied to the filter
  */
-public class CourseFilterCriterion {
-   private final FilterType filterType;
-   private final List<String> filterValues;
-
-   private CourseFilterCriterion(FilterType filterType, List<String> filterValues) {
-      this.filterType = filterType;
-      this.filterValues = filterValues;
-   }
+public record CourseFilterCriterion (FilterType filterType, List<String> filterValues){
 
    public static CourseFilterCriterion of(FilterType filterType, List<String> filterValues) {
       return new CourseFilterCriterion(filterType, filterValues);

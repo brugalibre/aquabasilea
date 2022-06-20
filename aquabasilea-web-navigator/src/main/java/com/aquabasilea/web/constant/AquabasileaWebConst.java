@@ -12,7 +12,7 @@ public class AquabasileaWebConst {
    /**
     * The time a refresh of the page takes
     */
-   public static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(10);
+   public static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(13);
 
    public static final String COURSE_PAGE = "coursePage";
    public static final String AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES = "config/aquabasilea-kurs-bucher-config.yml";
@@ -24,6 +24,7 @@ public class AquabasileaWebConst {
 
    public static final String WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_BUTTON_VALUE = "Migros Fitnesscenter Aquabasilea";
    public static final String WEB_BUTTON_FILTER_RESULTS_SHOW_MORE_VALUE = "Mehr anzeigen";
+   public static final String WEB_BUTTON_CLEAR_ALL_FILTERS = "Alle Filter zurücksetzen";
    public static final String WEB_BUTTON_COURSE_LOCATION_FILTER_BUTTON_VALUE = "Center";
    public static final String WEB_BUTTON_FITNESSCENTER_FILTER_BUTTON_VALUE = "Fitnesscenter";
    public static final String WEB_BUTTON_FITNESSPARK_FILTER_BUTTON_VALUE = "Fitnesspark";

@@ -3,20 +3,18 @@ package com.aquabasilea.web.filtercourse.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseFilter {
-
-   private final List<CourseFilterCriterion> courseFilterCriteria;
-
-   private CourseFilter() {
-      this.courseFilterCriteria = new ArrayList<>();
-   }
+public record CourseFilter(List<CourseFilterCriterion> courseFilterCriteria) {
 
    public List<CourseFilterCriterion> getCourseFilterCriteria() {
       return courseFilterCriteria;
    }
 
+   public CourseFilter() {
+      this(new ArrayList<>());
+   }
+
    public static class CourseFilterBuilder {
-      private CourseFilter courseFilter;
+      private final CourseFilter courseFilter;
 
       private CourseFilterBuilder() {
          this.courseFilter = new CourseFilter();
