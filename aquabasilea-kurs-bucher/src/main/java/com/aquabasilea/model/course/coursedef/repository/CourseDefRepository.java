@@ -3,6 +3,7 @@ package com.aquabasilea.model.course.coursedef.repository;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The {@link CourseDefRepository} is responsible for loading and saving {@link CourseDef}es

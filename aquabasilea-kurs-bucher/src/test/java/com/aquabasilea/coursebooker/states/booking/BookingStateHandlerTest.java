@@ -1,14 +1,17 @@
 package com.aquabasilea.coursebooker.states.booking;
 
+import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.junit.jupiter.api.Test;
 
-import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
 import java.util.Optional;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_SKIPPED;
@@ -25,8 +28,7 @@ class BookingStateHandlerTest {
       // Given
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withCourse(CourseBuilder.builder()
-                      .withTimeOfTheDay("15:15")
-                      .withDayOfWeek(DayOfWeek.WEDNESDAY)
+                      .withCourseDate(LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 15)))
                       .withIsPaused(true)
                       .withHasCourseDef(false)
                       .withCourseName("Kurs-99")
@@ -50,39 +52,34 @@ class BookingStateHandlerTest {
       String course4Id = "4";
       String course6Id = "6";
       Course currentCourse = CourseBuilder.builder()
-              .withTimeOfTheDay("15:15")
-              .withDayOfWeek(DayOfWeek.FRIDAY)
+              .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 15, 15, 15))// FRIDAY
               .withCourseName("Kurs-abcd")
               .withId(currentCourse1Id)
               .build();
 
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withCourse(CourseBuilder.builder()
-                      .withTimeOfTheDay("15:15")
-                      .withDayOfWeek(DayOfWeek.MONDAY)
+                      .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 11, 15, 15)) // MONDAY
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withCourseName("Kurs-11")
                       .withId(course2Id)
                       .build())
               .withCourse(CourseBuilder.builder()
-                      .withTimeOfTheDay("15:15")
-                      .withDayOfWeek(DayOfWeek.SUNDAY)
+                      .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 17, 15, 15))// SUNDAY
                       .withCourseName("Kurs-1")
                       .withHasCourseDef(true)
                       .withId(course3Id)
                       .build())
               .withCourse(CourseBuilder.builder()
-                      .withTimeOfTheDay("15:15")
-                      .withDayOfWeek(DayOfWeek.SATURDAY)
+                      .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 16, 15, 15))// SATURDAY
                       .withCourseName("Kurs-1")
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withId(course6Id)
                       .build())
               .withCourse(CourseBuilder.builder()
-                      .withTimeOfTheDay("15:15")
-                      .withDayOfWeek(DayOfWeek.WEDNESDAY)
+                      .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 14, 15, 15))// THURSDAY
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withCourseName("Kurs-99")

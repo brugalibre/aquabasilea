@@ -7,7 +7,7 @@ public class TextResources {
    }
 
    // Kurs
-   public static final String COURSE_REPRESENTATION = "'%s', %s um %s Uhr (Kursort: %s)";
+   public static final String COURSE_REPRESENTATION = "'%s', %s %s um %s Uhr (Kursort: %s)";
 
    public static final String PAUSE_APP = "Pausiere Kurs-Bucher";
    public static final String RESUME_APP = "Reaktiviere Kurs-Bucher";

@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,14 +43,14 @@ class CourseDefUpdaterTest {
    private StatisticsHelper statisticsHelper;
 
    @BeforeEach
-   public void setUp(){
+   public void setUp() {
       this.statisticsHelper = new StatisticsHelper(statisticsRepository);
       this.statisticsHelper.setLastCourseDefUpdate(null);
       this.courseDefRepository.deleteAll();
    }
 
    @AfterEach
-   public void cleanUp(){
+   public void cleanUp() {
       this.statisticsRepository.deleteAll();
       this.courseDefRepository.deleteAll();
    }
@@ -59,10 +60,9 @@ class CourseDefUpdaterTest {
 
       // Given
       CourseLocation courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
-      LocalDate courseDate = LocalDate.of(2022, Month.JUNE, 1);
-      String timeOfTheDay = "10:15";
+      LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
-      TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, timeOfTheDay, courseName, 50);
+      TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, courseName, 50);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(() -> aquabasileaCourseExtractor, statisticsHelper, courseDefRepository, new CoursesDefEntityMapperImpl());
 
       // When
@@ -80,7 +80,6 @@ class CourseDefUpdaterTest {
       assertThat(allCourseDefs.get(0).courseName(), is(courseName));
       assertThat(allCourseDefs.get(0).courseLocation(), is(CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA));
       assertThat(allCourseDefs.get(0).courseDate(), is(courseDate));
-      assertThat(allCourseDefs.get(0).timeOfTheDay(), is(timeOfTheDay));
    }
 
    @Test
@@ -88,10 +87,9 @@ class CourseDefUpdaterTest {
 
       // Given
       CourseLocation courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
-      LocalDate courseDate = LocalDate.of(2022, Month.JUNE, 1);
-      String timeOfTheDay = "10:15";
+      LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
-      TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, timeOfTheDay, courseName, 0);
+      TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, courseName, 0);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(() -> aquabasileaCourseExtractor, statisticsHelper, courseDefRepository, new CoursesDefEntityMapperImpl());
 
       // When
@@ -104,11 +102,10 @@ class CourseDefUpdaterTest {
       assertThat(allCourseDefs.get(0).courseName(), is(courseName));
       assertThat(allCourseDefs.get(0).courseLocation(), is(CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA));
       assertThat(allCourseDefs.get(0).courseDate(), is(courseDate));
-      assertThat(allCourseDefs.get(0).timeOfTheDay(), is(timeOfTheDay));
    }
 
    @Test
-   void startSchedulerAndStartUpdateImmediatelySinceThereIsNoPreviousUpdate()  {
+   void startSchedulerAndStartUpdateImmediatelySinceThereIsNoPreviousUpdate() {
 
       // Given
       LocalDateTime now = LocalDateTime.now().plusDays(1);
@@ -129,11 +126,10 @@ class CourseDefUpdaterTest {
       assertThat(allCourseDefs.size(), is(1));
       assertThat(allCourseDefs.get(0).courseName(), is(defaultAquabasileaCourse.courseName()));
       assertThat(allCourseDefs.get(0).courseDate(), is(defaultAquabasileaCourse.courseDate()));
-      assertThat(allCourseDefs.get(0).timeOfTheDay(), is(defaultAquabasileaCourse.timeOfTheDay()));
    }
 
    @Test
-   void startSchedulerScheduleNextUpdateSinceThereIsPreviousUpdate()  {
+   void startSchedulerScheduleNextUpdateSinceThereIsPreviousUpdate() {
 
       // Given
       this.statisticsHelper.setLastCourseDefUpdate(LocalDateTime.now());
@@ -155,18 +151,19 @@ class CourseDefUpdaterTest {
    }
 
    @NotNull
-   private TestAquabasileaCourseExtractor createNewTestAquabasileaCourseExtractor(CourseLocation courseLocation, LocalDate courseDate, String timeOfTheDay, String courseName, long extractingDuration) {
-      List<AquabasileaCourse> aquabasileaCourses = List.of(createAquabasileaCourse(courseLocation, courseDate, timeOfTheDay, courseName));
+   private TestAquabasileaCourseExtractor createNewTestAquabasileaCourseExtractor(CourseLocation courseLocation, LocalDateTime courseDate, String courseName, long extractingDuration) {
+      List<AquabasileaCourse> aquabasileaCourses = List.of(createAquabasileaCourse(courseLocation, courseDate, courseName));
       return new TestAquabasileaCourseExtractor(aquabasileaCourses, extractingDuration);
    }
 
    @NotNull
-   private static AquabasileaCourse createAquabasileaCourse(CourseLocation courseLocation, LocalDate courseDate, String timeOfTheDay, String courseName) {
-      return new AquabasileaCourse(courseDate, timeOfTheDay, courseLocation.getWebCourseLocation(), courseName);
+   private static AquabasileaCourse createAquabasileaCourse(CourseLocation courseLocation, LocalDateTime courseDate, String courseName) {
+      return new AquabasileaCourse(courseDate, courseLocation.getWebCourseLocation(), courseName);
    }
 
    private static AquabasileaCourse createDefaultAquabasileaCourse() {
-      return new AquabasileaCourse(LocalDate.of(2022, Month.JUNE, 5), "10:15", com.aquabasilea.web.model.CourseLocation.FITNESSPARK_HEUWAAGE, "test");
+      LocalDateTime courseDate = LocalDateTime.of(LocalDate.of(2022, Month.JUNE, 5), LocalTime.of(10, 15));
+      return new AquabasileaCourse(courseDate, com.aquabasilea.web.model.CourseLocation.FITNESSPARK_HEUWAAGE, "test");
    }
 
    private static class TestAquabasileaCourseExtractor implements AquabasileaCourseExtractor {

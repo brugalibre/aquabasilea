@@ -24,7 +24,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2021, 12, 31, 10, 15);// Friday
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
@@ -39,7 +39,7 @@ public class LocalDateTimeBuilderTest {
       String timeOfTheDay = DateUtil.getTimeAsString(refDate);
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, refDate.getDayOfWeek(), timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, refDate.getDayOfWeek(), timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(refDate.getYear()));
@@ -59,7 +59,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2022, 3, 28, 10, 15);// Monday
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
@@ -80,7 +80,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(currentYear, currentMonth, 26, 10, 15);// Saturday
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(currentYear));
@@ -104,7 +104,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2022, Month.MARCH, refDayOfTheMonth, hour, minute);// S
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(2022));
@@ -129,7 +129,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2022, Month.MARCH, refDayOfTheMonth, hour, minute);// S
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(2022));
@@ -149,7 +149,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2021, 12, 15, 10, 15);// Wednesday
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
@@ -165,7 +165,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2021, 12, 15, 10, 15);
 
       // When
-      Executable ex = () -> LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, DayOfWeek.SATURDAY, timeOfTheDay);
+      Executable ex = () -> LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, DayOfWeek.SATURDAY, timeOfTheDay);
 
       // Then
       assertThrows(IllegalStateException.class, ex);
@@ -178,7 +178,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime refDate = LocalDateTime.of(2021, 12, 15, 10, 15);
 
       // When
-      Executable ex = () -> LocalDateTimeBuilder.getLocalDateTimeWithReferenceDate(refDate, null, timeOfTheDay);
+      Executable ex = () -> LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, null, timeOfTheDay);
 
       // Then
       assertThrows(NullPointerException.class, ex);

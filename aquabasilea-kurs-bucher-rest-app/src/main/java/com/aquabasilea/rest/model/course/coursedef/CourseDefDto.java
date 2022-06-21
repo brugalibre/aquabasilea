@@ -2,16 +2,21 @@ package com.aquabasilea.rest.model.course.coursedef;
 
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.model.course.coursedef.CourseDef;
+import com.aquabasilea.rest.i18n.LocalProvider;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.search.SearchableAttribute;
+import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAttribute String dayOfWeek,
-                           @SearchableAttribute String timeOfTheDay, @SearchableAttribute CourseLocationDto courseLocationDto) {
+                           @SearchableAttribute String timeOfTheDay,
+                           @SearchableAttribute CourseLocationDto courseLocationDto,
+                           LocalDateTime courseDefDate) {
 
    /**
     * Creates a new {@link CourseDefDto}
@@ -25,12 +30,14 @@ public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAt
               .getDisplayName(TextStyle.FULL, Locale.GERMAN);
       return new CourseDefDto(courseDef.courseName(),
               dayOfWeekName,
-              courseDef.timeOfTheDay(),
-              CourseLocationDto.of(courseDef.courseLocation()));
+              DateUtil.getTimeAsString(courseDef.courseDate()),
+              CourseLocationDto.of(courseDef.courseLocation()),
+              courseDef.courseDate());
    }
 
    public String getCourseRepresentation() {
-      return String.format(TextResources.COURSE_REPRESENTATION, courseName, dayOfWeek,
+      String dateRep = DateUtil.toString(courseDefDate.toLocalDate(), LocalProvider.getInstance().getCurrentLocale());
+      return String.format(TextResources.COURSE_REPRESENTATION, courseName, dayOfWeek, dateRep,
               timeOfTheDay, courseLocationDto.courseLocationName());
    }
 }

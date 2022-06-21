@@ -2,41 +2,25 @@ package com.aquabasilea.model.course.weeklycourses;
 
 import com.aquabasilea.model.AbstractDomainModel;
 import com.aquabasilea.model.course.CourseLocation;
-import com.aquabasilea.model.course.LocalDateTimeBuilder;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class Course extends AbstractDomainModel {
    private String courseName;
-   private DayOfWeek dayOfWeek;
-   private String timeOfTheDay;
+   private LocalDateTime courseDate;
    private CourseLocation courseLocation;
 
    private boolean isPaused;
    private boolean hasCourseDef;
-   private LocalDateTime courseDate;
 
    public Course() {
       this.isPaused = false;
       this.hasCourseDef = false;
    }
 
-   public String getTimeOfTheDay() {
-      return timeOfTheDay;
-   }
-
-   public void setTimeOfTheDay(String timeOfTheDay) {
-      this.timeOfTheDay = timeOfTheDay;
-   }
-
    public LocalDateTime getCourseDate() {
-      if (isNull(courseDate)) {
-         this.courseDate = LocalDateTimeBuilder.createLocalDateTime(this.dayOfWeek, this.timeOfTheDay);
-      }
       return courseDate;
    }
 
@@ -55,8 +39,8 @@ public class Course extends AbstractDomainModel {
       this.courseName = courseName;
    }
 
-   public DayOfWeek getDayOfWeek() {
-      return dayOfWeek;
+   public void setCourseDate(LocalDateTime courseDate) {
+      this.courseDate = courseDate;
    }
 
    public boolean getIsPaused() {
@@ -65,10 +49,6 @@ public class Course extends AbstractDomainModel {
 
    public void setIsPaused(boolean isPaused) {
       this.isPaused = isPaused;
-   }
-
-   public void setDayOfWeek(DayOfWeek dayOfWeek) {
-      this.dayOfWeek = dayOfWeek;
    }
 
    public CourseLocation getCourseLocation() {
@@ -84,8 +64,7 @@ public class Course extends AbstractDomainModel {
       return "Course{" +
               "id='" + id + '\'' +
               ", courseName='" + courseName + '\'' +
-              ", dayOfWeek='" + dayOfWeek + '\'' +
-              ", timeOfTheDay='" + timeOfTheDay + '\'' +
+              ", courseDate='" + courseDate + '\'' +
               ", courseLocation=" + courseLocation +
               ", isPaused=" + isPaused +
               ", hasCourseDef=" + hasCourseDef +
@@ -102,9 +81,8 @@ public class Course extends AbstractDomainModel {
    }
 
    public static class CourseBuilder {
-      private DayOfWeek dayOfWeek;
+      private LocalDateTime courseDate;
       private String courseName;
-      private String timeOfTheDay;
       private boolean isPaused;
       private boolean hasCourseDef;
       private CourseLocation courseLocation;
@@ -124,11 +102,6 @@ public class Course extends AbstractDomainModel {
          return this;
       }
 
-      public CourseBuilder withTimeOfTheDay(String timeOfTheDay) {
-         this.timeOfTheDay = timeOfTheDay;
-         return this;
-      }
-
       public CourseBuilder withId(String id) {
          this.id = id;
          return this;
@@ -144,16 +117,15 @@ public class Course extends AbstractDomainModel {
          return this;
       }
 
-      public CourseBuilder withDayOfWeek(DayOfWeek dayOfWeek) {
-         this.dayOfWeek = dayOfWeek;
+      public CourseBuilder withCourseDate(LocalDateTime courseDate) {
+         this.courseDate = courseDate;
          return this;
       }
 
       public Course build() {
          Course course = new Course();
          course.setCourseName(courseName);
-         course.setTimeOfTheDay(timeOfTheDay);
-         course.setDayOfWeek(dayOfWeek);
+         course.courseDate = courseDate;
          course.setId(id);
          course.setIsPaused(isPaused);
          course.courseLocation = courseLocation;

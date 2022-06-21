@@ -1,15 +1,16 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.i18n.TextResources;
+import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -25,7 +26,7 @@ class InfoString4StateEvaluatorTest {
       // Given
       Course currentCourse = new Course();
       currentCourse.setCourseName("test");
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
+      currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.INIT, currentCourse);
@@ -40,7 +41,7 @@ class InfoString4StateEvaluatorTest {
       // Given
       Course currentCourse = new Course();
       currentCourse.setCourseName("test");
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
+      currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.PAUSED, currentCourse);
@@ -95,7 +96,7 @@ class InfoString4StateEvaluatorTest {
       Course currentCourse = new Course();
       String courseName = "test";
       currentCourse.setCourseName(courseName);
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
+      currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.BOOKING, currentCourse);
@@ -111,8 +112,8 @@ class InfoString4StateEvaluatorTest {
       Course currentCourse = new Course();
       String courseName = "test";
       currentCourse.setCourseName(courseName);
-      currentCourse.setDayOfWeek(DayOfWeek.MONDAY);
-      
+      currentCourse.setCourseDate(LocalDateTime.now());
+
       // When
       String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.BOOKING_DRY_RUN, currentCourse);
 
@@ -123,8 +124,7 @@ class InfoString4StateEvaluatorTest {
    private static Course buildCourse(String courseName, String hour, String min) {
       Course currentCourse = new Course();
       currentCourse.setCourseName(courseName);
-      currentCourse.setTimeOfTheDay(hour + ":" + min);
-      currentCourse.setDayOfWeek(LocalDate.now().getDayOfWeek());
+      currentCourse.setCourseDate(LocalDateTime.of(LocalDate.now(), LocalTime.of(Integer.parseInt(hour), Integer.parseInt(min))));
       return currentCourse;
    }
 }

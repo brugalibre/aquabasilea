@@ -34,7 +34,7 @@ public class WeeklyCoursesService {
    public void addCourse(CourseDto courseDto) {
       LOG.info("Add course {}", courseDto);
       WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
-      weeklyCourses.addCourse(CourseDto.map2Course(courseDto, localProvider.getCurrentLocale()));
+      weeklyCourses.addCourse(CourseDto.map2Course(courseDto));
       changeWeeklyCourseAndRefreshCourseBooker(weeklyCourses);
    }
 

@@ -7,7 +7,9 @@ import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +26,11 @@ class WeeklyCoursesServiceTest {
    @Test
    void updateCoursesAfterCourseDefUpdate() {
       // Given
-      LocalDateTime now = LocalDateTime.now();
-      LocalDateTime dayAfterTomorrow = now.plusDays(2);
+      LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 15));
+      LocalDateTime dayAfterTomorrow = LocalDateTime.of(LocalDate.now().plusDays(2), LocalTime.of(15, 15));
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withCourse(Course.CourseBuilder.builder()
-                      .withTimeOfTheDay(TIME_OF_THE_DAY_15_15)
-                      .withDayOfWeek(now.getDayOfWeek())
+                      .withCourseDate(now)
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withCourseName("Kurs-99")
@@ -37,16 +38,15 @@ class WeeklyCoursesServiceTest {
                       .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
               .withCourse(Course.CourseBuilder.builder()
-                      .withTimeOfTheDay(TIME_OF_THE_DAY_15_15)
-                      .withDayOfWeek(dayAfterTomorrow.getDayOfWeek())
+                      .withCourseDate(dayAfterTomorrow)
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withCourseName(COURSE_NAME_WITH_COURSE_DEF)
                       .withId("1")
                       .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
-              .withUpdatedCourseDef(new CourseDef(now.toLocalDate(), " - ", MIGROS_FITNESSCENTER_AQUABASILEA, ""))
-              .withUpdatedCourseDef(new CourseDef(dayAfterTomorrow.toLocalDate(), TIME_OF_THE_DAY_15_15, MIGROS_FITNESSCENTER_AQUABASILEA, COURSE_NAME_WITH_COURSE_DEF))
+              .withUpdatedCourseDef(new CourseDef(now, MIGROS_FITNESSCENTER_AQUABASILEA, ""))
+              .withUpdatedCourseDef(new CourseDef(dayAfterTomorrow, MIGROS_FITNESSCENTER_AQUABASILEA, COURSE_NAME_WITH_COURSE_DEF))
               .build();
 
       // When
@@ -70,7 +70,7 @@ class WeeklyCoursesServiceTest {
          this.weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
          this.weeklyCourses = new WeeklyCourses();
          this.aquabasileaCourseBooker = mock(AquabasileaCourseBooker.class);
-         this.weeklyCoursesService = new WeeklyCoursesService(weeklyCoursesRepository, aquabasileaCourseBooker , null);
+         this.weeklyCoursesService = new WeeklyCoursesService(weeklyCoursesRepository, aquabasileaCourseBooker, null);
          this.updatedCourseDefs = new ArrayList<>();
       }
 

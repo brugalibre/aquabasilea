@@ -8,6 +8,7 @@ import com.aquabasilea.persistence.entity.course.weeklycourses.WeeklyCoursesEnti
 import com.aquabasilea.persistence.entity.course.weeklycourses.dao.WeeklyCoursesDao;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,6 @@ import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 
 class WeeklyCoursesRepositoryImplTest {
 
@@ -25,9 +25,8 @@ class WeeklyCoursesRepositoryImplTest {
       WeeklyCoursesDao weeklyCoursesDao = new TestWeeklyCoursesDao();
       WeeklyCoursesRepository weeklyCoursesRepository = new WeeklyCoursesRepositoryImpl(weeklyCoursesDao);
       WeeklyCourses weeklyCourses = new WeeklyCourses(List.of(CourseBuilder.builder()
-              .withTimeOfTheDay("Samstag")
               .withCourseName("Test")
-              .withTimeOfTheDay("10:15")
+              .withCourseDate(LocalDateTime.now())
               .withIsPaused(true)
               .withHasCourseDef(true)
               .build()));
