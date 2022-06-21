@@ -2,18 +2,14 @@ package com.aquabasilea.coursebooker.states.init;
 
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.LocalDateTimeBuilder;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,13 +25,11 @@ class InitStateHandlerTest {
    @Test
    void testGetLocalDateTimeCourseTimeIsOneHourAfterNow() {
       // Given
-      LocalDateTime now = LocalDateTime.now();
-      String courseTime = DateUtil.getTimeAsString(now.plusHours(1));
+      LocalDateTime now = LocalDateTime.now().plusHours(1);
       String courseId = UUID.randomUUID().toString();
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withWeeklyCourses(new WeeklyCourses(List.of(Course.CourseBuilder.builder()
-                      .withTimeOfTheDay(courseTime)
-                      .withDayOfWeek(now.getDayOfWeek())
+                      .withCourseDate(now)
                       .withCourseName("Kurs-55")
                       .withId(courseId)
                       .build())))
@@ -54,14 +48,14 @@ class InitStateHandlerTest {
    @Test
    void evaluateNextCourseAndStateCourseDayIsCurrentWeekDay_CurrentCourseShouldBeAWeekInFuture() {
       // Given
-      LocalDateTime now = LocalDateTime.now();
+      LocalDateTime now = LocalDateTime.now()
+              .plusDays(1)
+              .plusMinutes(10);
       // The course takes place tomorrow, and we are less than 24h earlier
-      String courseTime = DateUtil.getTimeAsString(now.plusDays(1).plusMinutes(10));
       String courseId = UUID.randomUUID().toString();
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withWeeklyCourses(new WeeklyCourses(List.of(Course.CourseBuilder.builder()
-                      .withTimeOfTheDay(courseTime)
-                      .withDayOfWeek(now.getDayOfWeek())
+                      .withCourseDate(now)
                       .withCourseName("Kurs-11")
                       .withId(courseId)
                       .build())))
@@ -81,23 +75,21 @@ class InitStateHandlerTest {
       // Given
       // The course takes place tomorrow, and we are more than 24h earlier
       LocalDateTime courseDate =  LocalDateTime.now().plusDays(2);
-      String courseTime = DateUtil.getTimeAsString(courseDate);
       String courseId = UUID.randomUUID().toString();
       String courseName = "Kurs-51";
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withWeeklyCourses(new WeeklyCourses(List.of(Course.CourseBuilder.builder()
-                      .withTimeOfTheDay(courseTime)
-                      .withDayOfWeek(courseDate.getDayOfWeek())
+                      .withCourseDate(courseDate)
                       .withCourseName(courseName)
                       .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .withId(courseId)
                       .withHasCourseDef(false)
                       .build())))
-              .withCourseDef(new CourseDef(courseDate.toLocalDate(), courseTime, MIGROS_FITNESSCENTER_AQUABASILEA, courseName))
+              .withCourseDef(new CourseDef(courseDate, MIGROS_FITNESSCENTER_AQUABASILEA, courseName))
               .build();
 
       // When
-      tcb.initStateHandler.updateCoursesHasCourseDef();
+      tcb.initStateHandler.updateCoursesHasCourseDef(tcb.weeklyCourses);
 
       // Then
       assertThat(tcb.weeklyCourses.getCourses().get(0).getHasCourseDef(), is(true));

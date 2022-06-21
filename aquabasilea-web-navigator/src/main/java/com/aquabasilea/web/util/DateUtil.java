@@ -4,17 +4,38 @@ import org.apache.commons.lang.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.Objects.requireNonNull;
 
 public class DateUtil {
 
+   private static final String TIME_OF_THE_DAY_PATTERN = "hh:mm";
+   private static final String TIME_OF_THE_DAY_REGEX = "([0-9]{1,2}[:][0-9]{2})";
    private static final String DAY_OF_THE_WEEK_SEPARATOR = " ";
 
    private DateUtil() {
       // private
+   }
+
+
+   /**
+    * Creates a {@link LocalTime} from the given input. This input must follow the pattern {@link DateUtil#TIME_OF_THE_DAY_PATTERN}
+    *
+    * @param timeOfTheDay the input value
+    * @return a {@link LocalTime} instance
+    */
+   public static LocalTime getLocalTimeFromInput(String timeOfTheDay) {
+      validateLocaleTimeInput(timeOfTheDay);
+      int hour = Integer.parseInt(timeOfTheDay.substring(0, timeOfTheDay.indexOf(":")));
+      int min = Integer.parseInt(timeOfTheDay.substring(timeOfTheDay.indexOf(":") + 1));
+      return LocalTime.of(hour, min);
    }
 
    /**
@@ -56,6 +77,15 @@ public class DateUtil {
 
    private static String prepareCourseDate2WorkWithForNextValue(String courseDateString2WorkWith, String currentValue2Replace) {
       return courseDateString2WorkWith.replaceFirst(currentValue2Replace, "").trim();
+   }
+
+   private static void validateLocaleTimeInput(String timeOfTheDay) {
+      requireNonNull(timeOfTheDay, "Attribut 'timeOfTheDay' must be set!");
+      Pattern pattern = Pattern.compile(TIME_OF_THE_DAY_REGEX);
+      Matcher matcher = pattern.matcher(timeOfTheDay);
+      if (!matcher.matches()) {
+         throw new IllegalStateException("The time input '" + timeOfTheDay + "' does not match the required pattern '" + TIME_OF_THE_DAY_PATTERN + "'");
+      }
    }
 
    /**

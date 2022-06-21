@@ -26,7 +26,7 @@ public class ObjectTextSearch {
 
    private static final int MAX_FILTER_RESULTS = 10;
    /**
-    * A match below 66.7% is not really representiv sometimes.. So that's why we only want to count those above 66.7%
+    * A match below 66.7% is not really representative sometimes... So that's why we only want to count those above 66.7%
     */
    private static final double MATCH_THRESHOLD = 0.667;
    private static final String WORD_SEPARATOR = " ";

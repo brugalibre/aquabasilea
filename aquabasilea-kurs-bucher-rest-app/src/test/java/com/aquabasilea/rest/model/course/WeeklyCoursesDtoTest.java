@@ -4,10 +4,8 @@ import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
-import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -21,29 +19,35 @@ class WeeklyCoursesDtoTest {
    void getWeeklyCoursesDto() {
 
       // Given
-      String firstCourseId = "1";
-      String secondCourseId = "2";
-      String thirdCourseId = "3";
-      LocalDateTime now = LocalDateTime.now();
-      DayOfWeek dayOfWeek4CoursesWithSameDayOfWeek = now.getDayOfWeek();
-      DayOfWeek otherDayOfWeek = now.plusDays(1).getDayOfWeek();
+      String secondCourseId = "1";
+      String thirdCourseId = "2";
+      String fourthCourseId = "3";
+      String firstCourseId = "4";
+      LocalDateTime firstCourseDate = LocalDateTime.now()
+              .plusDays(1);
+      LocalDateTime secondCourseDate = firstCourseDate
+              .plusMinutes(10);
+      LocalDateTime thirdCourseDate = firstCourseDate
+              .plusDays(1);
+      LocalDateTime fourthCourseDate = firstCourseDate
+              .plusDays(7);
       WeeklyCourses weeklyCourses = new WeeklyCourses();
-      String todaysTimeOfTheDay = DateUtil.getTimeAsString(now.plusMinutes(10));
       Course currentCourse = CourseBuilder.builder()
-              .withTimeOfTheDay(todaysTimeOfTheDay)
-              .withDayOfWeek(otherDayOfWeek)
-              .withCourseName("Kurs-abc")
-              .withId(thirdCourseId)
+              .withCourseDate(thirdCourseDate)
+              .withCourseName("Kurs-abc1")
+              .withId(fourthCourseId)
               .build();
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
-              .withTimeOfTheDay("15:15")
-              .withDayOfWeek(dayOfWeek4CoursesWithSameDayOfWeek)
-              .withCourseName("Kurs-abc")
-              .withId(secondCourseId)
+              .withCourseDate(secondCourseDate)
+              .withCourseName("Kurs-abc2")
+              .withId(thirdCourseId)
               .build(), currentCourse, CourseBuilder.builder()
-              .withTimeOfTheDay(todaysTimeOfTheDay)
-              .withDayOfWeek(dayOfWeek4CoursesWithSameDayOfWeek)
-              .withCourseName("Kurs-abc")
+              .withCourseDate(firstCourseDate)
+              .withCourseName("Kurs-abc3")
+              .withId(secondCourseId)
+              .build(), CourseBuilder.builder()
+              .withCourseDate(fourthCourseDate)
+              .withCourseName("Kurs-abc3")
               .withId(firstCourseId)
               .build()));
 
@@ -54,6 +58,7 @@ class WeeklyCoursesDtoTest {
       assertThat(weeklyCoursesDto.courseDtos().get(0).id(), is(firstCourseId));
       assertThat(weeklyCoursesDto.courseDtos().get(1).id(), is(secondCourseId));
       assertThat(weeklyCoursesDto.courseDtos().get(2).id(), is(thirdCourseId));
-      assertThat(weeklyCoursesDto.courseDtos().get(2).isCurrentCourse(), is(true));
+      assertThat(weeklyCoursesDto.courseDtos().get(3).id(), is(fourthCourseId));
+      assertThat(weeklyCoursesDto.courseDtos().get(3).isCurrentCourse(), is(true));
    }
 }

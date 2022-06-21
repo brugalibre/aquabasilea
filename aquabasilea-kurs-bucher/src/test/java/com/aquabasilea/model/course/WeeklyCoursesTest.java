@@ -4,15 +4,12 @@ import com.aquabasilea.model.course.exception.CourseAlreadyExistsException;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,20 +26,17 @@ class WeeklyCoursesTest {
       // Given
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       LocalDateTime courseDate = LocalDateTime.now();
-      String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName(COURSE_1)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
               .build()));
 
       // When
       weeklyCourses.addCourse(CourseBuilder.builder()
               .withCourseName(COURSE_2)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
               .build());
 
@@ -56,21 +50,44 @@ class WeeklyCoursesTest {
       // Given
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       LocalDateTime courseDate = LocalDateTime.now();
-      String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName(COURSE_1)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
               .build()));
 
       // When
       Executable ex = () -> weeklyCourses.addCourse(CourseBuilder.builder()
               .withCourseName(COURSE_1)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
+              .build());
+
+      // Then
+      assertThrows(CourseAlreadyExistsException.class, ex);
+   }
+
+   @Test
+   void addCourseWithSameCourseDateButAWeakAheadAgain() {
+
+      // Given
+      WeeklyCourses weeklyCourses = new WeeklyCourses();
+      LocalDateTime courseDate = LocalDateTime.now();
+      LocalDateTime courseDateAWeekAhead = LocalDateTime.now()
+              .plusDays(7);
+      String courseId = "123";
+      weeklyCourses.setCourses(List.of(CourseBuilder.builder()
+              .withCourseName(COURSE_1)
+              .withCourseDate(courseDate)
+              .withId(courseId)
+              .build()));
+
+      // When
+      Executable ex = () -> weeklyCourses.addCourse(CourseBuilder.builder()
+              .withCourseName(COURSE_1)
+              .withCourseDate(courseDateAWeekAhead)
+              .withId(UUID.randomUUID().toString())
               .build());
 
       // Then
@@ -82,13 +99,10 @@ class WeeklyCoursesTest {
       // Given
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       LocalDateTime courseDate = LocalDateTime.now();
-      String timeOfTheDay = DateUtil.getTimeAsString(courseDate);
-      String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName(COURSE_1)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
               .build()));
 
@@ -105,26 +119,22 @@ class WeeklyCoursesTest {
       String newCourseName = "newCourseName";
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       LocalDateTime courseDate = LocalDateTime.now();
-      String timeOfTheDay = DateUtil.getTimeAsString(courseDate);
-      String dayOfTheWeek = courseDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.GERMAN);
       String courseId = "123";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName(COURSE_1)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
               .build()));
 
       // When
       weeklyCourses.changeCourse(CourseBuilder.builder()
               .withCourseName(newCourseName)
-              .withDayOfWeek(courseDate.getDayOfWeek())
-              .withTimeOfTheDay(dayOfTheWeek)
+              .withCourseDate(courseDate)
               .withId(courseId)
               .build());
 
       // Then
-      assertThat(weeklyCourses.getCourses().get(0).getCourseName(), is(newCourseName));
+      assertThat(weeklyCourses.getCourses().get(0).getCourseName(), is(COURSE_1));// remains immutable
    }
 
    @Test
@@ -134,8 +144,7 @@ class WeeklyCoursesTest {
       String courseId = "1";
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       Course course = CourseBuilder.builder()
-              .withTimeOfTheDay("15:15")
-              .withDayOfWeek(DayOfWeek.WEDNESDAY)
+              .withCourseDate(LocalDateTime.now())
               .withCourseName("Kurs-abc")
               .withId(courseId)
               .build();

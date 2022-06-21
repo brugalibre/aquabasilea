@@ -5,12 +5,13 @@ import com.aquabasilea.model.AbstractDomainModel;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.exception.CourseAlreadyExistsException;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
@@ -55,20 +56,8 @@ public class WeeklyCourses extends AbstractDomainModel {
    private boolean existsCourseAlready(Course newCourse) {
       return courses.stream()
               .anyMatch(course -> course.getCourseName().equals(newCourse.getCourseName())
-                      && course.getDayOfWeek().equals(newCourse.getDayOfWeek())
-                      && course.getTimeOfTheDay().equals(newCourse.getTimeOfTheDay())
+                      && hasSameCourseDate(course.getCourseDate(), newCourse)
                       && course.getCourseLocation().equals(newCourse.getCourseLocation()));
-   }
-
-   /**
-    * For each {@link Course} of this {@link WeeklyCourses} the {@link Course#getCourseDate()} is shifted forwards by
-    * the given amount of days
-    * @param days the amount of days
-    */
-   public void shiftCourseDateByDays(int days) {
-      this.courses = courses.stream()
-              .map(course -> course.shiftCourseDateByDays(days))
-              .collect(Collectors.toList());
    }
 
    /**
@@ -118,9 +107,6 @@ public class WeeklyCourses extends AbstractDomainModel {
    }
 
    private static void changeFoundCourse(Course course2Change, Course changedCourse) {
-      course2Change.setCourseName(changedCourse.getCourseName());
-      course2Change.setTimeOfTheDay(changedCourse.getTimeOfTheDay());
-      course2Change.setDayOfWeek(changedCourse.getDayOfWeek());
       course2Change.setIsPaused(changedCourse.getIsPaused());
    }
 
@@ -140,10 +126,15 @@ public class WeeklyCourses extends AbstractDomainModel {
       return course -> {
          course.setHasCourseDef(courseDefs.stream()
                  .anyMatch(existCourseDefPredicate(course)));
+         // Course has no courseDef -> assume that it's course-date lays in the past. shift a week forward and try again
          if (!course.getHasCourseDef()) {
             course.shiftCourseDateByDays(7);
             course.setHasCourseDef(courseDefs.stream()
                     .anyMatch(existCourseDefPredicate(course)));
+            if (!course.getHasCourseDef()) {
+               // Still no course-def -> the assumption above was wrong, revert changes to the course-date
+               course.shiftCourseDateByDays(-7);
+            }
          }
          return course;
       };
@@ -152,7 +143,21 @@ public class WeeklyCourses extends AbstractDomainModel {
    private static Predicate<CourseDef> existCourseDefPredicate(Course course) {
       return courseDef -> courseDef.courseName().equals(course.getCourseName())
               && courseDef.courseLocation().equals(course.getCourseLocation())
-              && courseDef.courseDate().equals(course.getCourseDate().toLocalDate())
-              && courseDef.timeOfTheDay().equals(course.getTimeOfTheDay());
+              && hasSameCourseDate(courseDef.courseDate(), course);
+   }
+
+   /**
+    * Verifies if the given course date is the same as the other courses one. Same means, that the time of the day
+    * and the day of the week are equal. This means, that the actual date can be a week or two apart and this method
+    * still returns true.
+    * <p>
+    * That's necessary, otherwise we could add the same course twice (once with today as the course-date and a 2nd time
+    * with a course date = today + 7 days) and as soo as we shift the first course-date a week into the futur, we have to identical courses.
+    */
+   private static boolean hasSameCourseDate(LocalDateTime courseDateCourseDef, Course course) {
+      LocalTime courseDefTime = courseDateCourseDef.toLocalTime();
+      LocalTime courseTime = course.getCourseDate().toLocalTime();
+      return courseDateCourseDef.getDayOfWeek() == course.getCourseDate().getDayOfWeek()
+              && (courseDefTime.getHour() == courseTime.getHour() && courseDefTime.getMinute() == courseTime.getMinute());
    }
 }

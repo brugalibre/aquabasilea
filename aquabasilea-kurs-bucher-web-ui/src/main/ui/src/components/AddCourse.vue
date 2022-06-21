@@ -71,6 +71,7 @@ export default {
     addCourseAndRefresh: function () {
       const courseBody = JSON.stringify({
         courseName: this.selectedCourseDef.courseName,
+        courseDate: this.selectedCourseDef.courseDefDate,
         dayOfWeek: this.selectedCourseDef.dayOfWeek,
         courseLocationDto: this.selectedCourseDef.courseLocationDto,
         timeOfTheDay: this.selectedCourseDef.timeOfTheDay,

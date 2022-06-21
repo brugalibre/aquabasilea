@@ -4,6 +4,7 @@ import com.aquabasilea.util.DateUtil;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoField;
 import java.util.regex.Matcher;
@@ -31,13 +32,14 @@ public class LocalDateTimeBuilder {
     * @return a new {@link LocalDateTime} object from the given day-of-the-week and the time
     */
    public static LocalDateTime createLocalDateTime(DayOfWeek dayOfWeek, String timeOfTheDay) {
-      return getLocalDateTimeWithReferenceDate(LocalDateTime.now(), dayOfWeek, timeOfTheDay);
+      return createLocalDateTimeWithReferenceDate(LocalDateTime.now(), dayOfWeek, timeOfTheDay);
    }
 
-   static LocalDateTime getLocalDateTimeWithReferenceDate(LocalDateTime refDateIn, DayOfWeek courseDate, String timeOfTheDay) {
+   static LocalDateTime createLocalDateTimeWithReferenceDate(LocalDateTime refDateIn, DayOfWeek courseDate, String timeOfTheDay) {
       validateInput(courseDate, timeOfTheDay);
-      int courseHour = Integer.parseInt(timeOfTheDay.substring(0, timeOfTheDay.indexOf(':')));
-      int courseMin = Integer.parseInt(timeOfTheDay.substring(timeOfTheDay.indexOf(':') + 1));
+      LocalTime localTime = createLocalTime(timeOfTheDay);
+      int courseHour = localTime.getHour();
+      int courseMin = localTime.getMinute();
       LocalDateTime refDate = adjustReferenceDateIfCourseTimeIsBeyondRefDateTime(refDateIn, courseDate, courseHour, courseMin);
       int dayOfMonth = getDayOfMonthAtWhichCourseTakesPlace(refDate, courseDate);
 
@@ -51,6 +53,19 @@ public class LocalDateTimeBuilder {
          refDate = refDate.plusDays(1);
       }
       return refDate;
+   }
+
+   /**
+    * Creates a {@link LocalTime} from the given input. This input must follow the pattern {@link LocalDateTimeBuilder#TIME_OF_THE_DAY_PATTERN}
+    *
+    * @param timeOfTheDay the input value
+    * @return a {@link LocalTime} instance
+    */
+   public static LocalTime createLocalTime(String timeOfTheDay) {
+      validateLocaleTimeInput(timeOfTheDay);
+      int hour = Integer.parseInt(timeOfTheDay.substring(0, timeOfTheDay.indexOf(":")));
+      int min = Integer.parseInt(timeOfTheDay.substring(timeOfTheDay.indexOf(":") + 1));
+      return LocalTime.of(hour, min);
    }
 
    private static boolean isSameDayOfTheWeekAndCourseTimeIsEarlierThanRefTime(LocalDateTime refDate, DayOfWeek courseDate, int courseHour, int courseMin) {
@@ -99,6 +114,10 @@ public class LocalDateTimeBuilder {
 
    private static void validateInput(DayOfWeek dayOfWeek, String timeOfTheDay) {
       requireNonNull(dayOfWeek, "Attribut 'dayOfWeek' must be set!");
+      validateLocaleTimeInput(timeOfTheDay);
+   }
+
+   private static void validateLocaleTimeInput(String timeOfTheDay) {
       requireNonNull(timeOfTheDay, "Attribut 'timeOfTheDay' must be set!");
       Pattern pattern = Pattern.compile(TIME_OF_THE_DAY_REGEX);
       Matcher matcher = pattern.matcher(timeOfTheDay);

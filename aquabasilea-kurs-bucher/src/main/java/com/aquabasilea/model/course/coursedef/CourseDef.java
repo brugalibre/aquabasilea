@@ -5,11 +5,12 @@ import com.aquabasilea.model.course.weeklycourses.Course;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * The {@link CourseDef} defines a bookable {@link Course}.
  * There is only one instance of a {@link CourseDef} but for one {@link CourseDef} there can be many {@link Course}s
  */
-public record CourseDef(LocalDate courseDate, String timeOfTheDay, CourseLocation courseLocation, String courseName) {
+public record CourseDef(LocalDateTime courseDate, CourseLocation courseLocation, String courseName) {
    //
 }

@@ -23,7 +23,8 @@ export default {
                 headers: {'Content-Type': 'application/json'},
                 body: courseBody
             };
-
+            console.log('Adding course \'' + courseBody + '\'');
+            const courseName = courseBody.courseName;
             // Call finally the api in order to add the new user
             fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/weekly-courses/addCourse', requestOptions)
                 .then(async response => {
@@ -35,7 +36,7 @@ export default {
                     if (!response.ok) {
                         // get error message from body or default to response status
                         const errorDetails = data ? data.error : 'upsidupsi, fehler nicht gefunden';
-                        const errorMsg = 'Fehler beim Hinzufügen des Kurses \'' + courseBody.courseName + '\': ' + errorDetails + ' (Fehlercode ' + response.status + ')';
+                        const errorMsg = 'Fehler beim Hinzufügen des Kurses \'' + courseName + '\': ' + errorDetails + ' (Fehlercode ' + response.status + ')';
                         return Promise.reject(errorMsg);
                     }
                 }).catch(error => this.logError(error));

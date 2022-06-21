@@ -28,7 +28,7 @@
           </td>
           <td class="table-cell">
             <label
-              v-c-tooltip="{content: course.courseDateAsString, placement: 'top'}"
+              v-c-tooltip="{content: formatDate(course.courseDate), placement: 'top'}"
             >
               {{ course.dayOfWeek }}
             </label>
@@ -69,10 +69,11 @@
 </template>
 <script>
 import WeeklyCoursesApi from '../mixins/WeeklyCoursesApi';
+import CommonAquabasileaRestApi from '../mixins/CommonAquabasileaRestApi';
 
 export default {
   name: 'WeeklyCoursesOverview',
-  mixins: [WeeklyCoursesApi],
+  mixins: [WeeklyCoursesApi, CommonAquabasileaRestApi],
   computed: {
     courseBookingStateDto: function () {
       return this.$store.getters.courseBookingStateDto

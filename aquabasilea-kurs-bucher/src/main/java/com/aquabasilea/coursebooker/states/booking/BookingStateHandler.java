@@ -1,11 +1,11 @@
 package com.aquabasilea.coursebooker.states.booking;
 
+import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.CourseComparator;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
@@ -51,7 +51,7 @@ public class BookingStateHandler {
       }
       LOG.info("About going to {} the course '{}' at {}", state == BOOKING ? "book" : "dry-run the booking",
               currentCourse.getCourseName(), DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
-      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getDayOfWeek(), currentCourse.getCourseLocation().getWebCourseLocation());
+      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseDate().getDayOfWeek(), currentCourse.getCourseLocation().getWebCourseLocation());
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(courseBookDetails);
       LOG.info("Course booking done. Result is {}", courseBookingEndResult);
       resumeCoursesUntil(currentCourse);

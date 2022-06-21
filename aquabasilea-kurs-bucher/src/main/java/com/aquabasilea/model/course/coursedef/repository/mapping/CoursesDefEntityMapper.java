@@ -18,7 +18,7 @@ public interface CoursesDefEntityMapper {
 
    CourseDef map2CourseDef(CourseDefEntity courseDefEntity);
 
-   List<CourseDef> mapAquabasileaCourse2CourseDefs(List<AquabasileaCourse> aquabasileaCourses);
+   List<CourseDef> mapAquabasileaCourses2CourseDefs(List<AquabasileaCourse> aquabasileaCourses);
 
    List<CourseDef> map2CourseDefs(List<CourseDefEntity> courseDefEntities);
 }
