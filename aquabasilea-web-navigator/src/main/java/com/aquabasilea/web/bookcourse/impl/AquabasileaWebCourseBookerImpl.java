@@ -62,6 +62,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
          return selectAndBookCourse(courseBookDetails, errorHandler);
       } catch (TimeoutException e) {
          if (timeOutRetries > 0) {
+            aquabasileaLoginHelper.clickLogoutButton();
             return handleTimeOutException(courseBookDetails, errorHandler, e);
          }
          return handleExceptionAndBuildResult(courseBookDetails.courseName(), errorHandler, e);
