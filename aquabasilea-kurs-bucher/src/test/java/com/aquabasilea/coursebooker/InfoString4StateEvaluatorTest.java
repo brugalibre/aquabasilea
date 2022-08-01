@@ -58,7 +58,10 @@ class InfoString4StateEvaluatorTest {
       String hour = "21";
       int min = 15;
       Course currentCourse = buildCourse("Kurs123", hour, String.valueOf(min));
-      String expectedInfoString = String.format(TextResources.INFO_TEXT_IDLE_BEFORE_BOOKING, currentCourse.getCourseName(), DateUtil.toString(currentCourse.getCourseDate(), Locale.GERMAN), 20 + ":" + 25);
+      LocalDateTime courseDate = currentCourse.getCourseDate();
+      LocalDateTime dryRunOrBookingDate = courseDate.minusMinutes(min2StartEarlier);
+      String dryRunOrBookingDateAsString = DateUtil.toString(dryRunOrBookingDate, Locale.GERMAN);
+      String expectedInfoString = String.format(TextResources.INFO_TEXT_IDLE_BEFORE_BOOKING, currentCourse.getCourseName(), DateUtil.toString(courseDate, Locale.GERMAN), dryRunOrBookingDateAsString);
       AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
       when(config.getDurationToStartBookerEarlier()).thenReturn(Duration.ofMinutes(min2StartEarlier));
 
@@ -77,8 +80,10 @@ class InfoString4StateEvaluatorTest {
       String hour = "21";
       int min = 55;
       Course currentCourse = buildCourse("Kurs123", hour, String.valueOf(min));
-      String diff = (min - min2StartEarlier) < 10 ? "0" + (min - min2StartEarlier) : "" + (min - min2StartEarlier);
-      String expectedInfoString = String.format(TextResources.INFO_TEXT_IDLE_BEFORE_DRY_RUN, currentCourse.getCourseName(), DateUtil.toString(currentCourse.getCourseDate(), Locale.GERMAN), hour + ":" + diff);
+      LocalDateTime courseDate = currentCourse.getCourseDate();
+      LocalDateTime dryRunOrBookingDate = courseDate.minusMinutes(min2StartEarlier);
+      String dryRunOrBookingDateAsString = DateUtil.toString(dryRunOrBookingDate, Locale.GERMAN);
+      String expectedInfoString = String.format(TextResources.INFO_TEXT_IDLE_BEFORE_DRY_RUN, currentCourse.getCourseName(), DateUtil.toString(courseDate, Locale.GERMAN), dryRunOrBookingDateAsString);
       AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
       when(config.getDurationToStartDryRunEarlier()).thenReturn(Duration.ofMinutes(min2StartEarlier));
 

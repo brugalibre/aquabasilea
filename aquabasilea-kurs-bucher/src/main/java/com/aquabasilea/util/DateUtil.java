@@ -29,17 +29,6 @@ public class DateUtil {
    }
 
    /**
-    * Creates a {@link LocalDateTime} from the given string input. This value must follow the pattern {@link DateUtil#DATE_TIME_FORMAT_DD_MM_YYY_HH_MM}
-    *
-    * @param dateAsString the String value
-    * @param locale       the {@link Locale}
-    * @return a {@link LocalDateTime} instance
-    */
-   public static LocalDateTime getLocalDateTimeFromString(String dateAsString, Locale locale) {
-      return LocalDateTime.parse(dateAsString, DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_DD_MM_YYY_HH_MM, locale));
-   }
-
-   /**
     * Returns the maximum possible day of the month, for the given {@link LocalDate}
     *
     * @param localDate the {@link LocalDate} to check
@@ -58,15 +47,16 @@ public class DateUtil {
     * @return a String representation of the given {@link LocalDateTime} in the given {@link Locale}
     */
    public static String toString(LocalDateTime courseDate, Locale locale) {
-      return courseDate.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_DD_MM_YYY_HH_MM, locale));
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_DD_MM_YYY_HH_MM);
+      return courseDate.format(dateTimeFormatter.withLocale(locale));
    }
 
    /**
     * Returns a String representation of the given {@link LocalDate} in the given {@link Locale}
     * The date representation is in the following pattern: DATE_TIME_FORMAT_DD_MM_YYY
     *
-    * @param date the date
-    * @param locale     the local
+    * @param date   the date
+    * @param locale the local
     * @return a String representation of the given {@link LocalDate} in the given {@link Locale}
     */
    public static String toString(LocalDate date, Locale locale) {
