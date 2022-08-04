@@ -148,18 +148,21 @@ public class CourseSelectHelper {
       } else {
          LOG.info("Time is not yet up. Retry again in {}ms", millis2WaitUntilCourseBecomesBookable);
          // but we also have to wait, until the course is bookable (24h before the course takes place)
-         WebElement cancelBookingButton = this.aquabasileaNavigatorHelper.getWebElementByTageNameAndInnerHtmlValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_CLOSE_BOOK_COURSE_BUTTON_TEXT);
-         cancelBookingButton.click();
+         getCloseBookingDialogButtonAndClick(courseDetails);
          return CourseClickedResult.COURSE_NOT_BOOKED_RETRY;
       }
    }
 
    private void handleBookButtonNotAvailable(String courseName, ErrorHandler errorHandler, WebElement courseDetails) {
-      WebElement closeBookingDialogButton = this.aquabasileaNavigatorHelper.getWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_CLOSE_BOOK_COURSE_BUTTON_TEXT);
-      closeBookingDialogButton.click();
+      getCloseBookingDialogButtonAndClick(courseDetails);
       this.aquabasileaNavigatorHelper.takeScreenshot("no-booking-button");
       String errorMsg = String.format("Booking Button not found! The course '%s' is not bookable", courseName);
       errorHandler.handleError(errorMsg);
+   }
+
+   private void getCloseBookingDialogButtonAndClick(WebElement courseDetails) {
+      WebElement closeBookingDialogButton = this.aquabasileaNavigatorHelper.getWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_CLOSE_BOOK_COURSE_BUTTON_TEXT);
+      closeBookingDialogButton.click();
    }
 
    private void handleCourseNotFound(ErrorHandler errorHandler, List<WebElement> courseButtons, String courseName) {
