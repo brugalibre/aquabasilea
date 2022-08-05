@@ -1,6 +1,6 @@
 package com.aquabasilea.rest;
 
-import com.aquabasilea.alerting.consumer.impl.AlertSender;
+import com.aquabasilea.alerting.consumer.impl.CourseBookingAlertSender;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursedef.update.CourseDefUpdater;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
@@ -58,7 +58,7 @@ public class AquabasileaCourseBookerRestAppConfig {
    private AquabasileaCourseBooker createAquabasileaCourseBooker(WeeklyCoursesRepository weeklyCoursesRepository,
                                                                  CourseDefRepository courseDefRepository, StatisticsHelper statisticsHelper) {
       AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(weeklyCoursesRepository, courseDefRepository, createAquabasileaCourseBookerThread());
-      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new AlertSender());
+      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender());
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new BookingStatisticsUpdater(statisticsHelper));
       aquabasileaCourseBookerSupplier.aquabasileaCourseBooker = aquabasileaCourseBooker;
       return aquabasileaCourseBooker;

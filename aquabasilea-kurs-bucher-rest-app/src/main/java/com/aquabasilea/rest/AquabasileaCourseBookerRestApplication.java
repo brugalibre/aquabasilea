@@ -1,6 +1,7 @@
 package com.aquabasilea.rest;
 
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.exception.GlobalExceptionHandler;
 import com.aquabasilea.security.securestorage.SecretStorage;
 import com.aquabasilea.security.securestorage.util.KeyUtils;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +16,7 @@ import static com.aquabasilea.rest.AquabasileaCourseBookerRestAppConfig.AQUABASI
 public class AquabasileaCourseBookerRestApplication {
 
    public static void main(String[] args) {
+      Thread.setDefaultUncaughtExceptionHandler(new GlobalExceptionHandler());
       ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(AquabasileaCourseBookerRestApplication.class, args);
       AquabasileaCourseBooker aquabasileaCourseBooker = (AquabasileaCourseBooker) configurableApplicationContext.getBean(AQUABASILEA_COURSE_BOOKER_BEAN);
       doAuthentication(args, aquabasileaCourseBooker);

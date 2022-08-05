@@ -1,13 +1,11 @@
 package com.aquabasilea.alerting.consumer.impl;
 
-import com.aquabasilea.alerting.api.AlertSendException;
 import com.aquabasilea.alerting.api.AlertSendService;
-import com.aquabasilea.alerting.api.factory.AlertSendServiceFactory;
 import com.aquabasilea.alerting.config.AlertSendConfig;
+import com.aquabasilea.alerting.send.BasicAlertSender;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.i18n.TextResources;
-import com.aquabasilea.util.YamlUtil;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -15,48 +13,34 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
-import static com.aquabasilea.alerting.constants.AlertConstants.ALERT_API_CONST_FILE;
 import static java.util.Objects.nonNull;
 
 /**
- * The {@link AlertSender} sends an alert configured by a {@link AlertSendConfig} to one or more subscribers
+ * The {@link CourseBookingAlertSender} sends an alert configured by a {@link AlertSendConfig} to one or more subscribers
  */
-public class AlertSender implements CourseBookingEndResultConsumer {
+public class CourseBookingAlertSender extends BasicAlertSender implements CourseBookingEndResultConsumer {
 
-   private static final Logger LOG = LoggerFactory.getLogger(AlertSender.class);
-   private final String alertApiConstFile;
-   private final Function<AlertSendConfig, AlertSendService> alertServiceFunction;
+   private static final Logger LOG = LoggerFactory.getLogger(CourseBookingAlertSender.class);
 
    /**
     * Constructor only for testing purpose
     *
     * @param alertApiConstFile the file with the alert config
     */
-   public AlertSender(String alertApiConstFile, Function<AlertSendConfig, AlertSendService> alertServiceFunction) {
-      this.alertApiConstFile = alertApiConstFile;
-      this.alertServiceFunction = alertServiceFunction;
+   public CourseBookingAlertSender(String alertApiConstFile, Function<AlertSendConfig, AlertSendService> alertServiceFunction) {
+      super(alertApiConstFile, alertServiceFunction);
    }
 
-   public AlertSender() {
-      this.alertApiConstFile = ALERT_API_CONST_FILE;
-      this.alertServiceFunction = alertSendConfig -> AlertSendServiceFactory.getAlertSendService4Name(alertSendConfig.getAlertServiceName());
+   public CourseBookingAlertSender() {
+      super();
    }
 
    @Override
    public void consumeResult(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
-      AlertSendConfig alertSendConfig = YamlUtil.readYaml(alertApiConstFile, AlertSendConfig.class);
       String msg = getMessage4Result(courseBookingEndResult, courseBookingState);
       if (nonNull(msg)) {
-         try {
-            getAlertSendApi(alertSendConfig).sendAlert(alertSendConfig, msg);
-         } catch (AlertSendException e) {
-            LOG.error(String.format("Sending of alert '%s' failed!", msg), e);
-         }
+         sendMessage(msg);
       }
-   }
-
-   private AlertSendService getAlertSendApi(AlertSendConfig alertSendConfig) {
-      return alertServiceFunction.apply(alertSendConfig);
    }
 
    private String getMessage4Result(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {

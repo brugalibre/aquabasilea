@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class AlertSenderTest {
+class CourseBookingAlertSenderTest {
 
    public static final String ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML = "alert/test-aquabasilea-alert-notification.yml";
 
@@ -28,7 +28,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
@@ -47,7 +47,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_NO_SINGLE_RESULT)
@@ -66,7 +66,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE)
@@ -85,7 +85,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
@@ -103,7 +103,7 @@ class AlertSenderTest {
       // Given
       String courseName = "courseName";
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKED_RETRY)
@@ -125,7 +125,7 @@ class AlertSenderTest {
       String exceptionMsg = exception.getClass().getSimpleName() +":\n" + exceptionDetailMsg;
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withException(exception)
@@ -145,7 +145,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
@@ -164,7 +164,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_NO_SINGLE_RESULT)
@@ -182,7 +182,7 @@ class AlertSenderTest {
       // Given
       String courseName = "courseName";
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE)
@@ -201,7 +201,7 @@ class AlertSenderTest {
       String courseName = "courseName";
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)
@@ -218,7 +218,7 @@ class AlertSenderTest {
    void consumeAndFailIllegalState() throws AlertSendException {
       // Given
       AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName("asdf")
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
@@ -239,7 +239,7 @@ class AlertSenderTest {
          wasThrown.set(true);
          throw new AlertSendException(new NullPointerException("Hoppla"));
       };
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new AlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName("asdf")
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
