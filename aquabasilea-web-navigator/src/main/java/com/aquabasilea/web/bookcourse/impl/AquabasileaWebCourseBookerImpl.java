@@ -62,7 +62,6 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
          return selectAndBookCourse(courseBookDetails, errorHandler);
       } catch (TimeoutException e) {
          if (timeOutRetries > 0) {
-            aquabasileaLoginHelper.clickLogoutButton();
             return handleTimeOutException(courseBookDetails, errorHandler, e);
          }
          return handleExceptionAndBuildResult(courseBookDetails.courseName(), errorHandler, e);
@@ -74,6 +73,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    private CourseBookingEndResult handleTimeOutException(CourseBookDetails courseBookDetails, ErrorHandler errorHandler, TimeoutException e) {
       this.timeOutRetries--;
       logError(String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseBookDetails.courseName(), timeOutRetries), errorHandler, e);
+      aquabasileaLoginHelper.clickLogoutButton();
       return selectAndBookCourse(courseBookDetails);
    }
 
