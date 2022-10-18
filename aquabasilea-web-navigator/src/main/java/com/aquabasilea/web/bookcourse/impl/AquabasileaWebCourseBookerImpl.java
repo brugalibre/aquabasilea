@@ -74,7 +74,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       this.timeOutRetries--;
       String errorMsg = String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseBookDetails.courseName(), timeOutRetries);
       logError(errorMsg, errorMsg, errorHandler, e);
-      aquabasileaLoginHelper.clickLogoutButton();
+      aquabasileaLoginHelper.tryClickLogoutButton();
       return selectAndBookCourse(courseBookDetails);
    }
 

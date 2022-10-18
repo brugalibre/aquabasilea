@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
@@ -51,12 +53,24 @@ public class AquabasileaLoginHelper {
 
    /**
     * After a {@link TimeoutException} bevor we can do a whole retry, we have to make sure we're logged out
+    * If the original {@link TimeoutException} occurred during login, then we have no logout button.
+    * Obviously a logout is not necessary in that case
     */
-   public void clickLogoutButton() {
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT), 20000);
-      WebElement logoutButton = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT);
-      logoutButton.click();
-      aquabasileaNavigatorHelper.waitForInvisibilityOfElement(logoutButton);
-      LOG.info("Logout button clicked");
+   public void tryClickLogoutButton() {
+      LOG.info("Try logout..");
+      Optional<WebElement> logoutButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT);
+      logoutButtonOpt.ifPresent(logoutButton -> {
+         logoutButton.click();
+         aquabasileaNavigatorHelper.waitForInvisibilityOfElement(logoutButton);
+         LOG.info("Logout button clicked");
+      });
+      logIfLogoutButtonIsAbsent(logoutButtonOpt.isEmpty());
+   }
+
+   private void logIfLogoutButtonIsAbsent(boolean isLogoutButtonNotAvailable) {
+      if (isLogoutButtonNotAvailable) {
+         LOG.warn("No logout button available!");
+         aquabasileaNavigatorHelper.takeScreenshot("no_logout_possible");
+      }
    }
 }
