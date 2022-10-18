@@ -6,10 +6,8 @@ import org.slf4j.LoggerFactory;
 
 public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler {
    private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-   private static final String LOG_ERROR_MSG = "Exception in Thread {}. Application is going to be shutdown";
-   private static final String APPLICATION_FAILURE_MSG = "Aquabasilea-Kurs-Bucher: Es ist ein schwerwiegender Fehler aufgetreten!\n" +
-           "Fehler details: '%s'\n" +
-           "Applikation wird heruntergefahren";
+   private static final String LOG_ERROR_MSG = "Exception in Thread %s. Application is going to be shutdown";
+   private static final String APPLICATION_FAILURE_MSG = "Aquabasilea-Kurs-Bucher: Es ist ein schwerwiegender Fehler aufgetreten, die Applikation wird heruntergefahren!\n\nFehler details: '%s'";
 
    @Override
    public void uncaughtException(Thread t, Throwable e) {
