@@ -72,7 +72,8 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
 
    private CourseBookingEndResult handleTimeOutException(CourseBookDetails courseBookDetails, ErrorHandler errorHandler, TimeoutException e) {
       this.timeOutRetries--;
-      logError(String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseBookDetails.courseName(), timeOutRetries), errorHandler, e);
+      String errorMsg = String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseBookDetails.courseName(), timeOutRetries);
+      logError(errorMsg, errorMsg, errorHandler, e);
       aquabasileaLoginHelper.clickLogoutButton();
       return selectAndBookCourse(courseBookDetails);
    }
@@ -138,9 +139,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    }
 
    private CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {
-      LOG.error("Error during course booking!", e);
-      errorHandler.handleError(ErrorUtil.getErrorMsgWithException(e));
-      webNavigatorHelper.takeScreenshot(e.getClass().getSimpleName());
+      logError(ErrorUtil.getErrorMsgWithException(e), "Error during course booking!", errorHandler, e);
       return buildCourseBookingEndResult(courseName, errorHandler, e, COURSE_NOT_SELECTED_EXCEPTION_OCCURRED);
    }
 
@@ -153,8 +152,9 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
               .build();
    }
 
-   private static void logError(String errorMsg, ErrorHandler errorHandler, Exception e) {
+   private void logError(String errorMsg,String logErrorMsg, ErrorHandler errorHandler, Exception e) {
       errorHandler.handleError(errorMsg);
-      LOG.error(errorMsg, e);
+      LOG.error(logErrorMsg, e);
+      webNavigatorHelper.takeScreenshot(e.getClass().getSimpleName());
    }
 }
