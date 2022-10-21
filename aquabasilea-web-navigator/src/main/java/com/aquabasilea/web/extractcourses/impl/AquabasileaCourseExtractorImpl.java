@@ -11,6 +11,7 @@ import com.aquabasilea.web.model.CourseLocation;
 import com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,13 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseExtractorImpl.class);
    private final ErrorHandlerImpl errorHandler;
+   private int timeOutRetries;
    private AquabasileaCourseExtractorHelper aquabasileaCourseExtractorHelper;
 
    public AquabasileaCourseExtractorImpl(String propertiesName) {
       super("", "", propertiesName);
       this.errorHandler = new ErrorHandlerImpl();
+      this.timeOutRetries = 3;
    }
 
    @Override
@@ -47,6 +50,14 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
 
    @Override
    public ExtractedAquabasileaCourses extractAquabasileaCourses(List<CourseLocation> courseLocations) {
+      try {
+         return extractAquabasileaCoursesInternal(courseLocations);
+      } catch (TimeoutException e) {
+         return handleTimeoutException(courseLocations, e);
+      }
+   }
+
+   private ExtractedAquabasileaCourses extractAquabasileaCoursesInternal(List<CourseLocation> courseLocations) {
       LOG.info("Start extracting courses for locations {} ", courseLocations);
       navigate2CoursePageAndAwaitReadiness();
       filterAndShowCourses(courseLocations);
@@ -92,5 +103,20 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
    private void navigate2CoursePageAndAwaitReadiness() {
       navigateToPage(coursePage);
       waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
+   }
+
+   private ExtractedAquabasileaCourses handleTimeoutException(List<CourseLocation> courseLocations, TimeoutException e) {
+      if (timeOutRetries > 0) {
+         handlingError(String.format("Timeout while extracting courses. Retries left: %s", this.timeOutRetries), e);
+         timeOutRetries--;
+         return extractAquabasileaCourses(courseLocations);
+      }
+      handlingError("Unrecoverable timeout while extracting courses!", e);
+      throw e;
+   }
+
+   private void handlingError(String errorLogMsg, TimeoutException e) {
+      LOG.error(errorLogMsg, e);
+      webNavigatorHelper.takeScreenshot("extracting_courses_" + e.getClass().getSimpleName());
    }
 }
