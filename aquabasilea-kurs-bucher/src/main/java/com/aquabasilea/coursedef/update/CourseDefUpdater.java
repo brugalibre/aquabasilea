@@ -97,7 +97,7 @@ public class CourseDefUpdater {
          updateAquabasileaCoursesInternal(courseLocations);
          Duration duration = Duration.ofMillis(start.until(LocalDateTime.now(), ChronoUnit.MILLIS));
          LOG.info("Updating course-defs done, duration: {}", duration);
-         updateStatistics(start);
+         updateStatistics(start, duration);
       } catch (Exception e) {
          LOG.error("Error while executing the CourseDefUpdater!", e);
       } finally {
@@ -105,8 +105,9 @@ public class CourseDefUpdater {
       }
    }
 
-   private void updateStatistics(LocalDateTime dateWhenUpdateStarted) {
-      Duration durationUntilNextUpdate = courseDefUpdaterScheduler.calcDelayUntilNextUpdate();
+   private void updateStatistics(LocalDateTime dateWhenUpdateStarted, Duration lastUpdateDuration) {
+      Duration durationUntilNextUpdate = courseDefUpdaterScheduler.calcDelayUntilNextUpdate()
+              .minus(lastUpdateDuration);
       statisticsHelper.setLastCourseDefUpdate(dateWhenUpdateStarted);
       statisticsHelper.setNextCourseDefUpdate(dateWhenUpdateStarted.plusNanos(durationUntilNextUpdate.toNanos()));
    }

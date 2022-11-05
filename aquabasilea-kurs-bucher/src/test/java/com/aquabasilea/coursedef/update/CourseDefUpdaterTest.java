@@ -83,7 +83,7 @@ class CourseDefUpdaterTest {
    }
 
    @Test
-   void startSchedulerAndUpdateImmediately_NoPrecedentUpdate() {
+   void startSchedulerAndUpdateImmediately_WithPreviousUpdateButToOld() {
 
       // Given
       CourseLocation courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
@@ -94,6 +94,7 @@ class CourseDefUpdaterTest {
 
       // When
       courseDefUpdater.startScheduler();
+      await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> aquabasileaCourseExtractor.amountOfInvocations == 1);
 
       // Then
       List<CourseDef> allCourseDefs = courseDefRepository.findAllCourseDefs();

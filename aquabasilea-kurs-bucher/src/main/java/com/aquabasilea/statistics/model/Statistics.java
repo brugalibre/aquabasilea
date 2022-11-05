@@ -1,7 +1,9 @@
 package com.aquabasilea.statistics.model;
 
 import com.aquabasilea.model.AbstractDomainModel;
+import com.aquabasilea.coursedef.update.CourseDefUpdaterScheduler;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
@@ -17,11 +19,12 @@ public class Statistics extends AbstractDomainModel {
     */
    public boolean needsCourseDefUpdate() {
       return isNull(this.lastCourseDefUpdate)
-              || lastUpdateIsOlderThanAWeek();
+              || lastUpdateIsTooOld();
    }
 
-   private boolean lastUpdateIsOlderThanAWeek() {
-      return (this.lastCourseDefUpdate.getDayOfYear() - LocalDateTime.now().getDayOfYear()) >= 7;
+   private boolean lastUpdateIsTooOld() {
+      Duration courseDefUpdateCycle = CourseDefUpdaterScheduler.getCourseDefUpdateCycle();
+      return (LocalDateTime.now().getDayOfYear() - this.lastCourseDefUpdate.getDayOfYear()) >= courseDefUpdateCycle.toDays();
    }
 
    public LocalDateTime getLastCourseDefUpdate() {
