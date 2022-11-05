@@ -7,6 +7,7 @@ import com.aquabasilea.rest.service.coursedef.CourseDefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +23,12 @@ public class CourseDefController {
       this.courseDefService = weeklyCoursesService;
    }
 
-   @RequestMapping(value = {"/getCourseDefDtos4Filter/{filter}", "/getCourseDefDtos4Filter/"})
+   @RequestMapping(method = RequestMethod.GET, value = {"/courseDefDtos4Filter/{filter}", "/courseDefDtos4Filter/"})
    public List<CourseDefDto> getDaysOfTheWeek4Course(@NonNull @PathVariable(required = false) String filter) {
       return courseDefService.getCourseDefDtos4Filter(filter);
    }
 
-   @GetMapping(path = "/getCourseLocationsDtos/")
+   @GetMapping(path = "/allCourseLocationsDtos/")
    public List<CourseLocationDto> getCourseLocationsDtos() {
       return courseDefService.getCourseLocationsDtos();
    }

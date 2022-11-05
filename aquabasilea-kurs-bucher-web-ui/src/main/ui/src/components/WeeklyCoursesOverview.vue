@@ -76,10 +76,10 @@ export default {
   mixins: [WeeklyCoursesApi, CommonAquabasileaRestApi],
   computed: {
     courseBookingStateDto: function () {
-      return this.$store.getters.courseBookingStateDto
+      return this.$store.state.aquabasilea.courseBookingStateDto
     },
     weeklyCourses: function () {
-      return this.$store.getters.weeklyCourses;
+      return this.$store.state.aquabasilea.weeklyCourses;
     },
   },
   methods: {
@@ -97,7 +97,7 @@ export default {
       return this.getToolTipText(course) !== '';
     },
     deleteCourseAndRefresh: function (course) {
-      this.$store.dispatch('setIsLoading', true);
+      this.$store.dispatch('aquabasilea/setIsLoading', true);
       this.deleteCourse(course);
       if (course.isCurrentCourse) {
         this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
@@ -106,7 +106,7 @@ export default {
       }
     },
     pauseCourseAndRefresh: function (course) {
-      this.$store.dispatch('setIsLoading', true);
+      this.$store.dispatch('aquabasilea/setIsLoading', true);
       this.pauseResumeCourse(course);
       this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     },

@@ -1,9 +1,7 @@
 import {AQUABASILEA_COURSE_BOOKER_API_URL} from '@/mixins/CommonAquabasileaRestApi';
-
-function logError(text, error) {
-    this.$store.dispatch('setIsLoading', false);
-    console.error(text, error);
-}
+import axios from 'axios';
+import authHeader from "@/services/auth/auth-header";
+import LoggingService from "@/services/log/logging.service";
 
 export default {
     name: 'CourseDefApi',
@@ -14,30 +12,30 @@ export default {
     },
     methods: {
         fetchCourseDefDtos: function (filter) {
-            fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/getCourseDefDtos4Filter/' + filter)
-                .then(response => response.json())
-                .then(data => this.$store.dispatch('setCourseDefDtos', data))
-                .catch(error => logError('Error occurred while fetching CourseDefDtos', error));
+            axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/courseDefDtos4Filter/' + filter, {headers: authHeader()})
+                .then(response => response.data)
+                .then(data => this.$store.dispatch('aquabasilea/setCourseDefDtos', data))
+                .catch(error => LoggingService.logError('Error occurred while fetching CourseDefDtos', error))
+                .finally(() => this.$store.dispatch('aquabasilea/setIsLoading', false));
         },
         fetchCourseLocations: function () {
-            fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/getCourseLocationsDtos/')
-                .then(response => response.json())
-                .then(data => this.$store.dispatch('setCourseLocationsDtos', data))
-                .catch(error => logError('Error occurred while fetching CourseLocations', error));
+            axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/allCourseLocationsDtos/', {headers: authHeader()})
+                .then(response => response.data)
+                .then(data => this.$store.dispatch('aquabasilea/setCourseLocationsDtos', data))
+                .catch(error => LoggingService.logError('Error occurred while fetching CourseLocations', error))
+                .finally(() => this.$store.dispatch('aquabasilea/setIsLoading', false));
         },
         fetchIsCourseDefUpdateRunning: function () {
-            fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/isCourseDefUpdateRunning/')
-                .then(response => response.json())
+            axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/isCourseDefUpdateRunning/', {headers: authHeader()})
+                .then(response => response.data)
                 .then(data => this.isCourseDefUpdateRunning = data)
-                .catch(error => logError('Error occurred while fetching isCourseDefUpdateRunning', error));
+                .catch(error => LoggingService.logError('Error occurred while fetching isCourseDefUpdateRunning', error))
+                .finally(() => this.$store.dispatch('aquabasilea/setIsLoading', false));
         },
         updateCourseDefs: function (selectedCourseDefLocation) {
-            fetch(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/updateCourseDefs/', {
-                method: 'POST', body: selectedCourseDefLocation,
-                headers: {'Content-Type': 'application/json',}
-            })
-                .then(response => response.json())
-                .catch(error => logError('Error occurred while fetching updateCourseDefs', error));
+            axios.post(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/updateCourseDefs/', selectedCourseDefLocation, {headers: authHeader()})
+                .catch(error => LoggingService.logError('Error occurred while fetching updateCourseDefs', error))
+                .finally(() => this.$store.dispatch('aquabasilea/setIsLoading', false));
         },
     }
 }

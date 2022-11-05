@@ -6,13 +6,14 @@ import com.aquabasilea.security.securestorage.SecretStorage;
 import com.aquabasilea.security.securestorage.util.KeyUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.function.Supplier;
 
-import static com.aquabasilea.rest.AquabasileaCourseBookerRestAppConfig.AQUABASILEA_COURSE_BOOKER_BEAN;
+import static com.aquabasilea.rest.config.AquabasileaCourseBookerRestAppConfig.AQUABASILEA_COURSE_BOOKER_BEAN;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class AquabasileaCourseBookerRestApplication {
 
    public static void main(String[] args) {

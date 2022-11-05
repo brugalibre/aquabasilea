@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import CourseDefApi from "@/mixins/CourseDefApi";
+
+import CourseDefApi from "../mixins/CourseDefApi";
 
 export default {
   name: 'UpdateCourseDef',
@@ -55,8 +56,9 @@ export default {
       return this.isCourseDefUpdateRunning || (!this.selectedCourseDefLocation || this.selectedCourseDefLocation.length == 0);
     },
     courseLocationsDtos: function () {
-      return this.$store.getters.courseLocationsDtos
+      return this.$store.state.aquabasilea.courseLocationsDtos
     },
   }
 }
+
 </script>

@@ -62,13 +62,13 @@ export default {
           .find(courseDto => courseDto.isCurrentCourse && (courseDto.isPaused !== undefined && courseDto.isPaused === false));
     },
     weeklyCourses: function () {
-      return this.$store.getters.weeklyCourses;
+      return this.$store.state.aquabasilea.weeklyCourses;
     },
     courseBookingStateDto: function () {
-      return this.$store.getters.courseBookingStateDto
+      return this.$store.state.aquabasilea.courseBookingStateDto
     },
     statisticsDto: function () {
-      return this.$store.getters.statisticsDto
+      return this.$store.state.aquabasilea.statisticsDto
     },
   },
   methods: {

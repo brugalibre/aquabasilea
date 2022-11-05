@@ -42,7 +42,7 @@
 <script>
 import weeklyCoursesApi from '../mixins/WeeklyCoursesApi';
 import UpdateCourseDef from "@/components/UpdateCourseDef";
-import CourseDefApi from "@/mixins/CourseDefApi";
+import CourseDefApi from "../mixins/CourseDefApi";
 
 export default {
   name: 'AddCourse',
@@ -88,7 +88,7 @@ export default {
   },
   computed: {
     courseDefDtos: function () {
-      return this.$store.getters.courseDefDtos
+      return this.$store.state.aquabasilea.courseDefDtos
     },
   },
   mounted() {

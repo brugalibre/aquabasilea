@@ -1,4 +1,4 @@
-package com.aquabasilea.rest;
+package com.aquabasilea.rest.config;
 
 import com.aquabasilea.alerting.consumer.impl.CourseBookingAlertSender;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
@@ -8,10 +8,13 @@ import com.aquabasilea.model.course.coursedef.repository.mapping.CoursesDefEntit
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.persistence.entity.statistic.StatisticsHelper;
+import com.aquabasilea.rest.api.security.AquabasileaUserRegisteredObserver;
 import com.aquabasilea.rest.service.WeeklyCoursesService;
 import com.aquabasilea.statistics.BookingStatisticsUpdater;
 import com.aquabasilea.statistics.repository.StatisticsRepository;
 import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
+import com.brugalibre.common.app.config.security.CommonAppSecurityConfig;
+import com.brugalibre.common.security.rest.api.AuthController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -23,10 +26,11 @@ import static com.aquabasilea.persistence.config.AquabasileaCourseBookerPersiste
 
 @Configuration
 @EnableAutoConfiguration
-@Import(AquabasileaCourseBookerPersistenceConfig.class)
+@Import({AquabasileaCourseBookerPersistenceConfig.class, CommonAppSecurityConfig.class})
 public class AquabasileaCourseBookerRestAppConfig {
 
    public static final String AQUABASILEA_COURSE_BOOKER_BEAN = "aquabasileaCourseBooker";
+   public static final String AQUABASILEA_USER_REGISTERED_OBSERVER = "aquabasileaUserRegisteredObserver";
    public static final String COURSE_DEF_UPDATER_BEAN = "courseDefUpdater";
    public static final String STATISTICS_HELPER_BEAN = "statisticsHelper";
 
@@ -43,6 +47,13 @@ public class AquabasileaCourseBookerRestAppConfig {
                                                              @Autowired CourseDefRepository courseDefRepository,
                                                              @Autowired StatisticsHelper statisticsHelper) {
       return createAquabasileaCourseBooker(weeklyCoursesRepository, courseDefRepository, statisticsHelper);
+   }
+
+   @Bean(name = AQUABASILEA_USER_REGISTERED_OBSERVER)
+   public AquabasileaUserRegisteredObserver getAquabasileaUserRegisteredObserver(@Autowired AuthController authController) {
+      AquabasileaUserRegisteredObserver aquabasileaUserRegisteredObserver = new AquabasileaUserRegisteredObserver();
+      authController.addUserRegisteredObserver(aquabasileaUserRegisteredObserver);
+      return aquabasileaUserRegisteredObserver;
    }
 
    @DependsOn(STATISTICS_HELPER_BEAN)

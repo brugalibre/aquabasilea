@@ -1,122 +1,68 @@
 <template>
   <div id="app">
-    <h1> {{ stagingMsg }} </h1>
-    <loading v-model:active="isLoading"
-             :is-full-page="true"/>
-    <div>
-      <div class="centered-flex">
-        <div class="content-left-side">
-          <course-booker-state-overview
-              class="tile course-state-overview"
-              :key="courseStateOverviewRefreshKey"
-              @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
-              @refreshCourseStateOverview="refreshCourseStateOverview()">
-          </course-booker-state-overview>
-          <add-course
-              class="tile"
-              :key="addCourseRefreshKey"
-              @error-occurred="errorOccurred"
-              @refreshAddCourse="refreshAddCourse()"
-              @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses">
-          </add-course>
-        </div>
-        <weekly-courses-overview
-            class="tile"
-            :key="weeklyCoursesRefreshKey"
-            @error-occurred="errorOccurred"
-            @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
-            @refreshWeeklyCourses="refreshWeeklyCourses()">
-        </weekly-courses-overview>
+    <nav class="navbar navbar-expand navbar-dark bg-info">
+      <a href="/" class="navbar-brand"> Migros-Kursbucher Verwaltung</a>
+      <div class="navbar-nav mr-auto" >
+        <li class="nav-item">
+          <router-link to="/manage" class="nav-link">
+            <font-awesome-icon icon="fa-solid fa-square-parking"/>
+            Migros-Kurs verwalten
+          </router-link>
+        </li>
       </div>
-      <CAlert v-show="this.errorDetails" color="danger" class="error-details tile" style="justify-self: center">
-        {{ this.errorDetails }}
-      </CAlert>
+
+      <div v-if="!currentUser" class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <router-link to="/register" class="nav-link">
+            <font-awesome-icon icon="user-plus"/>
+            Sign Up
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/login" class="nav-link">
+            <font-awesome-icon icon="sign-in-alt"/>
+            Login
+          </router-link>
+        </li>
+      </div>
+      <div v-if="currentUser" class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <router-link to="/profile" class="nav-link">
+            <font-awesome-icon icon="user"/>
+            {{ currentUser.username }}
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" @click.prevent="logOut">
+            <font-awesome-icon icon="sign-out-alt"/>
+            LogOut
+          </a>
+        </li>
+      </div>
+    </nav>
+
+    <div class="container">
+      <router-view/>
     </div>
+
   </div>
 </template>
 
 <script>
-import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
-import CourseBookerStateOverview from "@/components/CourseBookerStateOverview";
-import WeeklyCoursesOverview from "@/components/WeeklyCoursesOverview";
-import AddCourse from "@/components/AddCourse";
-import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
-
 export default {
-  name: 'App',
-  mixins: [CommonAquabasileaRestApi],
-  components: {
-    AddCourse,
-    Loading,
-    WeeklyCoursesOverview,
-    CourseBookerStateOverview
-  },
-  data() {
-    return {
-      errorDetails: '',
-      applicationTitle: 'Aquabasilea-Kurs Bucher',
-      stagingMsg: 'Aquabasilea-Kurs-Bucher Webapplikation',
-      courseStateOverviewRefreshKey: 0,
-      weeklyCoursesRefreshKey: 0,
-      addCourseRefreshKey: 0,
-    };
-  },
   computed: {
-    isLoading: function () {
-      return this.$store.getters.isLoading;
-    },
-  },
-  watch: {
-    applicationTitle: {
-      immediate: true,
-      handler() {
-        document.title = this.applicationTitle;
-      }
+    currentUser() {
+      return this.$store.state.auth.user;
     }
   },
   methods: {
-    refreshCourseStateOverview: function () {
-      this.$store.dispatch('setIsLoading', true);
-      setTimeout(() => {
-        this.courseStateOverviewRefreshKey += 1;
-      }, 1000);
-      console.log('courseStateOverview refreshed: ' + this.courseStateOverviewRefreshKey);
-    },
-    refreshWeeklyCourses: function () {
-      this.$store.dispatch('setIsLoading', true);
-      setTimeout(() => {
-        this.weeklyCoursesRefreshKey += 1;
-      }, 1000);
-      console.log('weeklyCourses refreshed: ' + this.weeklyCoursesRefreshKey);
-    },
-    errorOccurred: function (error) {
-      this.errorDetails = error;
-      console.log('App.vue: errorOccurred : \'' + this.errorDetails + '\'');
-    },
-    refreshCourseStateOverviewAndWeeklyCourses: function () {
-      this.$store.dispatch('setIsLoading', true);
-      setTimeout(() => {
-        this.weeklyCoursesRefreshKey += 1;
-        this.courseStateOverviewRefreshKey += 1;
-      }, 1000);
-      console.log('weeklyCourses & courseStateOverview refreshed: ' + this.weeklyCoursesRefreshKey + ', ' + this.courseStateOverviewRefreshKey);
-    },
-    refreshAddCourse: function () {
-      this.$store.dispatch('setIsLoading', true);
-      setTimeout(() => {
-        console.log('refreshAddCourse refreshed: ' + this.addCourseRefreshKey);
-        this.addCourseRefreshKey += 1;
-        this.$store.dispatch('setIsLoading', false);
-      }, 2500);
-    },
-  },
-  mounted() {
-    this.errorDetails = null;
+    logOut() {
+      this.$store.dispatch('auth/logout');
+      this.$router.push('/login');
+    }
   }
-}
+};
 </script>
-
 <style>
 * {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

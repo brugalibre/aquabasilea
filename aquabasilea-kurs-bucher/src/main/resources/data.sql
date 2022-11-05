@@ -29,3 +29,22 @@ CREATE TABLE IF NOT EXISTS statistics (
     booking_failed_counter INTEGER NOT NULL DEFAULT 0,
     booking_successful_counter INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS user_entity_roles
+(
+    user_entity_id varchar(255) not null,
+    roles          varchar(255)
+);
+
+CREATE TABLE IF NOT EXISTS users
+(
+    id       varchar(255) not null,
+    password varchar(255),
+    username varchar(255),
+    primary key (id)
+);
+
+alter table users
+    add constraint UKr43af9ap4edm43mmtq01oddj6 unique (username);
+alter table user_entity_roles
+    add constraint FK80w28k99mayei90r6mycds2em foreign key (user_entity_id) references users;

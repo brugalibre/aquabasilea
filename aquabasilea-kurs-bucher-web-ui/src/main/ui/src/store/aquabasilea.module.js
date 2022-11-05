@@ -1,8 +1,7 @@
-import {createStore} from 'vuex'
-
 const APP_OFFLINE_TXT = 'Application offline';
-export const store = createStore({
-    state: {
+export const aquabasilea = {
+    namespaced: true,
+    state: () => ({
         isLoading: false,
         statisticsDto: {
             lastCourseDefUpdate: ' - ',
@@ -22,24 +21,24 @@ export const store = createStore({
         },
         courseDefDtos: [],
         courseLocationsDtos: [],
-    },
+    }),
     getters: {
-        courseBookingStateDto: state => {
+        courseBookingStateDto(state) {
             return state.courseBookingStateDto;
         },
-        weeklyCourses: state => {
+        weeklyCourses(state) {
             return state.weeklyCourses;
         },
-        courseDefDtos: state => {
+        courseDefDtos(state) {
             return state.courseDefDtos;
         },
-        courseLocationsDtos: state => {
+        courseLocationsDtos(state) {
             return state.courseLocationsDtos;
         },
-        statisticsDto: state => {
+        statisticsDto(state) {
             return state.statisticsDto;
         },
-        isLoading: state => {
+        isLoading(state) {
             return state.isLoading;
         }
     },
@@ -83,4 +82,4 @@ export const store = createStore({
             context.commit("setIsLoading", isLoading);
         },
     },
-});
+};

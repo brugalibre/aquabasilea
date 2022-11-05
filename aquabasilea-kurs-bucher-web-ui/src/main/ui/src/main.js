@@ -1,6 +1,7 @@
 import {createApp} from 'vue'
 import App from './App.vue'
-import {store} from './store/store';
+import router from "./router";
+import store from "./store";
 import VueLoading from 'vue-loading-overlay';
 import Multiselect from "@vueform/multiselect";
 import {
@@ -8,6 +9,7 @@ import {
     CAccordionBody,
     CAccordionHeader,
     CAccordionItem,
+    CAlert,
     CButton,
     CDropdown,
     CDropdownItem,
@@ -15,27 +17,27 @@ import {
     CDropdownToggle,
     CFormInput,
     CTooltip,
-    CAlert,
     vctooltip
 } from '@coreui/vue';
 
-const app = createApp(App);
-app.use(store);
-app.component('CButton', CButton);
-app.component('CAccordion', CAccordion);
-app.component('CAccordionItem', CAccordionItem);
-app.component('CAccordionHeader', CAccordionHeader);
-app.component('CAccordionBody', CAccordionBody);
-app.component('CFormInput', CFormInput);
-app.component('CDropdown', CDropdown);
-app.component('CDropdownToggle', CDropdownToggle);
-app.component('CDropdownMenu', CDropdownMenu);
-app.component('CDropdownItem', CDropdownItem);
-app.component('CAlert', CAlert);
-app.component('CTooltip', CTooltip);
-app.directive('c-tooltip', vctooltip);
-app.component('Multiselect', Multiselect);
-app.use(VueLoading, {
-    color: '#0095c9'
-});
-app.mount('#app');
+createApp(App)
+    .component('CButton', CButton)
+    .component('CAccordion', CAccordion)
+    .component('CAccordionItem', CAccordionItem)
+    .component('CAccordionHeader', CAccordionHeader)
+    .component('CAccordionBody', CAccordionBody)
+    .component('CFormInput', CFormInput)
+    .component('CDropdown', CDropdown)
+    .component('CDropdownToggle', CDropdownToggle)
+    .component('CDropdownMenu', CDropdownMenu)
+    .component('CDropdownItem', CDropdownItem)
+    .component('CAlert', CAlert)
+    .component('CTooltip', CTooltip)
+    .component('Multiselect', Multiselect)
+    .directive('c-tooltip', vctooltip)
+    .use(router)
+    .use(store)
+    .use(VueLoading, {
+        color: '#0095c9'
+    })
+    .mount('#app');
