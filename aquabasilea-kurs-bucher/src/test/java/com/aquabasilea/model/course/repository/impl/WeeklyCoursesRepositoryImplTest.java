@@ -6,25 +6,27 @@ import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesReposi
 import com.aquabasilea.model.course.weeklycourses.repository.impl.WeeklyCoursesRepositoryImpl;
 import com.aquabasilea.persistence.entity.course.weeklycourses.WeeklyCoursesEntity;
 import com.aquabasilea.persistence.entity.course.weeklycourses.dao.WeeklyCoursesDao;
+import com.brugalibre.common.domain.repository.NoDomainModelFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class WeeklyCoursesRepositoryImplTest {
 
+   private static final String USER_ID = "123";
+
    @Test
    void saveWeeklyCourses() {
       // Given
       WeeklyCoursesDao weeklyCoursesDao = new TestWeeklyCoursesDao();
       WeeklyCoursesRepository weeklyCoursesRepository = new WeeklyCoursesRepositoryImpl(weeklyCoursesDao);
-      WeeklyCourses weeklyCourses = new WeeklyCourses(List.of(CourseBuilder.builder()
+      WeeklyCourses weeklyCourses = new WeeklyCourses(USER_ID, List.of(CourseBuilder.builder()
               .withCourseName("Test")
               .withCourseDate(LocalDateTime.now())
               .withIsPaused(true)
@@ -33,12 +35,11 @@ class WeeklyCoursesRepositoryImplTest {
 
       // When
       weeklyCoursesRepository.save(weeklyCourses);
-      weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
+      weeklyCourses = weeklyCoursesRepository.getByUserId(USER_ID);
 
       // Then
       assertThat(weeklyCourses.getCourses().get(0).getIsPaused(), is(true));
    }
-
 
    private static class TestWeeklyCoursesDao implements WeeklyCoursesDao {
       private final List<WeeklyCoursesEntity> weeklyCoursesEntities;
@@ -59,12 +60,12 @@ class WeeklyCoursesRepositoryImplTest {
       }
 
       @Override
-      public Optional<WeeklyCoursesEntity> findById(UUID uuid) {
+      public Optional<WeeklyCoursesEntity> findById(String uuid) {
          return Optional.empty();
       }
 
       @Override
-      public boolean existsById(UUID uuid) {
+      public boolean existsById(String uuid) {
          return false;
       }
 
@@ -74,7 +75,7 @@ class WeeklyCoursesRepositoryImplTest {
       }
 
       @Override
-      public Iterable<WeeklyCoursesEntity> findAllById(Iterable<UUID> uuids) {
+      public Iterable<WeeklyCoursesEntity> findAllById(Iterable<String> uuids) {
          return null;
       }
 
@@ -84,18 +85,17 @@ class WeeklyCoursesRepositoryImplTest {
       }
 
       @Override
-      public void deleteById(UUID uuid) {
+      public void deleteById(String uuid) {
 
       }
 
       @Override
       public void delete(WeeklyCoursesEntity entity) {
          this.weeklyCoursesEntities.remove(entity);
-
       }
 
       @Override
-      public void deleteAllById(Iterable<? extends UUID> uuids) {
+      public void deleteAllById(Iterable<? extends String> uuids) {
 
       }
 
@@ -107,6 +107,14 @@ class WeeklyCoursesRepositoryImplTest {
       @Override
       public void deleteAll() {
          this.weeklyCoursesEntities.clear();
+      }
+
+      @Override
+      public WeeklyCoursesEntity getByUserId(String userId) {
+         if (!weeklyCoursesEntities.isEmpty() && weeklyCoursesEntities.get(0).getUserId().equals(userId)) {
+            return weeklyCoursesEntities.get(0);
+         }
+         throw new NoDomainModelFoundException("No WeeklyCourses found for user id '" + userId + "'");
       }
    }
 }

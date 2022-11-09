@@ -1,6 +1,7 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.model.course.exception.CourseAlreadyExistsException;
+import com.aquabasilea.model.course.weeklycourses.exception.CourseAlreadyExistsException;
+import com.aquabasilea.service.security.login.CredentialsNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -25,7 +26,7 @@ public class AquabasileaCourseBookerControllerExceptionHandler {
       return new ResponseEntity<>(errors, HttpStatus.UNPROCESSABLE_ENTITY);
    }
 
-   @ExceptionHandler({NullPointerException.class, IllegalStateException.class, CourseAlreadyExistsException.class})
+   @ExceptionHandler({NullPointerException.class, IllegalStateException.class, CourseAlreadyExistsException.class, CredentialsNotValidException.class})
    protected ResponseEntity<Object> handleOtherExceptions(Exception ex) {
       Map<String, String> errors = Map.of("error", ex.getLocalizedMessage());
       return new ResponseEntity<>(errors, HttpStatus.UNPROCESSABLE_ENTITY);

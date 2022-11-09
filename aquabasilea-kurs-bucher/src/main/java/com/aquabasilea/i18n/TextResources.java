@@ -34,6 +34,9 @@ public class TextResources {
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";
 
+   // Login
+   public static final String MIGROS_FITNESS_CREDENTIALS_NOT_VALID = "Es gibt kein Migros-Fitness Login mit dem Benutzername '%s' oder das Passwort ist falsch";
+
    // Errors
    public static final String ERROR_COURSE_ALREADY_EXISTS = "Kurs %s existiert bereits und kann nicht erneut hinzugefügt werden";
 }

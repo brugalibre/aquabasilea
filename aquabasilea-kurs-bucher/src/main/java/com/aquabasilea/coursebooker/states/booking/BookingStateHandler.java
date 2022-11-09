@@ -12,6 +12,7 @@ import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
+import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,21 +41,22 @@ public class BookingStateHandler {
    /**
     * Does the actual booking or dry-run of the current Course but only, if there is a {@link CourseDef}
     * for the given course.
-    *
+
+    * @param userId        the id uf the {@link User} whose {@link Course}s are resumed
     * @param currentCourse the {@link Course} to book
     * @param state         the current {@link CourseBookingState}
     * @return a {@link CourseBookingEndResult} with details about the booking
     */
-   public CourseBookingEndResult bookCourse(Course currentCourse, CourseBookingState state) {
+   public CourseBookingEndResult bookCourse(String userId, Course currentCourse, CourseBookingState state) {
       if (!currentCourse.getHasCourseDef()) {
-         return handleCourseWithoutCourseDef(currentCourse);
+         return handleCourseWithoutCourseDef(userId, currentCourse);
       }
-      LOG.info("About going to {} the course '{}' at {}", state == BOOKING ? "book" : "dry-run the booking",
-              currentCourse.getCourseName(), DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
+      LOG.info("About going to {} the course [{}] for user [{}] at {}", state == BOOKING ? "book" : "dry-run the booking",
+              currentCourse.getCourseName(), userId, DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
       CourseBookDetails courseBookDetails = createCourseBookDetails(currentCourse);
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(courseBookDetails);
-      LOG.info("Course booking done. Result is {}", courseBookingEndResult);
-      resumeCoursesUntil(currentCourse);
+      LOG.info("Course booking for user [{}] is done. Result is {}", userId, courseBookingEndResult);
+      resumeCoursesUntil(userId, currentCourse);
       return courseBookingEndResult;
    }
 
@@ -62,11 +64,12 @@ public class BookingStateHandler {
     * All paused Courses which take place before the given <code>currentCourse</code> are resumed.
     * The idea is to automatically resume all paused courses, as soon as they lie in the past regarding the given course
     *
+    * @param userId        the id uf the {@link User} whose {@link Course}s are resumed
     * @param currentCourse the course which marks the next {@link Course} to book
     */
-   public void resumeCoursesUntil(Course currentCourse) {
-      LOG.info("Resumes previously paused curses");
-      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
+   public void resumeCoursesUntil(String userId, Course currentCourse) {
+      LOG.info("Resumes previously paused curses for user [{}]", userId);
+      WeeklyCourses weeklyCourses = weeklyCoursesRepository.getByUserId(userId);
       List<Course> courses = new ArrayList<>(weeklyCourses.getCourses());
       courses.sort(new CourseComparator());
       for (Course course : courses) {
@@ -78,8 +81,9 @@ public class BookingStateHandler {
       weeklyCoursesRepository.save(weeklyCourses);
    }
 
-   private static CourseBookingEndResult handleCourseWithoutCourseDef(Course currentCourse) {
-      LOG.warn("Course {} not booked, because there exist no real aquabasilea-course counterpart!", currentCourse.getCourseName());
+   private static CourseBookingEndResult handleCourseWithoutCourseDef(String userId, Course currentCourse) {
+      LOG.warn("Course {} not booked for user [{}], because there exist no real aquabasilea-course counterpart!", userId,
+              currentCourse.getCourseName());
       return CourseBookingEndResultBuilder.builder()
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
               .withCourseName(currentCourse.getCourseName())

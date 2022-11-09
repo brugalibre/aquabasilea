@@ -8,12 +8,12 @@
       />
       <div @submit="handleLogin" :validation-schema="schema">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">Benutzername</label>
           <CFormInput v-model="username" id="username" name="username" type="text" class="form-control"/>
           <CAlert name="username" class="error-feedback"/>
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">Passwort</label>
 
           <!-- XXX hier war es ursprünglich ein Field typ! aber der ist immer protected-->
           <CFormInput v-model="password" id="password" name="password" type="password" class="form-control" onsubmit="this.handleLogin()"/>
@@ -21,7 +21,7 @@
         </div>
 
         <div class="form-group">
-          <CButton color="info" :disabled="loading" v-on:click="this.handleLogin()">
+          <CButton color="info" class="login-button" :disabled="loading" v-on:click="this.handleLogin()">
             <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
@@ -30,10 +30,21 @@
           </CButton>
         </div>
 
-        <div class="form-group">
-          <CAlert v-if="message" color="danger" class="error-details tile" style="justify-self: center">
-            {{ message }}
-          </CAlert>
+        <div
+            v-if="message"
+            class="alert"
+            :class="'alert-danger'"
+        >
+          {{ message }}
+        </div>
+        <div>
+          <label>
+            Noch nicht registriert?
+            Hier gehts zur
+          </label>
+          <router-link to="/register">
+            Registrierung
+          </router-link>
         </div>
       </div>
     </div>
@@ -41,8 +52,9 @@
 </template>
 
 <script>
+// import {ErrorMessage, Form} from "vee-validate";
 import * as yup from "yup";
-import AuthService from "@/services/auth/auth.service";
+import LoggingService from "@/services/log/logging.service";
 
 export default {
   name: "Login",
@@ -58,8 +70,7 @@ export default {
 
     return {
       loading: false,
-      response: null,
-      message: "",
+      message: '',
       username: '',
       password: '',
       schema,
@@ -72,7 +83,7 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push('/manage');
+      this.$router.push('/');
     }
   },
   methods: {
@@ -82,21 +93,26 @@ export default {
         username: this.username,
         password: this.password
       };
-      AuthService.login(user, this.$store)
+      this.$store.dispatch("auth/login", user)
           .then(response => {
-            console.log('login successful -> going to manage.');
             if (response) {
-              this.response = response;
-              this.$store.dispatch('auth/login', user);
-              this.$router.push('/manage');
+              this.$router.push('/');
             }
-          }).finally(() => this.loading = false);
+          })
+          .catch(error => this.message = LoggingService.extractErrorText(error))
+          .finally(() => this.loading = false);
     },
   },
 };
 </script>
 
 <style scoped>
+
+.login-button {
+  margin-bottom: 35px;
+  width: 100%;
+}
+
 label {
   display: block;
   margin-top: 10px;

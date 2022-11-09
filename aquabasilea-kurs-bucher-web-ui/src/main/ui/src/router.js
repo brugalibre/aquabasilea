@@ -7,7 +7,7 @@ const Profile = () => import("./components/user/Profile.vue")
 
 const routes = [
     {
-        path: "/manage",
+        path: "/",
         component: AquabasileaDashboard,
     },
     {

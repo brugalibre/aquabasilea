@@ -82,7 +82,7 @@ export default {
       });
       this.addCourse(courseBody);
       this.selectedCourseDef = null;
-      this.courseDefFilter = null;
+      this.courseDefFilter = '';
       this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     }
   },

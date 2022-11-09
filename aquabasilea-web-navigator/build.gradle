@@ -16,19 +16,8 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'com.web.navigator', name: 'web-navigator', version: '1.0-SNAPSHOT'
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    implementation group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
-    implementation 'io.github.bonigarcia:webdrivermanager:5.0.3'
-    implementation('org.seleniumhq.selenium:selenium-java:4.0.0') {
-        exclude group: 'org.seleniumhq.selenium', module: 'selenium-android-driver'
-        exclude group: 'org.seleniumhq.selenium', module: 'selenium-iphone-driver'
-        exclude group: 'org.seleniumhq.selenium', module: 'selenium-safari-driver'
-        exclude group: 'org.webbitserver', module: 'webbit'
-        exclude group: 'commons-codec', module: 'commons-codec'
-        exclude group: 'cglib', module: 'cglib-node'
-    }
+    implementation group: 'com.brugalibre', name: 'web-navigator', version: '1.0-SNAPSHOT'
+    compileOnly 'org.slf4j:slf4j-api:2.0.4'
 }
 
 shadowJar{

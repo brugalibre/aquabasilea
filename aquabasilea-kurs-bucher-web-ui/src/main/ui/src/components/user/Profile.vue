@@ -1,14 +1,19 @@
 <template>
   <div class="container">
-    <header class="jumbotron">
-      <h3>
-        <strong>{{ currentUser.username }}</strong> Profile
-      </h3>
-    </header>
-    <strong>Benutzerrollen:</strong>
-    <ul>
-      <li v-for="role in currentUser.roles" :key="role">{{ role }}</li>
-    </ul>
+    <div class="jumbotron" style="width: 300px">
+      <div class="grid-container-60-40">
+        <label class="attr">Benutzername</label>
+        <span>{{ currentUser.username }}</span>
+        <label class="attr">Benutzerrollen</label>
+        <span>
+          <ul>
+        <li v-for="role in currentUser.roles" :key="role">{{ role }}</li>
+          </ul></span>
+      </div>
+    </div>
+
+    <label>Mhh.. ja zugegeben ist noch ein bisschen leer hier..
+      Vielleicht kommt da später noch mehr</label>
   </div>
 </template>
 
@@ -27,3 +32,14 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+
+.attr {
+  font-weight: bold;
+  word-wrap: anywhere;
+}
+
+
+</style>

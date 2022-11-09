@@ -13,7 +13,7 @@ export const aquabasilea = {
         },
         courseBookingStateDto: {
             stateMsg: APP_OFFLINE_TXT,
-            pauseOrResumeButtonText: APP_OFFLINE_TXT,
+            pauseOrResumeButtonText: 'Reaktiviere Kurs-Bucher',
             state: 'OFFLINE',
         },
         weeklyCourses: {

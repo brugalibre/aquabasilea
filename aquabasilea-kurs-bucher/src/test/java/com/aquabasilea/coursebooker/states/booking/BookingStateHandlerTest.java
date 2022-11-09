@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_SKIPPED;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class BookingStateHandlerTest {
+   private static final String USER_ID = "123";
 
    @Test
    void testBookCourseWithoutCourseDef() {
@@ -37,7 +39,7 @@ class BookingStateHandlerTest {
               .build();
 
       // When
-      CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(tcb.weeklyCourses.getCourses().get(0), tcb.currentBookingState);
+      CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0), tcb.currentBookingState);
 
       // When
       assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKING_SKIPPED));
@@ -89,10 +91,10 @@ class BookingStateHandlerTest {
               .build();
 
       // When
-      tcb.bookingStateHandler.resumeCoursesUntil(currentCourse);
+      tcb.bookingStateHandler.resumeCoursesUntil(USER_ID, currentCourse);
 
       // Then
-      WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.findFirstWeeklyCourses();
+      WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.getByUserId(USER_ID);
       Optional<Course> course4Id1 = getCourse4Id(course4Id, weeklyCourses);
       Optional<Course> course2Id1 = getCourse4Id(course2Id, weeklyCourses);
       Optional<Course> course6Id1 = getCourse4Id(course6Id, weeklyCourses);
@@ -120,7 +122,7 @@ class BookingStateHandlerTest {
       private TestCaseBuilder() {
          this.weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
          this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, null);
-         this.weeklyCourses = new WeeklyCourses();
+         this.weeklyCourses = new WeeklyCourses(USER_ID);
          this.currentBookingState = CourseBookingState.BOOKING;
       }
 
@@ -135,7 +137,7 @@ class BookingStateHandlerTest {
       }
 
       private void mockWeeklyCoursesRepository() {
-         when(weeklyCoursesRepository.findFirstWeeklyCourses()).thenReturn(weeklyCourses);
+         when(weeklyCoursesRepository.getByUserId(USER_ID)).thenReturn(weeklyCourses);
       }
    }
 }

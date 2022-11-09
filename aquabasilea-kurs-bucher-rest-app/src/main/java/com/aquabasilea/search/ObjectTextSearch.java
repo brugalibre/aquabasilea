@@ -20,6 +20,8 @@ import static java.util.Objects.nonNull;
  * If it's rather a complex Type, then this type is searched recursively in order to extract all searchable attributes.
  * <p>
  * The given list is then sorted according the weight of all {@link Object} and only the best matches are returned
+ * Attention: the logic is bounded at v. commons-text:1.9. The JaroWinklerDistance works different and this leads
+ * to different results. Also, the weighted results needs to be inverted with v1.9
  */
 @Component
 public class ObjectTextSearch {
@@ -110,8 +112,8 @@ public class ObjectTextSearch {
       return searchableObjectAttrs;
    }
 
-   private Double applyJaroWinklerDistance(String courseDefDto, String singleWordFilter) {
-      Double matchValue = new JaroWinklerDistance().apply(courseDefDto.toLowerCase(), singleWordFilter.toLowerCase());
+   private Double applyJaroWinklerDistance(String courseDefRepresentationElement, String singleWordFilter) {
+      Double matchValue = new JaroWinklerDistance().apply(courseDefRepresentationElement.toLowerCase(), singleWordFilter.toLowerCase());
       if (matchValue <= matchThreshold) {
          return 0.0;
       }

@@ -31,7 +31,7 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
    private AquabasileaCourseExtractorHelper aquabasileaCourseExtractorHelper;
 
    public AquabasileaCourseExtractorImpl(String propertiesName) {
-      super("", "", propertiesName);
+      super("", new char[]{}, propertiesName);
       this.errorHandler = new ErrorHandlerImpl();
       this.timeOutRetries = 3;
    }

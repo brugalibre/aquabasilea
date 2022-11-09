@@ -1,6 +1,6 @@
 <template>
   <div id=selectCourseDef class="select-course-def-container">
-    <h5>Auswählbare Kurse aktualisieren</h5>
+    <h5>Auswählbare Migros-Kurse aktualisieren</h5>
     <div class="grid-container-40-60">
       <label>Gewünschte Kursorte wählen</label>
       <select
@@ -21,7 +21,7 @@
         </label>
       </div>
       <CButton color="info" :disabled="isUpdateCourseDefButtonDisabled" v-on:click="updateCourseDefsAndRefresh()">
-        Aquabasilea Kurse
+        Migros Kurse
         aktualisieren
       </CButton>
     </div>
@@ -38,6 +38,14 @@ export default {
   data() {
     return {
       selectedCourseDefLocation: [],
+    }
+  },
+  watch: {
+    courseLocationsDtos: {
+      immediate: true,
+      handler() {
+        this.selectedCourseDefLocation = this.courseLocationsDtos.filter(courseLocation => courseLocation.isSelected);
+      }
     }
   },
   methods: {

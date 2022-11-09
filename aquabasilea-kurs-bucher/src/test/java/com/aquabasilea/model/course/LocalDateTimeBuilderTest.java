@@ -37,15 +37,26 @@ public class LocalDateTimeBuilderTest {
       // Given
       LocalDateTime refDate = LocalDateTime.now();
       String timeOfTheDay = DateUtil.getTimeAsString(refDate);
+      int dayOfMonth = refDate.getDayOfMonth();
+      int expectedMonth = refDate.getMonthValue();
+      int expectedDayOfTheMont = dayOfMonth + 7;
+      int diff = DateUtil.getLastDayOfMonth(refDate) - dayOfMonth;
+      if (diff < 7) {
+         // hurray a test depending on the current day...
+         // at the end of the month (e.g. the 27th) we can't just add 7 days ->
+         // the actual month will be the next month and the actual day will bi in that month
+         expectedMonth++;
+         expectedDayOfTheMont = 7 - diff;
+      }
 
       // When
       LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, refDate.getDayOfWeek(), timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(refDate.getYear()));
-      assertThat(actualCreateLDTime.getMonthValue(), is(refDate.getMonthValue()));
+      assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
       assertThat(actualCreateLDTime.getDayOfWeek(), is(refDate.getDayOfWeek()));
-      assertThat(actualCreateLDTime.getDayOfMonth(), is(refDate.getDayOfMonth() + 7));
+      assertThat(actualCreateLDTime.getDayOfMonth(), is(expectedDayOfTheMont));
    }
 
    @Test

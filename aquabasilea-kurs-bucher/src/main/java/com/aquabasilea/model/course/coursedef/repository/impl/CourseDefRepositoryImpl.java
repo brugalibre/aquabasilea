@@ -2,37 +2,28 @@ package com.aquabasilea.model.course.coursedef.repository.impl;
 
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.coursedef.repository.mapping.CoursesDefEntityMapper;
 import com.aquabasilea.model.course.coursedef.repository.mapping.CoursesDefEntityMapperImpl;
 import com.aquabasilea.persistence.entity.course.aquabasilea.CourseDefEntity;
 import com.aquabasilea.persistence.entity.course.aquabasilea.dao.CoursesDefDao;
+import com.brugalibre.common.domain.repository.CommonDomainRepositoryImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CourseDefRepositoryImpl implements CourseDefRepository {
-   private final CoursesDefDao coursesDefDao;
-   private final CoursesDefEntityMapper coursesDefEntityMapper;
-
+public class CourseDefRepositoryImpl extends CommonDomainRepositoryImpl<CourseDef, CourseDefEntity, CoursesDefDao>
+        implements CourseDefRepository {
    public CourseDefRepositoryImpl(CoursesDefDao coursesDefDao) {
-      this.coursesDefDao = coursesDefDao;
-      this.coursesDefEntityMapper = new CoursesDefEntityMapperImpl();
+      super(coursesDefDao, new CoursesDefEntityMapperImpl());
    }
 
    @Override
-   public List<CourseDef> findAllCourseDefs() {
-      List<CourseDefEntity> courseDefEntities = new ArrayList<>();
-      coursesDefDao.findAll().forEach(courseDefEntities::add);
-      return new ArrayList<>(coursesDefEntityMapper.map2CourseDefs(courseDefEntities));
+   public void deleteAllByUserId(String userId) {
+      // yes, maybe this could be done faster with a custom query. Maybe tomorrow..
+      domainDao.getAllByUserId(userId)
+              .forEach(domainDao::delete);
    }
 
    @Override
-   public void saveAll(List<CourseDef> courseDefs) {
-      coursesDefDao.saveAll(coursesDefEntityMapper.map2CourseDefEntities(courseDefs));
-   }
-
-   @Override
-   public void deleteAll() {
-      coursesDefDao.deleteAll();
+   public List<CourseDef> getAllByUserId(String userId) {
+      return domainModelMapper.map2DomainModels(domainDao.getAllByUserId(userId));
    }
 }

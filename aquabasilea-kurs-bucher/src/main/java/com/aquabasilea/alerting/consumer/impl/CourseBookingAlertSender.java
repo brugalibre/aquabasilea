@@ -2,16 +2,20 @@ package com.aquabasilea.alerting.consumer.impl;
 
 import com.aquabasilea.alerting.api.AlertSendService;
 import com.aquabasilea.alerting.config.AlertSendConfig;
+import com.aquabasilea.alerting.config.AlertSendConfigProvider;
+import com.aquabasilea.alerting.send.AlertSendInfos;
 import com.aquabasilea.alerting.send.BasicAlertSender;
+import com.aquabasilea.coursebooker.consumer.ConsumerUser;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.util.Objects.nonNull;
 
@@ -25,21 +29,22 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
    /**
     * Constructor only for testing purpose
     *
-    * @param alertApiConstFile the file with the alert config
+    * @param configProvider a {@link Supplier} which provides the {@link AlertSendConfig}
     */
-   public CourseBookingAlertSender(String alertApiConstFile, Function<AlertSendConfig, AlertSendService> alertServiceFunction) {
-      super(alertApiConstFile, alertServiceFunction);
+   public CourseBookingAlertSender(AlertSendConfigProvider configProvider, Function<AlertSendConfig, AlertSendService> alertServiceFunction) {
+      super(configProvider, alertServiceFunction);
    }
 
-   public CourseBookingAlertSender() {
-      super();
+   public CourseBookingAlertSender(AlertSendConfigProvider configProvider) {
+      super(configProvider);
    }
 
    @Override
-   public void consumeResult(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
+   public void consumeResult(ConsumerUser consumerUser, CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
       String msg = getMessage4Result(courseBookingEndResult, courseBookingState);
       if (nonNull(msg)) {
-         sendMessage(msg);
+         AlertSendInfos alertSendInfos = new AlertSendInfos(msg, List.of(consumerUser.phoneNr()));
+         sendMessage(alertSendInfos);
       }
    }
 
@@ -52,7 +57,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
          case BOOKING_DRY_RUN:
             return getMessage4ResultDryRun(courseBookingEndResult, courseName);
          default:
-            LOG.error("Warning! Unhandled state '{}'", courseBookingState);
+            LOG.error("Warning! Unhandled state [{}]", courseBookingState);
             return null;
       }
    }
@@ -65,7 +70,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
          case COURSE_BOOKING_ABORTED:
             return String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
          default:
-            LOG.error("Warning! Unhandled state '{}'", courseBookingEndResult.getCourseClickedResult());
+            LOG.error("Warning! Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
             return null;
       }
    }
@@ -84,12 +89,11 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
          case COURSE_BOOKING_SKIPPED:
             return String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
-            LOG.error("Warning! Unhandled state '{}'", courseBookingEndResult.getCourseClickedResult());
+            LOG.error("Warning! Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
             return null;
       }
    }
 
-   @NotNull
    private static String getExceptionMsg(CourseBookingEndResult courseBookingEndResult) {
       Exception exception = courseBookingEndResult.getException();
       return exception.getClass().getSimpleName() + ":\n" + exception.getMessage();

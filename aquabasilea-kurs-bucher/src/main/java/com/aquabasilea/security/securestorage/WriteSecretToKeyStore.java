@@ -14,6 +14,7 @@ import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.SecretKeyEntry;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -22,7 +23,7 @@ import static com.aquabasilea.security.securestorage.util.KeyUtils.loadKeyStoreF
 
 public class WriteSecretToKeyStore {
 
-   public static final String SALT = "add some salty-salt";
+   private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
    public static void main(String[] args) {
 
@@ -64,12 +65,11 @@ public class WriteSecretToKeyStore {
       PasswordProtection keyStorePP = new PasswordProtection(keyStorePassword);
 
       SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
-      SecretKey generatedSecret =
-              factory.generateSecret(new PBEKeySpec(
-                      aliasSecret,
-                      SALT.getBytes(),
-                      13
-              ));
+      SecretKey generatedSecret = factory.generateSecret(new PBEKeySpec(
+              aliasSecret,
+              SECURE_RANDOM.generateSeed(512),
+              13
+      ));
 
       keyStore.setEntry(alias, new SecretKeyEntry(generatedSecret), keyStorePP);
 

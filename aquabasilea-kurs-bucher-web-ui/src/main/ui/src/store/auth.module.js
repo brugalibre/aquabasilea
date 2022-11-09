@@ -1,6 +1,6 @@
 import AuthService from '../services/auth/auth.service';
 
-const user = localStorage.getItem('user');
+const user = JSON.parse(localStorage.getItem('user'));
 const initialState = user
     ? {status: {loggedIn: true}, user}
     : {status: {loggedIn: false}, user: null};
@@ -10,15 +10,29 @@ export const auth = {
     state: initialState,
     actions: {
         login({commit}, user) {
-            commit('loginSuccess', user);
+            return AuthService.login(user)
+                .then(user => {
+                    commit('loginSuccess', user);
+                    return Promise.resolve(user);
+                }).catch(error => {
+                    commit('loginFailure');
+                    return Promise.reject(error);
+                });
         },
         logout({commit}) {
             AuthService.logout();
             commit('logout');
         },
-        registerSuccess({commit}) {
-            commit('registerSuccess');
-        },
+        register({commit}, user) {
+            return AuthService.register(user)
+                .then(response => {
+                    commit('registerSuccess');
+                    return Promise.resolve(response.data);
+                }).catch(error => {
+                    commit('registerFailure');
+                    return Promise.reject(error);
+                });
+        }
     },
     mutations: {
         loginSuccess(state, user) {

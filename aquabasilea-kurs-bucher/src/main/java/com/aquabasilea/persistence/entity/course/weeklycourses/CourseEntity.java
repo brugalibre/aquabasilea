@@ -1,34 +1,34 @@
 package com.aquabasilea.persistence.entity.course.weeklycourses;
 
 import com.aquabasilea.model.course.CourseLocation;
-import com.aquabasilea.persistence.entity.base.BaseEntity;
-import org.springframework.lang.NonNull;
+import com.brugalibre.common.domain.persistence.DomainEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "course")
-public class CourseEntity extends BaseEntity {
+public class CourseEntity extends DomainEntity {
 
    @ManyToOne
    @JoinColumn(name = "weeklycourses_id")
    private WeeklyCoursesEntity weeklyCoursesEntity;
 
-   @NonNull
+   @NotNull
    private String courseName;
 
-   @NonNull
+   @NotNull
    private String courseInstructor;
 
-   @NonNull
+   @NotNull
    private LocalDateTime courseDate;
 
    private boolean hasCourseDef;
 
    @Enumerated(EnumType.STRING)
-   @NonNull
+   @NotNull
    private CourseLocation courseLocation;
 
    private boolean isPaused;
@@ -47,30 +47,30 @@ public class CourseEntity extends BaseEntity {
       this.weeklyCoursesEntity = weeklyCoursesEntity;
    }
 
-   @NonNull
+   @NotNull
    public LocalDateTime getCourseDate() {
       return courseDate;
    }
 
-   public void setCourseDate(@NonNull LocalDateTime courseDate) {
+   public void setCourseDate(@NotNull LocalDateTime courseDate) {
       this.courseDate = courseDate;
    }
 
-   @NonNull
+   @NotNull
    public CourseLocation getCourseLocation() {
       return courseLocation;
    }
 
-   public void setCourseLocation(@NonNull CourseLocation courseLocation) {
+   public void setCourseLocation(@NotNull CourseLocation courseLocation) {
       this.courseLocation = courseLocation;
    }
 
-   @NonNull
+   @NotNull
    public String getCourseName() {
       return courseName;
    }
 
-   public void setCourseName(@NonNull String courseName) {
+   public void setCourseName(@NotNull String courseName) {
       this.courseName = courseName;
    }
 
@@ -90,7 +90,6 @@ public class CourseEntity extends BaseEntity {
       this.hasCourseDef = hasCourseDef;
    }
 
-   @NonNull
    public String getCourseInstructor() {
       return courseInstructor;
    }

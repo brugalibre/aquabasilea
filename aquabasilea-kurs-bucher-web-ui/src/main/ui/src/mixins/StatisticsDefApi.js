@@ -10,8 +10,10 @@ export default {
             axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/statistics', {headers: authHeader()})
                 .then(response => response.data)
                 .then(data => this.$store.dispatch('aquabasilea/setStatisticsDto', data))
-                .catch(error => LoggingService.logError('Error occurred while fetching StatisticsDto', error))
-                .finally(() => this.$store.dispatch('aquabasilea/setIsLoading', false));
+                .catch(error => {
+                    LoggingService.logError('Error occurred while fetching StatisticsDto', error);
+                    this.$emit('error-occurred', LoggingService.extractErrorText(error));
+                });
         },
     }
 }

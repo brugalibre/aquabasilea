@@ -7,12 +7,12 @@ import static com.aquabasilea.web.constant.AquabasileaWebConst.LOGIN_FAILED_ERRO
 
 public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
 
-   public AquabasileaLogin(String userName, String userPassword, String propertiesName) {
+   public AquabasileaLogin(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
    }
 
    public static void main(String[] args) {
-      AquabasileaLogin.createAquabasileaLogin("asdf", "df").doLogin();
+      AquabasileaLogin.createAquabasileaLogin("asdf", new char[]{}).doLogin();
    }
 
    /**
@@ -22,7 +22,7 @@ public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
     * @param userPassword the user-password
     * @return a new {@link AquabasileaLogin}
     */
-   public static AquabasileaLogin createAquabasileaLogin(String userName, String userPassword) {
+   public static AquabasileaLogin createAquabasileaLogin(String userName, char[] userPassword) {
       AquabasileaLogin aquabasileaLogin = new AquabasileaLogin(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
       aquabasileaLogin.initWebDriver();
       return aquabasileaLogin;
@@ -36,8 +36,7 @@ public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
    public boolean doLogin() {
       super.navigateToPageAndLogin();
       boolean isLoginSuccessful =  this.webNavigatorHelper.findWebElementById(LOGIN_FAILED_ERROR_MSG_ID)
-              .map(webElement -> false)
-              .orElse(true);
+              .isEmpty();
       logout();
       return isLoginSuccessful;
    }

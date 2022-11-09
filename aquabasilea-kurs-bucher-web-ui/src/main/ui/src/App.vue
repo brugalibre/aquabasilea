@@ -1,47 +1,44 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-info">
-      <a href="/" class="navbar-brand"> Migros-Kursbucher Verwaltung</a>
-      <div class="navbar-nav mr-auto" >
-        <li class="nav-item">
-          <router-link to="/manage" class="nav-link">
-            <font-awesome-icon icon="fa-solid fa-square-parking"/>
-            Migros-Kurs verwalten
-          </router-link>
-        </li>
-      </div>
+    <nav class="navbar navbar-expand navbar-dark bg-info nav-bar-container">
 
+      <div class="aquabasilea-course-overview-router-link">
+        <router-link to="/" class="nav-link">
+          <!--          <span class="aquabasilea-icon"/>-->
+          <h3 class="aquabasilea-course-overview-router-link-title">Deine Migros-Kurse</h3>
+        </router-link>
+      </div>
       <div v-if="!currentUser" class="navbar-nav ml-auto">
-        <li class="nav-item">
+        <li class="nav-item icon-with-text">
+          <span class="register-icon"/>
           <router-link to="/register" class="nav-link">
-            <font-awesome-icon icon="user-plus"/>
-            Sign Up
+            <label class="router-link-label">Register</label>
           </router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item icon-with-text nav-bar-end-element">
+          <span class="login-icon"/>
           <router-link to="/login" class="nav-link">
-            <font-awesome-icon icon="sign-in-alt"/>
-            Login
+            <label class="router-link-label">Login</label>
           </router-link>
         </li>
       </div>
       <div v-if="currentUser" class="navbar-nav ml-auto">
-        <li class="nav-item">
+        <li class="nav-item icon-with-text">
+          <span class="user-icon"/>
           <router-link to="/profile" class="nav-link">
-            <font-awesome-icon icon="user"/>
-            {{ currentUser.username }}
+            <label class="router-link-label">Profil verwalten</label>
           </router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item icon-with-text nav-bar-end-element">
+          <span class="logout-icon"/>
           <a class="nav-link" @click.prevent="logOut">
-            <font-awesome-icon icon="sign-out-alt"/>
-            LogOut
+            <label class="router-link-label">Logout</label>
           </a>
         </li>
       </div>
     </nav>
 
-    <div class="container">
+    <div class="aquabasilea-container container">
       <router-view/>
     </div>
 
@@ -68,6 +65,24 @@ export default {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.nav-bar-end-element {
+  margin: 0px 25px 0px 50px;
+}
+
+.nav-bar-container {
+  display: flex;
+  justify-content: space-between !important;
+  max-height: 60px;
+}
+
+.router-link-label {
+  white-space: nowrap;
+}
+
+.aquabasilea-container {
+  min-width: 100%;
+}
+
 .centered-flex {
   display: flex;
   flex-wrap: wrap;
@@ -79,10 +94,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: auto;
-}
-
-.course-state-overview {
-  flex-grow: 2;
 }
 
 .tile {
@@ -186,6 +197,51 @@ button {
 
 .error-details {
   border-radius: 10px;
+}
+
+.login-icon {
+  background: url("./assets/login.svg") transparent no-repeat right;
+}
+
+.register-icon {
+  background: url("./assets/register.svg") no-repeat left;
+}
+
+.logout-icon {
+  background: url("./assets/logout.svg") transparent no-repeat right;
+}
+
+.user-icon {
+  background: url("./assets/user.svg") no-repeat left;
+  background-size: 50% 50%;
+}
+
+.aquabasilea-icon {
+  background: url("./assets/aqualogo.jpg") transparent no-repeat left;
+}
+
+.icon-with-text {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  grid-template-rows: auto;
+  width: 100%;
+}
+
+.aquabasilea-course-overview-router-link {
+  margin-left: 1vw;
+  max-height: 50px;
+  min-width: 50px;
+}
+
+.aquabasilea-course-overview-router-link-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  width: 100%;
+  text-align: left;
+  float: left;
+  color: white;
 }
 
 </style>

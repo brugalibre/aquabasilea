@@ -5,7 +5,10 @@
         v-bind:class="{ isRunning: courseBookingStateDto.state === 'IDLE' || courseBookingStateDto.state === 'BOOKING',
         isNotRunning: courseBookingStateDto.state !== 'IDLE'
         }">
-      <label> {{ courseBookingStateDto.stateMsg }} </label>
+      <label v-bind:class="{
+        courseBookingStateNotOfflineLabel: courseBookingStateDto.state === 'IDLE' || courseBookingStateDto.state === 'BOOKING',
+        courseBookingStateOfflineLabel: courseBookingStateDto.state !== 'IDLE'}">
+        {{ courseBookingStateDto.stateMsg }} </label>
     </div>
     <CButton
         color="info"
@@ -21,9 +24,9 @@
         </CAccordionHeader>
         <CAccordionBody>
           <div class="grid-container-60-40">
-            <label class="statistic-attr">Letztes Aquabasilea-Kurs-Update</label>
+            <label class="statistic-attr">Letztes Migros-Kurs-Update</label>
             <span>{{ statisticsDto.lastCourseDefUpdate }}</span>
-            <label class="statistic-attr">Nächstes Aquabasilea-Kurs-Update</label>
+            <label class="statistic-attr">Nächstes Migros-Kurs-Update</label>
             <span>{{ statisticsDto.nextCourseDefUpdate }}</span>
             <label class="statistic-attr">Uptime</label>
             <span>{{ statisticsDto.uptimeRepresentation }}</span>
@@ -88,6 +91,15 @@ export default {
 }
 </script>
 <style scoped>
+
+.courseBookingStateOfflineLabel {
+  text-align: center;
+  display: block;
+}
+
+.courseBookingStateNotOfflineLabel {
+  text-align: left;
+}
 
 .isNotRunning {
   background-color: #ffcccb;

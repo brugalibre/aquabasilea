@@ -5,8 +5,12 @@
 .gradle
 .idea
 *.keystore
+*.jks
+*.p12
 # Log file
 *.log
+*.gz
+created.sql
 
 # BlueJ files
 *.ctxt
@@ -25,3 +29,4 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/aquabasilea-secure-web.p12

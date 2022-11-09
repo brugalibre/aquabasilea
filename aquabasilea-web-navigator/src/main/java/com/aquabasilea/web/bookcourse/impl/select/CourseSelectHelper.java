@@ -86,7 +86,7 @@ public class CourseSelectHelper {
     * @return a {@link CourseClickedResult} describing the outcome of the selecting procedure
     */
    public CourseClickedResult selectCourseAndBook(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
-      LOG.info("Trying to select course '{}'", courseBookDetails.courseName());
+      LOG.info("Trying to select course [{}]", courseBookDetails.courseName());
       boolean courseSelected = selectCourse(courseBookDetails, errorHandler);
       return clickSelectedCourseLoginIfNecessaryAndBook(courseSelected, courseBookDetails.courseName(), errorHandler);
    }

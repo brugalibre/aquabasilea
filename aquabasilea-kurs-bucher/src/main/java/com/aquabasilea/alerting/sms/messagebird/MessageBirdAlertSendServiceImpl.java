@@ -1,8 +1,11 @@
 package com.aquabasilea.alerting.sms.messagebird;
 
+import com.aquabasilea.alerting.api.AlertResponse;
 import com.aquabasilea.alerting.api.AlertSendException;
-import com.aquabasilea.alerting.config.AlertSendConfig;
 import com.aquabasilea.alerting.api.AlertSendService;
+import com.aquabasilea.alerting.config.AlertSendConfig;
+import com.aquabasilea.alerting.send.AlertSendInfos;
+import com.aquabasilea.alerting.sms.messagebird.model.MessageBirdSendAlertResponse;
 import com.messagebird.MessageBirdClient;
 import com.messagebird.MessageBirdService;
 import com.messagebird.MessageBirdServiceImpl;
@@ -23,19 +26,19 @@ public class MessageBirdAlertSendServiceImpl implements AlertSendService {
    private static final Logger LOG = LoggerFactory.getLogger(MessageBirdAlertSendServiceImpl.class);
 
    @Override
-   public String sendAlert(AlertSendConfig alertSendConfig, String msg) throws AlertSendException {
-      LOG.info("Sending text {} to {} receivers", msg, alertSendConfig.getReceivers().size());
+   public AlertResponse sendAlert(AlertSendConfig alertSendConfig, AlertSendInfos alertSendInfos) throws AlertSendException {
+      LOG.info("Sending text {} to {} receivers", alertSendInfos, alertSendInfos.receivers().size());
       MessageBirdService messageBirdService = new MessageBirdServiceImpl(alertSendConfig.getApiKey());
       MessageBirdClient messageBirdClient = new MessageBirdClient(messageBirdService);
       // convert String number into acceptable format
-      List<BigInteger> receivers = alertSendConfig.getReceivers()
+      List<BigInteger> receivers = alertSendInfos.receivers()
               .stream()
               .map(BigInteger::new)
               .collect(Collectors.toList());
       try {
-         final MessageResponse response = messageBirdClient.sendMessage(alertSendConfig.getOriginator(), msg, receivers);
-         LOG.info("Sending text done, response '{}'", response);
-         return response.getBody();
+         final MessageResponse response = messageBirdClient.sendMessage(alertSendConfig.getOriginator(), alertSendInfos.msg(), receivers);
+         LOG.info("Sending text done, response [{}]", response);
+         return MessageBirdSendAlertResponse.of(response);
       } catch (UnauthorizedException | GeneralException e) {
          throw new AlertSendException(e);
       }

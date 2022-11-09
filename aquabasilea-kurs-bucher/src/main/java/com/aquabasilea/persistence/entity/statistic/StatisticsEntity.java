@@ -1,45 +1,43 @@
 package com.aquabasilea.persistence.entity.statistic;
 
-import com.aquabasilea.persistence.entity.base.BaseEntity;
-import org.springframework.lang.NonNull;
+import com.brugalibre.common.domain.persistence.DomainEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "statistics")
-public class StatisticsEntity extends BaseEntity {
+public class StatisticsEntity extends DomainEntity {
+
+   @NotNull
+   @Column(name = "user_id")
+   private String userId;
 
    private LocalDateTime lastCourseDefUpdate;
    private LocalDateTime nextCourseDefUpdate;
    private int bookingFailedCounter;
    private int bookingSuccessfulCounter;
 
-   public StatisticsEntity(UUID id) {
-      super(id);
-   }
-
    public StatisticsEntity() {
       super(null);
    }
 
-   @NonNull
    public LocalDateTime getLastCourseDefUpdate() {
       return lastCourseDefUpdate;
    }
 
-   public void setLastCourseDefUpdate(@NonNull LocalDateTime lastCourseDefUpdate) {
+   public void setLastCourseDefUpdate(@NotNull LocalDateTime lastCourseDefUpdate) {
       this.lastCourseDefUpdate = lastCourseDefUpdate;
    }
 
-   @NonNull
    public LocalDateTime getNextCourseDefUpdate() {
       return nextCourseDefUpdate;
    }
 
-   public void setNextCourseDefUpdate(@NonNull LocalDateTime nextCourseDefUpdate) {
+   public void setNextCourseDefUpdate(@NotNull LocalDateTime nextCourseDefUpdate) {
       this.nextCourseDefUpdate = nextCourseDefUpdate;
    }
 
@@ -57,5 +55,13 @@ public class StatisticsEntity extends BaseEntity {
 
    public void setBookingSuccessfulCounter(int bookingSuccessfulCounter) {
       this.bookingSuccessfulCounter = bookingSuccessfulCounter;
+   }
+
+   public String getUserId() {
+      return userId;
+   }
+
+   public void setUserId(String userId) {
+      this.userId = userId;
    }
 }

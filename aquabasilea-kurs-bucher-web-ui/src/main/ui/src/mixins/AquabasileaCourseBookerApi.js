@@ -6,7 +6,7 @@ export default {
     name: 'AquabasileaCourseBookerApi',
     methods: {
         pauseOrResumeAquabasileaCourseBooker: function () {
-            axios.post(AQUABASILEA_COURSE_BOOKER_API_URL + '/pauseOrResume', {headers: authHeader()})
+            axios.put(AQUABASILEA_COURSE_BOOKER_API_URL + '/pauseOrResume', null, {headers: authHeader()})
                 .catch(error => console.error("Error occurred while pausing or resuming", error));
         },
         fetchCourseBookingStateDto: function () {

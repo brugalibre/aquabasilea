@@ -4,7 +4,7 @@ Dies ist eine App, welche zeitgesteuert und voll automatisch das Buchen von Spor
 
 ## Funktionsweise
 
-Kurse werden hinzugefügt, in dem sie aus einer Liste mit vordefinierten "Aquabasliea-Kursen" gewählt werden. Diese vordefinierten "Aquabasilea-Kurse" werden jeweils beim initialen Start der Applikation und anschliessend jeweils am Sonntag um 23:00 Uhr automatisch aktualisiert. Die gewünschten Kursorte können in der Datei 'config\aquabasilea-kurs-bucher-config.yml' definiert werden. z.B. mit dem Eintrag 
+Kurse werden hinzugefügt, in dem sie aus einer Liste mit vordefinierten "Migros-Kursen" gewählt werden. Diese vordefinierten "Aquabasilea-Kurse" werden jeweils beim initialen Start der Applikation und anschliessend jeweils am Sonntag um 23:00 Uhr automatisch aktualisiert. Die gewünschten Kursorte können in der Datei 'config\aquabasilea-kurs-bucher-config.yml' definiert werden. z.B. mit dem Eintrag 
 `defaultCourses:`
 
  `- "Migros Fitnesscenter Aquabasilea"`
@@ -31,7 +31,7 @@ Ebenfalls kann dort die App pausiert bzw. reaktiviert werden.
 Ein Klick auf den Button 'Statistik' klappt die eine Sektion mit statistischen Informationen über die App aus. D.h Informationen wann das letzte Mal die Kurse anhand der Aquabasilea-Kursseite aktualisiert wurden, wann das nächste Update erfolgen wird oder wie lange die Applikation bereits läuft, wie viele Buchungen erfolgt sind und wie viele davon erfolgreich waren.
 
 ## Hinzufügen von Kursen
-In der linken unteren Kachel können neue Kurse aus einer Liste von definierten Aquabasilea-Kursen ausgewählt und hinzugefügt werden. Grundsätzlich werden die auswählbaren Kurse automatisch aktualisiert (s. Abschnitt 'Funktionsweise'). Aus der Liste mit Aquabasilea-Kursen kann der zu hinzufügende Kurs ausgewählt werden.
+In der linken unteren Kachel können neue Kurse aus einer Liste von definierten Migros-Kursen ausgewählt und hinzugefügt werden. Grundsätzlich werden die auswählbaren Kurse automatisch aktualisiert (s. Abschnitt 'Funktionsweise'). Aus der Liste mit Aquabasilea-Kursen kann der zu hinzufügende Kurs ausgewählt werden.
 Das anklicken eines Kurses in der Dropdown fügt ihn automatisch hinzu.
 Das Eingabefeld, welches links von den auszuwählenden Kursen platziert ist, ist eine Volltextsuche. Z.B. kann mit der Eingabe 'Funct Mittwoch 1815' nach dem Kurs 'Functional Training', welche jeweils am Mittwoch um 18:15 Uhr stattfindet. In der Dropdown-Liste werden die Treffer bzw. Kurse, welcher mit der Eingabe am besten übereinstimmen, zu oberst aufgeführt. Es kann jeweils nur ein Kurs auf einmal ausgewählt werden.
 
@@ -43,7 +43,7 @@ Daraufhin wird der Knopf ausgegraut und im Hintergrund startet die Aktualisierun
 die definierten standard Kursorte mit der aktuellen Auswahl überschrieben.
 
 Dieser Vorgang kann einige Minuten dauern. Aktualisiere daher nach ein paar Minuten den Browser, bis der Aktualisieren-Button wieder aktiv und die 
-Liste mit vordefinierten Aquabasilea-Kursen abgefüllt ist. 
+Liste mit vordefinierten Migros-Kursen abgefüllt ist. 
 
 ## Kurse verwalten
 
@@ -61,7 +61,7 @@ Konfiguration dazu erfolgt im File 'config/alert/aquabasilea-alert-notification.
 # Authentifizierung
 
 Damit die Authentifizierung des Aquabasilea-Benutzers funktioniert, müssen zwei key-stores angelegt werden:
-- aquabasilea.keystore
+- aquabasilea.jks
 - aquabasilea-keystore.keystore
 
 Letzter ist quasi der Super-Keystore, welcher die Passwörter für den eigentlichen Keystore enthält. Dieser kann mit einem eigenen Password geschützt werden.

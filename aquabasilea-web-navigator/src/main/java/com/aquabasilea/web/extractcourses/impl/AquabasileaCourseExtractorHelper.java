@@ -6,7 +6,7 @@ import com.aquabasilea.web.model.CourseLocation;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
 import com.aquabasilea.web.util.DateUtil;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -63,10 +63,10 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
     * @return a {@link AquabasileaCourse}
     */
    public AquabasileaCourse evalCourseDetailsAndCreateAquabasileaCourse(WebElement courseButton) {
+      LOG.info("Evaluate AquabasileaCourse for button [{}]", courseButton.getText());
       openCourseDetailDialogAndAwaitReadiness(courseButton);
-      LOG.info("Evaluate AquabasileaCourse for button '{}'", courseButton.getText());
       AquabasileaCourse aquabasileaCourse = evalCourseDetailsAndCreateAquabasileaCourse();
-      LOG.info("Evaluated AquabasileaCourse '{}'", aquabasileaCourse);
+      LOG.info("Evaluated AquabasileaCourse [{}]", aquabasileaCourse);
       return aquabasileaCourse;
    }
 

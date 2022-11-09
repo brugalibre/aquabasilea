@@ -1,17 +1,28 @@
 package com.aquabasilea.rest.api.security;
 
-import com.aquabasilea.security.securestorage.WriteSecretToKeyStore;
+import com.aquabasilea.app.initialize.api.AquabasileaAppInitializer;
+import com.aquabasilea.app.initialize.api.UserAddedEvent;
 import com.brugalibre.common.security.auth.register.UserRegisteredEvent;
 import com.brugalibre.common.security.auth.register.UserRegisteredObserver;
-import com.brugalibre.common.security.rest.model.RegisterRequest;
+import com.brugalibre.common.security.user.model.User;
 
-public class AquabasileaUserRegisteredObserver implements UserRegisteredObserver {
-
-   public static final String AQUABASILEA_KEYSTORE = "aquabasilea.keystore";
+/**
+ * The {@link AquabasileaUserRegisteredObserver} handles as a {@link UserRegisteredObserver} the event of a new registration
+ * of a {@link User} It therefore forwards the event to the {@link AquabasileaAppInitializer} which creates and initializes
+ * all necessary components for the new user
+ *
+ * @param aquabasileaAppInitializer the {@link AquabasileaAppInitializer}
+ */
+public record AquabasileaUserRegisteredObserver(
+        AquabasileaAppInitializer aquabasileaAppInitializer) implements UserRegisteredObserver {
 
    @Override
    public void userRegistered(UserRegisteredEvent userRegisteredEvent) {
-      RegisterRequest registerRequest = userRegisteredEvent.registerRequest();
-      new WriteSecretToKeyStore().writeSecretToKeyStore(AQUABASILEA_KEYSTORE, "Aqua21!basilea22^^".toCharArray(), registerRequest.username(), registerRequest.password().toCharArray());
+      aquabasileaAppInitializer.initialize(createUserAddedEvent(userRegisteredEvent));
+   }
+
+   private static UserAddedEvent createUserAddedEvent(UserRegisteredEvent userRegisteredEvent) {
+      return new UserAddedEvent(userRegisteredEvent.username(), userRegisteredEvent.phoneNr(),
+              userRegisteredEvent.userId(), userRegisteredEvent.password());
    }
 }

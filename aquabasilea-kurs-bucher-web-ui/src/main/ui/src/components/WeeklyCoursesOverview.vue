@@ -1,6 +1,6 @@
 <template>
   <div class="weekly-courses-overview grid-container">
-    <h2>Kurse verwalten</h2>
+    <h2>Wöchentliche Kurse verwalten</h2>
     <div class="table">
       <table>
         <tr>
@@ -44,6 +44,7 @@
           <td>
             <div style="display: flex">
               <button
+                  v-c-tooltip="{content: getPauseButtonToolTipText(), placement: 'top'}"
                   class="pause-button table-button"
                   v-on:click="pauseCourseAndRefresh(course)">
               </button>
@@ -52,6 +53,7 @@
           <td>
             <div style="display: flex">
               <button
+                  v-c-tooltip="{content: getDeleteButtonToolTipText(), placement: 'top'}"
                   class="delete-button table-button"
                   v-bind:class="{ 'table-button': !course.isPaused, 'inactive-table-button': course.isPaused}"
                   v-on:click="deleteCourseAndRefresh(course)">
@@ -63,8 +65,7 @@
     </div>
     <div class="weekly-courses-placeholder"></div>
     <a class="course-programm-link" href="https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm"
-       target="_blank">Aquabasilea
-      kursprogramm</a>
+       target="_blank">Offizielles Migrosfitness Kursprogramm</a>
   </div>
 </template>
 <script>
@@ -85,13 +86,20 @@ export default {
   methods: {
     getToolTipText: function (course) {
       if (!course.hasCourseDef) {
-        return 'Achtung! Für diesen Kurs gibt es keinen Aquabasilea Kurs!';
+        return 'Achtung! Für diesen Kurs gibt es keinen Migros-Kurs!';
       } else if (course.isPaused) {
-        return 'Dieser Kurs ist pausiert';
+        return 'Dieser Kurs ist pausiert, bis der nächste aktive Kurs gebucht wurde';
       } else if (course.isCurrentCourse) {
-        return 'Dieser Kurs wird als nächstes gebucht';
+        return 'Dieser Kurs wird als nächstes gebucht. Kursinstruktor ' + course.courseInstructor + '';
       }
       return '';
+    },
+    getDeleteButtonToolTipText: function () {
+      return 'Löscht diesen Kurs. Keine Angst, er kann ganz einfach wieder hinzugefügt werden';
+    },
+    getPauseButtonToolTipText: function () {
+      return 'Pausiert diesen Kurs. Wenn es noch weitere, aktive Kurse gibt, wird dieser Kurs nur für eine Woche ausgesetzt.\n' +
+          'Ist es hingegen der einzige Kurs, wird die gesamte Applikation pausiert';
     },
     hasToolTipText: function (course) {
       return this.getToolTipText(course) !== '';
@@ -106,7 +114,6 @@ export default {
       }
     },
     pauseCourseAndRefresh: function (course) {
-      this.$store.dispatch('aquabasilea/setIsLoading', true);
       this.pauseResumeCourse(course);
       this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     },

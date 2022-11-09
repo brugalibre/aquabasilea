@@ -39,12 +39,10 @@ public class InfoString4StateEvaluator {
    }
 
    private String getInfoString4IdleBeforeBooking(Course currentCourse) {
-      this.aquabasileaCourseBookerConfig.refresh();
       return getInfoString4Idle(currentCourse, aquabasileaCourseBookerConfig.getDurationToStartBookerEarlier(), TextResources.INFO_TEXT_IDLE_BEFORE_BOOKING);
    }
 
    private String getInfoString4IdleBeforeDryRun(Course currentCourse) {
-      this.aquabasileaCourseBookerConfig.refresh();
       return getInfoString4Idle(currentCourse, aquabasileaCourseBookerConfig.getDurationToStartDryRunEarlier(), TextResources.INFO_TEXT_IDLE_BEFORE_DRY_RUN);
    }
 

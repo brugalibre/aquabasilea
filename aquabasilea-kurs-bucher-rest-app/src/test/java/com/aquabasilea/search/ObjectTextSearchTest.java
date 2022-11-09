@@ -15,6 +15,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class ObjectTextSearchTest {
 
+   private static final String USER_ID = "1234";
+   public static final String COURSE_INSTRUCTOR = "Maja K.";
+
    @Test
    void testFilterCoursesWithSameCourseNameButDifferentLocation() {
       // Given
@@ -25,11 +28,11 @@ class ObjectTextSearchTest {
       String filterWith2Words = "functional aqua";
       String functionalTraining = "Functional training";
       TestCaseBuilder tcb = new TestCaseBuilder()
-              .withCourseDef(new CourseDef(friday, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
-              .withCourseDef(new CourseDef(friday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, functionalTraining))
-              .withCourseDef(new CourseDef(friday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "BeBo Fit (Beckenboden Fit)"))
-              .withCourseDef(new CourseDef(monday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2"))
-              .withCourseDef(new CourseDef(thursday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant"))
+              .withCourseDef(new CourseDef("1", USER_ID, friday, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("2", USER_ID, friday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, functionalTraining, COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("3", USER_ID, friday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "BeBo Fit (Beckenboden Fit)", COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("4", USER_ID, monday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2", COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("5", USER_ID, thursday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant", COURSE_INSTRUCTOR))
               .build();
 
       // When
@@ -55,10 +58,10 @@ class ObjectTextSearchTest {
       String filter = "16:15 aqua functional";// 'aqua' should not mislead the best search result..
       String functionalTraining = "Functional training";
       TestCaseBuilder tcb = new TestCaseBuilder()
-              .withCourseDef(new CourseDef(friday_1615, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
-              .withCourseDef(new CourseDef(friday_1315, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining))
-              .withCourseDef(new CourseDef(monday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2"))
-              .withCourseDef(new CourseDef(thursday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant"))
+              .withCourseDef(new CourseDef("1", USER_ID, friday_1615, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("2", USER_ID, friday_1315, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("3", USER_ID, monday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2", COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("4", USER_ID, thursday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant", COURSE_INSTRUCTOR))
               .build();
 
       // When

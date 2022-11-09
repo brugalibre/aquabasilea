@@ -1,6 +1,6 @@
 package com.aquabasilea.model.course;
 
-import com.aquabasilea.model.course.exception.CourseAlreadyExistsException;
+import com.aquabasilea.model.course.weeklycourses.exception.CourseAlreadyExistsException;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;

@@ -7,6 +7,7 @@ import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.util.DateUtil;
+import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +47,11 @@ public class InitStateHandler {
     * or if the dry-run is skipped and directly moved to the {@link CourseBookingState#BOOKING}
     * If there are no next courses, {@link CourseBookingState#PAUSED} is returned as a default result
     *
+    * @param userId the id of the {@link User} for which the next {@link Course} is evaluated
     * @return an {@link InitializationResult} containing the next {@link Course} as well as the next {@link CourseBookingState}
     */
-   public InitializationResult evaluateNextCourseAndState() {
-      aquabasileaCourseBookerConfig.refresh();
-      WeeklyCourses weeklyCourses = weeklyCoursesRepository.findFirstWeeklyCourses();
+   public InitializationResult evaluateNextCourseAndState(String userId) {
+      WeeklyCourses weeklyCourses = weeklyCoursesRepository.getByUserId(userId);
       return getCourseAndTimeUntilStart(weeklyCourses);
    }
 
@@ -58,15 +59,15 @@ public class InitStateHandler {
       LocalDateTime refDate = LocalDateTime.now();
       InitializationResult idleBeforeBookingResult = checkAllCoursesAndGetEarliestCourseAndTimeUntilStart(weeklyCourses, refDate);
       if (isNull(idleBeforeBookingResult)) {
-         LOG.warn("No courses defined!");
+         LOG.warn("No courses defined for user {}!", weeklyCourses.getUserId());
          return InitializationResult.pause(weeklyCourses);
       }
       InitializationResult idleBeforeDryRunResult = getDryRunInitializationResult(refDate, idleBeforeBookingResult);
       if (nonNull(idleBeforeDryRunResult)) {
-         LOG.info("Found next course '{}' for dry run. Starting {}s earlier", idleBeforeDryRunResult.getCurrentCourse(), idleBeforeDryRunResult.getDurationUtilDryRunOrBookingBegin());
+         LOG.info("Found next course [{}] for dry run. Starting {}s earlier. User: {}", idleBeforeDryRunResult.getCurrentCourse(), idleBeforeDryRunResult.getDurationUtilDryRunOrBookingBegin(), weeklyCourses.getUserId());
          return idleBeforeDryRunResult;
       }
-      LOG.info("Found next course '{}' for booking. Starting {}s earlier", idleBeforeBookingResult.getCurrentCourse(), idleBeforeBookingResult.getDurationUtilDryRunOrBookingBegin());
+      LOG.info("Found next course [{}] for booking. Starting {}s earlier. User: {}", idleBeforeBookingResult.getCurrentCourse(), idleBeforeBookingResult.getDurationUtilDryRunOrBookingBegin(), weeklyCourses.getUserId());
       return idleBeforeBookingResult;
    }
 
@@ -133,14 +134,14 @@ public class InitStateHandler {
     * During the initializing state the course-dates of the {@link Course}s may be updated, when this date lays in the past
     * Additionally the {@link Course#getHasCourseDef()} must be updated, when this course-date has changed
     *
-    * @param initializationResult the {@link InitializationResult} which resulted from a {@link InitStateHandler#evaluateNextCourseAndState()} call
+    * @param initializationResult the {@link InitializationResult} which resulted from a {@link InitStateHandler#evaluateNextCourseAndState(String)} call
     */
    public void saveUpdatedWeeklyCourses(InitializationResult initializationResult) {
       updateCoursesHasCourseDef(initializationResult.getUpdatedWeeklyCourses());
    }
 
    void updateCoursesHasCourseDef(WeeklyCourses weeklyCourses) {
-      weeklyCourses.updateCoursesHasCourseDef(courseDefRepository.findAllCourseDefs());
+      weeklyCourses.updateCoursesHasCourseDef(courseDefRepository.getAllByUserId(weeklyCourses.getUserId()));
       weeklyCoursesRepository.save(weeklyCourses);
    }
 }

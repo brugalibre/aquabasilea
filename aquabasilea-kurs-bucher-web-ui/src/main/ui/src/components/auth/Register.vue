@@ -10,20 +10,28 @@
       <!--      <form @submit="handleRegister">-->
       <div>
         <div v-if="!successful">
-          <div>
-            <label for="username">Username</label>
-            <CFormInput v-model="username" id="username" name="username" type="text"/>
-            <CAlert name="username" class="error-feedback"/>
+          <div class="form-group">
+            <label for="username">Benutzername</label>
+            <CFormInput v-model="username" id="username" placeholder="Dein Migros Fitness Benutzername" name="username"
+                        plactype="text" class="form-control"/>
+            <!--            <ErrorMessage name="username" class="error-feedback"/>-->
           </div>
-          <div style="border: darkred solid 3px">
-            <label for="password">Password</label>
-            <CFormInput v-model="password" id="password" name="password" type="password"/>
-            <CAlert name="password" class="error-feedback"/>
+          <div class="form-group">
+            <label for="password">Passwort</label>
+            <CFormInput v-model="password" id="password" placeholder="Dein Migros Fitness Passwort" name="password"
+                        type="password" class="form-control"/>
+            <!--            <ErrorMessage name="password" class="error-feedback"/>-->
           </div>
-
-          <div style="border: darkred solid 3px">
-            <CButton color="info" class="form-group register-button" :disabled="loading"
-                     v-on:click="this.handleRegister()" style="justify-self: center">
+          <div class="form-group">
+            <label for="phoneNr">Handy-Nr</label>
+            <!-- XXX hier war es ursprünglich ein Field typ! aber der ist immer protected-->
+            <CFormInput v-model="userPhoneNr" id="phoneNr" name="phoneNr" type="text" class="form-control"
+                        onsubmit="this.handleRegister()"/>
+            <CAlert name="phoneNr" class="error-feedback"/>
+          </div>
+          <div class="form-group">
+            <CButton color="info" class="register-button" :disabled="loading || !this.inputValid()"
+                     v-on:click="this.handleRegister()">
               <span
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
@@ -33,14 +41,22 @@
           </div>
         </div>
       </div>
-      <div class="form-group">
-        <CAlert v-if="successMessage" color="success" class="error-details" style="justify-self: center">
-          {{ successMessage }}
-        </CAlert>
-        <CAlert v-if=errorMessage color="danger" class="error-details" style="justify-self: center">
-          {{ errorMessage }}
-        </CAlert>
+
+      <div
+          v-if="message"
+          class="alert"
+          :class="successful ? 'alert-success' : 'alert-danger'"
+      >
+        {{ message }}
       </div>
+      <div>
+        <label>Bereits registriert?
+          Hier gehts zum</label>
+        <router-link to="/login">
+          Login
+        </router-link>
+      </div>
+
     </div>
   </div>
 </template>
@@ -51,7 +67,6 @@
 // import AuthService from "@/services/auth/auth.service";
 import LoggingService from "@/services/log/logging.service";
 // import axios from "axios";
-import AuthService from "@/services/auth/auth.service";
 
 export default {
   name: 'Register',
@@ -73,10 +88,10 @@ export default {
     return {
       username: '',
       password: '',
+      userPhoneNr: '',
       successful: false,
       loading: false,
-      successMessage: '',
-      errorMessage: '',
+      message: '',
       // schema
     };
   },
@@ -87,31 +102,32 @@ export default {
   },
   mounted() {
     if (this.loggedIn) {
-      this.$router.push('/manage');
+      this.$router.push('/');
     }
   },
   methods: {
+    inputValid: function () {
+      return this.username && this.userPhoneNr && this.password;
+    },
     handleRegister: function () {
-      this.successMessage = "";
+      this.message = "";
       this.successful = false;
       this.loading = true;
-      AuthService.register({
-            username: this.username,
-            password: this.password,
-            roles: ['ROLE_USER']
-          }
-      ).then(response => {
-            console.log('register response: ' + JSON.stringify(response));
-            this.$store.dispatch('auth/registerSuccess');
+      this.$store.dispatch("auth/register", {
+        username: this.username,
+        password: this.password,
+        userPhoneNr: this.userPhoneNr,
+        roles: ['USER']
+      }).then(response => {
+            console.log('Register success!');
             this.successful = true;
             this.loading = false;
-            this.successMessage = response?.data?.data;
-            this.errorMessage = null;
+            this.message = response?.data;
           }
       ).catch(error => {
-            LoggingService.logError('Error while registering', JSON.stringify(error));
-            this.errorMessage = LoggingService.extractErrorText(error);
-            this.successMessage = null;
+            this.message = LoggingService.extractErrorText(error);
+            LoggingService.logError('Error while registering', this.message);
+            this.successful = false;
           }
       ).finally(() => {
         console.log('register done');
@@ -123,6 +139,12 @@ export default {
 </script>
 
 <style scoped>
+
+.register-button {
+  margin-bottom: 35px;
+  width: 100%;
+}
+
 label {
   display: block;
   margin-top: 10px;
@@ -154,11 +176,6 @@ label {
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
   border-radius: 50%;
-}
-
-.register-button {
-  justify-self: center;
-  margin-bottom: 10px;
 }
 
 .error-feedback {

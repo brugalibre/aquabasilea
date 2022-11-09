@@ -1,6 +1,6 @@
 package com.aquabasilea.reflection;
 
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 
 public class ReflectionUtil {
 

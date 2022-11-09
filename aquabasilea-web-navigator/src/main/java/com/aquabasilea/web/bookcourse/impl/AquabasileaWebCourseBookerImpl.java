@@ -41,14 +41,14 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    private CourseFilterHelper courseFilterHelper;
    private AquabasileaLoginHelper aquabasileaLoginHelper;
 
-   public AquabasileaWebCourseBookerImpl(String userName, String userPassword, String propertiesName) {
+   public AquabasileaWebCourseBookerImpl(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
       PropertyReader propertyReader = new PropertyReader(propertiesName);
       this.coursePage = propertyReader.readValue(COURSE_PAGE);
       this.timeOutRetries = 4;
    }
 
-   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, String userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
+   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, char[] userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       AquabasileaWebCourseBookerImpl aquabasileaWebNavigator = new AquabasileaWebCourseBookerImpl(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
       aquabasileaWebNavigator.initWebDriver();
       aquabasileaWebNavigator.init(dryRun, duration2WaitUntilCourseBecomesBookable);

@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.model.statistic;
 
-import com.aquabasilea.statistics.model.Statistics;
+import com.aquabasilea.model.statistics.Statistics;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ class StatisticsDtoTest {
    void testGetStatisticsDto() {
 
       // Given
-      Statistics statistics = new Statistics();
+      Statistics statistics = new Statistics("123");
       statistics.setBookingFailedCounter(61);
       statistics.setBookingSuccessfulCounter(79);
       LocalDateTime lastCourseDefUpdate = LocalDateTime.of(2022, Month.APRIL, 1, 12, 15);
@@ -36,7 +36,7 @@ class StatisticsDtoTest {
    void testGetStatisticsDtoZeroBookings() {
 
       // Given
-      Statistics statistics = new Statistics();
+      Statistics statistics = new Statistics("1234");
 
       // When
       StatisticsDto statisticsDto = StatisticsDto.of(statistics, Locale.GERMAN, "1h, 1min");

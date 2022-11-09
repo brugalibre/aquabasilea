@@ -16,6 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 
 import static com.aquabasilea.security.securestorage.util.KeyUtils.ALGORITHM;
 import static com.aquabasilea.security.securestorage.util.KeyUtils.loadKeyStoreFromFile;
+import static java.util.Objects.requireNonNull;
 
 public class SecretFromKeyStoreReader {
 
@@ -44,6 +45,7 @@ public class SecretFromKeyStoreReader {
    private static char[] readSecretFromKeyStoreInternal(KeyStore keyStore, char[] aliasPassword, String passwordAlias) throws NoSuchAlgorithmException, UnrecoverableEntryException, KeyStoreException, InvalidKeySpecException {
       PasswordProtection keyStorePP = new PasswordProtection(aliasPassword);
       SecretKeyEntry ske = (SecretKeyEntry) keyStore.getEntry(passwordAlias, keyStorePP);
+      requireNonNull(ske, "No secret found for alias '" + passwordAlias + "'. Probably wrong alias used?");
 
       SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
       PBEKeySpec keySpec = (PBEKeySpec) factory.getKeySpec(ske.getSecretKey(),

@@ -25,7 +25,7 @@ public class RunAquabasileaNavigator {
       String courseName = "Aqua Tabata 50 Min.";
       String courseInstructor = "Sibylle A.";
       String username = args[0];
-      String password = args[1];
+      char[] password = args[1].toCharArray();
       LocalDateTime courseDateAndTime = getCourseDateAndTime();
 
       boolean dryRun = true;

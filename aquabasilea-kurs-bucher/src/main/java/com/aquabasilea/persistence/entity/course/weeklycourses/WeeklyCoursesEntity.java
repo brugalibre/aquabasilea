@@ -1,19 +1,22 @@
 package com.aquabasilea.persistence.entity.course.weeklycourses;
 
-import com.aquabasilea.persistence.entity.base.BaseEntity;
-import org.springframework.lang.NonNull;
+import com.brugalibre.common.domain.persistence.DomainEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "weeklycourses")
-public class WeeklyCoursesEntity extends BaseEntity {
+public class WeeklyCoursesEntity extends DomainEntity {
+
+   @NotNull
+   @Column(name = "user_id")
+   private String userId;
 
    /*
     * yes eager, since we access them in the mapper, where the session is already closed.
@@ -24,8 +27,8 @@ public class WeeklyCoursesEntity extends BaseEntity {
            cascade = CascadeType.ALL,
            fetch = FetchType.EAGER,
            orphanRemoval = true)
-   @NonNull
-   private List<CourseEntity> coursesEntities;
+   @NotNull
+   private List<CourseEntity> courses;
 
    public WeeklyCoursesEntity() {
       this(null);
@@ -36,24 +39,33 @@ public class WeeklyCoursesEntity extends BaseEntity {
     *
     * @param id the id
     */
-   public WeeklyCoursesEntity(UUID id) {
+   public WeeklyCoursesEntity(String id) {
       super(id);
-      this.coursesEntities = new ArrayList<>();
+      this.courses = new ArrayList<>();
    }
 
-   @NonNull
-   public List<CourseEntity> getCoursesEntities() {
-      return coursesEntities;
+   @NotNull
+   public List<CourseEntity> getCourses() {
+      return courses;
    }
 
-   public void setCoursesEntities(List<CourseEntity> coursesEntities) {
-      this.coursesEntities = requireNonNull(coursesEntities);
+   public void setCourses(List<CourseEntity> coursesEntities) {
+      this.courses = requireNonNull(coursesEntities);
+   }
+
+   @NotNull
+   public String getUserId() {
+      return userId;
+   }
+
+   public void setUserId(@NotNull String userId) {
+      this.userId = userId;
    }
 
    @Override
    public String toString() {
       return "WeeklyCoursesEntity{" +
-              "coursesEntities=" + coursesEntities +
+              "coursesEntities=" + courses +
               ", id=" + id +
               '}';
    }
@@ -64,11 +76,11 @@ public class WeeklyCoursesEntity extends BaseEntity {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
       WeeklyCoursesEntity that = (WeeklyCoursesEntity) o;
-      return coursesEntities.equals(that.coursesEntities);
+      return courses.equals(that.courses);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), coursesEntities);
+      return Objects.hash(super.hashCode(), courses);
    }
 }

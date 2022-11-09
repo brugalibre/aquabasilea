@@ -15,7 +15,7 @@ public abstract class AbstractAquabasileaWebNavigator extends BaseWebNavigator<A
    protected final String coursePage;
    protected AquabasileaLoginHelper aquabasileaLoginHelper;
 
-   public AbstractAquabasileaWebNavigator(String userName, String userPassword, String propertiesName) {
+   public AbstractAquabasileaWebNavigator(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
       PropertyReader propertyReader = new PropertyReader(propertiesName);
       this.coursePage = propertyReader.readValue(COURSE_PAGE);

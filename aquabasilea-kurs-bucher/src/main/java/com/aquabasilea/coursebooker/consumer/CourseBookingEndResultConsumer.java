@@ -8,8 +8,9 @@ public interface CourseBookingEndResultConsumer {
    /**
     * Consumes the given result from the course-booking
     *
+    * @param consumerUser           the {@link ConsumerUser} for which the {@link CourseBookingEndResult} is consumed
     * @param courseBookingEndResult the {@link CourseBookingEndResult}
     * @param courseBookingState     defines weather or not it was a dry-run or a real booking
     */
-   void consumeResult(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState);
+   void consumeResult(ConsumerUser consumerUser, CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState);
 }

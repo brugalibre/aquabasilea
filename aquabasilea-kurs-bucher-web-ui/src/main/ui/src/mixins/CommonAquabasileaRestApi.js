@@ -7,7 +7,7 @@ export default {
     methods: {
         formatDate(dateString) {
             const date = dayjs(dateString);
-            return date.format('DD.MM.YYYY hh:mm');
+            return date.format('DD.MM.YYYY HH:mm');
         }
     }
 }

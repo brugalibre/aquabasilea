@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <h1> {{ stagingMsg }} </h1>
     <loading v-model:active="isLoading"
              :is-full-page="true"/>
@@ -42,6 +42,7 @@ import CourseBookerStateOverview from "@/components/CourseBookerStateOverview";
 import WeeklyCoursesOverview from "@/components/WeeklyCoursesOverview";
 import AddCourse from "@/components/AddCourse";
 import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
+import LoggingService from "@/services/log/logging.service";
 
 export default {
   name: 'App',
@@ -55,8 +56,8 @@ export default {
   data() {
     return {
       errorDetails: '',
-      applicationTitle: 'Aquabasilea-Kurs Bucher',
-      stagingMsg: 'Aquabasilea-Kurs-Bucher Webapplikation',
+      applicationTitle: 'Migros-Kurs Bucher',
+      stagingMsg: 'Migros-Kurs-Bucher Webapplikation',
       courseStateOverviewRefreshKey: 0,
       weeklyCoursesRefreshKey: 0,
       addCourseRefreshKey: 0,
@@ -80,6 +81,8 @@ export default {
       this.$store.dispatch('aquabasilea/setIsLoading', true);
       setTimeout(() => {
         this.courseStateOverviewRefreshKey += 1;
+        this.$store.dispatch('aquabasilea/setIsLoading', false);
+        this.errorDetails = null;
       }, 1000);
       console.log('courseStateOverview refreshed: ' + this.courseStateOverviewRefreshKey);
     },
@@ -87,11 +90,18 @@ export default {
       this.$store.dispatch('aquabasilea/setIsLoading', true);
       setTimeout(() => {
         this.weeklyCoursesRefreshKey += 1;
+        this.$store.dispatch('aquabasilea/setIsLoading', false);
+        this.errorDetails = null;
       }, 1000);
       console.log('weeklyCourses refreshed: ' + this.weeklyCoursesRefreshKey);
     },
     errorOccurred: function (error) {
       this.errorDetails = error;
+      if (LoggingService.isAuthenticationFailed(error)) {
+        this.$store.dispatch('auth/logout');
+        this.$router.push('/login');
+        return;
+      }
       console.log('AquabasileaDashboard.vue: errorOccurred : \'' + this.errorDetails + '\'');
     },
     refreshCourseStateOverviewAndWeeklyCourses: function () {
@@ -99,6 +109,8 @@ export default {
       setTimeout(() => {
         this.weeklyCoursesRefreshKey += 1;
         this.courseStateOverviewRefreshKey += 1;
+        this.$store.dispatch('aquabasilea/setIsLoading', false);
+        this.errorDetails = null;
       }, 1000);
       console.log('weeklyCourses & courseStateOverview refreshed: ' + this.weeklyCoursesRefreshKey + ', ' + this.courseStateOverviewRefreshKey);
     },
@@ -108,11 +120,18 @@ export default {
         console.log('refreshAddCourse refreshed: ' + this.addCourseRefreshKey);
         this.addCourseRefreshKey += 1;
         this.$store.dispatch('aquabasilea/setIsLoading', false);
+        this.errorDetails = null;
       }, 2500);
     },
   },
   mounted() {
     this.errorDetails = null;
+    this.$store.dispatch('aquabasilea/setIsLoading', false);
   }
 }
 </script>
+<style scoped>
+.course-state-overview {
+  flex-grow: 2;
+}
+</style>

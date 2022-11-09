@@ -1,6 +1,5 @@
 package com.aquabasilea.security.securestorage;
 
-import com.aquabasilea.security.securestorage.util.KeyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,15 +7,14 @@ import java.io.FileNotFoundException;
 import java.security.KeyStore;
 import java.util.function.Supplier;
 
-import static com.aquabasilea.security.securestorage.AquabasileaKeyStore.*;
-import static com.aquabasilea.security.securestorage.util.KeyUtils.loadKeyStoreFromFile;
+import static com.aquabasilea.security.securestorage.util.KeyUtils.*;
 
 /**
  * The {@link SecretStorage} contains password or other secrets within a {@link KeyStore}
  */
 public class SecretStorage {
    private static final Logger LOG = LoggerFactory.getLogger(SecretStorage.class);
-   public static final String EMPTY_SECRET = "";
+   private static final String EMPTY_SECRET = "";
    private final String pathToKeyStore;
 
    public SecretStorage(String pathToKeyStore) {
@@ -25,7 +23,9 @@ public class SecretStorage {
 
    public static void main(String[] args) {
       char[] aquabasileaKeyStoragePwd = args[0].toCharArray();
-      Supplier<char[]> userPasswordSupplier = new SecretStorage(KeyUtils.AQUABASILEA_KEYSTORAGE).getSecretSupplier4Alias("username", aquabasileaKeyStoragePwd);
+      String pathToKeyStore = args[1];
+      String alias = args[2];
+      Supplier<char[]> userPasswordSupplier = new SecretStorage(pathToKeyStore).getSecretSupplier4Alias(alias, aquabasileaKeyStoragePwd);
       System.out.println("Userpwd: " + String.valueOf(userPasswordSupplier.get()));
    }
 
@@ -47,7 +47,7 @@ public class SecretStorage {
    }
 
    private static char[] getKeystorePassword(char[] aquabasileaKeyStoragePwd) throws FileNotFoundException {
-      KeyStore aquabasileaKeyStoreStorage = loadKeyStoreFromFile(AQUABASILEA_KEYSTORAGE_STORAGE, aquabasileaKeyStoragePwd);
-      return new SecretFromKeyStoreReader().readSecretFromKeyStore(aquabasileaKeyStoreStorage, aquabasileaKeyStoragePwd, AQUABASILEA_KEYSTORE_ALIAS);
+      KeyStore aquabasileaKeyStoreStorage = loadKeyStoreFromFile(AQUABASILEA_KEYSTORE_STORAGE, aquabasileaKeyStoragePwd);
+      return new SecretFromKeyStoreReader().readSecretFromKeyStore(aquabasileaKeyStoreStorage, aquabasileaKeyStoragePwd, AQUABASILEA_KEYSTORE_STORAGE_ALIAS);
    }
 }

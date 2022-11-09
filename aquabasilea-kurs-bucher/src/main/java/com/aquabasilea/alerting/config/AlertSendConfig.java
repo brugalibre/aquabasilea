@@ -8,14 +8,18 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 public class AlertSendConfig {
    private String originatorName;
+   private String keyStoreLocation;
    private String alertServiceName;
    private String username;
    private String originator;
-   private List<String> receivers;
+   private List<String> onApplicationErrorReceivers;
+
+   public AlertSendConfig() {
+      keyStoreLocation = KeyUtils.AQUABASILEA_ALERT_KEYSTORE;
+   }
 
    public String getUsername() {
       return username;
@@ -42,7 +46,7 @@ public class AlertSendConfig {
    }
 
    public String getApiKey() {
-      Supplier<char[]> apiKeyProvider = new SecretStorage(KeyUtils.AQUABASILEA_KEYSTORAGE).getSecretSupplier4Alias(alertServiceName, "".toCharArray());
+      Supplier<char[]> apiKeyProvider = new SecretStorage(keyStoreLocation).getSecretSupplier4Alias(alertServiceName, "".toCharArray());
       return String.valueOf(apiKeyProvider.get());
    }
 
@@ -54,14 +58,18 @@ public class AlertSendConfig {
       this.originator = originator;
    }
 
-   public List<String> getReceivers() {
-      if (isNull(receivers)) {
-         this.receivers = new ArrayList<>();
+   public List<String> getOnApplicationErrorReceivers() {
+      if (isNull(onApplicationErrorReceivers)) {
+         this.onApplicationErrorReceivers = new ArrayList<>();
       }
-      return receivers;
+      return onApplicationErrorReceivers;
    }
 
-   public void setReceivers(List<String> receivers) {
-      this.receivers = receivers;
+   public void setOnApplicationErrorReceivers(List<String> onApplicationErrorReceivers) {
+      this.onApplicationErrorReceivers = onApplicationErrorReceivers;
+   }
+
+   public void setKeyStoreLocation(String keyStoreLocation) {
+      this.keyStoreLocation = keyStoreLocation;
    }
 }

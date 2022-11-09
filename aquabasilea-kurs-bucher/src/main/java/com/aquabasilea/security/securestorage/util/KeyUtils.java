@@ -4,24 +4,37 @@ package com.aquabasilea.security.securestorage.util;
 import com.aquabasilea.security.securestorage.exception.SecureStorageException;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 
+import static com.aquabasilea.util.FileUtil.getFileInputStreamForPath;
+
 public class KeyUtils {
 
    private KeyUtils() {
       // private
    }
+
    /*
    Generate a new, empty keystore:
+   keytool -genkeypair -alias aquabasilea-alert -storepass test123 -keypass secretPassword -keystore emptyStore.keystore -dname "CN=Developer, OU=Department, O=Company, L=City, ST=State, C=CA"
+   // Optional -keysize 2048 argument
+   keytool -genkeypair -alias aquabasilea-alert -storepass test123 -keypass test123 -keystore aquabasilea-alert.keystore
+   keytool -delete -alias aquabasilea-keystore -keystore aquabasilea-keystore.keystore
     keytool -genkey -alias <value-for-alias> -keyalg RSA -keysize 2048 -keystore <key-store-name>
     */
 
    public static final String ALGORITHM = "PBE";
-   public static final String AQUABASILEA_KEYSTORAGE = "aquabasilea.keystore";
+   /**
+    * Note: Changing name here also requires changing name in the application.yml!
+    */
+   public static final String AQUABASILEA_ALERT_KEYSTORE = "aquabasilea-alert.keystore";
+   public static final String AQUABASILEA_KEYSTORE_STORAGE = "aquabasilea-keystore.keystore";
+   public static final String AQUABASILEA_KEYSTORE_STORAGE_ALIAS = "aquabasilea-keystore";
    public static final String JCEKS = "PKCS12";
 
    /**
@@ -44,28 +57,32 @@ public class KeyUtils {
       }
    }
 
+   /**
+    * Loads a {@link KeyStore} with the given path/name and key-store password or throws a {@link IllegalStateException} if there
+    * is no {@link KeyStore}
+    *
+    * @param pathToFile       the path or name of the {@link KeyStore}
+    * @param keystorePassword the password for the {@link KeyStore}
+    * @return a {@link KeyStore} instance
+    */
+   public static KeyStore loadKeyStoreFromFileOrThrow(String pathToFile, char[] keystorePassword) {
+      KeyStore keyStore;
+      try {
+         keyStore = loadKeyStoreFromFile(pathToFile, keystorePassword);
+      } catch (FileNotFoundException e) {
+         throw new IllegalStateException(e);
+      }
+      return keyStore;
+   }
+
    public static KeyStore loadKeyStoreFromFile(String pathToFile, char[] keystorePassword) throws FileNotFoundException {
       try {
          KeyStore keyStore = KeyStore.getInstance(JCEKS);
          keyStore.load(getFileInputStreamForPath(pathToFile), keystorePassword);
          return keyStore;
-      } catch (FileNotFoundException e) {
-         throw e;
-      } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
+      } catch (KeyStoreException | URISyntaxException | IOException | NoSuchAlgorithmException | CertificateException e) {
          throw new SecureStorageException(e);
       }
-   }
-
-   /**
-    * Returns a {@link FileInputStream} from the given file path
-    *
-    * @param filePath the given file path
-    * @return a {@link FileInputStream}
-    * @throws FileNotFoundException if there is no such file
-    */
-   public static FileInputStream getFileInputStreamForPath(String filePath) throws FileNotFoundException {
-      File file = new File(filePath);
-      return new FileInputStream(file);
    }
 
    /**

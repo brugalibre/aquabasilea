@@ -1,9 +1,9 @@
 package com.aquabasilea.model.course.weeklycourses;
 
 import com.aquabasilea.i18n.TextResources;
-import com.aquabasilea.model.AbstractDomainModel;
 import com.aquabasilea.model.course.coursedef.CourseDef;
-import com.aquabasilea.model.course.exception.CourseAlreadyExistsException;
+import com.aquabasilea.model.course.weeklycourses.exception.CourseAlreadyExistsException;
+import com.brugalibre.common.domain.model.AbstractDomainModel;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,13 +17,21 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 public class WeeklyCourses extends AbstractDomainModel {
+
+   private String userId;
+
    private List<Course> courses;
+
+   public WeeklyCourses(String userId) {
+      this(userId, new ArrayList<>());
+   }
 
    public WeeklyCourses() {
       this.courses = new ArrayList<>();
    }
 
-   public WeeklyCourses(List<Course> courses) {
+   public WeeklyCourses(String userId, List<Course> courses) {
+      this.userId = userId;
       setCourses(courses);
    }
 
@@ -33,6 +41,14 @@ public class WeeklyCourses extends AbstractDomainModel {
          courses = new ArrayList<>();
       }
       this.courses = new ArrayList<>(requireNonNull(courses));
+   }
+
+   public String getUserId() {
+      return userId;
+   }
+
+   public void setUserId(String userId) {
+      this.userId = userId;
    }
 
    public List<Course> getCourses() {

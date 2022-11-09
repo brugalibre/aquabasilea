@@ -1,13 +1,11 @@
 package com.aquabasilea.rest.model.statistic;
 
-import com.aquabasilea.statistics.model.Statistics;
 import com.aquabasilea.i18n.TextResources;
+import com.aquabasilea.model.statistics.Statistics;
 import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -35,7 +33,6 @@ public record StatisticsDto(String lastCourseDefUpdate, String nextCourseDefUpda
       return bookingSuccessfulCounterBD.divide(totalBookingCounterBD, 3, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue();
    }
 
-   @NotNull
    private static String getLocaleDateTime2String(LocalDateTime localDateTime, Locale locale) {
       if (isNull(localDateTime)) {
          return " - ";

@@ -1,16 +1,9 @@
 package com.aquabasilea.coursebooker.config;
 
-import com.aquabasilea.util.YamlUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
-
-import static java.util.Objects.nonNull;
 
 public class AquabasileaCourseBookerConfig {
 
-   private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseBookerConfig.class);
    /**
     * Offset in minutes when the booker starts earlier
     * We have to start the booker slightly earlier, so that we are ready to book, right when the course becomes bookable
@@ -69,25 +62,6 @@ public class AquabasileaCourseBookerConfig {
       this.durationToStartBookerEarlier = DURATION_TO_START_BOOKER_EARLIER;
       this.durationToStartDryRunEarlier = DURATION_TO_START_DRY_RUN_EARLIER;
       this.daysToBookCourseEarlier = DAYS_TO_BOOK_COURSE_EARLIER;
-      readConfigFromFile();
-   }
-
-   private void readConfigFromFile() {
-      AquabasileaCourseBookerConfigImport configImport = YamlUtil.readYamlIgnoreMissingFile(this.courseConfigFile, AquabasileaCourseBookerConfigImport.class);
-      if (nonNull(configImport.getMinutesToStartDryRunEarlier())) {
-         this.durationToStartDryRunEarlier = Duration.ofMinutes(configImport.getMinutesToStartDryRunEarlier());
-         LOG.info("Override default value for 'durationToStartDryRunEarlier' with customized value {}", durationToStartDryRunEarlier);
-      }
-   }
-
-   /**
-    * Refreshes all config values of this {@link AquabasileaCourseBookerConfig}
-    * Note: The location of the configuration file must not change!
-    */
-   public void refresh() {
-      LOG.info("Refresh configuration..");
-      readConfigFromFile();
-      LOG.info("Configuration refreshed: {}", this);
    }
 
    /**

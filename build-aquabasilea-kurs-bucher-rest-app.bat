@@ -38,7 +38,7 @@ echo "<========================================>"
 echo "<====    aquabasilea-kurs-bucher     ====>"
 echo "<========================================>"
 cd aquabasilea-kurs-bucher
-call gradlew clean build -x Test shadowJar publishToMavenLocal
+call gradlew clean build shadowJar publishToMavenLocal
 cd ..
 
 Rem build aquabasilea-kurs-bucher-rest-app

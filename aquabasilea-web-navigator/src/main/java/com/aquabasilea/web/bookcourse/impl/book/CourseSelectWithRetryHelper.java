@@ -65,7 +65,7 @@ public class CourseSelectWithRetryHelper {
    private CourseClickedResult filterAndSelectAgainIfNecessary(CourseBookDetails courseBookDetails, ErrorHandler errorHandler, CourseClickedResult courseClickedResult) {
       while (courseClickedResult == CourseClickedResult.COURSE_NOT_BOOKED_RETRY) {
          long millis2Wait = duration2WaitUntilCourseBecomesBookable.get().toMillis();
-         LOG.info("Course '{}' not yet available, {}ms left until course becomes bookable, Refresh page and do retry..", courseBookDetails.courseName(), millis2Wait);
+         LOG.info("Course [{}] not yet available, {}ms left until course becomes bookable, Refresh page and do retry..", courseBookDetails.courseName(), millis2Wait);
          waitAndRefreshCoursePage(millis2Wait);
          LOG.info("Page refreshed, try to filter and select course again");
          courseFilterHelper.applyCriteriaFilter(courseBookDetails, errorHandler);

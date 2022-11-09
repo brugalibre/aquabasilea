@@ -1,32 +1,42 @@
 package com.aquabasilea.persistence.entity.course.aquabasilea;
 
 import com.aquabasilea.model.course.CourseLocation;
-import com.aquabasilea.persistence.entity.base.BaseEntity;
-import org.springframework.lang.NonNull;
+import com.brugalibre.common.domain.persistence.DomainEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "coursedef")
-public class CourseDefEntity extends BaseEntity {
+public class CourseDefEntity extends DomainEntity {
 
-   @NonNull
+   @NotNull
+   @Column(name = "user_id")
+   private String userId;
+
+   @NotNull
    private String courseName;
 
-   @NonNull
+   @NotNull
    private String courseInstructor;
 
-   @NonNull
+   @NotNull
    private LocalDateTime courseDate;
 
    @Enumerated(EnumType.STRING)
-   @NonNull
+   @NotNull
    private CourseLocation courseLocation;
+
+   @NotNull
+   public String getUserId() {
+      return userId;
+   }
+
+   public void setUserId(@NotNull String userId) {
+      this.userId = userId;
+   }
 
    public CourseDefEntity() {
       // private constructor for JPA
@@ -49,37 +59,38 @@ public class CourseDefEntity extends BaseEntity {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
       CourseDefEntity that = (CourseDefEntity) o;
-      return courseName.equals(that.courseName) && courseInstructor.equals(that.courseInstructor) && courseDate.equals(that.courseDate) && courseLocation == that.courseLocation;
+      return Objects.equals(userId, that.userId) && Objects.equals(courseName, that.courseName) && Objects.equals(courseInstructor, that.courseInstructor) && Objects.equals(courseDate, that.courseDate) && courseLocation == that.courseLocation;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), courseName, courseInstructor, courseDate, courseLocation);
+      return Objects.hash(super.hashCode(), userId, courseName, courseInstructor, courseDate, courseLocation);
    }
 
+   @NotNull
    public String getCourseName() {
       return courseName;
    }
 
-   public void setCourseName(@NonNull String courseName) {
+   public void setCourseName(@NotNull String courseName) {
       this.courseName = courseName;
    }
 
-   @NonNull
+   @NotNull
    public LocalDateTime getCourseDate() {
       return courseDate;
    }
 
-   public void setCourseDate(@NonNull LocalDateTime courseDate) {
+   public void setCourseDate(@NotNull LocalDateTime courseDate) {
       this.courseDate = courseDate;
    }
 
-   @NonNull
+   @NotNull
    public CourseLocation getCourseLocation() {
       return courseLocation;
    }
 
-   public void setCourseLocation(@NonNull CourseLocation courseLocation) {
+   public void setCourseLocation(@NotNull CourseLocation courseLocation) {
       this.courseLocation = courseLocation;
    }
 

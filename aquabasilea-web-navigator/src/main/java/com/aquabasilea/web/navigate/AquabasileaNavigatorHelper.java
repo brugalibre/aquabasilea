@@ -5,7 +5,7 @@ import com.aquabasilea.web.error.ErrorHandler;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigatorHelper;
 import com.zeiterfassung.web.common.impl.navigate.button.ButtonClickHelper;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
