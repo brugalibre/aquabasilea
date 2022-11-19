@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
@@ -26,6 +25,7 @@ import static java.util.Objects.*;
 
 public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNavigatorHelper,
                                                ErrorHandler errorHandler) {
+   private static final String COURSE_INSTRUCTOR_PATTERN = "(^[a-zA-Z]+[ ][A-Z]([.]$))";
    private static final String PLACES_AVAILABLE_PATTERN = "(([\\d]{1,2})[\\/]([\\d]{1,2}))\\s?(?:.)+";
    private static final String TIME_OF_DAY_SEPARATOR = " - ";
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseExtractorHelper.class);
@@ -60,23 +60,27 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
 
    private static AquabasileaCourse createAquabasileaCourse(String courseName, List<String> courseDetailsText) {
       String timeOfTheDay = null;
+      String courseInstructor = "";
       CourseLocation courseLocation = null;
       LocalDate courseDate = null;
       for (String courseDetailSpanText : courseDetailsText) {
          if (courseDetailSpanText.contains(TIME_OF_DAY_SEPARATOR) && isNull(timeOfTheDay)) {
             timeOfTheDay = courseDetailSpanText.substring(0, courseDetailSpanText.indexOf(TIME_OF_DAY_SEPARATOR));
+         } else if (courseDetailSpanText.matches(COURSE_INSTRUCTOR_PATTERN)) {
+            courseInstructor = courseDetailSpanText;
          } else if (DateUtil.isStartsWithDayOfWeek(courseDetailSpanText, Locale.GERMAN)) {
             courseDate = DateUtil.getLocalDateFromInput(courseDetailSpanText, Locale.GERMAN);
          } else if (isNull(courseLocation)) {
             courseLocation = CourseLocation.forCourseLocationName(courseDetailSpanText);
-         } else if (nonNull(courseDate) && nonNull(timeOfTheDay)) {
+         } else if (nonNull(courseDate) && StringUtils.isNotEmpty(courseInstructor) && nonNull(timeOfTheDay)) {
             break;// we're done so far
          }
       }
       requireNonNull(courseDate, "CourseDate konnte nicht ermittelt werden! courseDetailsText:" + courseDetailsText);
       LocalTime localTime = DateUtil.getLocalTimeFromInput(timeOfTheDay);
-      return new AquabasileaCourse(LocalDateTime.of(courseDate, localTime), courseLocation, courseName);
+      return new AquabasileaCourse(LocalDateTime.of(courseDate, localTime), courseLocation, courseName, courseInstructor);
    }
+
 
    private void openCourseDetailDialogAndAwaitReadiness(WebElement courseDetails) {
       webNavigatorHelper.clickButton(courseDetails, errorHandler);

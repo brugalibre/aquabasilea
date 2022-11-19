@@ -13,7 +13,9 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAttribute String dayOfWeek,
+public record CourseDefDto(@SearchableAttribute String courseName,
+                           @SearchableAttribute String courseInstructor,
+                           @SearchableAttribute String dayOfWeek,
                            @SearchableAttribute String timeOfTheDay,
                            @SearchableAttribute CourseLocationDto courseLocationDto,
                            LocalDateTime courseDefDate) {
@@ -29,6 +31,7 @@ public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAt
               .getDayOfWeek()
               .getDisplayName(TextStyle.FULL, Locale.GERMAN);
       return new CourseDefDto(courseDef.courseName(),
+              courseDef.courseInstructor(),
               dayOfWeekName,
               DateUtil.getTimeAsString(courseDef.courseDate()),
               CourseLocationDto.of(courseDef.courseLocation()),
@@ -37,7 +40,7 @@ public record CourseDefDto(@SearchableAttribute String courseName, @SearchableAt
 
    public String getCourseRepresentation() {
       String dateRep = DateUtil.toString(courseDefDate.toLocalDate(), LocalProvider.getInstance().getCurrentLocale());
-      return String.format(TextResources.COURSE_REPRESENTATION, courseName, dayOfWeek, dateRep,
+      return String.format(TextResources.COURSE_REPRESENTATION, courseName, courseInstructor, dayOfWeek, dateRep,
               timeOfTheDay, courseLocationDto.courseLocationName());
    }
 }

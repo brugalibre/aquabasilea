@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
  * The {@link CourseDef} defines a bookable {@link Course}.
  * There is only one instance of a {@link CourseDef} but for one {@link CourseDef} there can be many {@link Course}s
  */
-public record CourseDef(LocalDateTime courseDate, CourseLocation courseLocation, String courseName) {
+public record CourseDef(LocalDateTime courseDate, CourseLocation courseLocation, String courseName, String courseInstructor) {
    //
 }

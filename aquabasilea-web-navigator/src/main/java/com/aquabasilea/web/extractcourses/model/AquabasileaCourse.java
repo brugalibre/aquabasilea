@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 /**
  * A {@link AquabasileaCourse} defines a guided course which can be booked at a certain day and a certain time
  */
-public record AquabasileaCourse(LocalDateTime courseDate, CourseLocation courseLocation, String courseName) {
+public record AquabasileaCourse(LocalDateTime courseDate, CourseLocation courseLocation, String courseName,
+                                String courseInstructor) {
    // no-op
 }
 

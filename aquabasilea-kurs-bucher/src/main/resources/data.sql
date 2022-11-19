@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS course (
 CREATE TABLE IF NOT EXISTS coursedef (
     id VARCHAR(250) PRIMARY KEY,
     course_name VARCHAR(250) NOT NULL,
+    course_instructor VARCHAR(250) NOT NULL,
     course_date TIMESTAMP NOT NULL,
     course_location VARCHAR(250) NOT NULL
 );

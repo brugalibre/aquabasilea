@@ -19,6 +19,9 @@ public class CourseDefEntity extends BaseEntity {
    private String courseName;
 
    @NonNull
+   private String courseInstructor;
+
+   @NonNull
    private LocalDateTime courseDate;
 
    @Enumerated(EnumType.STRING)
@@ -34,12 +37,26 @@ public class CourseDefEntity extends BaseEntity {
    public String toString() {
       return "CourseDefEntity{" +
               "courseName='" + courseName + '\'' +
+              "courseInstructor='" + courseInstructor + '\'' +
               ", courseDate='" + courseDate + '\'' +
               ", courseLocation=" + courseLocation +
               '}';
    }
 
-   @NonNull
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
+      CourseDefEntity that = (CourseDefEntity) o;
+      return courseName.equals(that.courseName) && courseInstructor.equals(that.courseInstructor) && courseDate.equals(that.courseDate) && courseLocation == that.courseLocation;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(super.hashCode(), courseName, courseInstructor, courseDate, courseLocation);
+   }
+
    public String getCourseName() {
       return courseName;
    }
@@ -66,18 +83,11 @@ public class CourseDefEntity extends BaseEntity {
       this.courseLocation = courseLocation;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      if (!super.equals(o)) return false;
-      CourseDefEntity that = (CourseDefEntity) o;
-      return courseName.equals(that.courseName) && courseDate.equals(that.courseDate) && courseLocation == that.courseLocation;
+   public String getCourseInstructor() {
+      return courseInstructor;
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hash(super.hashCode(), courseName, courseDate, courseLocation);
+   public void setCourseInstructor(String courseInstructor) {
+      this.courseInstructor = courseInstructor;
    }
-
 }
