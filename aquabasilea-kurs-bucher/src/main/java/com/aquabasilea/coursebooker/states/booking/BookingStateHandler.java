@@ -51,7 +51,7 @@ public class BookingStateHandler {
       }
       LOG.info("About going to {} the course '{}' at {}", state == BOOKING ? "book" : "dry-run the booking",
               currentCourse.getCourseName(), DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
-      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseDate().getDayOfWeek(), currentCourse.getCourseLocation().getWebCourseLocation());
+      CourseBookDetails courseBookDetails = createCourseBookDetails(currentCourse);
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(courseBookDetails);
       LOG.info("Course booking done. Result is {}", courseBookingEndResult);
       resumeCoursesUntil(currentCourse);
@@ -84,5 +84,10 @@ public class BookingStateHandler {
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
               .withCourseName(currentCourse.getCourseName())
               .build();
+   }
+
+   private static CourseBookDetails createCourseBookDetails(Course currentCourse) {
+      return new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
+              currentCourse.getCourseDate(), currentCourse.getCourseLocation().getWebCourseLocation());
    }
 }

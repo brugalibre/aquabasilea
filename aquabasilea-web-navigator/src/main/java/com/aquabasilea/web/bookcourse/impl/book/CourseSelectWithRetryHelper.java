@@ -58,7 +58,7 @@ public class CourseSelectWithRetryHelper {
     * @see CourseSelectHelper
     */
    public CourseClickedResult selectAndBookCourseWithRetry(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
-      CourseClickedResult courseClickedResult = courseSelectHelper.selectCourseAndBook(courseBookDetails.courseName(), errorHandler);
+      CourseClickedResult courseClickedResult = courseSelectHelper.selectCourseAndBook(courseBookDetails, errorHandler);
       return filterAndSelectAgainIfNecessary(courseBookDetails, errorHandler, courseClickedResult);
    }
 
@@ -69,7 +69,7 @@ public class CourseSelectWithRetryHelper {
          waitAndRefreshCoursePage(millis2Wait);
          LOG.info("Page refreshed, try to filter and select course again");
          courseFilterHelper.applyCriteriaFilter(courseBookDetails, errorHandler);
-         courseClickedResult = courseSelectHelper.selectCourseAndBook(courseBookDetails.courseName(), errorHandler);
+         courseClickedResult = courseSelectHelper.selectCourseAndBook(courseBookDetails, errorHandler);
       }
       return courseClickedResult;
    }

@@ -9,6 +9,7 @@ import static java.util.Objects.nonNull;
 
 public class Course extends AbstractDomainModel {
    private String courseName;
+   private String courseInstructor;
    private LocalDateTime courseDate;
    private CourseLocation courseLocation;
 
@@ -59,11 +60,20 @@ public class Course extends AbstractDomainModel {
       this.courseLocation = courseLocation;
    }
 
+   public String getCourseInstructor() {
+      return courseInstructor;
+   }
+
+   public void setCourseInstructor(String courseInstructor) {
+      this.courseInstructor = courseInstructor;
+   }
+
    @Override
    public String toString() {
       return "Course{" +
               "id='" + id + '\'' +
               ", courseName='" + courseName + '\'' +
+              ", courseInstructor='" + courseInstructor + '\'' +
               ", courseDate='" + courseDate + '\'' +
               ", courseLocation=" + courseLocation +
               ", isPaused=" + isPaused +
@@ -83,6 +93,7 @@ public class Course extends AbstractDomainModel {
    public static class CourseBuilder {
       private LocalDateTime courseDate;
       private String courseName;
+      private String courseInstructor;
       private boolean isPaused;
       private boolean hasCourseDef;
       private CourseLocation courseLocation;
@@ -99,6 +110,11 @@ public class Course extends AbstractDomainModel {
 
       public CourseBuilder withCourseName(String courseName) {
          this.courseName = courseName;
+         return this;
+      }
+
+      public CourseBuilder withCourseInstructor(String courseInstructor) {
+         this.courseInstructor = courseInstructor;
          return this;
       }
 
@@ -125,6 +141,7 @@ public class Course extends AbstractDomainModel {
       public Course build() {
          Course course = new Course();
          course.setCourseName(courseName);
+         course.courseInstructor = courseInstructor;
          course.courseDate = courseDate;
          course.setId(id);
          course.setIsPaused(isPaused);

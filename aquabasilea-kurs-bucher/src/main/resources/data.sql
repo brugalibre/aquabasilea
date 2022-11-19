@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS course (
     weeklycourses_id VARCHAR(250) NOT NULL,
     CONSTRAINT FK_WEEKLY_COURSES FOREIGN KEY (weeklycourses_id) REFERENCES weeklycourses(id),
     course_name VARCHAR(250) NOT NULL,
+    course_instructor VARCHAR(250) NOT NULL,
     course_date TIMESTAMP NOT NULL,
     is_paused BOOLEAN NOT NULL DEFAULT FALSE,
     has_course_def BOOLEAN NOT NULL DEFAULT FALSE,

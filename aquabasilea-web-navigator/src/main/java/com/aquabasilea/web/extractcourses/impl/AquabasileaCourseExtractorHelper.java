@@ -31,6 +31,32 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseExtractorHelper.class);
 
    /**
+    * Reads all the {@link WebElement}s which represents courses and converts them into a list of {@link AquabasileaCourse}s
+    *
+    * @return a {@link List} of {@link AquabasileaCourse}s
+    */
+   public List<AquabasileaCourse> findAndMapAllAquabasileaCourseButtons() {
+      List<WebElement> courseButtons = findAllAquabasileaCourseButtons();
+      return map2AquabasileaCourses(courseButtons);
+   }
+
+   /**
+    * Reads all the {@link WebElement}s which represents courses
+    *
+    * @return a {@link List} of migros-courses as {@link WebElement}s
+    */
+   public List<WebElement> findAllAquabasileaCourseButtons() {
+      WebElement courseArea = webNavigatorHelper.findWebElementBy(null, WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE)).get();
+      return webNavigatorHelper.findAllWebElementsByPredicateAndBy(courseArea, By.tagName(HTML_BUTTON_TYPE), webElement -> true);
+   }
+
+   private List<AquabasileaCourse> map2AquabasileaCourses(List<WebElement> courseButtons) {
+      return courseButtons.stream()
+              .map(this::evalCourseDetailsAndCreateAquabasileaCourse)
+              .collect(Collectors.toList());
+   }
+
+   /**
     * Reads the {@link WebElement} which represents a single course and maps them into a {@link AquabasileaCourse}
     *
     * @param courseButton the {@link WebElement}-button which represents a course

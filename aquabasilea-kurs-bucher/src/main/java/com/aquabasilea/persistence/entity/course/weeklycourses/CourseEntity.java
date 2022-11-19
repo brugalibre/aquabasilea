@@ -20,6 +20,9 @@ public class CourseEntity extends BaseEntity {
    private String courseName;
 
    @NonNull
+   private String courseInstructor;
+
+   @NonNull
    private LocalDateTime courseDate;
 
    private boolean hasCourseDef;
@@ -87,11 +90,21 @@ public class CourseEntity extends BaseEntity {
       this.hasCourseDef = hasCourseDef;
    }
 
+   @NonNull
+   public String getCourseInstructor() {
+      return courseInstructor;
+   }
+
+   public void setCourseInstructor(String courseInstructor) {
+      this.courseInstructor = courseInstructor;
+   }
+
    @Override
    public String toString() {
       return "CourseEntity{" +
               "weeklyCoursesEntity=" + weeklyCoursesEntity +
               ", courseName='" + courseName + '\'' +
+              ", courseInstructor='" + courseInstructor + '\'' +
               ", courseDate='" + courseDate + '\'' +
               ", hasCourseDef=" + hasCourseDef +
               ", courseLocation=" + courseLocation +
@@ -105,11 +118,11 @@ public class CourseEntity extends BaseEntity {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
       CourseEntity that = (CourseEntity) o;
-      return hasCourseDef == that.hasCourseDef && isPaused == that.isPaused && Objects.equals(weeklyCoursesEntity, that.weeklyCoursesEntity) && courseName.equals(that.courseName) && courseDate.equals(that.courseDate) && courseLocation == that.courseLocation;
+      return hasCourseDef == that.hasCourseDef && isPaused == that.isPaused && Objects.equals(weeklyCoursesEntity, that.weeklyCoursesEntity) && Objects.equals(courseName, that.courseName) && courseInstructor.equals(that.courseInstructor) && Objects.equals(courseDate, that.courseDate) && courseLocation == that.courseLocation;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(super.hashCode(), weeklyCoursesEntity, courseName, courseDate, hasCourseDef, courseLocation, isPaused);
+      return Objects.hash(super.hashCode(), weeklyCoursesEntity, courseName, courseInstructor, courseDate, hasCourseDef, courseLocation, isPaused);
    }
 }

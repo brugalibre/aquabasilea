@@ -61,22 +61,10 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
       LOG.info("Start extracting courses for locations {} ", courseLocations);
       navigate2CoursePageAndAwaitReadiness();
       filterAndShowCourses(courseLocations);
-      List<WebElement> courseButtons = findAllAquabasileaCourseButtons();
-      List<AquabasileaCourse> aquabasileaCourses = map2AquabasileaCourses(courseButtons);
+      List<AquabasileaCourse> aquabasileaCourses = aquabasileaCourseExtractorHelper.findAndMapAllAquabasileaCourseButtons();
       logout();
       LOG.info("Done extracting courses, found {} courses ", aquabasileaCourses.size());
       return () -> aquabasileaCourses;
-   }
-
-   private List<WebElement> findAllAquabasileaCourseButtons() {
-      WebElement courseArea = webNavigatorHelper.findWebElementBy(null, WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE)).get();
-      return webNavigatorHelper.findAllWebElementsByPredicateAndBy(courseArea, By.tagName(HTML_BUTTON_TYPE), webElement -> true);
-   }
-
-   private List<AquabasileaCourse> map2AquabasileaCourses(List<WebElement> courseButtons) {
-      return courseButtons.stream()
-              .map(aquabasileaCourseExtractorHelper::evalCourseDetailsAndCreateAquabasileaCourse)
-              .collect(Collectors.toList());
    }
 
    /**

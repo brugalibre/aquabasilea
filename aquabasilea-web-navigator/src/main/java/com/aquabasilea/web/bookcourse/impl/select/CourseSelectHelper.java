@@ -2,8 +2,11 @@ package com.aquabasilea.web.bookcourse.impl.select;
 
 import com.aquabasilea.web.bookcourse.impl.book.CourseBookerHelper;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
+import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorHelper;
+import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
 import com.aquabasilea.web.login.AquabasileaLoginHelper;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
@@ -20,6 +23,7 @@ import java.util.function.Supplier;
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
+import static java.util.Objects.nonNull;
 
 /**
  * The {@link CourseSelectHelper} does the actual selecting and booking of a course.
@@ -77,29 +81,33 @@ public class CourseSelectHelper {
     * If there is a logging-button, the booking is done after the logging and {@link CourseClickedResult#COURSE_BOOKED} is returned as well.
     * This method returns {@link CourseClickedResult#COURSE_NOT_BOOKABLE} if there is neither of the two buttons.
     *
-    * @param courseName   the name of the course to book
-    * @param errorHandler the {@link ErrorHandler} to handle missing {@link WebElement}
+    * @param courseBookDetails {@link CourseBookDetails} with details about the course to book
+    * @param errorHandler      the {@link ErrorHandler} to handle missing {@link WebElement}
     * @return a {@link CourseClickedResult} describing the outcome of the selecting procedure
     */
-   public CourseClickedResult selectCourseAndBook(String courseName, ErrorHandler errorHandler) {
-      LOG.info("Trying to select course '{}'", courseName);
-      boolean courseSelected = selectCourse(courseName, errorHandler);
-      return clickSelectedCourseLoginIfNecessaryAndBook(courseSelected, courseName, errorHandler);
+   public CourseClickedResult selectCourseAndBook(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
+      LOG.info("Trying to select course '{}'", courseBookDetails.courseName());
+      boolean courseSelected = selectCourse(courseBookDetails, errorHandler);
+      return clickSelectedCourseLoginIfNecessaryAndBook(courseSelected, courseBookDetails.courseName(), errorHandler);
    }
 
-   private boolean selectCourse(String courseName, ErrorHandler errorHandler) {
-      List<WebElement> courseButtons = getCourseButtons();
-      LOG.info("Course '{}' selected, found {} results", courseName, courseButtons.size());
+   private boolean selectCourse(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
+      List<WebElement> courseButtons = getFilteredCourseButtons();
       if (courseButtons.size() == 1) {
+         LOG.info("Found one result, going to click the button");
          this.aquabasileaNavigatorHelper.clickButton(courseButtons.get(0), errorHandler);
          return true;
       } else {
-         handleCourseNotFound(errorHandler, courseButtons, courseName);
+         LOG.warn("No unique filter-results, found {} courses!", courseButtons.size());
+         if (doBruteForceCourseSelecting(courseBookDetails, errorHandler)) {
+            return true;
+         }
+         handleCourseNotFound(errorHandler, courseButtons, courseBookDetails.courseName());
          return false;
       }
    }
 
-   private List<WebElement> getCourseButtons() {
+   private List<WebElement> getFilteredCourseButtons() {
       Optional<WebElement> courseTableOpt = getCourseTableWebElement();
       if (courseTableOpt.isPresent()) {
          return this.aquabasileaNavigatorHelper.findAllWebElementsByPredicateAndBy(courseTableOpt.get(), By.tagName(HTML_BUTTON_TYPE), webElement -> true);
@@ -109,8 +117,43 @@ public class CourseSelectHelper {
       return List.of();
    }
 
+   private boolean doBruteForceCourseSelecting(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
+      LOG.warn("Try to find the right course by doing a brute-force search of all found course-buttons..");
+      WebElement aquabasileaCourseButton = findAquabasileaCourseButton(courseBookDetails, errorHandler);
+      if (nonNull(aquabasileaCourseButton)) {
+         LOG.info("Course {} found within the filtered courses!", courseBookDetails.courseName());
+         this.aquabasileaNavigatorHelper.clickButton(aquabasileaCourseButton, errorHandler);
+      }
+      return nonNull(aquabasileaCourseButton);
+   }
+
+   /**
+    * If there are more than one filter-results, we assume that one or more filters couldn't be applied
+    * Depending on which filters where applied (e.g. course location) the right course might be within all results.
+    * So lets check them all in a brut-force-manner for a course with the right course name
+    */
+   private WebElement findAquabasileaCourseButton(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE), 20000);
+      AquabasileaCourseExtractorHelper aquabasileaCourseExtractorHelper = new AquabasileaCourseExtractorHelper(aquabasileaNavigatorHelper, errorHandler);
+      List<WebElement> allAquabasileaCourseWebElements = aquabasileaCourseExtractorHelper.findAllAquabasileaCourseButtons();
+      for (WebElement aquabasileaCourseButton : allAquabasileaCourseWebElements) {
+         AquabasileaCourse aquabasileaCourse = aquabasileaCourseExtractorHelper.evalCourseDetailsAndCreateAquabasileaCourse(aquabasileaCourseButton);
+         if (isEquals(courseBookDetails, aquabasileaCourse)) {
+            return aquabasileaCourseButton;
+         }
+      }
+      return null;
+   }
+
+   private static boolean isEquals(CourseBookDetails courseBookDetails, AquabasileaCourse aquabasileaCourse) {
+      return courseBookDetails.courseName().equals(aquabasileaCourse.courseName())
+              && courseBookDetails.courseLocation().equals(aquabasileaCourse.courseLocation())
+              && courseBookDetails.courseDate().equals(aquabasileaCourse.courseDate())
+              && courseBookDetails.courseInstructor().equals(aquabasileaCourse.courseInstructor());
+   }
+
    private Optional<WebElement> getCourseTableWebElement() {
-      LOG.info("Waiting {}s for the course-table to appear..", WAIT_FOR_COURSE_TABLE_TO_APPEAR.toSeconds());
+      LOG.info("Waiting for the course-table to appear (max. {}s)", WAIT_FOR_COURSE_TABLE_TO_APPEAR.toSeconds());
       By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
       this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis());
       return this.aquabasileaNavigatorHelper.findWebElementBy(null, courseTableBy);
