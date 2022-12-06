@@ -41,7 +41,7 @@ public class BookingStateHandler {
    /**
     * Does the actual booking or dry-run of the current Course but only, if there is a {@link CourseDef}
     * for the given course.
-
+    *
     * @param userId        the id uf the {@link User} whose {@link Course}s are resumed
     * @param currentCourse the {@link Course} to book
     * @param state         the current {@link CourseBookingState}
@@ -92,6 +92,6 @@ public class BookingStateHandler {
 
    private static CourseBookDetails createCourseBookDetails(Course currentCourse) {
       return new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              currentCourse.getCourseDate(), currentCourse.getCourseLocation().getWebCourseLocation());
+              currentCourse.getCourseDate(), currentCourse.getCourseLocation().getCourseLocationName());
    }
 }

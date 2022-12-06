@@ -4,7 +4,6 @@ import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
-import com.aquabasilea.web.model.CourseLocation;
 
 import java.time.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,7 +32,7 @@ public class RunAquabasileaNavigator {
          dryRun = Boolean.parseBoolean(args[2]);
       }
       AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier());
-      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, courseInstructor, courseDateAndTime, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA));
+      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, courseInstructor, courseDateAndTime, "Migros Fitnesscenter Aquabasilea"));
       printErrors(dryRun, courseBookingEndResult);
    }
 

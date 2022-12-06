@@ -3,38 +3,29 @@ package com.aquabasilea.model.course;
 import java.util.Arrays;
 
 public enum CourseLocation {
-   MIGROS_FITNESSCENTER_AQUABASILEA("Migros Fitnesscenter Aquabasilea"),
 
-   MIGROS_FITNESSCENTER_NIEDERHOLZ("Migros Fitnesscenter Niederholz"),
+   FITNESSPARK_WINTERTHUR("Fitnesspark Winterthur", "10"),
 
-   MIGROS_FITNESSCENTER_CLARASTRASSE("Migros Fitnesscenter Clarastrasse"),
+   FITNESSPARK_GLATTPARK("Fitnesspark Glattpark", "13"),
 
-   MIGROS_FITNESSCENTER_FRENKENDORF("Migros Fitnesscenter Frenkendorf"),
+   FITNESSPARK_HEUWAAGE("Fitnesspark Heuwaage", "16"),
 
-   FITNESSPARK_HEUWAAGE("Fitnesspark Heuwaage"),
+   FITNESSPARK_REGENSDORF("Fitnesspark Regensdorf", "18"),
 
-   FITNESSPARK_NATIONAL("Fitnesspark National"),
+   MIGROS_FITNESSCENTER_CLARASTRASSE("Migros Fitnesscenter Clarastrasse", "71"),
 
-   FITNESSPARK_SIHLCITY("Fitnesspark Sihlcity"),
+   MIGROS_FITNESSCENTER_FRENKENDORF("72=Migros Fitnesscenter Frenkendorf", "72"),
 
-   FITNESSPARK_TIME_OUT("Fitnesspark Time-Out"),
+   MIGROS_FITNESSCENTER_AQUABASILEA("Migros Fitnesscenter Aquabasilea", "139"),
 
-   FITNESSPARK_PULS5("Fitnesspark Puls5"),
-
-   FITNESSPARK_STADELHOFEN("Fitnesspark Stadelhofen"),
-
-   FITNESSPARK_TRAFO_BADEN("Fitnesspark Trafo Baden"),
-
-   FITNESSPARK_REGENSDORF("Fitnesspark Regensdorf"),
-
-   FITNESSPARK_STOCKERHOF("Fitnesspark Stockerhof"),
-
-   FITNESSPARK_WINTERTHUR("Fitnesspark Winterthur");
+   MIGROS_FITNESSCENTER_NIEDERHOLZ("Migros Fitnesscenter Niederholz", "140");
 
    private final String courseLocationName;
+   private final String id;
 
-   CourseLocation(String name) {
+   CourseLocation(String name, String id) {
       this.courseLocationName = name;
+      this.id = id;
    }
 
    public static CourseLocation of(String courseLocationName) {
@@ -48,7 +39,7 @@ public enum CourseLocation {
       return courseLocationName;
    }
 
-   public com.aquabasilea.web.model.CourseLocation getWebCourseLocation() {
-      return com.aquabasilea.web.model.CourseLocation.forCourseLocationName(this.courseLocationName);
+   public String getId() {
+      return id;
    }
 }

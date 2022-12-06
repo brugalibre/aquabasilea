@@ -1,0 +1,34 @@
+plugins {
+    id 'java-library'
+    id 'application'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'com.aquabasilea'
+version '1.0-SNAPSHOT'
+
+apply from: '../aquabasilea-dependencies.gradle'
+apply from: '../aquabasilea.gradle'
+apply from: '../test.gradle'
+
+mainClassName = 'com.aquabasilea.migrosapi.service.MigrosApiImpl'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
+
+    implementation 'org.slf4j:slf4j-api:2.0.5'
+
+    testImplementation group: 'org.mock-server', name: 'mockserver-netty', version: '5.11.2'
+}
+
+test {
+    useJUnitPlatform()
+}

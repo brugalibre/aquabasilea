@@ -2,7 +2,6 @@ package com.aquabasilea.web.extractcourses.impl;
 
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
-import com.aquabasilea.web.model.CourseLocation;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
 import com.aquabasilea.web.util.DateUtil;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
@@ -87,7 +86,7 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
    private static AquabasileaCourse createAquabasileaCourse(String courseName, List<String> courseDetailsText) {
       String timeOfTheDay = null;
       String courseInstructor = "";
-      CourseLocation courseLocation = null;
+      String courseLocation = null;
       LocalDate courseDate = null;
       for (String courseDetailSpanText : courseDetailsText) {
          if (courseDetailSpanText.contains(TIME_OF_DAY_SEPARATOR) && isNull(timeOfTheDay)) {
@@ -97,7 +96,7 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
          } else if (DateUtil.isStartsWithDayOfWeek(courseDetailSpanText, Locale.GERMAN)) {
             courseDate = DateUtil.getLocalDateFromInput(courseDetailSpanText, Locale.GERMAN);
          } else if (isNull(courseLocation)) {
-            courseLocation = CourseLocation.forCourseLocationName(courseDetailSpanText);
+            courseLocation = courseDetailSpanText;
          } else if (nonNull(courseDate) && StringUtils.isNotEmpty(courseInstructor) && nonNull(timeOfTheDay)) {
             break;// we're done so far
          }

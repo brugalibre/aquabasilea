@@ -179,12 +179,12 @@ class CourseDefUpdaterTest {
    }
 
    private static AquabasileaCourse createAquabasileaCourse(CourseLocation courseLocation, LocalDateTime courseDate, String courseName, String courseInstructor) {
-      return new AquabasileaCourse(courseDate, courseLocation.getWebCourseLocation(), courseName, courseInstructor);
+      return new AquabasileaCourse(courseDate, courseLocation.getCourseLocationName(), courseName, courseInstructor);
    }
 
    private static AquabasileaCourse createDefaultAquabasileaCourse() {
       LocalDateTime courseDate = LocalDateTime.of(LocalDate.of(2022, Month.JUNE, 5), LocalTime.of(10, 15));
-      return new AquabasileaCourse(courseDate, com.aquabasilea.web.model.CourseLocation.FITNESSPARK_HEUWAAGE, "test", "heinz");
+      return new AquabasileaCourse(courseDate, "FITNESSPARK_HEUWAAGE", "test", "heinz");
    }
 
    private static class TestAquabasileaCourseExtractor implements AquabasileaCourseExtractor {
@@ -200,7 +200,7 @@ class CourseDefUpdaterTest {
       }
 
       @Override
-      public ExtractedAquabasileaCourses extractAquabasileaCourses(List<com.aquabasilea.web.model.CourseLocation> list) {
+      public ExtractedAquabasileaCourses extractAquabasileaCourses(List<String> list) {
          try {
             Thread.sleep(extractingDuration);
          } catch (InterruptedException e) {

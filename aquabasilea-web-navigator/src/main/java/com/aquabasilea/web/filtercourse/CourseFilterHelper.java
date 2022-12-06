@@ -13,7 +13,6 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,7 +53,7 @@ public class CourseFilterHelper {
     */
    public void applyCriteriaFilter(CourseBookDetails courseBookDetails, ErrorHandler errorHandler) {
       applyFilterCriteria(CourseFilterBuilder.builder()
-              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.COURSE_LOCATION, courseBookDetails.courseLocationName()))
+              .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.COURSE_LOCATION, courseBookDetails.courseLocation()))
               .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.COURSE_NAME, courseBookDetails.courseName()))
               .addCourseFilterCriterion(CourseFilterCriterion.of(FilterType.DAY_OF_WEEK, courseBookDetails.getDayOfWeekName(Locale.GERMAN)))
               .build(), errorHandler);

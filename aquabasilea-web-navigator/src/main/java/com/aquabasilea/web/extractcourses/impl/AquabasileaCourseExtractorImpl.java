@@ -7,17 +7,13 @@ import com.aquabasilea.web.extractcourses.model.ExtractedAquabasileaCourses;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
 import com.aquabasilea.web.filtercourse.filter.CourseFilterCriterion;
 import com.aquabasilea.web.filtercourse.filter.FilterType;
-import com.aquabasilea.web.model.CourseLocation;
 import com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
-import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
@@ -49,7 +45,7 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
    }
 
    @Override
-   public ExtractedAquabasileaCourses extractAquabasileaCourses(List<CourseLocation> courseLocations) {
+   public ExtractedAquabasileaCourses extractAquabasileaCourses(List<String> courseLocations) {
       try {
          return extractAquabasileaCoursesInternal(courseLocations);
       } catch (TimeoutException e) {
@@ -57,7 +53,7 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
       }
    }
 
-   private ExtractedAquabasileaCourses extractAquabasileaCoursesInternal(List<CourseLocation> courseLocations) {
+   private ExtractedAquabasileaCourses extractAquabasileaCoursesInternal(List<String> courseLocations) {
       LOG.info("Start extracting courses for locations {} ", courseLocations);
       navigate2CoursePageAndAwaitReadiness();
       filterAndShowCourses(courseLocations);
@@ -70,10 +66,9 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
    /**
     * Defines the necessary filter criteria and shows all found courses
     */
-   private void filterAndShowCourses(List<CourseLocation> courseLocations) {
+   private void filterAndShowCourses(List<String> courseLocations) {
       CourseFilterHelper courseFilterHelper = new CourseFilterHelper(webNavigatorHelper);
-      List<String> courseLocationsAsString = courseLocations.stream().map(CourseLocation::getCourseLocationName).toList();
-      List<CourseFilterCriterion> criteria = List.of(CourseFilterCriterion.of(FilterType.COURSE_LOCATION, courseLocationsAsString));
+      List<CourseFilterCriterion> criteria = List.of(CourseFilterCriterion.of(FilterType.COURSE_LOCATION, courseLocations));
       courseFilterHelper.applyCriteriaFilter(criteria, errorHandler);
       showAllSearchResults();
    }
@@ -93,7 +88,7 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
       waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
    }
 
-   private ExtractedAquabasileaCourses handleTimeoutException(List<CourseLocation> courseLocations, TimeoutException e) {
+   private ExtractedAquabasileaCourses handleTimeoutException(List<String> courseLocations, TimeoutException e) {
       if (timeOutRetries > 0) {
          handlingError(String.format("Timeout while extracting courses. Retries left: %s", this.timeOutRetries), e);
          timeOutRetries--;

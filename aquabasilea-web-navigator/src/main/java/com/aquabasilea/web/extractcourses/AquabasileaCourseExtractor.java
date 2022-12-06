@@ -1,7 +1,6 @@
 package com.aquabasilea.web.extractcourses;
 
 import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
-import com.aquabasilea.web.model.CourseLocation;
 import com.aquabasilea.web.extractcourses.model.ExtractedAquabasileaCourses;
 
 import java.util.List;
@@ -19,5 +18,5 @@ public interface AquabasileaCourseExtractor {
     * @param courseLocations the course location to filter
     * @return a {@link ExtractedAquabasileaCourses} which contains a list with {@link AquabasileaCourse}s
     */
-   ExtractedAquabasileaCourses extractAquabasileaCourses(List<CourseLocation> courseLocations);
+   ExtractedAquabasileaCourses extractAquabasileaCourses(List<String> courseLocations);
 }

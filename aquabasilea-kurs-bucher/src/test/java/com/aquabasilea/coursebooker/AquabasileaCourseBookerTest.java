@@ -235,7 +235,7 @@ class AquabasileaCourseBookerTest {
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - (duration2StartDryRunEarlier.toMinutes() - (24 * 60)))));
       assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_DRY_RUN, BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP)));
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              actualCourseDate, currentCourse.getCourseLocation().getWebCourseLocation());
+              actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
       verify(aquabasileaWebNavigator, times(2)).selectAndBookCourse(eq(courseBookDetails));
       verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
               .withCourseName(COURSE_NAME)
@@ -286,7 +286,7 @@ class AquabasileaCourseBookerTest {
       assertThat(actualCourseDate, is(notNullValue()));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt, is(nullValue()));
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              actualCourseDate, currentCourse.getCourseLocation().getWebCourseLocation());
+              actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
       verify(aquabasileaWebNavigator).selectAndBookCourse(eq(courseBookDetails));
       verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
               .withCourseName(zumba)
@@ -329,7 +329,7 @@ class AquabasileaCourseBookerTest {
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       LocalDateTime actualCourseDate = currentCourse.getCourseDate();
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              actualCourseDate, currentCourse.getCourseLocation().getWebCourseLocation());
+              actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
       verify(aquabasileaWebNavigator, never()).selectAndBookCourse(eq(courseBookDetails));
       verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
               .withCourseName(zumba)
