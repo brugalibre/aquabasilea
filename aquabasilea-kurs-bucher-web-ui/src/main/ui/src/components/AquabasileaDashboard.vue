@@ -119,9 +119,10 @@ export default {
       setTimeout(() => {
         console.log('refreshAddCourse refreshed: ' + this.addCourseRefreshKey);
         this.addCourseRefreshKey += 1;
+        this.weeklyCoursesRefreshKey += 1;// after the course-defs are refreshed -> refresh current courses, may be one of them is without course-def now
         this.$store.dispatch('aquabasilea/setIsLoading', false);
         this.errorDetails = null;
-      }, 2500);
+      }, 2000);
     },
   },
   mounted() {

@@ -3,6 +3,7 @@ package com.aquabasilea.app.config;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.model.course.coursedef.repository.impl.CourseDefRepositoryImpl;
 import com.aquabasilea.model.course.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.model.course.coursedef.update.facade.CourseExtractorFacade;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.model.course.weeklycourses.repository.impl.WeeklyCoursesRepositoryImpl;
 import com.aquabasilea.model.statistics.repository.StatisticsRepository;
@@ -18,7 +19,6 @@ import com.aquabasilea.service.coursedef.update.CourseDefUpdaterService;
 import com.aquabasilea.service.statistics.StatisticsService;
 import com.aquabasilea.service.userconfig.UserConfigService;
 import com.aquabasilea.service.weeklycourses.WeeklyCoursesService;
-import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
@@ -66,7 +66,7 @@ public class AquabasileaCourseBookerAppConfig {
    public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository, @Autowired StatisticsService statisticsService,
                                                @Autowired UserConfigRepository userConfigRepository,
                                                @Autowired WeeklyCoursesService weeklyCoursesService) {
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator,
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(CourseExtractorFacade.getCourseExtractorFacade(),
               statisticsService, courseDefRepository, userConfigRepository);
       courseDefUpdater.addCourseDefUpdatedNotifier(weeklyCoursesService::updateCoursesAfterCourseDefUpdate);
       return courseDefUpdater;

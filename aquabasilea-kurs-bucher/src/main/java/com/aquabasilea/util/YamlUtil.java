@@ -6,6 +6,7 @@ import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 public class YamlUtil {
 
@@ -30,6 +31,28 @@ public class YamlUtil {
          throw new IllegalStateException(e);
       }
    }
+
+   /**
+    * Loads the given yml file and create a new class with the content
+    * of the read file
+    * If there is no file, then a new instance of the given class is created, using its default constructor
+    *
+    * @param ymlFile the file
+    * @param clazz   type of the class to create
+    * @return a new instance of the given class, with the content of the given yml-file
+    */
+   public static <T> T readYamlIgnoreMissingFile(String ymlFile, Class<T> clazz) {
+      try {
+         return readYaml(ymlFile, clazz);
+      } catch (Exception e) {
+         try {
+            return clazz.getDeclaredConstructor().newInstance();
+         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+            throw new IllegalStateException(e);
+         }
+      }
+   }
+
 
    private static Representer createRepresenter() {
       Representer representer = new Representer();

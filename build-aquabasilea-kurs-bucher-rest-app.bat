@@ -33,6 +33,15 @@ cd aquabasilea-web-navigator
 call gradlew clean build shadowJar publishToMavenLocal
 cd ..
 
+Rem build aquabasilea-migros-api
+cd %aquabasileaKursBuchenBaseDir%
+echo "<==========================================>"
+echo "<=====     aquabasilea-migros-api     =====>"
+echo "<==========================================>"
+cd aquabasilea-migros-api
+call gradlew clean build shadowJar publishToMavenLocal
+cd ..
+
 Rem build aquabasilea-kurs-bucher
 echo "<========================================>"
 echo "<====    aquabasilea-kurs-bucher     ====>"

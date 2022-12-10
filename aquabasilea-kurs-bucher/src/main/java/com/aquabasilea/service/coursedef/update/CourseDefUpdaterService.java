@@ -30,7 +30,7 @@ public class CourseDefUpdaterService {
 
    /**
     * Updates all {@link CourseDef} according user's configuration (which defines the {@link CourseLocation}s to consider)
-    * According to those the aquabasliea-courses defined on their course-page are considered
+    * According to those the Aquabasilea-courses defined on their course-page are considered
     *
     * @param userId          the id of the {@link User}
     * @param courseLocations the {@link CourseLocation}s which are considered when updating the {@link CourseDef}s

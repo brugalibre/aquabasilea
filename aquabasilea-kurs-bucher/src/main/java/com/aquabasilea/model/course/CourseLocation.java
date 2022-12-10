@@ -14,7 +14,7 @@ public enum CourseLocation {
 
    MIGROS_FITNESSCENTER_CLARASTRASSE("Migros Fitnesscenter Clarastrasse", "71"),
 
-   MIGROS_FITNESSCENTER_FRENKENDORF("72=Migros Fitnesscenter Frenkendorf", "72"),
+   MIGROS_FITNESSCENTER_FRENKENDORF("Migros Fitnesscenter Frenkendorf", "72"),
 
    MIGROS_FITNESSCENTER_AQUABASILEA("Migros Fitnesscenter Aquabasilea", "139"),
 
@@ -28,11 +28,30 @@ public enum CourseLocation {
       this.id = id;
    }
 
-   public static CourseLocation of(String courseLocationName) {
+   /**
+    * Returns a {@link CourseLocation} which <code>id</code> attribute matches with the provided id
+    *
+    * @param courseLocationId the id of the {@link CourseLocation}
+    * @return a {@link CourseLocation} which <code>id</code> attribute matches with the provided id
+    */
+   public static CourseLocation fromId(String courseLocationId) {
+      return Arrays.stream(CourseLocation.values())
+              .filter(courseLocation -> courseLocation.id.equals(courseLocationId))
+              .findFirst()
+              .orElseThrow(() -> new IllegalStateException("There is no CourseLocation with course location id '" + courseLocationId + "'!"));
+   }
+
+   /**
+    * Returns a {@link CourseLocation} which <code>courseLocationName</code> attribute matches with the provided value
+    *
+    * @param courseLocationName the display name of the {@link CourseLocation}
+    * @return a {@link CourseLocation} which <code>courseLocationName</code> attribute matches with the provided value
+    */
+   public static CourseLocation fromDisplayName(String courseLocationName) {
       return Arrays.stream(CourseLocation.values())
               .filter(courseLocation -> courseLocation.courseLocationName.equals(courseLocationName))
               .findFirst()
-              .orElseThrow(() -> new IllegalStateException("There is no CourseLocation with course location name '" + courseLocationName + "'!"));
+              .orElseThrow(() -> new IllegalStateException("There is no CourseLocation with course location id '" + courseLocationName + "'!"));
    }
 
    public String getCourseLocationName() {

@@ -1,7 +1,5 @@
 !!com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfigImport
+courseDefExtractorType: MIGROS_API
 minutesToStartDryRunEarlier: 34
 loginPage: https://login.migros.ch/login
 coursePage: https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm
-defaultCourses:
-  - "Migros Fitnesscenter Aquabasilea"
-  - "Fitnesspark Heuwaage"

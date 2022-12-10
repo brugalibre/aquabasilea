@@ -1,16 +1,13 @@
 package com.aquabasilea.model.course.coursedef.update;
 
-import com.aquabasilea.model.course.coursedef.update.notify.CourseDefUpdatedNotifier;
 import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.coursedef.repository.mapping.CoursesDefEntityMapper;
-import com.aquabasilea.model.course.coursedef.repository.mapping.CoursesDefEntityMapperImpl;
+import com.aquabasilea.model.course.coursedef.update.facade.CourseExtractorFacade;
+import com.aquabasilea.model.course.coursedef.update.notify.CourseDefUpdatedNotifier;
 import com.aquabasilea.model.userconfig.UserConfig;
 import com.aquabasilea.model.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.service.statistics.StatisticsService;
-import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
-import com.aquabasilea.web.extractcourses.model.ExtractedAquabasileaCourses;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -36,25 +31,23 @@ public class CourseDefUpdater {
 
    // Repositories
    private final CourseDefRepository courseDefRepository;
-   private final CoursesDefEntityMapper coursesDefEntityMapper;
    private final UserConfigRepository userConfigRepository;
    private final StatisticsService statisticsService;
 
-   private final Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractorSupplier;
+   private final CourseExtractorFacade courseExtractorFacade;
    private final ExecutorService executorService;
    private final CourseDefUpdaterScheduler courseDefUpdaterScheduler;
    private final List<CourseDefUpdatedNotifier> courseDefUpdatedNotifiers;
    private final Map<String, Boolean> userId2IsCourseDefUpdateRunningMap;
 
-   public CourseDefUpdater(Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractorSupplier, StatisticsService statisticsService, CourseDefRepository courseDefRepository,
+   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, StatisticsService statisticsService, CourseDefRepository courseDefRepository,
                            UserConfigRepository userConfigRepository) {
-      this(aquabasileaCourseExtractorSupplier, statisticsService, courseDefRepository, userConfigRepository, new CourseDefUpdateDate());
+      this(courseExtractorFacade, statisticsService, courseDefRepository, userConfigRepository, new CourseDefUpdateDate());
    }
 
-   public CourseDefUpdater(Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractorSupplier, StatisticsService statisticsService,
+   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, StatisticsService statisticsService,
                            CourseDefRepository courseDefRepository, UserConfigRepository userConfigRepository, CourseDefUpdateDate courseDefUpdateDate) {
-      this.aquabasileaCourseExtractorSupplier = aquabasileaCourseExtractorSupplier;
-      this.coursesDefEntityMapper = new CoursesDefEntityMapperImpl();
+      this.courseExtractorFacade = courseExtractorFacade;
       this.userConfigRepository = userConfigRepository;
       this.courseDefRepository = courseDefRepository;
       this.statisticsService = statisticsService;
@@ -118,19 +111,10 @@ public class CourseDefUpdater {
    }
 
    private void updateAquabasileaCoursesInternal(String userId, List<CourseLocation> courseLocations) {
-      List<String> webCourseLocations = map2Strings(courseLocations);
-      ExtractedAquabasileaCourses extractedAquabasileaCourses = aquabasileaCourseExtractorSupplier.get().extractAquabasileaCourses(webCourseLocations);
+      List<CourseDef> courseDefs = courseExtractorFacade.extractAquabasileaCourses(userId, courseLocations);
       courseDefRepository.deleteAllByUserId(userId);
-      List<CourseDef> courseDefs = map2CourseDefsAndSetUserId(userId, extractedAquabasileaCourses);
       courseDefRepository.saveAll(courseDefs);
       courseDefUpdatedNotifiers.forEach(courseDefUpdatedNotifier -> courseDefUpdatedNotifier.courseDefsUpdated(userId, courseDefs));
-   }
-
-   private List<CourseDef> map2CourseDefsAndSetUserId(String userId, ExtractedAquabasileaCourses extractedAquabasileaCourses) {
-      return coursesDefEntityMapper.mapAquabasileaCourses2CourseDefs(extractedAquabasileaCourses.getAquabasileaCourses())
-              .stream()
-              .map(courseDef -> courseDef.setUserId(userId))
-              .toList();
    }
 
    /**
@@ -144,11 +128,5 @@ public class CourseDefUpdater {
 
    public void addCourseDefUpdatedNotifier(CourseDefUpdatedNotifier courseDefUpdatedNotifier) {
       courseDefUpdatedNotifiers.add(requireNonNull(courseDefUpdatedNotifier));
-   }
-
-   private static List<String> map2Strings(List<CourseLocation> courseLocations) {
-      return courseLocations.stream()
-              .map(CourseLocation::getCourseLocationName)
-              .collect(Collectors.toList());
    }
 }

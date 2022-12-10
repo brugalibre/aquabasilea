@@ -22,6 +22,7 @@ repositories {
 dependencies {
     compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.0-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0-SNAPSHOT'
+    implementation group: 'com.aquabasilea', name: 'aquabasilea-migros-api', version: '1.0-SNAPSHOT'
 
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
 

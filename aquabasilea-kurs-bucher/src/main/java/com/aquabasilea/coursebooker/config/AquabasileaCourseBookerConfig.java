@@ -1,6 +1,11 @@
 package com.aquabasilea.coursebooker.config;
 
+import com.aquabasilea.model.course.coursedef.update.facade.CourseDefExtractorType;
+import com.aquabasilea.util.YamlUtil;
+
 import java.time.Duration;
+
+import static java.util.Objects.nonNull;
 
 public class AquabasileaCourseBookerConfig {
 
@@ -26,16 +31,7 @@ public class AquabasileaCourseBookerConfig {
    private Duration durationToStartBookerEarlier;
    private String courseConfigFile;
    private int daysToBookCourseEarlier;
-
-   @Override
-   public String toString() {
-      return "AquabasileaCourseBookerConfig{" +
-              "durationToStartDryRunEarlier=" + durationToStartDryRunEarlier +
-              ", durationToStartBookerEarlier=" + durationToStartBookerEarlier +
-              ", courseConfigFile='" + courseConfigFile + '\'' +
-              ", daysToBookCourseEarlier=" + daysToBookCourseEarlier +
-              '}';
-   }
+   private CourseDefExtractorType courseDefExtractorType;
 
    public AquabasileaCourseBookerConfig() {
       init(AQUABASILEA_COURSE_BOOKER_CONFIG_FILE);
@@ -62,6 +58,30 @@ public class AquabasileaCourseBookerConfig {
       this.durationToStartBookerEarlier = DURATION_TO_START_BOOKER_EARLIER;
       this.durationToStartDryRunEarlier = DURATION_TO_START_DRY_RUN_EARLIER;
       this.daysToBookCourseEarlier = DAYS_TO_BOOK_COURSE_EARLIER;
+      this.courseDefExtractorType = CourseDefExtractorType.AQUABASILEA_WEB;
+   }
+
+   /**
+    * Refreshes the configurable values from the {@link #AQUABASILEA_COURSE_BOOKER_CONFIG_FILE}
+    */
+   public AquabasileaCourseBookerConfig refreshConfig() {
+      readConfigFromFile();
+      return this;
+   }
+
+   private void readConfigFromFile() {
+      AquabasileaCourseBookerConfig externalReadConfig = YamlUtil.readYamlIgnoreMissingFile(courseConfigFile, getClass());
+      if (nonNull(externalReadConfig.getCourseDefExtractorType())) {
+         this.courseDefExtractorType = externalReadConfig.courseDefExtractorType;
+      }
+   }
+
+   public CourseDefExtractorType getCourseDefExtractorType() {
+      return courseDefExtractorType;
+   }
+
+   public void setCourseDefExtractorType(CourseDefExtractorType courseDefExtractorType) {
+      this.courseDefExtractorType = courseDefExtractorType;
    }
 
    /**
@@ -83,5 +103,15 @@ public class AquabasileaCourseBookerConfig {
 
    public int getDaysToBookCourseEarlier() {
       return daysToBookCourseEarlier;
+   }
+
+   @Override
+   public String toString() {
+      return "AquabasileaCourseBookerConfig{" +
+              "durationToStartDryRunEarlier=" + durationToStartDryRunEarlier +
+              ", durationToStartBookerEarlier=" + durationToStartBookerEarlier +
+              ", courseConfigFile='" + courseConfigFile + '\'' +
+              ", daysToBookCourseEarlier=" + daysToBookCourseEarlier +
+              '}';
    }
 }
