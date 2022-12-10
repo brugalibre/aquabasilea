@@ -34,7 +34,7 @@ dependencies {
 
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
 
-    compileOnly 'org.slf4j:slf4j-api:2.0.4'
+    compileOnly 'org.slf4j:slf4j-api:2.0.5'
 
     testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.0-SNAPSHOT'
     testImplementation group: 'org.mock-server', name: 'mockserver-netty', version: '5.11.2'
