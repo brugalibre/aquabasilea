@@ -7,7 +7,7 @@ class AuthService {
         return axios.post(API_URL + 'login', user)
             .then(response => {
                 if (response?.data?.accessToken) {
-                    localStorage.setItem('user', JSON.stringify(response.data));
+                    this.setCurrentUser(response.data);
                 }
                 return response.data;
             });
@@ -19,6 +19,10 @@ class AuthService {
 
     register(user) {
         return axios.post(API_URL + 'register', user);
+    }
+
+    setCurrentUser(currentUser) {
+        localStorage.setItem('user', JSON.stringify(currentUser));
     }
 }
 
