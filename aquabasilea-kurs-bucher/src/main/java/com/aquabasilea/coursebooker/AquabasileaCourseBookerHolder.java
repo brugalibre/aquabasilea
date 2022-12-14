@@ -3,6 +3,7 @@ package com.aquabasilea.coursebooker;
 import com.brugalibre.domain.user.model.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,5 +26,12 @@ public class AquabasileaCourseBookerHolder {
 
    public AquabasileaCourseBooker getForUserId(String userId) {
       return requireNonNull(userId2AquabasileaCourseBookerMap.get(userId), "No AquabasileaCourseBooker registered for user id '" + userId + "'!");
+   }
+
+   /**
+    * @return an unmodifiable map of all user-ids and their {@link AquabasileaCourseBooker}
+    */
+   public Map<String, AquabasileaCourseBooker> getUserId2AquabasileaCourseBookerMap() {
+      return Collections.unmodifiableMap(userId2AquabasileaCourseBookerMap);
    }
 }

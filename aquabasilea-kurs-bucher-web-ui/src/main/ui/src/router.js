@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import AquabasileaDashboard from "./components/AquabasileaDashboard.vue";
 import Login from "./components/auth/Login.vue";
 import Register from "./components/auth/Register.vue";
+import Admin from "./components/admin/Admin.vue";
 // lazy-loaded
 const Profile = () => import("./components/user/Profile.vue")
 
@@ -17,6 +18,10 @@ const routes = [
     {
         path: "/register",
         component: Register,
+    },
+    {
+        path: "/admin",
+        component: Admin,
     },
     {
         path: "/profile",

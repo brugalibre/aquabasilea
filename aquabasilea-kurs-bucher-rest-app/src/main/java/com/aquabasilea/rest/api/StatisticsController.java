@@ -23,6 +23,6 @@ public class StatisticsController {
 
    @GetMapping(path = "/statistics")
    public StatisticsDto getStatisticsDto() {
-      return statisticsRestService.getStatisticDto(userProvider.getCurrentUserId());
+      return statisticsRestService.getStatisticDtoByUserId(userProvider.getCurrentUserId());
    }
 }

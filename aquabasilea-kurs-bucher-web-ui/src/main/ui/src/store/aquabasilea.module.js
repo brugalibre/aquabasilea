@@ -19,6 +19,8 @@ export const aquabasilea = {
         weeklyCourses: {
             courseDtos: [],
         },
+        adminOverview: {
+        },
         courseDefDtos: [],
         courseLocationsDtos: [],
     }),
@@ -28,6 +30,9 @@ export const aquabasilea = {
         },
         weeklyCourses(state) {
             return state.weeklyCourses;
+        },
+        adminOverview(state) {
+            return state.adminOverview;
         },
         courseDefDtos(state) {
             return state.courseDefDtos;
@@ -49,6 +54,9 @@ export const aquabasilea = {
         setWeeklyCourses(state, weeklyCourses) {
             state.weeklyCourses = weeklyCourses;
         },
+        setAdminOverview(state, adminOverview) {
+            state.adminOverview = adminOverview;
+        },
         setCourseDefDtos(state, courseDefDtos) {
             state.courseDefDtos = courseDefDtos;
         },
@@ -68,6 +76,9 @@ export const aquabasilea = {
         },
         setWeeklyCourses(context, weeklyCourses) {
             context.commit("setWeeklyCourses", weeklyCourses);
+        },
+        setAdminOverview(context, adminOverview) {
+            context.commit("setAdminOverview", adminOverview);
         },
         setCourseDefDtos(context, courseDefDtos) {
             context.commit("setCourseDefDtos", courseDefDtos);

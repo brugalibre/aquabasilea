@@ -1,26 +1,28 @@
 <template>
-  <div class="container">
-    <div class="jumbotron" style="width: 400px">
-      <h2 style="text-align: left;">Details</h2>
-      <div class="grid-container-60-40">
-        <label class="attr">Benutzername</label>
-        <span>{{ currentUser.username }}</span>
-        <label class="attr">Mobile-Nr</label>
-        <span>{{ currentUser.phoneNr }}</span>
-        <label class="attr">Benutzerrollen</label>
-        <span>
+  <div class="container centered-flex">
+    <div>
+      <div class="tile grid-container jumbotron">
+        <h2>Details</h2>
+        <div class="grid-container-60-40">
+          <label class="attr">Benutzername</label>
+          <span style="word-wrap: anywhere">{{ currentUser.username }}</span>
+          <label class="attr">Mobile-Nr</label>
+          <span>{{ currentUser.phoneNr }}</span>
+          <label class="attr">Benutzerrollen</label>
+          <span>
           <ul>
             <li v-for="role in currentUser.roles" :key="role">{{ role }}</li>
           </ul>
         </span>
+        </div>
       </div>
-    </div>
-    <div class="jumbotron" style="width: 600px; margin-top: 50px">
-      <h2 style="text-align: left">Daten ändern</h2>
-      <div class="grid-container-40-60">
-        <label class="attr">Neue Mobile-Nr</label>
-        <div style="display: flex">
-          <CFormInput v-model="newPhoneNumber"></CFormInput>
+      <div class="tile grid-container jumbotron" style="margin-top: 50px">
+        <h2>Daten ändern</h2>
+        <div class="grid-container-40-60">
+          <label class="attr">Neue Mobile-Nr</label>
+          <div style="display: flex">
+            <CFormInput v-model="newPhoneNumber"></CFormInput>
+          </div>
           <CButton color="info" class="change-phone-nr-button" :disabled="this.isDisabled()"
                    v-on:click="this.changePhoneNr()">
               <span
@@ -29,14 +31,14 @@
               ></span>
             Speichern
           </CButton>
-        </div>
-        <span v-if="message"></span>
-        <div
-            v-if="message"
-            class="alert"
-            :class="successful ? 'alert-success' : 'alert-danger'"
-        >
-          {{ message }}
+          <span v-if="message"></span>
+          <div
+              v-if="message"
+              class="alert"
+              :class="successful ? 'alert-success' : 'alert-danger'"
+          >
+            {{ message }}
+          </div>
         </div>
       </div>
     </div>
@@ -62,7 +64,8 @@ export default {
     currentUser() {
       return this.$store.state.auth.user;
     }
-  }, methods: {
+  },
+  methods: {
     isDisabled() {
       return this.newPhoneNumber === this.currentUser.phoneNr
           || this.loading
@@ -94,14 +97,12 @@ export default {
 <style scoped>
 
 .change-phone-nr-button {
-  margin-left: 10px;
-  width: 100%;
+  margin-right: 10px;
 }
 
 .attr {
   font-weight: bold;
   word-wrap: anywhere;
 }
-
 
 </style>

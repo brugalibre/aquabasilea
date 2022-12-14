@@ -2,12 +2,13 @@
   <div id="app">
     <nav class="navbar navbar-expand navbar-dark bg-info nav-bar-container">
 
-      <div class="aquabasilea-course-overview-router-link">
+      <div v-if="this.hasCurrentUserRole('USER')" class="aquabasilea-course-overview-router-link">
         <router-link to="/" class="nav-link">
           <!--          <span class="aquabasilea-icon"/>-->
           <h3 class="aquabasilea-course-overview-router-link-title">Deine Migros-Kurse</h3>
         </router-link>
       </div>
+      <div v-else></div>
       <div v-if="!currentUser" class="navbar-nav ml-auto">
         <li class="nav-item icon-with-text">
           <span class="register-icon"/>
@@ -23,6 +24,12 @@
         </li>
       </div>
       <div v-if="currentUser" class="navbar-nav ml-auto">
+        <li v-if="this.hasCurrentUserRole('ADMIN')" class="nav-item icon-with-text nav-bar-end-element">
+          <span class="admin-icon"/>
+          <router-link to="/admin" class="nav-link">
+            <label class="router-link-label">Admin</label>
+          </router-link>
+        </li>
         <li class="nav-item icon-with-text">
           <span class="user-icon"/>
           <router-link to="/profile" class="nav-link">
@@ -37,11 +44,9 @@
         </li>
       </div>
     </nav>
-
     <div class="aquabasilea-container container">
       <router-view/>
     </div>
-
   </div>
 </template>
 
@@ -56,6 +61,10 @@ export default {
     logOut() {
       this.$store.dispatch('auth/logout');
       this.$router.push('/login');
+    },
+    hasCurrentUserRole(role) {
+      return this.currentUser?.roles
+          .find(currentUserRole => currentUserRole === role);
     }
   }
 };
@@ -201,6 +210,10 @@ button {
 
 .login-icon {
   background: url("./assets/login.svg") transparent no-repeat right;
+}
+
+.admin-icon {
+  background: url("./assets/admin.svg") transparent no-repeat right;
 }
 
 .register-icon {

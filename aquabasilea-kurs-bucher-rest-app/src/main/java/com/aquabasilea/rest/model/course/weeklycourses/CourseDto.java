@@ -33,6 +33,15 @@ public record CourseDto(String id, String courseName, String courseInstructor, S
               .build();
    }
 
+   /**
+    * Returns a new {@link CourseDto} for the given {@link Course}, {@link Locale} and boolean which defines if the given course
+    * is the current course or not
+    *
+    * @param course          the course for which a {@link CourseDto} is build
+    * @param isCurrentCourse <code>true</code> if the given {@link Course} is the current course or <code>false</code> if not
+    * @param locale          the {@link Locale} for which the ui display texts are resolved
+    * @return a new {@link CourseDto}
+    */
    public static CourseDto of(Course course, boolean isCurrentCourse, Locale locale) {
       return new CourseDto(course.getId(), course.getCourseName(), course.getCourseInstructor(), course.getCourseDate().getDayOfWeek().getDisplayName(TextStyle.FULL, locale),
               DateUtil.getTimeAsString(course.getCourseDate()), course.getCourseDate(), CourseLocationDto.of(course.getCourseLocation()),

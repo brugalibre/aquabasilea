@@ -1,7 +1,6 @@
 package com.aquabasilea.rest.service.statistics;
 
 import com.aquabasilea.i18n.TextResources;
-import com.aquabasilea.model.statistics.repository.StatisticsRepository;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.statistic.StatisticsDto;
 import com.aquabasilea.service.statistics.StatisticsService;
@@ -24,12 +23,12 @@ public class StatisticsRestService {
       this.runtimeMXBean = ManagementFactory.getRuntimeMXBean();
    }
 
-   public StatisticsDto getStatisticDto(String userId) {
+   public StatisticsDto getStatisticDtoByUserId(String userId) {
       return StatisticsDto.of(statisticsService.getByUserId(userId), LocaleProvider.getCurrentLocale(), getDurationString());
    }
 
-   private String getDurationString() {
-      Duration uptimeDuration = Duration.ofMillis(runtimeMXBean.getUptime());
+   public String getDurationString() {
+      Duration uptimeDuration = getUptimeDuration();
       long totalDays = uptimeDuration.toDays();
       long years = Math.floorDiv(totalDays, 365);
       long restDays = totalDays - (years * 365);
@@ -39,5 +38,9 @@ public class StatisticsRestService {
          yearsAndMonth = TextResources.UPTIME_YEARS_AND_MONTH.formatted(years, month) + ", ";
       }
       return yearsAndMonth + TextResources.UPTIME_DAYS_HOURS_MINUTES.formatted(uptimeDuration.toDaysPart(), uptimeDuration.toHoursPart(), uptimeDuration.toMinutesPart());
+   }
+
+   public Duration getUptimeDuration() {
+      return Duration.ofMillis(runtimeMXBean.getUptime());
    }
 }

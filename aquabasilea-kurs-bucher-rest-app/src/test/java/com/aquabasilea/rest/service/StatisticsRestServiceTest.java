@@ -48,7 +48,7 @@ class StatisticsRestServiceTest {
       statisticsRepository.save(statistics);
 
       // When
-      StatisticsDto statisticDto = statisticsRestService.getStatisticDto(userId);
+      StatisticsDto statisticDto = statisticsRestService.getStatisticDtoByUserId(userId);
 
       // Then
       assertThat(statisticDto.bookingSuccessRate(), is(100.0));
