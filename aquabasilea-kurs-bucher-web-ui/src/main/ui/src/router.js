@@ -3,28 +3,29 @@ import AquabasileaDashboard from "./components/AquabasileaDashboard.vue";
 import Login from "./components/auth/Login.vue";
 import Register from "./components/auth/Register.vue";
 import Admin from "./components/admin/Admin.vue";
+import RouterConstants from "@/router-constants";
 // lazy-loaded
 const Profile = () => import("./components/user/Profile.vue")
 
 const routes = [
     {
-        path: "/",
+        path: RouterConstants.COURSE_OVERVIEW_PATH,
         component: AquabasileaDashboard,
     },
     {
-        path: "/login",
+        path: RouterConstants.LOGIN_PATH,
         component: Login,
     },
     {
-        path: "/register",
+        path: RouterConstants.REGISTER_PATH,
         component: Register,
     },
     {
-        path: "/admin",
+        path: RouterConstants.ADMIN_PATH,
         component: Admin,
     },
     {
-        path: "/profile",
+        path: RouterConstants.PROFILE_PATH,
         name: "profile",
         // lazy-loaded
         component: Profile,
@@ -37,13 +38,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const publicPages = ['/login', '/register'];
+    const publicPages = [RouterConstants.LOGIN_PATH, RouterConstants.REGISTER_PATH];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = localStorage.getItem('user');
     // trying to access a restricted page + not logged in
     // redirect to login page
     if (authRequired && !loggedIn) {
-        next('/login');
+        next(RouterConstants.LOGIN_PATH);
     } else {
         next();
     }

@@ -2,10 +2,14 @@ package com.aquabasilea.rest.app.config.security.auth;
 
 import com.brugalibre.common.security.auth.config.WebSecurityConfigHelper;
 import com.brugalibre.persistence.user.Role;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AquabasileaWebSecurityConfigHelper implements WebSecurityConfigHelper {
+
+   @Value("server:servlet:context-path:'/'")
+   private String loginProcessingUrl;
 
    private static final String V_1_AQUABASILEA_COURSE_BOOKER = "/api/v1/aquabasilea-course-booker/**";
    private static final String API_V_1_ADMIN = "/api/v1/admin/**";
@@ -22,6 +26,6 @@ public class AquabasileaWebSecurityConfigHelper implements WebSecurityConfigHelp
 
    @Override
    public String getLoginProcessingUrl() {
-      return "/";
+      return loginProcessingUrl;
    }
 }

@@ -1,10 +1,9 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-info nav-bar-container">
+    <nav class="navbar navbar-expand navbar-dark bg-info nav-bar-container" style="overflow-x: auto; overflow-y: hidden">
 
       <div v-if="this.hasCurrentUserRole('USER')" class="aquabasilea-course-overview-router-link">
-        <router-link to="/" class="nav-link">
-          <!--          <span class="aquabasilea-icon"/>-->
+        <router-link :to=courseOverview class="nav-link">
           <h3 class="aquabasilea-course-overview-router-link-title">Deine Migros-Kurse</h3>
         </router-link>
       </div>
@@ -12,13 +11,13 @@
       <div v-if="!currentUser" class="navbar-nav ml-auto">
         <li class="nav-item icon-with-text">
           <span class="register-icon"/>
-          <router-link to="/register" class="nav-link">
+          <router-link :to=registerPath class="nav-link">
             <label class="router-link-label">Register</label>
           </router-link>
         </li>
         <li class="nav-item icon-with-text nav-bar-end-element">
           <span class="login-icon"/>
-          <router-link to="/login" class="nav-link">
+          <router-link :to=loginPath class="nav-link">
             <label class="router-link-label">Login</label>
           </router-link>
         </li>
@@ -26,13 +25,13 @@
       <div v-if="currentUser" class="navbar-nav ml-auto">
         <li v-if="this.hasCurrentUserRole('ADMIN')" class="nav-item icon-with-text nav-bar-end-element">
           <span class="admin-icon"/>
-          <router-link to="/admin" class="nav-link">
+          <router-link :to=adminPath class="nav-link">
             <label class="router-link-label">Admin</label>
           </router-link>
         </li>
         <li class="nav-item icon-with-text">
           <span class="user-icon"/>
-          <router-link to="/profile" class="nav-link">
+          <router-link :to=profilePath class="nav-link">
             <label class="router-link-label">Profil verwalten</label>
           </router-link>
         </li>
@@ -51,7 +50,19 @@
 </template>
 
 <script>
+
+import RouterConstants from "@/router-constants";
+
 export default {
+  data() {
+    return {
+      courseOverview: RouterConstants.COURSE_OVERVIEW_PATH,
+      profilePath: RouterConstants.PROFILE_PATH,
+      adminPath: RouterConstants.ADMIN_PATH,
+      loginPath: RouterConstants.LOGIN_PATH,
+      registerPath: RouterConstants.REGISTER_PATH,
+    }
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -60,7 +71,7 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch('auth/logout');
-      this.$router.push('/login');
+      this.$router.push(this.loginPath);
     },
     hasCurrentUserRole(role) {
       return this.currentUser?.roles
@@ -225,7 +236,7 @@ button {
 }
 
 .user-icon {
-  background: url("./assets/user.svg") no-repeat left;
+  background: url("./assets/user.svg") no-repeat right;
   background-size: 50% 50%;
 }
 

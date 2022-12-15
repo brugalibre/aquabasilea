@@ -43,6 +43,7 @@ import WeeklyCoursesOverview from "@/components/WeeklyCoursesOverview";
 import AddCourse from "@/components/AddCourse";
 import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
 import LoggingService from "@/services/log/logging.service";
+import RouterConstants from "@/router-constants";
 
 export default {
   name: 'App',
@@ -55,6 +56,7 @@ export default {
   },
   data() {
     return {
+      loginPath: RouterConstants.LOGIN_PATH,
       errorDetails: '',
       applicationTitle: 'Migros-Kurs Bucher',
       stagingMsg: 'Migros-Kurs-Bucher Webapplikation',
@@ -99,7 +101,7 @@ export default {
       this.errorDetails = error;
       if (LoggingService.isAuthenticationFailed(error)) {
         this.$store.dispatch('auth/logout');
-        this.$router.push('/login');
+        this.$router.push(this.loginPath);
         return;
       }
       console.log('AquabasileaDashboard.vue: errorOccurred : \'' + this.errorDetails + '\'');

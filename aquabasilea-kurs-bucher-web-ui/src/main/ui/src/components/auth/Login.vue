@@ -42,7 +42,7 @@
             Noch nicht registriert?
             Hier gehts zur
           </label>
-          <router-link to="/register">
+          <router-link :to=registerPath>
             Registrierung
           </router-link>
         </div>
@@ -55,6 +55,7 @@
 // import {ErrorMessage, Form} from "vee-validate";
 import * as yup from "yup";
 import LoggingService from "@/services/log/logging.service";
+import RouterConstants from "@/router-constants";
 
 export default {
   name: "Login",
@@ -69,6 +70,8 @@ export default {
     });
 
     return {
+      registerPath: RouterConstants.REGISTER_PATH,
+      courseOverviewPath: RouterConstants.COURSE_OVERVIEW_PATH,
       loading: false,
       message: '',
       username: '',
@@ -83,7 +86,7 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push('/');
+      this.$router.push(this.courseOverviewPath);
     }
   },
   methods: {
@@ -96,7 +99,7 @@ export default {
       this.$store.dispatch("auth/login", user)
           .then(response => {
             if (response) {
-              this.$router.push('/');
+              this.$router.push(this.courseOverviewPath);
             }
           })
           .catch(error => this.message = LoggingService.extractErrorText(error))

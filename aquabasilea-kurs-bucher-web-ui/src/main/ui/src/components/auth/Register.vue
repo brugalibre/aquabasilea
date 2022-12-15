@@ -52,7 +52,7 @@
       <div>
         <label>Bereits registriert?
           Hier gehts zum</label>
-        <router-link to="/login">
+        <router-link :to=loginPath>
           Login
         </router-link>
       </div>
@@ -66,6 +66,7 @@
 
 // import AuthService from "@/services/auth/auth.service";
 import LoggingService from "@/services/log/logging.service";
+import RouterConstants from "@/router-constants";
 // import axios from "axios";
 
 export default {
@@ -86,6 +87,8 @@ export default {
     // });
 
     return {
+      loginPath: RouterConstants.LOGIN_PATH,
+      courseOverviewPath: RouterConstants.COURSE_OVERVIEW_PATH,
       username: '',
       password: '',
       userPhoneNr: '',
@@ -102,7 +105,7 @@ export default {
   },
   mounted() {
     if (this.loggedIn) {
-      this.$router.push('/');
+      this.$router.push(this.courseOverviewPath);
     }
   },
   methods: {

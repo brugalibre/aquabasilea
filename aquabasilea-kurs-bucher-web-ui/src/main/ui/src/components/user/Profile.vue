@@ -1,6 +1,6 @@
 <template>
   <div class="container centered-flex">
-    <div>
+    <div v-if="currentUser">
       <div class="tile grid-container jumbotron">
         <h2>Details</h2>
         <div class="grid-container-60-40">
