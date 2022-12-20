@@ -6,7 +6,7 @@ import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.CourseComparator;
 import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.util.DateUtil;
+import com.aquabasilea.util.PlUtil;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
@@ -16,10 +16,8 @@ import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.coursebooker.states.CourseBookingState.BOOKING;
@@ -51,11 +49,13 @@ public class BookingStateHandler {
       if (!currentCourse.getHasCourseDef()) {
          return handleCourseWithoutCourseDef(userId, currentCourse);
       }
-      LOG.info("About going to {} the course [{}] for user [{}] at {}", state == BOOKING ? "book" : "dry-run the booking",
-              currentCourse.getCourseName(), userId, DateUtil.toStringWithSeconds(LocalDateTime.now(), Locale.GERMAN));
+      LOG.info("About going to {} the course [{}] for user [{}]", state == BOOKING ? "book" : "dry-run the booking",
+              currentCourse.getCourseName(), userId);
       CourseBookDetails courseBookDetails = createCourseBookDetails(currentCourse);
+      PlUtil.INSTANCE.startLogInfo("Course booker");
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(courseBookDetails);
       LOG.info("Course booking for user [{}] is done. Result is {}", userId, courseBookingEndResult);
+      PlUtil.INSTANCE.endLogInfo();
       resumeCoursesUntil(userId, currentCourse);
       return courseBookingEndResult;
    }

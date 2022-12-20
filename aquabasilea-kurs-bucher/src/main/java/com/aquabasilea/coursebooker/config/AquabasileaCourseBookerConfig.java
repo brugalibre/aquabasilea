@@ -27,6 +27,7 @@ public class AquabasileaCourseBookerConfig {
    private static final int DAYS_TO_BOOK_COURSE_EARLIER = 1;
 
    private static final String AQUABASILEA_COURSE_BOOKER_CONFIG_FILE = "config/aquabasilea-kurs-bucher-config.yml";
+   private Integer secondsToStartBookerEarlier;
    private Duration durationToStartDryRunEarlier;
    private Duration durationToStartBookerEarlier;
    private String courseConfigFile;
@@ -74,6 +75,9 @@ public class AquabasileaCourseBookerConfig {
       if (nonNull(externalReadConfig.getCourseDefExtractorType())) {
          this.courseDefExtractorType = externalReadConfig.courseDefExtractorType;
       }
+      if (nonNull(externalReadConfig.secondsToStartBookerEarlier)) {
+         this.durationToStartBookerEarlier = Duration.ofSeconds(externalReadConfig.secondsToStartBookerEarlier);
+      }
    }
 
    public CourseDefExtractorType getCourseDefExtractorType() {
@@ -103,6 +107,10 @@ public class AquabasileaCourseBookerConfig {
 
    public int getDaysToBookCourseEarlier() {
       return daysToBookCourseEarlier;
+   }
+
+   public void setSecondsToStartBookerEarlier(int secondsToStartBookerEarlier) {
+      this.secondsToStartBookerEarlier = secondsToStartBookerEarlier;
    }
 
    @Override
