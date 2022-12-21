@@ -104,9 +104,54 @@ class CourseDefUpdaterTest {
    }
 
    @Test
-   void startSchedulerAndUpdateImmediately_WithPreviousUpdateButToOld() {
+   void startSchedulerAndUpdateImmediately_WithPreviousUpdateButToOld_UpdateNow() {
 
       // Given
+      LocalDateTime updateTime = LocalDateTime.now();
+
+      // If right now is after 23:00 o'clock -> the next execution will be tomorrow @23:00
+      LocalDateTime expectedNextCourseDefUpdate = updateTime.minusMinutes(1);
+      if (updateTime.toLocalTime().compareTo(LocalTime.of(23, 0, 0)) < 0) {
+         expectedNextCourseDefUpdate = LocalDateTime.of(updateTime.toLocalDate().plusDays(1), updateTime.toLocalTime());
+      }
+      String updateTimeAsString = DateUtil.getTimeAsString(updateTime);
+      String timeOfTheDayAsString = updateTimeAsString.substring(updateTimeAsString.indexOf(", ") + 1);
+      CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(updateTime.getDayOfWeek(), timeOfTheDayAsString);
+      CourseLocation courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
+      LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
+      String courseName = "Test";
+      TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, courseName, 0, "karl");
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService, courseDefRepository, userConfigRepository, courseDefUpdateDate);
+
+      // When
+      courseDefUpdater.startScheduler(USER_ID_WITH_PREV_UPDATE);
+      await().atMost(new Duration(5, TimeUnit.MINUTES)).until(() -> aquabasileaCourseExtractor.amountOfInvocations == 1);
+
+      // Then
+      Statistics statistics = statisticsRepository.getByUserId(USER_ID_WITH_PREV_UPDATE);
+      assertThat(statistics.getNextCourseDefUpdate().toLocalDate(), is(expectedNextCourseDefUpdate.toLocalDate()));
+      assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getHour(), is(expectedNextCourseDefUpdate.toLocalTime().getHour()));
+      assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getMinute(), is(expectedNextCourseDefUpdate.toLocalTime().getMinute()));
+      List<CourseDef> allCourseDefs = courseDefRepository.getAll();
+      assertThat(allCourseDefs.size(), is(1));
+      assertThat(allCourseDefs.get(0).courseName(), is(courseName));
+      assertThat(allCourseDefs.get(0).courseLocation(), is(CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA));
+      assertThat(allCourseDefs.get(0).courseDate(), is(courseDate));
+   }
+
+   @Test
+   void startSchedulerAndUpdateImmediately_WithPreviousUpdateButToOld_UpdateAt11pm() {
+
+      // Given
+      LocalDateTime now = LocalDateTime.now();
+      LocalDateTime expectedNextCourseDefUpdate;
+      // If right now is before 23:00 o'clock -> the next execution will be today @23:00
+      if (now.toLocalTime().compareTo(LocalTime.of(23, 0, 0)) < 0) {
+         expectedNextCourseDefUpdate = LocalDateTime.of(now.toLocalDate(), LocalTime.of(23, 0, 0));
+      } else {
+         // If right now already after 23:00 o'clock -> the next execution will be tomorrow @23:00
+         expectedNextCourseDefUpdate = LocalDateTime.of(now.toLocalDate().plusDays(1), LocalTime.of(23, 0, 0));
+      }
       CourseLocation courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
@@ -118,6 +163,10 @@ class CourseDefUpdaterTest {
       await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> aquabasileaCourseExtractor.amountOfInvocations == 1);
 
       // Then
+      Statistics statistics = statisticsRepository.getByUserId(USER_ID_WITH_PREV_UPDATE);
+      assertThat(statistics.getNextCourseDefUpdate().toLocalDate(), is(expectedNextCourseDefUpdate.toLocalDate()));
+      assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getHour(), is(expectedNextCourseDefUpdate.toLocalTime().getHour()));
+      assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getMinute(), is(expectedNextCourseDefUpdate.toLocalTime().getMinute()));
       List<CourseDef> allCourseDefs = courseDefRepository.getAll();
       assertThat(allCourseDefs.size(), is(1));
       assertThat(allCourseDefs.get(0).courseName(), is(courseName));

@@ -66,6 +66,7 @@ public class CourseDefUpdaterScheduler {
 
    private Duration calcInitialDelay(LocalDateTime courseDefUpdateDate) {
       long until = LocalDateTime.now().until(courseDefUpdateDate, ChronoUnit.MINUTES);
-      return Duration.ofMinutes(until);
+      return Duration.ofMinutes(until)
+              .plusMinutes(1);// 1 minute more, because the difference between 23.11@23:00 and 24.11@23:00 is 23h and 59min
    }
 }

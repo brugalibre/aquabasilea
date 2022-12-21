@@ -19,9 +19,10 @@ public class LocalDateTimeBuilderTest {
       // Given
       int expectedYear = 2022;
       int expectedMonth = 1;
-      DayOfWeek dayOfTheWeek = DayOfWeek.SATURDAY;
+      DayOfWeek dayOfTheWeek = DayOfWeek.FRIDAY;
+      DayOfWeek expectedDayOfTheWeek = DayOfWeek.SATURDAY;
       String timeOfTheDay = "18:00";
-      LocalDateTime refDate = LocalDateTime.of(2021, 12, 31, 10, 15);// Friday
+      LocalDateTime refDate = LocalDateTime.of(2021, 12, 31, 18, 15);// Friday
 
       // When
       LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
@@ -29,7 +30,7 @@ public class LocalDateTimeBuilderTest {
       // Then
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
       assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
-      assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
+      assertThat(actualCreateLDTime.getDayOfWeek(), is(expectedDayOfTheWeek));
    }
 
    @Test
@@ -39,14 +40,13 @@ public class LocalDateTimeBuilderTest {
       String timeOfTheDay = DateUtil.getTimeAsString(refDate);
       int dayOfMonth = refDate.getDayOfMonth();
       int expectedMonth = refDate.getMonthValue();
-      int expectedDayOfTheMont = dayOfMonth + 7;
+      int expectedDayOfTheMont = dayOfMonth + 1;
       int diff = DateUtil.getLastDayOfMonth(refDate) - dayOfMonth;
-      if (diff < 7) {
+      if (diff == 0) {
          // hurray a test depending on the current day...
-         // at the end of the month (e.g. the 27th) we can't just add 7 days ->
-         // the actual month will be the next month and the actual day will bi in that month
+         // if the current day is at the end of the month (e.g. the 31th) we can't just add 1 days ->
          expectedMonth++;
-         expectedDayOfTheMont = 7 - diff;
+         expectedDayOfTheMont = 1;
       }
 
       // When
@@ -55,7 +55,7 @@ public class LocalDateTimeBuilderTest {
       // Then
       assertThat(actualCreateLDTime.getYear(), is(refDate.getYear()));
       assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
-      assertThat(actualCreateLDTime.getDayOfWeek(), is(refDate.getDayOfWeek()));
+      assertThat(actualCreateLDTime.getDayOfWeek(), is(refDate.plusDays(1).getDayOfWeek()));
       assertThat(actualCreateLDTime.getDayOfMonth(), is(expectedDayOfTheMont));
    }
 
@@ -64,10 +64,10 @@ public class LocalDateTimeBuilderTest {
       // Given
       int expectedYear = 2022;
       int expectedMonth = 4;
-      int expectedDayOfWeek = DayOfWeek.SUNDAY.getValue();
-      DayOfWeek dayOfTheWeek = DayOfWeek.SUNDAY;
+      DayOfWeek dayOfTheWeek = DayOfWeek.THURSDAY;
+      DayOfWeek expectedDayOfTheWeek = DayOfWeek.FRIDAY;
       String timeOfTheDay = "18:00";
-      LocalDateTime refDate = LocalDateTime.of(2022, 3, 28, 10, 15);// Monday
+      LocalDateTime refDate = LocalDateTime.of(2022, 3, 31, 18, 15);// Monday
 
       // When
       LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
@@ -75,8 +75,7 @@ public class LocalDateTimeBuilderTest {
       // Then
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
       assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
-      assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
-      assertThat(actualCreateLDTime.getDayOfWeek().getValue(), is(expectedDayOfWeek));
+      assertThat(actualCreateLDTime.getDayOfWeek(), is(expectedDayOfTheWeek));
    }
 
    @Test
@@ -84,35 +83,32 @@ public class LocalDateTimeBuilderTest {
       // Given
       int currentYear = 2022;
       int currentMonth = 3;
-      int expectedDayOfWeek = DayOfWeek.MONDAY.getValue();
-
-      DayOfWeek dayOfTheWeek = DayOfWeek.MONDAY;
+      DayOfWeek dayOfTheWeek = DayOfWeek.SUNDAY;
       String timeOfTheDay = "18:00";
-      LocalDateTime refDate = LocalDateTime.of(currentYear, currentMonth, 26, 10, 15);// Saturday
+      LocalDateTime refDate = LocalDateTime.of(currentYear, currentMonth, 26, 18, 15);// Saturday
 
       // When
-      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
+      LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, DayOfWeek.SATURDAY, timeOfTheDay);
 
       // Then
       assertThat(actualCreateLDTime.getYear(), is(currentYear));
       assertThat(actualCreateLDTime.getMonthValue(), is(currentMonth));
       assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
-      assertThat(actualCreateLDTime.getDayOfWeek().getValue(), is(expectedDayOfWeek));
    }
 
    @Test
-   void testGetLocalDateTimeCourseTimeIsOneMinuteBeforeNow() {
+   void testGetLocalDateTimeCourseTimeIsOneHourAfterNow() {
       // Given
       int currentMonth = 3;
       DayOfWeek dayOfTheWeek = DayOfWeek.TUESDAY;
       int expectedDayOfWeek = dayOfTheWeek.getValue();
       int refDayOfTheMonth = 1; // Tuesday
-      int expectedDayOfTheMonth = refDayOfTheMonth + 7;
-      int hour = 10;
+      int refHour = LocalDateTime.now().getHour();
+      int hour = refHour + 1;
       int minute = 15;
 
       String timeOfTheDay = hour + ":" + (minute - 1);
-      LocalDateTime refDate = LocalDateTime.of(2022, Month.MARCH, refDayOfTheMonth, hour, minute);// S
+      LocalDateTime refDate = LocalDateTime.of(2022, Month.MARCH, refDayOfTheMonth, refHour, minute);// S
 
       // When
       LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
@@ -122,7 +118,7 @@ public class LocalDateTimeBuilderTest {
       assertThat(actualCreateLDTime.getMonthValue(), is(currentMonth));
       assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
       assertThat(actualCreateLDTime.getDayOfWeek().getValue(), is(expectedDayOfWeek));
-      assertThat(actualCreateLDTime.getDayOfMonth(), is(expectedDayOfTheMonth));
+      assertThat(actualCreateLDTime.getDayOfMonth(), is(refDayOfTheMonth));
    }
 
    @Test
@@ -132,12 +128,11 @@ public class LocalDateTimeBuilderTest {
       DayOfWeek dayOfTheWeek = DayOfWeek.TUESDAY;
       int expectedDayOfWeek = dayOfTheWeek.getValue();
       int refDayOfTheMonth = 1; // Tuesday
-      int expectedDayOfTheMonth = refDayOfTheMonth + 7;
       int hour = 10;
       int minute = 15;
 
-      String timeOfTheDay = (hour -1) + ":" + minute;
-      LocalDateTime refDate = LocalDateTime.of(2022, Month.MARCH, refDayOfTheMonth, hour, minute);// S
+      String timeOfTheDay = (hour + 1) + ":" + minute;
+      LocalDateTime refDate = LocalDateTime.of(2022, Month.MARCH, refDayOfTheMonth, hour, minute);
 
       // When
       LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, dayOfTheWeek, timeOfTheDay);
@@ -147,7 +142,7 @@ public class LocalDateTimeBuilderTest {
       assertThat(actualCreateLDTime.getMonthValue(), is(currentMonth));
       assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
       assertThat(actualCreateLDTime.getDayOfWeek().getValue(), is(expectedDayOfWeek));
-      assertThat(actualCreateLDTime.getDayOfMonth(), is(expectedDayOfTheMonth));
+      assertThat(actualCreateLDTime.getDayOfMonth(), is(refDayOfTheMonth));
    }
 
    @Test
@@ -165,7 +160,7 @@ public class LocalDateTimeBuilderTest {
       // Then
       assertThat(actualCreateLDTime.getYear(), is(expectedYear));
       assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
-      assertThat(actualCreateLDTime.getDayOfWeek(), is(dayOfTheWeek));
+      assertThat(actualCreateLDTime.getDayOfWeek(), is(DayOfWeek.WEDNESDAY));
       assertThat(actualCreateLDTime.getHour(), is(8));
    }
 

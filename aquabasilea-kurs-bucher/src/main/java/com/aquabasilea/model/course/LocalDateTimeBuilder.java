@@ -1,12 +1,9 @@
 package com.aquabasilea.model.course;
 
-import com.aquabasilea.util.DateUtil;
-
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.temporal.ChronoField;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +21,7 @@ public class LocalDateTimeBuilder {
    /**
     * Creates a new {@link LocalDateTime} object from the given {@link DayOfWeek} and the time of the day.
     * If the calculated {@link LocalDateTime} is already in the past (compared <code>{@link LocalDateTime#now()}</code>) then the reference
-    * day is shifted one day into the future, this results in a calculated {@link LocalDateTime} which lays 7 day into
-    * the futur from <code>{@link LocalDateTime#now()}</code>
+    * day is shifted one day into the future
     *
     * @param dayOfWeek    the day when the course takes place as string value
     * @param timeOfTheDay the time, when the course starts as string value
@@ -41,11 +37,10 @@ public class LocalDateTimeBuilder {
       int courseHour = localTime.getHour();
       int courseMin = localTime.getMinute();
       LocalDateTime refDate = adjustReferenceDateIfCourseTimeIsBeyondRefDateTime(refDateIn, courseDate, courseHour, courseMin);
-      int dayOfMonth = getDayOfMonthAtWhichCourseTakesPlace(refDate, courseDate);
-
+      int dayOfMonth = refDate.getDayOfMonth();
       int month = getMonth(refDate, dayOfMonth);
       int year = getYear(refDate, month);
-      return LocalDateTime.of(year, month, dayOfMonth, courseHour, courseMin);
+      return LocalDateTime.of(year, month, refDate.getDayOfMonth(), courseHour, courseMin);
    }
 
    private static LocalDateTime adjustReferenceDateIfCourseTimeIsBeyondRefDateTime(LocalDateTime refDate, DayOfWeek courseDate, int courseHour, int courseMin) {
@@ -72,23 +67,6 @@ public class LocalDateTimeBuilder {
       return courseDate == refDate.getDayOfWeek()
               && (courseHour < refDate.getHour() || (courseHour == refDate.getHour()
               && courseMin <= refDate.getMinute()));
-   }
-
-   /**
-    * gets the new day of the month, given our reference date and the day, on which the course takes place
-    */
-   private static int getDayOfMonthAtWhichCourseTakesPlace(LocalDateTime refDate, DayOfWeek courseDate) {
-      int currentDayOfWeek = refDate.get(ChronoField.DAY_OF_WEEK);
-      int diff = courseDate.getValue() - currentDayOfWeek;
-      int lastDayOfMonth = DateUtil.getLastDayOfMonth(refDate);
-      if (diff < 0) {
-         diff = DayOfWeek.values().length + diff;
-      }
-      int newDayOfMonth = refDate.getDayOfMonth() + diff;
-      if (newDayOfMonth > lastDayOfMonth) {
-         return newDayOfMonth - lastDayOfMonth;
-      }
-      return newDayOfMonth;
    }
 
    private static int getYear(LocalDateTime refDate, int newMonth) {
