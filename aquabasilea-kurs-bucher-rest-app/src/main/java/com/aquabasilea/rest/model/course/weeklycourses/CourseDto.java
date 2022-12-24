@@ -1,6 +1,7 @@
 package com.aquabasilea.rest.model.course.weeklycourses;
 
 
+import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.model.course.weeklycourses.Course;
 import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
@@ -18,7 +19,7 @@ import static java.util.Objects.isNull;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public record CourseDto(String id, String courseName, String courseInstructor, String dayOfWeek, String timeOfTheDay,
                         LocalDateTime courseDate, CourseLocationDto courseLocationDto, boolean isPaused,
-                        boolean hasCourseDef, boolean isCurrentCourse) {
+                        boolean hasCourseDef, boolean isCurrentCourse, String tooltipText) {
 
    public static Course map2Course(CourseDto courseDto) {
       String currentId = isNull(courseDto.id) ? UUID.randomUUID().toString() : courseDto.id;
@@ -45,7 +46,18 @@ public record CourseDto(String id, String courseName, String courseInstructor, S
    public static CourseDto of(Course course, boolean isCurrentCourse, Locale locale) {
       return new CourseDto(course.getId(), course.getCourseName(), course.getCourseInstructor(), course.getCourseDate().getDayOfWeek().getDisplayName(TextStyle.FULL, locale),
               DateUtil.getTimeAsString(course.getCourseDate()), course.getCourseDate(), CourseLocationDto.of(course.getCourseLocation()),
-              course.getIsPaused(), course.getHasCourseDef(), isCurrentCourse);
+              course.getIsPaused(), course.getHasCourseDef(), isCurrentCourse, getTooltipText(course, isCurrentCourse));
+   }
+
+   private static String getTooltipText(Course course, boolean isCurrentCourse) {
+      if (!course.getHasCourseDef()) {
+         return TextResources.TOOLTIP_COURSE_HAS_NO_COURSE_DEF;
+      } else if (course.getIsPaused()) {
+         return TextResources.TOOLTIP_COURSE_IS_PAUSED;
+      } else if (isCurrentCourse) {
+         return TextResources.TOOLTIP_COURSE_IS_CURRENT_COURSE.formatted(course.getCourseInstructor());
+      }
+      return "";
    }
 }
 

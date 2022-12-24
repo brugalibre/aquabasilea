@@ -18,7 +18,7 @@
           <td class="table-cell">
             <div style="display: grid">
               <div
-                  v-c-tooltip="{content: getToolTipText(course), placement: 'top', visible: hasToolTipText(course)}">
+                  v-c-tooltip="{content: getToolTipText(course), placement: 'top', visible: course.tooltipText !== ''}">
                 <span v-show="!course.hasCourseDef" class="no-course-def-warning cell-icon"></span>
                 <span v-show="course.isCurrentCourse && this.courseBookingStateDto.state !== 'PAUSED'"
                       class="current-course-star cell-icon"/>
@@ -28,7 +28,7 @@
           </td>
           <td class="table-cell">
             <label
-              v-c-tooltip="{content: formatDate(course.courseDate), placement: 'top'}"
+                v-c-tooltip="{content: formatDate(course.courseDate), placement: 'top'}"
             >
               {{ course.dayOfWeek }}
             </label>
@@ -85,14 +85,10 @@ export default {
   },
   methods: {
     getToolTipText: function (course) {
-      if (!course.hasCourseDef) {
-        return 'Achtung! Für diesen Kurs gibt es keinen Migros-Kurs!';
-      } else if (course.isPaused) {
-        return 'Dieser Kurs ist pausiert, bis der nächste aktive Kurs gebucht wurde';
-      } else if (course.isCurrentCourse) {
-        return 'Dieser Kurs wird als nächstes gebucht. Kursinstruktor ' + course.courseInstructor + '';
+      if (this.courseBookingStateDto.state === 'PAUSED') {
+        return '';
       }
-      return '';
+      return course.tooltipText;
     },
     getDeleteButtonToolTipText: function () {
       return 'Löscht diesen Kurs. Keine Angst, er kann ganz einfach wieder hinzugefügt werden';

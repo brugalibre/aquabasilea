@@ -11,6 +11,9 @@ public class TextResources {
 
    public static final String PAUSE_APP = "Pausiere Kurs-Bucher";
    public static final String RESUME_APP = "Reaktiviere Kurs-Bucher";
+   public static final String TOOLTIP_COURSE_HAS_NO_COURSE_DEF = "Achtung! Dieser Kurs kann nicht gebucht werden.\nDer Kurs existiert im offiziellen Migros-Kursprogramm nicht";
+   public static final String TOOLTIP_COURSE_IS_PAUSED = "Dieser Kurs ist pausiert, bis der nächste aktive Kurs gebucht wurde";
+   public static final String TOOLTIP_COURSE_IS_CURRENT_COURSE = "Dieser Kurs wird als nächstes gebucht. Kursinstruktor:in ist %s";
 
    // Statistics
    public static final String UPTIME_YEARS_AND_MONTH = "%s Jahre, %s Monate";
@@ -30,7 +33,7 @@ public class TextResources {
    public static final String COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT = "Kurs '%s' konnte nicht gebucht werden, da nicht eindeutig gefiltert werden konnte!";
    public static final String
            COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";
-   public static final String COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF = "Kurs '%s' wurde nicht gebucht, da kein entsprechender aquababasilea kurs existiert";
+   public static final String COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF = "Kurs '%s' wurde nicht gebucht! Der Kurs existiert im offiziellen Migros-Kursprogramm nicht";
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";
 
