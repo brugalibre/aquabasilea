@@ -136,10 +136,17 @@ public class CourseSelectHelper {
       this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE), 20000);
       AquabasileaCourseExtractorHelper aquabasileaCourseExtractorHelper = new AquabasileaCourseExtractorHelper(aquabasileaNavigatorHelper, errorHandler);
       List<WebElement> allAquabasileaCourseWebElements = aquabasileaCourseExtractorHelper.findAllAquabasileaCourseButtons();
+      LOG.info("Try to find matching course for booking details {}", courseBookDetails);
       for (WebElement aquabasileaCourseButton : allAquabasileaCourseWebElements) {
          AquabasileaCourse aquabasileaCourse = aquabasileaCourseExtractorHelper.evalCourseDetailsAndCreateAquabasileaCourse(aquabasileaCourseButton);
          if (isEquals(courseBookDetails, aquabasileaCourse)) {
             return aquabasileaCourseButton;
+         } else {
+            LOG.warn("No match!");
+            LOG.warn("Course-name is equal: {}", courseBookDetails.courseName().equals(aquabasileaCourse.courseName()));
+            LOG.warn("Course-location is equal: {}", courseBookDetails.courseLocation().equals(aquabasileaCourse.courseLocation()));
+            LOG.warn("Course-date is equal: {}", courseBookDetails.courseDate().equals(aquabasileaCourse.courseDate()));
+            LOG.warn("Course-instructor is equal: {}", courseBookDetails.courseInstructor().equals(aquabasileaCourse.courseInstructor()));
          }
       }
       return null;

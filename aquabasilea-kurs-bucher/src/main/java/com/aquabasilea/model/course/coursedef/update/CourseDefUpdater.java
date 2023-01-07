@@ -106,6 +106,7 @@ public class CourseDefUpdater {
    private void updateStatistics(String userId, LocalDateTime dateWhenUpdateStarted, Duration lastUpdateDuration) {
       Duration durationUntilNextUpdate = courseDefUpdaterScheduler.calcDelayUntilNextUpdate()
               .minus(lastUpdateDuration);
+      LOG.info("Updating statistics: Updated started at '{}', duration until next update '{}'", dateWhenUpdateStarted, durationUntilNextUpdate);
       statisticsService.setLastCourseDefUpdate(userId, dateWhenUpdateStarted);
       statisticsService.setNextCourseDefUpdate(userId, dateWhenUpdateStarted.plusNanos(durationUntilNextUpdate.toNanos()));
    }
