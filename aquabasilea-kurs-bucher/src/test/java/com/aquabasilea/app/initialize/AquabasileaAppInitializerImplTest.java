@@ -20,6 +20,7 @@ import com.aquabasilea.service.statistics.StatisticsService;
 import com.aquabasilea.service.userconfig.UserConfigService;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.login.AquabasileaLogin;
+import com.brugalibre.domain.user.service.userrole.UserRoleConfigService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -50,6 +51,9 @@ class AquabasileaAppInitializerImplTest {
 
    @Mock
    private AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer;
+
+   @Mock
+   private UserRoleConfigService userRoleConfigService;
 
    @Autowired
    private WeeklyCoursesRepository weeklyCoursesRepository;
@@ -90,7 +94,7 @@ class AquabasileaAppInitializerImplTest {
       AquabasileaLoginService aquabasileaLoginService = mockAquabasileaLoginService();
       UserCredentialsInitializer userCredentialsInitializer = new UserCredentialsInitializer(aquabasileaLoginService, KEY_STORE_PASSWORD, TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE);
       AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(persistenceInitializer,
-              userCredentialsInitializer, aquabasileaCourseBookerInitializer, courseDefUpdater, null);
+              userCredentialsInitializer, aquabasileaCourseBookerInitializer, courseDefUpdater, null, userRoleConfigService);
 
       // When
       aquabasileaAppInitializer.initialize(userAddedEvent1);
@@ -105,6 +109,9 @@ class AquabasileaAppInitializerImplTest {
       // verify we initialized the aquabasileaCourseBookerInitializer
       verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent1));
       verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent2));
+
+      verify(userRoleConfigService).addMissingRoles(eq(userAddedEvent1.userId()));
+      verify(userRoleConfigService).addMissingRoles(eq(userAddedEvent2.userId()));
 
       // verify we created a default config and updated the one of user 2
       UserConfig userConfig1 = userConfigService.getByUserId(userId1);

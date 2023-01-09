@@ -9,6 +9,7 @@ import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.model.course.coursedef.update.CourseDefUpdater;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
+import com.brugalibre.domain.user.service.userrole.UserRoleConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,19 @@ public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer 
    private final AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer;
    private final CourseDefUpdater courseDefUpdater;
    private final UserRepository userRepository;
+   private final UserRoleConfigService userRoleConfigService;
 
    @Autowired
    public AquabasileaAppInitializerImpl(PersistenceInitializer persistenceInitializer,
                                         UserCredentialsInitializer userCredentialsInitializer,
                                         AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer,
                                         CourseDefUpdater courseDefUpdater,
-                                        UserRepository userRepository) {
+                                        UserRepository userRepository,
+                                        UserRoleConfigService userRoleConfigService) {
       this.persistenceInitializer = persistenceInitializer;
       this.userCredentialsInitializer = userCredentialsInitializer;
       this.aquabasileaCourseBookerInitializer = aquabasileaCourseBookerInitializer;
+      this.userRoleConfigService = userRoleConfigService;
       this.courseDefUpdater = courseDefUpdater;
       this.userRepository = userRepository;
    }
@@ -62,6 +66,7 @@ public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer 
          UserAddedEvent userAddedEvent = UserAddedEvent.of(user);
          courseDefUpdater.startScheduler(userAddedEvent.userId());
          aquabasileaCourseBookerInitializer.initialize(userAddedEvent);
+         userRoleConfigService.addMissingRoles(user.id());
       }
       LOG.info("Initialization done");
    }
