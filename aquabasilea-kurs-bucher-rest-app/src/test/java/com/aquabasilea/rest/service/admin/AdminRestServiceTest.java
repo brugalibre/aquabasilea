@@ -10,6 +10,7 @@ import com.aquabasilea.rest.config.TestAquabasileaCourseBookerRestAppConfig;
 import com.aquabasilea.rest.model.admin.AdminOverviewDto;
 import com.aquabasilea.rest.model.admin.Course4AdminViewDto;
 import com.aquabasilea.rest.service.statistics.StatisticsRestService;
+import com.brugalibre.domain.contactpoint.mobilephone.model.MobilePhone;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -50,9 +51,9 @@ class AdminRestServiceTest {
 
    @BeforeEach
    public void setUp() {
-      this.userId1 = userRepository.save(User.of("Peter", "1234", "0791234567")).id();
-      this.userId2 = userRepository.save(User.of("Hans", "1234", "0791234568")).id();
-      this.userIdWithoutCurrentCourse = userRepository.save(User.of("Karl", "1234", "0791234568")).id();
+      this.userId1 = userRepository.save(User.of("Peter", "1234", MobilePhone.of("0791234567"))).id();
+      this.userId2 = userRepository.save(User.of("Hans", "1234", MobilePhone.of("0791234568"))).id();
+      this.userIdWithoutCurrentCourse = userRepository.save(User.of("Karl", "1234", MobilePhone.of("0791234568"))).id();
       createStatistics(userIdWithoutCurrentCourse, 0, 0);
    }
 

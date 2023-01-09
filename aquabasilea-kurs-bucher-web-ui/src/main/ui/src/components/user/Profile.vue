@@ -47,7 +47,7 @@
 
 <script>
 import LoggingService from "@/services/log/logging.service";
-import UserService from "@/services/user/user.service";
+import MobilePhoneService from "@/services/mobilephone/mobile-phone.service";
 import AuthService from "@/services/auth/auth.service";
 
 export default {
@@ -73,11 +73,11 @@ export default {
     },
     changePhoneNr() {
       this.loading = true;
-      const changeUser = {
-        username: this.currentUser.username,
+      const changeMobilePhoneRequest = {
+        userId: this.currentUser.userId,
         newUserPhoneNr: this.newPhoneNumber,
       }
-      UserService.changePhoneNumber(changeUser)
+      MobilePhoneService.changePhoneNumber(changeMobilePhoneRequest)
           .then(() => {
             this.successful = true;
             this.message = 'Mobile-Nr Aktualisiert!';

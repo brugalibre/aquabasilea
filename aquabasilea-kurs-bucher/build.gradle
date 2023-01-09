@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.0-SNAPSHOT'
+    compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.1-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-migros-api', version: '1.0-SNAPSHOT'
 
@@ -37,7 +37,7 @@ dependencies {
 
     compileOnly 'org.slf4j:slf4j-api:2.0.5'
 
-    testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.0-SNAPSHOT'
+    testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.1-SNAPSHOT'
     testImplementation group: 'org.mock-server', name: 'mockserver-netty', version: '5.11.2'
     testImplementation 'org.hibernate:hibernate-core:6.1.5.Final'
     testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'

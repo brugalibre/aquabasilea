@@ -21,8 +21,8 @@ public class RunAquabasileaNavigator {
    }
 
    private static void run(String[] args) {
-      String courseName = "Aqua Tabata 50 Min.";
-      String courseInstructor = "Sibylle A.";
+      String courseName = "Yoga 50 Min. G1";
+      String courseInstructor = "Ladina B.";
       String username = args[0];
       char[] password = args[1].toCharArray();
       LocalDateTime courseDateAndTime = getCourseDateAndTime();
@@ -39,7 +39,7 @@ public class RunAquabasileaNavigator {
    private static LocalDateTime getCourseDateAndTime() {
       LocalDate now = LocalDate.now();
       LocalDate date = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth() + 1);
-      return LocalDateTime.of(date, LocalTime.of(12, 15));
+      return LocalDateTime.of(date, LocalTime.of(17, 45));
    }
 
    private static Supplier<Duration> getDurationUntilIsBookableSupplier() {

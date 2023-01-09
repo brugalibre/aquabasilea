@@ -31,10 +31,8 @@ repositories {
 
 dependencies {
 
-	implementation 'org.springframework.boot:spring-boot-properties-migrator'
-
-	implementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.0-SNAPSHOT'
-	implementation group: 'com.brugalibre', name: 'common-app-security', version: '1.0-SNAPSHOT'
+	implementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.1-SNAPSHOT'
+	implementation group: 'com.brugalibre', name: 'common-app-security', version: '1.1-SNAPSHOT'
 	implementation group: 'com.aquabasilea', name: 'aquabasilea-kurs-bucher', version: '1.0-SNAPSHOT'
 
 	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
@@ -50,15 +48,6 @@ dependencies {
 
 test {
 	useJUnitPlatform()
-}
-
-publishing {
-	publications {
-		maven(MavenPublication) {
-			from components.java
-			artifact bootJar
-		}
-	}
 }
 
 publish {

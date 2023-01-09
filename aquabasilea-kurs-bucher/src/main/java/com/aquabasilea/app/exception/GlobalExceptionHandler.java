@@ -14,6 +14,6 @@ public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler {
       LOG.error(LOG_ERROR_MSG.formatted(t), e);
       ApplicationErrorAlertSender applicationErrorAlertSender = ApplicationErrorAlertSender.of();
       applicationErrorAlertSender.sendApplicationErrorMessage(APPLICATION_FAILURE_MSG.formatted(e.getMessage()));
-      System.exit(-1);
+      System.exit(1);
    }
 }

@@ -5,6 +5,7 @@ import com.aquabasilea.model.statistics.repository.StatisticsRepository;
 import com.aquabasilea.rest.config.TestAquabasileaCourseBookerRestAppConfig;
 import com.aquabasilea.rest.model.statistic.StatisticsDto;
 import com.aquabasilea.rest.service.statistics.StatisticsRestService;
+import com.brugalibre.domain.contactpoint.mobilephone.model.MobilePhone;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +38,7 @@ class StatisticsRestServiceTest {
 
    @BeforeEach
    public void setUp() {
-      this.userId = userRepository.save(User.of("peter", "1234", "0791234567")).id();
+      this.userId = userRepository.save(User.of("peter", "1234", MobilePhone.of("0791234567"))).id();
    }
 
    @Test

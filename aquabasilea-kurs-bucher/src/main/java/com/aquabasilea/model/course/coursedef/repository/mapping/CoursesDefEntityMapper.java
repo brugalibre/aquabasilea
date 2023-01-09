@@ -19,6 +19,8 @@ public interface CoursesDefEntityMapper extends CommonDomainModelMapper<CourseDe
    List<CourseDef> mapAquabasileaCourses2CourseDefs(List<AquabasileaCourse> aquabasileaCourses);
 
    @Mapping(source = "courseLocation", target = "courseLocation", qualifiedByName = "mapCourseLocationName2CourseLocation")
+   @Mapping(target = "id", ignore = true)
+   @Mapping(target = "userId", ignore = true)
    CourseDef mapAquabasileaCourse2CourseDef(AquabasileaCourse aquabasileaCourse);
 
    @Named("mapCourseLocationName2CourseLocation")
@@ -29,6 +31,8 @@ public interface CoursesDefEntityMapper extends CommonDomainModelMapper<CourseDe
    List<CourseDef> mapMigrosCourses2CourseDefs(List<MigrosCourse> migrosCourses);
 
    @Mapping(source = "centerId", target = "courseLocation", qualifiedByName = "mapCenterId2CourseLocation")
+   @Mapping(target = "id", ignore = true)
+   @Mapping(target = "userId", ignore = true)
    CourseDef mapMigrosCourse2CourseDef(MigrosCourse migrosCourse);
 
    @Named("mapCenterId2CourseLocation")

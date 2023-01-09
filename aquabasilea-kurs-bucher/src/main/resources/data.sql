@@ -1,81 +1,91 @@
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE IF NOT EXISTS weeklycourses
 (
-    id       varchar(255) not null,
-    password varchar(255),
-    phone_nr  varchar(255),
-    username varchar(255),
-    CONSTRAINT UNIQUE_USERNAME unique (username),
-    primary key (id)
-);
-
-CREATE TABLE IF NOT EXISTS user_entity_roles
-(
-    user_entity_id varchar(255) not null,
-    CONSTRAINT FK_USER_ENTITY_ROLES_TO_USER FOREIGN KEY (user_entity_id) REFERENCES users (id),
-    roles          varchar(255)
+    id      VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS coursedef
 (
-    id                VARCHAR(250) PRIMARY KEY,
-    user_id           VARCHAR(250) NOT NULL,
-    CONSTRAINT FK_COURSE_DEF_TO_USER FOREIGN KEY (user_id) REFERENCES users (id),
-    course_name       VARCHAR(250) NOT NULL,
-    course_instructor VARCHAR(250) NOT NULL,
-    course_date       TIMESTAMP    NOT NULL,
-    course_location   VARCHAR(250) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS user_config
-(
-    id      varchar(255) not null,
-    user_id varchar(255) not null,
-    primary key (id)
-);
-
-CREATE TABLE IF NOT EXISTS user_config_entity_course_locations
-(
-    user_config_entity_id varchar(255) not null,
-    course_locations      varchar(255)
-);
-
-CREATE TABLE IF NOT EXISTS weeklycourses
-(
-    id          VARCHAR(250) PRIMARY KEY,
-    user_id     VARCHAR(250) NOT NULL,
-    CONSTRAINT  FK_WEEKLY_COURSES_TO_USER FOREIGN KEY (user_id) REFERENCES users (id)
+    id                VARCHAR(255) NOT NULL,
+    course_date       timestamp(6) NOT NULL,
+    course_instructor VARCHAR(255) NOT NULL,
+    course_location   VARCHAR(255) NOT NULL,
+    course_name       VARCHAR(255) NOT NULL,
+    user_id           VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS course
 (
-    id                VARCHAR(250) PRIMARY KEY,
-    weeklycourses_id  VARCHAR(250) NOT NULL,
-    CONSTRAINT FK_WEEKLY_COURSES FOREIGN KEY (weeklycourses_id) REFERENCES weeklycourses (id),
-    course_name       VARCHAR(250) NOT NULL,
-    course_instructor VARCHAR(250) NOT NULL,
-    course_date       TIMESTAMP    NOT NULL,
-    is_paused         BOOLEAN      NOT NULL DEFAULT FALSE,
-    has_course_def    BOOLEAN      NOT NULL DEFAULT FALSE,
-    course_location   VARCHAR(250) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS coursedef
-(
-    id              VARCHAR(250) PRIMARY KEY,
-    user_id         VARCHAR(250) NOT NULL,
-    CONSTRAINT      FK_COURSE_DEF_TO_USER FOREIGN KEY (user_id) REFERENCES users (id),
-    course_name     VARCHAR(250) NOT NULL,
-    course_date     TIMESTAMP    NOT NULL,
-    course_location VARCHAR(250) NOT NULL
+    id                VARCHAR(255) NOT NULL,
+    course_date       timestamp(6) NOT NULL,
+    course_instructor VARCHAR(255) NOT NULL,
+    course_location   VARCHAR(255) NOT NULL,
+    course_name       VARCHAR(255) NOT NULL,
+    has_course_def    boolean      NOT NULL,
+    is_paused         boolean      NOT NULL,
+    weeklycourses_id  VARCHAR(255),
+    CONSTRAINT FK_COURSE_WEEKLYCOURSES FOREIGN KEY (weeklycourses_id) REFERENCES weeklycourses (id),
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS statistics
 (
-    id                         VARCHAR(250) PRIMARY KEY,
-    user_id                    VARCHAR(250) NOT NULL,
-    CONSTRAINT FK_STATISTICS_TO_USER FOREIGN KEY (user_id) REFERENCES users (id),
-    last_course_def_update     TIMESTAMP,
-    next_course_def_update     TIMESTAMP,
-    booking_failed_counter     INTEGER NOT NULL DEFAULT 0,
-    booking_successful_counter INTEGER NOT NULL DEFAULT 0
+    id                         VARCHAR(255) NOT NULL,
+    booking_failed_counter     integer      NOT NULL,
+    booking_successful_counter integer      NOT NULL,
+    last_course_def_update     timestamp(6),
+    next_course_def_update     timestamp(6),
+    user_id                    VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS user_config
+(
+    id      VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS user_config_entity_course_locations
+(
+    user_config_entity_id VARCHAR(255) NOT NULL,
+    course_locations      VARCHAR(255),
+    CONSTRAINT FK_USERS_CONFIG_ENTITY_COURSE_LOCATIONS_USER_CONFIG FOREIGN KEY (user_config_entity_id) REFERENCES user_config (id)
+);
+
+CREATE TABLE IF NOT EXISTS users
+(
+    id       VARCHAR(255) NOT NULL,
+    password VARCHAR(255),
+    username VARCHAR(255),
+    phone_nr varchar(255),
+    PRIMARY KEY (id),
+    CONSTRAINT UNIQUE_USERNAME unique (username)
+);
+
+CREATE TABLE IF NOT EXISTS user_entity_roles
+(
+    user_entity_id VARCHAR(255) NOT NULL,
+    roles          VARCHAR(255),
+    CONSTRAINT FK_USER_ENTITY_ROLES_USERS FOREIGN KEY (user_entity_id) REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS contact_point_entity
+(
+    dm_contact_point_type VARCHAR(31)  NOT NULL,
+    id                    VARCHAR(255) NOT NULL,
+    contact_point_type    VARCHAR(255),
+    phone_nr              VARCHAR(255),
+    user_id               VARCHAR(255),
+    PRIMARY KEY (id),
+    CONSTRAINT FK_CONTACT_POINT_ENTITY_USERS FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+INSERT INTO contact_point_entity
+SELECT 'MOBILE_PHONE', RANDOM_UUID(), 'MOBILE_PHONE', u.phone_nr, u.id
+FROM users u;
+
+ALTER TABLE users
+    DROP COLUMN phone_nr;
