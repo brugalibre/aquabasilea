@@ -95,7 +95,7 @@ public class CourseDefUpdater {
          updateAquabasileaCoursesInternal(userId, userConfig.getCourseLocations());
          Duration duration = Duration.ofMillis(start.until(LocalDateTime.now(), ChronoUnit.MILLIS));
          LOG.info("Updating course-defs done, duration: {}", duration);
-         updateStatistics(userId, start, duration);
+         updateStatistics(userId, start);
       } catch (Exception e) {
          LOG.error("Error while executing the CourseDefUpdater!", e);
       } finally {
@@ -103,12 +103,19 @@ public class CourseDefUpdater {
       }
    }
 
-   private void updateStatistics(String userId, LocalDateTime dateWhenUpdateStarted, Duration lastUpdateDuration) {
-      Duration durationUntilNextUpdate = courseDefUpdaterScheduler.calcDelayUntilNextUpdate()
-              .minus(lastUpdateDuration);
-      LOG.info("Updating statistics: Updated started at '{}', duration until next update '{}'", dateWhenUpdateStarted, durationUntilNextUpdate);
+   private void updateStatistics(String userId, LocalDateTime dateWhenUpdateStarted) {
+      Duration durationUntilNextUpdate = courseDefUpdaterScheduler.calcDelayUntilNextUpdate();
+      LocalDateTime nextCourseDefUpdate;
+      // If there are exactly 24h between a schedule, then 'scheduledFuture.getDelay' returns 0s -> calculate the next iteration by adding the update-cycle
+      // No idea why that's like this... but its true
+      if (durationUntilNextUpdate.toMinutes() == 0) {
+         nextCourseDefUpdate = dateWhenUpdateStarted.plusNanos(CourseDefUpdaterScheduler.getCourseDefUpdateCycle().toNanos());
+      } else {
+         nextCourseDefUpdate = dateWhenUpdateStarted.plusNanos(durationUntilNextUpdate.toNanos());
+      }
+      LOG.info("Updating statistics: Updated started at '{}', next update is at '{}'", dateWhenUpdateStarted, nextCourseDefUpdate);
       statisticsService.setLastCourseDefUpdate(userId, dateWhenUpdateStarted);
-      statisticsService.setNextCourseDefUpdate(userId, dateWhenUpdateStarted.plusNanos(durationUntilNextUpdate.toNanos()));
+      statisticsService.setNextCourseDefUpdate(userId, nextCourseDefUpdate);
    }
 
    private void updateAquabasileaCoursesInternal(String userId, List<CourseLocation> courseLocations) {

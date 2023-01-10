@@ -60,6 +60,7 @@ class AquabasileaAppInitializerImplTest {
 
    @Autowired
    private UserConfigRepository userConfigRepository;
+
    @Autowired
    private CourseDefRepository courseDefRepository;
 

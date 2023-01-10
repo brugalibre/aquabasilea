@@ -1,10 +1,12 @@
 package com.aquabasilea.coursedef.update;
 
+import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.model.course.CourseLocation;
 import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.model.course.coursedef.update.CourseDefUpdateDate;
 import com.aquabasilea.model.course.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.model.course.coursedef.update.facade.CourseDefExtractorType;
 import com.aquabasilea.model.course.coursedef.update.facade.CourseExtractorFacade;
 import com.aquabasilea.model.statistics.Statistics;
 import com.aquabasilea.model.statistics.repository.StatisticsRepository;
@@ -35,6 +37,8 @@ import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = TestAquabasileaCourseBookerPersistenceConfig.class)
 class CourseDefUpdaterTest {
@@ -110,7 +114,7 @@ class CourseDefUpdaterTest {
       LocalDateTime updateTime = LocalDateTime.now();
 
       // If right now is after 23:00 o'clock -> the next execution will be tomorrow @23:00
-      LocalDateTime expectedNextCourseDefUpdate = updateTime.minusMinutes(1);
+      LocalDateTime expectedNextCourseDefUpdate = updateTime;
       if (updateTime.toLocalTime().compareTo(LocalTime.of(23, 0, 0)) < 0) {
          expectedNextCourseDefUpdate = LocalDateTime.of(updateTime.toLocalDate().plusDays(1), updateTime.toLocalTime());
       }
@@ -140,7 +144,7 @@ class CourseDefUpdaterTest {
    }
 
    @Test
-   void startSchedulerAndUpdateImmediately_WithPreviousUpdateButToOld_UpdateAt11pm() {
+   void startSchedulerAndUpdateImmediately_WithPreviousUpdateButTooOld_UpdateAt11pm() {
 
       // Given
       LocalDateTime now = LocalDateTime.now();
@@ -202,22 +206,29 @@ class CourseDefUpdaterTest {
    void startSchedulerScheduleNextUpdateSinceThereIsPreviousUpdate() {
 
       // Given
-      this.statisticsService.setLastCourseDefUpdate(USER_ID, LocalDateTime.now());
-      LocalDateTime now = LocalDateTime.now().plusDays(1);
-      String localDateTimeAsString = DateUtil.getTimeAsString(now);
-      String timeOfTheDayAsString = localDateTimeAsString.substring(localDateTimeAsString.indexOf(", ") + 1);
-      CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(now.getDayOfWeek(), timeOfTheDayAsString);
-      AquabasileaCourse defaultAquabasileaCourse = createDefaultAquabasileaCourse();
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(defaultAquabasileaCourse), statisticsService,
+      LocalDateTime now = LocalDateTime.now();
+      courseDefRepository.deleteAll();
+      this.statisticsService.setLastCourseDefUpdate(USER_ID, now);
+      LocalDateTime nowPlusOneDay = now.plusDays(1);
+      LocalDateTime expectedNextCourseDefUpdate = nowPlusOneDay.plusMinutes(1);
+      String localDateTimeAsString = DateUtil.getTimeAsString(nowPlusOneDay);
+      CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(nowPlusOneDay.getDayOfWeek(), localDateTimeAsString);
+      TestAquabasileaCourseExtractor aquabasileaCourseExtractor = new TestAquabasileaCourseExtractor(List.of(createDefaultAquabasileaCourse()), 0);
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService,
               courseDefRepository, userConfigRepository, courseDefUpdateDate);
 
       // When
       courseDefUpdater.startScheduler(USER_ID);
+      await().atMost(new Duration(70, TimeUnit.SECONDS)).until(() -> aquabasileaCourseExtractor.amountOfInvocations == 1);
 
       // Then
       // no scheduler started, since there is already an update in the statistic-table
       List<CourseDef> allCourseDefs = courseDefRepository.getAll();
-      assertThat(allCourseDefs.size(), is(0));
+      assertThat(allCourseDefs.size(), is(1));
+      Statistics statistics = statisticsRepository.getByUserId(USER_ID);
+      assertThat(statistics.getNextCourseDefUpdate().toLocalDate(), is(expectedNextCourseDefUpdate.toLocalDate()));
+      assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getHour(), is(expectedNextCourseDefUpdate.toLocalTime().getHour()));
+      assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getMinute(), is(expectedNextCourseDefUpdate.toLocalTime().getMinute()));
    }
 
    private TestAquabasileaCourseExtractor createNewTestAquabasileaCourseExtractor(CourseLocation courseLocation,
@@ -238,11 +249,14 @@ class CourseDefUpdaterTest {
    }
 
    private static CourseExtractorFacade getCourseExtractorFacade(AquabasileaCourse defaultAquabasileaCourse) {
-      return new CourseExtractorFacade(() -> courseLocations -> () -> List.of(defaultAquabasileaCourse), null);
+      return getCourseExtractorFacade(courseLocations -> () -> List.of(defaultAquabasileaCourse));
    }
 
-   private static CourseExtractorFacade getCourseExtractorFacade(TestAquabasileaCourseExtractor aquabasileaCourseExtractor) {
-      return new CourseExtractorFacade(() -> aquabasileaCourseExtractor, null);
+   private static CourseExtractorFacade getCourseExtractorFacade(AquabasileaCourseExtractor aquabasileaCourseExtractor) {
+      AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
+      when(config.refreshConfig()).thenReturn(config);
+      when(config.getCourseDefExtractorType()).thenReturn(CourseDefExtractorType.AQUABASILEA_WEB);
+      return new CourseExtractorFacade(() -> aquabasileaCourseExtractor, null, config);
    }
 
    private static class TestAquabasileaCourseExtractor implements AquabasileaCourseExtractor {

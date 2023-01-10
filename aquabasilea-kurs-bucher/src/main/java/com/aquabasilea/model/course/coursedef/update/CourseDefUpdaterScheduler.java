@@ -35,7 +35,7 @@ public class CourseDefUpdaterScheduler {
    /**
     * Starts an update immediately if necessary, or schedule one in the near future. It also schedules all future, regularly updates from then on
     *
-    * @param userId          the id of the {@link User} for which a regular update is scheduled
+    * @param userId the id of the {@link User} for which a regular update is scheduled
     * @return the {@link LocalDateTime} when the next update takes place
     */
    public LocalDateTime startScheduler(String userId) {
