@@ -82,10 +82,3 @@ CREATE TABLE IF NOT EXISTS contact_point_entity
     PRIMARY KEY (id),
     CONSTRAINT FK_CONTACT_POINT_ENTITY_USERS FOREIGN KEY (user_id) REFERENCES users (id)
 );
-
-INSERT INTO contact_point_entity
-SELECT 'MOBILE_PHONE', RANDOM_UUID(), 'MOBILE_PHONE', u.phone_nr, u.id
-FROM users u;
-
-ALTER TABLE users
-    DROP COLUMN phone_nr;
