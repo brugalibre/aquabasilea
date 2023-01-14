@@ -1,6 +1,6 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.alerting.consumer.impl.CourseBookingAlertSender;
+import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingAlertSender;
 import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.config.TestAquabasileaCourseBookerConfig;

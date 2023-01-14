@@ -1,16 +1,20 @@
 package com.aquabasilea.alerting.consumer.impl;
 
-import com.aquabasilea.alerting.api.AlertSendException;
-import com.aquabasilea.alerting.api.AlertSendService;
-import com.aquabasilea.alerting.config.AlertSendConfigProviderImpl;
-import com.aquabasilea.alerting.send.AlertSendInfos;
 import com.aquabasilea.coursebooker.consumer.ConsumerUser;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingAlertSender;
 import com.aquabasilea.i18n.TextResources;
+import com.aquabasilea.notification.config.AlertSendConfigProviderImpl;
+import com.aquabasilea.security.securestorage.util.KeyUtils;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import com.brugalibre.notification.api.AlertResponse;
+import com.brugalibre.notification.api.AlertSendException;
+import com.brugalibre.notification.api.AlertSendService;
+import com.brugalibre.notification.config.AlertSendConfig;
+import com.brugalibre.notification.send.AlertSendInfos;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,17 +29,18 @@ import static org.mockito.Mockito.*;
 class CourseBookingAlertSenderTest {
 
    public static final String ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML = "alert/test-aquabasilea-alert-notification.yml";
-   public static final AlertSendConfigProviderImpl CONFIG_PROVIDER = new AlertSendConfigProviderImpl(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML);
+   public static final AlertSendConfigProviderImpl CONFIG_PROVIDER = new AlertSendConfigProviderImpl(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, KeyUtils.AQUABASILEA_ALERT_KEYSTORE);
    private static final ConsumerUser CONSUMER_USER = new ConsumerUser("1234", "1234");
 
    @Test
-   void consumeAndSendSmsBookingSuccessful() throws AlertSendException {
+   void consumeAndSendSmsBookingSuccessful() {
       // Given
       String courseName = "courseName";
+      String apiKey = "abc-123-apikey";
       String expectedMsg = String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedMsg, List.of(CONSUMER_USER.phoneNr()));
-      AlertSendService alertSendService = mock(AlertSendService.class);
-      AlertSendConfigProviderImpl alertSendConfigProvider = new AlertSendConfigProviderImpl(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML);
+      TestAlertSendService alertSendService = spy(new TestAlertSendService());
+      AlertSendConfigProviderImpl alertSendConfigProvider = CONFIG_PROVIDER;
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(alertSendConfigProvider, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
@@ -47,6 +52,7 @@ class CourseBookingAlertSenderTest {
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
+      assertThat(alertSendService.apiKey, is(apiKey));
    }
 
    @Test
@@ -265,5 +271,16 @@ class CourseBookingAlertSenderTest {
 
       // Then
       assertThat(wasThrown.get(), is(true));
+   }
+
+   private static class TestAlertSendService implements AlertSendService {
+
+      String apiKey;
+
+      @Override
+      public AlertResponse sendAlert(AlertSendConfig alertSendConfig, AlertSendInfos alertSendInfos) {
+         this.apiKey = alertSendConfig.getApiKey();
+         return new TestAlertResponse(200, "OK");
+      }
    }
 }

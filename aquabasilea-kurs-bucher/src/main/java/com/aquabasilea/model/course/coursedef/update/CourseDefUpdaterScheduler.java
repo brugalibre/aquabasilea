@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import static java.util.Objects.nonNull;
 
 /**
- * The {@link CourseDefUpdaterScheduler} schedules the regulary updates of the {@link CourseDef}s
+ * The {@link CourseDefUpdaterScheduler} schedules the regular updates of the {@link CourseDef}s
  */
 public class CourseDefUpdaterScheduler {
    private static final Logger LOG = LoggerFactory.getLogger(CourseDefUpdaterScheduler.class);

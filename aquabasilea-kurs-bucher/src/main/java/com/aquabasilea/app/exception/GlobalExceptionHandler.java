@@ -1,6 +1,7 @@
 package com.aquabasilea.app.exception;
 
-import com.aquabasilea.alerting.send.ApplicationErrorAlertSender;
+import com.aquabasilea.notification.config.AlertSendConfigProviderImpl;
+import com.brugalibre.notification.send.ApplicationErrorAlertSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler {
    @Override
    public void uncaughtException(Thread t, Throwable e) {
       LOG.error(LOG_ERROR_MSG.formatted(t), e);
-      ApplicationErrorAlertSender applicationErrorAlertSender = ApplicationErrorAlertSender.of();
+      ApplicationErrorAlertSender applicationErrorAlertSender = ApplicationErrorAlertSender.of(AlertSendConfigProviderImpl.of());
       applicationErrorAlertSender.sendApplicationErrorMessage(APPLICATION_FAILURE_MSG.formatted(e.getMessage()));
       System.exit(1);
    }

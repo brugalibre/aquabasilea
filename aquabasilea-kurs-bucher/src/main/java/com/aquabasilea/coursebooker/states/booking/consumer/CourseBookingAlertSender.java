@@ -1,15 +1,15 @@
-package com.aquabasilea.alerting.consumer.impl;
+package com.aquabasilea.coursebooker.states.booking.consumer;
 
-import com.aquabasilea.alerting.api.AlertSendService;
-import com.aquabasilea.alerting.config.AlertSendConfig;
-import com.aquabasilea.alerting.config.AlertSendConfigProvider;
-import com.aquabasilea.alerting.send.AlertSendInfos;
-import com.aquabasilea.alerting.send.BasicAlertSender;
 import com.aquabasilea.coursebooker.consumer.ConsumerUser;
 import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.brugalibre.notification.api.AlertSendService;
+import com.brugalibre.notification.config.AlertSendConfig;
+import com.brugalibre.notification.config.AlertSendConfigProvider;
+import com.brugalibre.notification.send.AlertSendInfos;
+import com.brugalibre.notification.send.BasicAlertSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

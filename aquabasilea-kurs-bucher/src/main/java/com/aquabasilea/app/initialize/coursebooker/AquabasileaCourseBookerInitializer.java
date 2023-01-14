@@ -1,11 +1,11 @@
 package com.aquabasilea.app.initialize.coursebooker;
 
-import com.aquabasilea.alerting.config.AlertSendConfigProviderImpl;
-import com.aquabasilea.alerting.consumer.impl.CourseBookingAlertSender;
+import com.aquabasilea.notification.config.AlertSendConfigProviderImpl;
 import com.aquabasilea.app.initialize.Initializer;
 import com.aquabasilea.app.initialize.api.UserAddedEvent;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
+import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingAlertSender;
 import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
 import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.model.statistics.BookingStatisticsUpdater;
