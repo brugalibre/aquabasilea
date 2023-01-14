@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
     compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.1-SNAPSHOT'
+    implementation group: 'com.brugalibre', name: 'common-app-util', version: '1.0.0-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-migros-api', version: '1.0-SNAPSHOT'
 
@@ -32,8 +33,6 @@ dependencies {
     implementation 'org.glassfish.jersey.core:jersey-client:3.1.0'
     implementation 'org.glassfish.jersey.inject:jersey-hk2:3.1.0'
     implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '2.1.0'
-
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
 
     compileOnly 'org.slf4j:slf4j-api:2.0.5'
 

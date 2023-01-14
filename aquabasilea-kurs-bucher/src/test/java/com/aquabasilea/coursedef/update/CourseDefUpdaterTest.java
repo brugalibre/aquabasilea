@@ -254,7 +254,7 @@ class CourseDefUpdaterTest {
 
    private static CourseExtractorFacade getCourseExtractorFacade(AquabasileaCourseExtractor aquabasileaCourseExtractor) {
       AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
-      when(config.refreshConfig()).thenReturn(config);
+      when(config.refresh()).thenReturn(config);
       when(config.getCourseDefExtractorType()).thenReturn(CourseDefExtractorType.AQUABASILEA_WEB);
       return new CourseExtractorFacade(() -> aquabasileaCourseExtractor, null, config);
    }

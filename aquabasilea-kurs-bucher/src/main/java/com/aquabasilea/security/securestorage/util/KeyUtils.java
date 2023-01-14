@@ -3,7 +3,9 @@ package com.aquabasilea.security.securestorage.util;
 
 import com.aquabasilea.security.securestorage.exception.SecureStorageException;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -11,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 
-import static com.aquabasilea.util.FileUtil.getFileInputStreamForPath;
+import static com.brugalibre.util.file.FileUtil.getFileInputStreamForPath;
 
 public class KeyUtils {
 

@@ -34,7 +34,7 @@ public class CourseExtractorFacade {
       this.coursesDefEntityMapper = new CoursesDefEntityMapperImpl();
       this.aquabasileaCourseExtractorSupplier = aquabasileaCourseExtractor;
       this.migrosApiSupplier = migrosApiSupplier;
-      this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig.refreshConfig();
+      this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig.refresh();
    }
 
    public CourseExtractorFacade(Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractor, Supplier<MigrosApi> migrosApiSupplier) {
@@ -54,7 +54,7 @@ public class CourseExtractorFacade {
     * @return a {@link List} of {@link CourseDef}s
     */
    public List<CourseDef> extractAquabasileaCourses(String userId, List<CourseLocation> courseLocations) {
-      aquabasileaCourseBookerConfig.refreshConfig();
+      aquabasileaCourseBookerConfig.refresh();
       switch (aquabasileaCourseBookerConfig.getCourseDefExtractorType()) {
          case MIGROS_API -> {
             MigrosApiGetCoursesRequest migrosApiGetCoursesRequest = getMigrosApiGetCoursesRequest(courseLocations);

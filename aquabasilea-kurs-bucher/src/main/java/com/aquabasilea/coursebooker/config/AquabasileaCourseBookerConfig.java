@@ -1,13 +1,14 @@
 package com.aquabasilea.coursebooker.config;
 
 import com.aquabasilea.model.course.coursedef.update.facade.CourseDefExtractorType;
-import com.aquabasilea.util.YamlUtil;
+import com.brugalibre.util.config.yml.YmlConfig;
+import com.brugalibre.util.file.yml.YamlService;
 
 import java.time.Duration;
 
 import static java.util.Objects.nonNull;
 
-public class AquabasileaCourseBookerConfig {
+public class AquabasileaCourseBookerConfig implements YmlConfig {
 
    /**
     * Offset in minutes when the booker starts earlier
@@ -27,6 +28,7 @@ public class AquabasileaCourseBookerConfig {
    private static final int DAYS_TO_BOOK_COURSE_EARLIER = 1;
 
    private static final String AQUABASILEA_COURSE_BOOKER_CONFIG_FILE = "config/aquabasilea-kurs-bucher-config.yml";
+   private static final YamlService YAML_SERVICE = new YamlService();
    private Integer secondsToStartBookerEarlier;
    private Duration durationToStartDryRunEarlier;
    private Duration durationToStartBookerEarlier;
@@ -65,13 +67,14 @@ public class AquabasileaCourseBookerConfig {
    /**
     * Refreshes the configurable values from the {@link #AQUABASILEA_COURSE_BOOKER_CONFIG_FILE}
     */
-   public AquabasileaCourseBookerConfig refreshConfig() {
+   @Override
+   public AquabasileaCourseBookerConfig refresh() {
       readConfigFromFile();
       return this;
    }
 
    private void readConfigFromFile() {
-      AquabasileaCourseBookerConfig externalReadConfig = YamlUtil.readYamlIgnoreMissingFile(courseConfigFile, getClass());
+      AquabasileaCourseBookerConfig externalReadConfig = YAML_SERVICE.readYamlIgnoreMissingFile(courseConfigFile, getClass());
       if (nonNull(externalReadConfig.getCourseDefExtractorType())) {
          this.courseDefExtractorType = externalReadConfig.courseDefExtractorType;
       }

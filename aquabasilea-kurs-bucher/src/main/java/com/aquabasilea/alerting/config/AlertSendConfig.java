@@ -2,6 +2,7 @@ package com.aquabasilea.alerting.config;
 
 import com.aquabasilea.security.securestorage.SecretStorage;
 import com.aquabasilea.security.securestorage.util.KeyUtils;
+import com.brugalibre.util.config.yml.YmlConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.isNull;
 
-public class AlertSendConfig {
+public class AlertSendConfig implements YmlConfig {
    private String originatorName;
    private String keyStoreLocation;
    private String alertServiceName;
@@ -71,5 +72,13 @@ public class AlertSendConfig {
 
    public void setKeyStoreLocation(String keyStoreLocation) {
       this.keyStoreLocation = keyStoreLocation;
+   }
+
+   /**
+    * @return the very same config instance - no refresh implemented!
+    */
+   @Override
+   public YmlConfig refresh() {
+      return this;
    }
 }

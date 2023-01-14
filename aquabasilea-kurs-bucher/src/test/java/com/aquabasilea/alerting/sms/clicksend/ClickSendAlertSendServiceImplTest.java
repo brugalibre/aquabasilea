@@ -5,7 +5,7 @@ import com.aquabasilea.alerting.api.AlertSendException;
 import com.aquabasilea.alerting.config.AlertSendConfig;
 import com.aquabasilea.alerting.send.AlertSendInfos;
 import com.aquabasilea.test.server.DummyHttpServerTestCaseBuilder;
-import com.aquabasilea.util.YamlUtil;
+import com.brugalibre.util.file.yml.YamlService;
 import org.junit.jupiter.api.Test;
 import org.mockserver.model.Header;
 
@@ -26,7 +26,7 @@ class ClickSendAlertSendServiceImplTest {
       String path = "/v3/send/sms";
       String msg = "test-message";
       AlertSendInfos alertSendInfos = getAlertSendInfos(msg);
-      AlertSendConfig alertSendConfig = YamlUtil.readYaml(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, AlertSendConfig.class);
+      AlertSendConfig alertSendConfig = new YamlService().readYaml(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, AlertSendConfig.class);
 
       String response = "OK";
       String authValue = "Basic bnVsbDphYmMtMTIzLWFwaWtleQ==";// change if user/password from alert.keystore is changed

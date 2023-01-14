@@ -35,7 +35,7 @@ class CourseExtractorFacadeTest {
       List<CourseDef> courseDefs = courseExtractorFacade.extractAquabasileaCourses(userId1, List.of());
 
       // Then
-      verify(config, times(2)).refreshConfig();// once during initialization and a 2nd time bevor the call
+      verify(config, times(2)).refresh();// once during initialization and a 2nd time bevor the call
       verify(aquabasileaCourseExtractor, never()).extractAquabasileaCourses(any());
       assertThat(courseDefs.size(), is(1));
       CourseDef courseDef = courseDefs.get(0);
@@ -62,7 +62,7 @@ class CourseExtractorFacadeTest {
       List<CourseDef> courseDefs = courseExtractorFacade.extractAquabasileaCourses(userId, List.of(courseLocation));
 
       // Then
-      verify(config, times(2)).refreshConfig();// once during initialization and a 2nd time bevor the call
+      verify(config, times(2)).refresh();// once during initialization and a 2nd time bevor the call
       verify(migrosApi, never()).getCourses(any());
       assertThat(courseDefs.size(), is(1));
       CourseDef courseDef = courseDefs.get(0);
@@ -74,7 +74,7 @@ class CourseExtractorFacadeTest {
    private static AquabasileaCourseBookerConfig mockAquabasileaCourseBookerConfig(CourseDefExtractorType courseDefExtractorType) {
       AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
       when(config.getCourseDefExtractorType()).thenReturn(courseDefExtractorType);
-      when(config.refreshConfig()).thenReturn(config);
+      when(config.refresh()).thenReturn(config);
       return config;
    }
 
