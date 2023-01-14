@@ -20,6 +20,9 @@ import com.aquabasilea.service.statistics.StatisticsService;
 import com.aquabasilea.service.userconfig.UserConfigService;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.login.AquabasileaLogin;
+import com.brugalibre.domain.contactpoint.mobilephone.model.MobilePhone;
+import com.brugalibre.domain.user.model.User;
+import com.brugalibre.domain.user.repository.UserRepository;
 import com.brugalibre.domain.user.service.userrole.UserRoleConfigService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -85,13 +88,14 @@ class AquabasileaAppInitializerImplTest {
       String userId2 = "userId2";
       String password1 = "userPassword1";
       String password2 = "userPassword2";
+      String phoneNr = "+41791234567";
 
       Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractorSupplier = () -> list -> List::of;
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(new CourseExtractorFacade(aquabasileaCourseExtractorSupplier, () -> null),
               statisticsService, courseDefRepository, userConfigRepository);
 
-      UserAddedEvent userAddedEvent1 = createUserAddedEvent(USERNAME_1, userId1, password1);
-      UserAddedEvent userAddedEvent2 = createUserAddedEvent(USERNAME_2, userId2, password2);
+      UserAddedEvent userAddedEvent1 = createUserAddedEvent(USERNAME_1, userId1, password1, phoneNr);
+      UserAddedEvent userAddedEvent2 = createUserAddedEvent(USERNAME_2, userId2, password2, phoneNr);
       AquabasileaLoginService aquabasileaLoginService = mockAquabasileaLoginService();
       UserCredentialsInitializer userCredentialsInitializer = new UserCredentialsInitializer(aquabasileaLoginService, KEY_STORE_PASSWORD, TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE);
       AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(persistenceInitializer,
@@ -111,9 +115,6 @@ class AquabasileaAppInitializerImplTest {
       verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent1));
       verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent2));
 
-      verify(userRoleConfigService).addMissingRoles(eq(userAddedEvent1.userId()));
-      verify(userRoleConfigService).addMissingRoles(eq(userAddedEvent2.userId()));
-
       // verify we created a default config and updated the one of user 2
       UserConfig userConfig1 = userConfigService.getByUserId(userId1);
       UserConfig userConfig2 = userConfigService.getByUserId(userId2);
@@ -126,9 +127,42 @@ class AquabasileaAppInitializerImplTest {
       assertThat(secretStoreService.getUserPassword(USERNAME_2), is(password2.toCharArray()));
    }
 
-   private static UserAddedEvent createUserAddedEvent(String username, String userId, String password) {
-      char[] userPwd = password.toCharArray();
-      return new UserAddedEvent(username, "+41791234567", userId, userPwd);
+   @Test
+   void initializeAquabasilaApp4ExistingUser() {
+      // Given
+      String userId1 = "userId1";
+      String userId2 = "userId2";
+      String password1 = "userPassword1";
+      String password2 = "userPassword2";
+      String phoneNr = "+41791234567";
+
+      CourseDefUpdater courseDefUpdater = mock(CourseDefUpdater.class);
+      UserCredentialsInitializer userCredentialsInitializer = mock(UserCredentialsInitializer.class);
+
+      UserAddedEvent userAddedEvent1 = createUserAddedEvent(USERNAME_1, userId1, null, phoneNr);
+      UserAddedEvent userAddedEvent2 = createUserAddedEvent(USERNAME_2, userId2, null, phoneNr);
+      UserRepository userRepository = mock(UserRepository.class);
+      User user1 = User.of(userId1, USERNAME_1, password1, MobilePhone.of(phoneNr));
+      User user2 = User.of(userId2, USERNAME_2, password2, MobilePhone.of(phoneNr));
+      when(userRepository.getAll()).thenReturn(List.of(user1, user2));
+      AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(persistenceInitializer,
+              userCredentialsInitializer, aquabasileaCourseBookerInitializer, courseDefUpdater, userRepository, userRoleConfigService);
+
+      // When
+      aquabasileaAppInitializer.initialize4ExistingUsers();
+
+      // Then
+      verify(userRoleConfigService).addMissingRoles(eq(userId1));
+      verify(userRoleConfigService).addMissingRoles(eq(userId2));
+      verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent1));
+      verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent2));
+      verify(courseDefUpdater).startScheduler(eq(userId1));
+      verify(courseDefUpdater).startScheduler(eq(userId2));
+   }
+
+   private static UserAddedEvent createUserAddedEvent(String username, String userId, String password, String phoneNr) {
+      char[] userPwd = password == null ? null : password.toCharArray();
+      return new UserAddedEvent(username, phoneNr, userId, userPwd);
    }
 
    private static AquabasileaLoginService mockAquabasileaLoginService() {
