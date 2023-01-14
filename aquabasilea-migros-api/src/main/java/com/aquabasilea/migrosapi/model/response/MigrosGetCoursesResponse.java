@@ -1,6 +1,6 @@
 package com.aquabasilea.migrosapi.model.response;
 
-import com.aquabasilea.migrosapi.model.response.common.CommonHttpResponse;
+import com.brugalibre.common.http.model.response.CommonHttpResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;

@@ -1,7 +1,5 @@
 package com.aquabasilea.migrosapi.service;
 
-import com.aquabasilea.migrosapi.http.model.request.HttpRequest;
-import com.aquabasilea.migrosapi.http.service.HttpService;
 import com.aquabasilea.migrosapi.mapper.MigrosCourseMapper;
 import com.aquabasilea.migrosapi.mapper.MigrosCourseMapperImpl;
 import com.aquabasilea.migrosapi.model.request.MigrosRequestCourse;
@@ -15,11 +13,12 @@ import com.aquabasilea.migrosapi.model.response.api.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosCourse;
 import com.aquabasilea.migrosapi.service.response.MigrosBookCourseResponseReader;
 import com.aquabasilea.migrosapi.service.response.MigrosGetCoursesResponseReader;
+import com.brugalibre.common.http.model.request.HttpRequest;
+import com.brugalibre.common.http.service.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.aquabasilea.migrosapi.service.MigrosApiConst.*;
 
@@ -66,12 +65,12 @@ public class MigrosApiImpl implements MigrosApi {
 
    @Override
    public MigrosApGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
-      LOG.info("Evaluating courses for request {}", migrosApiGetCoursesRequest);
       List<MigrosResponseCourse> migrosResponseCourses = getMigrosCourses(migrosApiGetCoursesRequest);
       return new MigrosApGetCoursesResponse(migrosCourseMapper.mapToMigrosCourses(migrosResponseCourses));
    }
 
    private List<MigrosResponseCourse> getMigrosCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
+      LOG.info("Evaluating courses for request {}", migrosApiGetCoursesRequest);
       HttpRequest httpGetCourseRequest = getMigrosGetAllCourseHttpRequest(migrosApiGetCoursesRequest);
       MigrosGetCoursesResponse migrosGetCoursesResponse = httpService.callRequestAndParse(new MigrosGetCoursesResponseReader(), httpGetCourseRequest);
       LOG.info("Evaluated {} courses ", migrosGetCoursesResponse.getResultCount());
@@ -121,7 +120,6 @@ public class MigrosApiImpl implements MigrosApi {
    }
 
    private static String joinStrings2String(List<String> elements) {
-      return elements.stream()
-              .collect(Collectors.joining(","));
+      return String.join(",", elements);
    }
 }

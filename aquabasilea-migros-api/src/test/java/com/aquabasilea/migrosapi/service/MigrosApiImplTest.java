@@ -1,10 +1,10 @@
 package com.aquabasilea.migrosapi.service;
 
-import com.aquabasilea.migrosapi.http.DummyHttpServerTestCaseBuilder;
 import com.aquabasilea.migrosapi.model.request.api.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosCourse;
-import org.jetbrains.annotations.NotNull;
+import com.brugalibre.common.http.auth.AuthConst;
+import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockserver.model.Header;
 
@@ -31,7 +31,7 @@ class MigrosApiImplTest {
               .withMethod("POST")
               .withResponseBody(RESPONSE_1)
               .withRequestBody(REQUEST_1)
-              .withHeader(new Header("Authorization", ""))
+              .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
               .buildRequestResponse()
               .build();
 

@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.service.response;
 
-import com.aquabasilea.migrosapi.http.service.response.AbstractHttpResponseReader;
 import com.aquabasilea.migrosapi.model.response.MigrosBookCourseResponse;
+import com.brugalibre.common.http.service.response.AbstractHttpResponseReader;
 
 public class MigrosBookCourseResponseReader extends AbstractHttpResponseReader<MigrosBookCourseResponse> {
    @Override
