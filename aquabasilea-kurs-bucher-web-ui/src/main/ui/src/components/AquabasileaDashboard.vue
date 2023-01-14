@@ -42,8 +42,8 @@ import CourseBookerStateOverview from "@/components/CourseBookerStateOverview";
 import WeeklyCoursesOverview from "@/components/WeeklyCoursesOverview";
 import AddCourse from "@/components/AddCourse";
 import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
-import LoggingService from "@/services/log/logging.service";
 import RouterConstants from "@/router-constants";
+import AuthService from "@/services/auth/auth.service";
 
 export default {
   name: 'App',
@@ -99,7 +99,7 @@ export default {
     },
     errorOccurred: function (error) {
       this.errorDetails = error;
-      if (LoggingService.isAuthenticationFailed(error)) {
+      if (AuthService.isAuthenticationFailed(error)) {
         this.$store.dispatch('auth/logout');
         this.$router.push(this.loginPath);
         return;

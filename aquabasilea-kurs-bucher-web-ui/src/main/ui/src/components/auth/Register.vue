@@ -64,9 +64,9 @@
 <script>
 // import * as yup from "yup";
 
-// import AuthService from "@/services/auth/auth.service";
 import LoggingService from "@/services/log/logging.service";
 import RouterConstants from "@/router-constants";
+import NetworkService from "@/services/network/network.service";
 // import axios from "axios";
 
 export default {
@@ -130,6 +130,9 @@ export default {
       ).catch(error => {
             this.message = LoggingService.extractErrorText(error);
             LoggingService.logError('Error while registering', this.message);
+            if (NetworkService.isNetworkError(error)) {
+              this.message = 'Migros-Kurs Bucher offline!'
+            }
             this.successful = false;
           }
       ).finally(() => {

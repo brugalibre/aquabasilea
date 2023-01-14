@@ -24,6 +24,10 @@ class AuthService {
     setCurrentUser(currentUser) {
         localStorage.setItem('user', JSON.stringify(currentUser));
     }
+
+    isAuthenticationFailed(error) {
+        return error === 'Unauthorized';// not very elegant, but it does the trick..
+    }
 }
 
 export default new AuthService();

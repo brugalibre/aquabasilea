@@ -56,6 +56,7 @@
 import * as yup from "yup";
 import LoggingService from "@/services/log/logging.service";
 import RouterConstants from "@/router-constants";
+import NetworkService from "@/services/network/network.service";
 
 export default {
   name: "Login",
@@ -102,7 +103,12 @@ export default {
               this.$router.push(this.courseOverviewPath);
             }
           })
-          .catch(error => this.message = LoggingService.extractErrorText(error))
+          .catch(error => {
+            this.message = LoggingService.extractErrorText(error)
+            if (NetworkService.isNetworkError(error)) {
+                this.message = 'Migros-Kurs Bucher offline!'
+            }
+          })
           .finally(() => this.loading = false);
     },
   },
