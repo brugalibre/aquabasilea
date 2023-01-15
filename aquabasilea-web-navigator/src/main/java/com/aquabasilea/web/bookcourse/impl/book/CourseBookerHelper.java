@@ -27,12 +27,12 @@ public class CourseBookerHelper {
    /**
     * Finally cancel the booking or book the selected course
     *
-    * @param bookCourseButtonOpt the optional button to book the selected course
-    * @param errorHandler        the {@link ErrorHandler}
+    * @param bookCourseButton the button to book the selected course
+    * @param errorHandler     the {@link ErrorHandler}
     * @return a {@link CourseClickedResult} depending on weather we canceled or booked
     */
-   public CourseClickedResult cancelOrBookCourse(Optional<WebElement> bookCourseButtonOpt, ErrorHandler errorHandler) {
-      return selectedCourseHandler.cancelOrBookCourse(bookCourseButtonOpt, errorHandler);
+   public CourseClickedResult cancelOrBookCourse(WebElement bookCourseButton, ErrorHandler errorHandler) {
+      return selectedCourseHandler.cancelOrBookCourse(bookCourseButton, errorHandler);
    }
 
    private SelectedCourseHandler getSelectedCourseHandler(boolean dryRun) {
@@ -44,8 +44,8 @@ public class CourseBookerHelper {
          };
       } else {
          return (bookButton, errorHandler) -> {
-            this.aquabasileaNavigatorHelper.clickButtonOrHandleError(() -> bookButton, errorHandler, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
-            bookButton.ifPresent(webElement -> closeCourseDialog(errorHandler));
+            this.aquabasileaNavigatorHelper.clickButtonOrHandleError(() -> Optional.of(bookButton), errorHandler, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
+            closeCourseDialog(errorHandler);
             LOG.info("Course booking successfully!");
             return CourseClickedResult.COURSE_BOOKED;
          };

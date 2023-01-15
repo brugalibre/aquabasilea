@@ -7,7 +7,6 @@ import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorHelper;
 import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
-import com.aquabasilea.web.login.AquabasileaLoginHelper;
 import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
@@ -51,15 +50,12 @@ public class CourseSelectHelper {
    private static final Duration DURATION_TO_WAIT_ADDITIONAL_UNTIL_A_COURSE_BECAME_BOOKABLE = Duration.ofSeconds(60);
    private final Supplier<Duration> duration2WaitUntilCourseBecomesBookable;
    private final CourseBookerHelper courseBookerHelper;
-   private final AquabasileaLoginHelper aquabasileaLoginHelper;
    private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
    private final BookingAndCloseButtonMissingCallbackHandler missingBookingAndCloseButtonCallbackHandler;
 
-   public CourseSelectHelper(CourseBookerHelper courseBookerHelper, AquabasileaLoginHelper aquabasileaLoginHelper,
-                             AquabasileaNavigatorHelper aquabasileaNavigatorHelper, Supplier<Duration> duration2WaitUntilCourseBecomesBookable,
-                             boolean dryRun) {
+   public CourseSelectHelper(CourseBookerHelper courseBookerHelper, AquabasileaNavigatorHelper aquabasileaNavigatorHelper,
+                             Supplier<Duration> duration2WaitUntilCourseBecomesBookable, boolean dryRun) {
       this.aquabasileaNavigatorHelper = aquabasileaNavigatorHelper;
-      this.aquabasileaLoginHelper = aquabasileaLoginHelper;
       // It may happen, that the AquabasileaWebNavigator was started slightly to early and has to wait, until the booking button becomes available
       this.duration2WaitUntilCourseBecomesBookable = duration2WaitUntilCourseBecomesBookable;
       this.courseBookerHelper = courseBookerHelper;
@@ -167,13 +163,9 @@ public class CourseSelectHelper {
          this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), 10000);
          LOG.info("Course {} selected. Now either do booking or cancel", courseName);
          WebElement courseDetails = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE);
-         Optional<WebElement> loginButton = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
          Optional<WebElement> bookCourseButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
          if (bookCourseButtonOpt.isPresent()) {
-            return courseBookerHelper.cancelOrBookCourse(bookCourseButtonOpt, errorHandler);
-         } else if (loginButton.isPresent()) {
-            aquabasileaLoginHelper.login(loginButton.get());
-            return courseBookerHelper.cancelOrBookCourse(bookCourseButtonOpt, errorHandler);
+            return courseBookerHelper.cancelOrBookCourse(bookCourseButtonOpt.get(), errorHandler);
          } else {
             LOG.warn("Neither booking nor login button present..");
             return missingBookingAndCloseButtonCallbackHandler.handleBookingAndCloseButtonMissing(courseName, errorHandler, courseDetails);

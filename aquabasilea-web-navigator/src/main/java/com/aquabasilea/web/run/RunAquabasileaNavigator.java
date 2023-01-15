@@ -16,13 +16,13 @@ public class RunAquabasileaNavigator {
       try {
          run(args);
       } catch (Exception ex) {
-         System.err.println(ex);
+         ex.printStackTrace();
       }
    }
 
    private static void run(String[] args) {
-      String courseName = "Yoga 50 Min. G1";
-      String courseInstructor = "Ladina B.";
+      String courseName = "Aqua Gym 50 Min.";
+      String courseInstructor = "Barbara W.";
       String username = args[0];
       char[] password = args[1].toCharArray();
       LocalDateTime courseDateAndTime = getCourseDateAndTime();

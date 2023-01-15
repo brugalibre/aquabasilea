@@ -138,7 +138,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       this.courseFilterHelper = new CourseFilterHelper(this.webNavigatorHelper);
       CourseBookerHelper courseBookerHelper = new CourseBookerHelper(this.webNavigatorHelper, dryRun);
-      CourseSelectHelper courseSelectHelper = new CourseSelectHelper(courseBookerHelper, aquabasileaLoginHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun);
+      CourseSelectHelper courseSelectHelper = new CourseSelectHelper(courseBookerHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun);
       this.courseSelectWithRetryHelper = new CourseSelectWithRetryHelper(courseSelectHelper, this.courseFilterHelper, this::navigate2CoursePage, duration2WaitUntilCourseBecomesBookable);
    }
 

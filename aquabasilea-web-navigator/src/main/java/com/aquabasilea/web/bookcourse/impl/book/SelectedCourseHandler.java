@@ -15,9 +15,9 @@ public interface SelectedCourseHandler {
    /**
     * Closes the booking dialog or books the selected course
     *
-    * @param bookCourseButtonOpt the optional button to book the selected course
+    * @param bookCourseButton the button to book the selected course
     * @param errorHandler        the {@link ErrorHandler} to handle any missing button
     * @return a {@link CourseClickedResult} which defines either the course was booked or the dialog closed
     */
-   CourseClickedResult cancelOrBookCourse(Optional<WebElement> bookCourseButtonOpt, ErrorHandler errorHandler);
+   CourseClickedResult cancelOrBookCourse(WebElement bookCourseButton, ErrorHandler errorHandler);
 }
