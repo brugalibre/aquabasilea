@@ -1,6 +1,6 @@
 package com.aquabasilea.coursebooker.config;
 
-import com.aquabasilea.model.course.coursedef.update.facade.CourseDefExtractorType;
+import com.aquabasilea.coursedef.update.facade.CourseDefExtractorType;
 import com.brugalibre.util.config.yml.YmlConfig;
 import com.brugalibre.util.file.yml.YamlService;
 

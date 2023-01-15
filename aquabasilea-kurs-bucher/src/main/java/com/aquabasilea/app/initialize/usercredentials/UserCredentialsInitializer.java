@@ -2,8 +2,8 @@ package com.aquabasilea.app.initialize.usercredentials;
 
 import com.aquabasilea.app.initialize.Initializer;
 import com.aquabasilea.app.initialize.api.UserAddedEvent;
-import com.aquabasilea.service.security.login.AquabasileaLoginService;
 import com.aquabasilea.security.securestorage.WriteSecretToKeyStore;
+import com.aquabasilea.security.service.login.AquabasileaLoginService;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

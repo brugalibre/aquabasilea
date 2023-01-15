@@ -1,9 +1,9 @@
 package com.aquabasilea.rest.model.course.weeklycourses;
 
 
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.CourseComparator;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.CourseComparator;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import static java.util.Objects.nonNull;
 
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record WeeklyCoursesDto (List<CourseDto> courseDtos){
+public record WeeklyCoursesDto(List<CourseDto> courseDtos) {
 
    public static WeeklyCoursesDto of(WeeklyCourses weeklyCourses, Course currentCourse, Locale locale) {
       return new WeeklyCoursesDto(weeklyCourses.getCourses()

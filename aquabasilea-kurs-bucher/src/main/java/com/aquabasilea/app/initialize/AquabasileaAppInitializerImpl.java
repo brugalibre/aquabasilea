@@ -6,7 +6,7 @@ import com.aquabasilea.app.initialize.coursebooker.AquabasileaCourseBookerInitia
 import com.aquabasilea.app.initialize.persistence.PersistenceInitializer;
 import com.aquabasilea.app.initialize.usercredentials.UserCredentialsInitializer;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.model.course.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.coursedef.update.CourseDefUpdater;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import com.brugalibre.domain.user.service.userrole.UserRoleConfigService;

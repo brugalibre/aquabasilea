@@ -1,13 +1,13 @@
 package com.aquabasilea.rest.service.coursedef;
 
-import com.aquabasilea.model.course.CourseLocation;
-import com.aquabasilea.model.course.coursedef.CourseDef;
-import com.aquabasilea.model.course.coursedef.update.notify.CourseDefUpdatedNotifier;
+import com.aquabasilea.coursebooker.model.course.CourseLocation;
+import com.aquabasilea.coursebooker.service.userconfig.UserConfigService;
+import com.aquabasilea.coursedef.model.CourseDef;
+import com.aquabasilea.coursedef.service.CourseDefUpdaterService;
+import com.aquabasilea.coursedef.update.notify.CourseDefUpdatedNotifier;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import com.aquabasilea.search.ObjectTextSearch;
-import com.aquabasilea.service.coursedef.update.CourseDefUpdaterService;
-import com.aquabasilea.service.userconfig.UserConfigService;
 import com.brugalibre.domain.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,28 +1,27 @@
 package com.aquabasilea.app.config;
 
-import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.coursedef.repository.impl.CourseDefRepositoryImpl;
-import com.aquabasilea.model.course.coursedef.update.CourseDefUpdater;
-import com.aquabasilea.model.course.coursedef.update.facade.CourseExtractorFacade;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.model.course.weeklycourses.repository.impl.WeeklyCoursesRepositoryImpl;
-import com.aquabasilea.model.statistics.repository.StatisticsRepository;
-import com.aquabasilea.model.statistics.repository.impl.StatisticsRepositoryImpl;
-import com.aquabasilea.model.userconfig.repository.UserConfigRepository;
-import com.aquabasilea.model.userconfig.repository.impl.UserConfigRepositoryImpl;
-import com.aquabasilea.persistence.config.AquabasileaCourseBookerPersistenceConfig;
-import com.aquabasilea.persistence.entity.course.aquabasilea.dao.CoursesDefDao;
-import com.aquabasilea.persistence.entity.course.weeklycourses.dao.WeeklyCoursesDao;
-import com.aquabasilea.persistence.entity.statistic.dao.StatisticsDao;
-import com.aquabasilea.persistence.entity.userconfig.dao.UserConfigDao;
-import com.aquabasilea.service.coursedef.update.CourseDefUpdaterService;
-import com.aquabasilea.service.statistics.StatisticsService;
-import com.aquabasilea.service.userconfig.UserConfigService;
-import com.aquabasilea.service.weeklycourses.WeeklyCoursesService;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.impl.WeeklyCoursesRepositoryImpl;
+import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
+import com.aquabasilea.coursebooker.model.statistics.repository.impl.StatisticsRepositoryImpl;
+import com.aquabasilea.coursebooker.model.userconfig.repository.UserConfigRepository;
+import com.aquabasilea.coursebooker.model.userconfig.repository.impl.UserConfigRepositoryImpl;
+import com.aquabasilea.coursebooker.persistence.course.weeklycourses.dao.WeeklyCoursesDao;
+import com.aquabasilea.coursebooker.persistence.statistic.dao.StatisticsDao;
+import com.aquabasilea.coursebooker.persistence.userconfig.dao.UserConfigDao;
+import com.aquabasilea.coursebooker.service.statistics.StatisticsService;
+import com.aquabasilea.coursebooker.service.userconfig.UserConfigService;
+import com.aquabasilea.coursebooker.service.weeklycourses.WeeklyCoursesService;
+import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.coursedef.model.repository.impl.CourseDefRepositoryImpl;
+import com.aquabasilea.coursedef.persistence.dao.CoursesDefDao;
+import com.aquabasilea.coursedef.service.CourseDefUpdaterService;
+import com.aquabasilea.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.coursedef.update.facade.CourseExtractorFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
-import static com.aquabasilea.service.weeklycourses.WeeklyCoursesService.WEEKLY_COURSES_SERVICE;
+import static com.aquabasilea.coursebooker.service.weeklycourses.WeeklyCoursesService.WEEKLY_COURSES_SERVICE;
 
 @Configuration
 @ComponentScan(basePackages = {"com.aquabasilea.service", "com.aquabasilea.app.initialize", "com.aquabasilea.coursebooker"})

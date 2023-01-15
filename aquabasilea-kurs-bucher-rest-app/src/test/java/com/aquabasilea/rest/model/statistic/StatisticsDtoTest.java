@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.model.statistic;
 
-import com.aquabasilea.model.statistics.Statistics;
+import com.aquabasilea.coursebooker.model.statistics.Statistics;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

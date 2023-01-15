@@ -1,11 +1,11 @@
 package com.aquabasilea.coursebooker.states.booking;
 
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.CourseComparator;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.coursedef.CourseDef;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.CourseComparator;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.util.PlUtil;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;

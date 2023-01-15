@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.model.statistic;
 
+import com.aquabasilea.coursebooker.model.statistics.Statistics;
 import com.aquabasilea.i18n.TextResources;
-import com.aquabasilea.model.statistics.Statistics;
 import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 

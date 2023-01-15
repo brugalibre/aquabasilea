@@ -2,11 +2,11 @@ package com.aquabasilea.rest.service;
 
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.service.weeklycourses.WeeklyCoursesService;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
-import com.aquabasilea.service.weeklycourses.WeeklyCoursesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

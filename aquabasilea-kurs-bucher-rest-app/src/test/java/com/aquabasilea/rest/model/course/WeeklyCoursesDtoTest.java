@@ -1,8 +1,8 @@
 package com.aquabasilea.rest.model.course;
 
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course.CourseBuilder;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
 import org.junit.jupiter.api.Test;
 
@@ -76,7 +76,7 @@ class WeeklyCoursesDtoTest {
       String fourthCourseId = "4";
       String fifthCourseId = "5";
       String sixthCourseId = "6";
-      LocalDateTime firstCourseDate = LocalDateTime.of(2022,12,12, 18,15,0);
+      LocalDateTime firstCourseDate = LocalDateTime.of(2022, 12, 12, 18, 15, 0);
       LocalDateTime secondCourseDate = firstCourseDate
               .plusMinutes(30);
       LocalDateTime thirdCourseDate = firstCourseDate

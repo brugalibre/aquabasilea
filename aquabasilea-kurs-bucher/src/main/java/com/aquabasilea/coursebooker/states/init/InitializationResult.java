@@ -1,8 +1,8 @@
 package com.aquabasilea.coursebooker.states.init;
 
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
 
 import java.time.Duration;
 

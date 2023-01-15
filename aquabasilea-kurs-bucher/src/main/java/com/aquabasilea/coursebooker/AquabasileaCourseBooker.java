@@ -1,16 +1,16 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
-import com.aquabasilea.coursebooker.consumer.ConsumerUser;
-import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.coursebooker.states.booking.BookingStateHandler;
+import com.aquabasilea.coursebooker.states.booking.consumer.ConsumerUser;
+import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
+import com.aquabasilea.coursebooker.states.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitializationResult;
-import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;

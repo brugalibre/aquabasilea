@@ -2,7 +2,7 @@ package com.aquabasilea.rest.service.admin;
 
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.admin.AdminOverviewDto;
 import com.aquabasilea.rest.model.admin.Course4AdminViewDto;

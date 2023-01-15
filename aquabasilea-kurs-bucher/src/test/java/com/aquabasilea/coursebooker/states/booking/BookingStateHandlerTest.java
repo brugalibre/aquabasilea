@@ -1,10 +1,10 @@
 package com.aquabasilea.coursebooker.states.booking;
 
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course.CourseBuilder;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_SKIPPED;

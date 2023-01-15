@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.model.admin;
 
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.util.DateUtil;

@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.model.course.weeklycourses.exception.CourseAlreadyExistsException;
-import com.aquabasilea.service.security.login.CredentialsNotValidException;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.exception.CourseAlreadyExistsException;
+import com.aquabasilea.security.service.login.CredentialsNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

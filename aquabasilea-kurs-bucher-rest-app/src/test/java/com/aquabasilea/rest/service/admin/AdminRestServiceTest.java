@@ -2,10 +2,10 @@ package com.aquabasilea.rest.service.admin;
 
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.model.course.CourseLocation;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.statistics.Statistics;
-import com.aquabasilea.model.statistics.repository.StatisticsRepository;
+import com.aquabasilea.coursebooker.model.course.CourseLocation;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.statistics.Statistics;
+import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
 import com.aquabasilea.rest.config.TestAquabasileaCourseBookerRestAppConfig;
 import com.aquabasilea.rest.model.admin.AdminOverviewDto;
 import com.aquabasilea.rest.model.admin.Course4AdminViewDto;
@@ -84,8 +84,8 @@ class AdminRestServiceTest {
       AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder = new AquabasileaCourseBookerHolder();
       aquabasileaCourseBookerHolder.putForUserId(userIdWithoutCurrentCourse, mock(AquabasileaCourseBooker.class));
       AdminRestService adminRestService = new AdminRestService(statisticsRestService, aquabasileaCourseBookerHolder, userRepository);
-      createStatistics(userId1, 0,0);
-      createStatistics(userId2, 0,0);
+      createStatistics(userId1, 0, 0);
+      createStatistics(userId2, 0, 0);
 
       // When
       AdminOverviewDto adminOverview = adminRestService.getAdminOverviewDto();

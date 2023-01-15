@@ -1,10 +1,9 @@
 package com.aquabasilea.rest.model.course.weeklycourses;
 
 
+import com.aquabasilea.coursebooker.model.course.CourseLocation;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
 import com.aquabasilea.i18n.TextResources;
-import com.aquabasilea.model.course.CourseLocation;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -23,7 +22,7 @@ public record CourseDto(String id, String courseName, String courseInstructor, S
 
    public static Course map2Course(CourseDto courseDto) {
       String currentId = isNull(courseDto.id) ? UUID.randomUUID().toString() : courseDto.id;
-      return CourseBuilder.builder()
+      return Course.CourseBuilder.builder()
               .withId(currentId)
               .withCourseName(courseDto.courseName())
               .withCourseInstructor(courseDto.courseInstructor())

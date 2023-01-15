@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.service.admin;
 
-import com.aquabasilea.model.course.weeklycourses.CourseDateComparator;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.CourseDateComparator;
 import com.aquabasilea.rest.model.admin.Course4AdminViewDto;
 
 public class CourseDtoAdminViewComparator implements java.util.Comparator<Course4AdminViewDto> {

@@ -1,12 +1,12 @@
 package com.aquabasilea.coursebooker.states.init;
 
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.coursedef.CourseDef;
-import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursedef.model.CourseDef;
+import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.aquabasilea.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
+import static com.aquabasilea.coursebooker.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;

@@ -16,7 +16,6 @@ public class DateUtil {
 
    private static final String DATE_FORMAT_DD_MM_YYY = "dd.MM.yyyy";
    public static final String DATE_TIME_FORMAT_DD_MM_YYY_HH_MM = "dd.MM.yyyy, HH:mm";
-   public static final String DATE_TIME_FORMAT_DD_MM_YYY_HH_MM_SS = "dd.MM.yyyy, HH:mm:ss";
 
    /**
     * Returns the amount of milliseconds for the given {@link LocalDateTime}
@@ -60,19 +59,20 @@ public class DateUtil {
     * @return a String representation of the given {@link LocalDate} in the given {@link Locale}
     */
    public static String toString(LocalDate date, Locale locale) {
-      return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT_DD_MM_YYY, locale));
+      return toString(date, DATE_FORMAT_DD_MM_YYY, locale);
    }
 
    /**
-    * Returns a String representation of the given {@link LocalDateTime} in the given {@link Locale}
-    * The date representation is in the following pattern: DATE_TIME_FORMAT_DD_MM_YYY_HH_MM_SS
+    * Returns a String representation of the given {@link LocalDate} in the given {@link Locale}
+    * for the given pattern
     *
-    * @param courseDate the date-time
-    * @param locale     the local
-    * @return a String representation of the given {@link LocalDateTime} in the given {@link Locale}
+    * @param date    the date
+    * @param pattern the pattern which defines the formatting of the returned value
+    * @param locale  the local
+    * @return a String representation of the given {@link LocalDate} in the given {@link Locale}
     */
-   public static String toStringWithSeconds(LocalDateTime courseDate, Locale locale) {
-      return courseDate.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_DD_MM_YYY_HH_MM_SS, locale));
+   private static String toString(LocalDate date, String pattern, Locale locale) {
+      return date.format(DateTimeFormatter.ofPattern(pattern, locale));
    }
 
    /**

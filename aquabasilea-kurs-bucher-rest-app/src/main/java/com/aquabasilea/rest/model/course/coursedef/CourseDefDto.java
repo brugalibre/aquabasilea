@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.model.course.coursedef;
 
+import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.i18n.TextResources;
-import com.aquabasilea.model.course.coursedef.CourseDef;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.CourseLocationDto;
 import com.aquabasilea.search.SearchableAttribute;

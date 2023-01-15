@@ -1,11 +1,11 @@
 package com.aquabasilea.coursebooker.states.init;
 
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.util.DateUtil;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;

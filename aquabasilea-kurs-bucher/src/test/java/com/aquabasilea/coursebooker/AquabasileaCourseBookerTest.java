@@ -1,18 +1,18 @@
 package com.aquabasilea.coursebooker;
 
-import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingAlertSender;
-import com.aquabasilea.coursebooker.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.config.TestAquabasileaCourseBookerConfig;
-import com.aquabasilea.coursebooker.consumer.ConsumerUser;
-import com.aquabasilea.coursebooker.consumer.CourseBookingEndResultConsumer;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.Course.CourseBuilder;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
-import com.aquabasilea.model.course.coursedef.CourseDef;
-import com.aquabasilea.model.course.coursedef.repository.CourseDefRepository;
-import com.aquabasilea.model.course.weeklycourses.Course;
-import com.aquabasilea.model.course.weeklycourses.Course.CourseBuilder;
-import com.aquabasilea.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursebooker.states.booking.consumer.ConsumerUser;
+import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
+import com.aquabasilea.coursebooker.states.booking.notification.CourseBookingAlertSender;
+import com.aquabasilea.coursebooker.states.callback.CourseBookingStateChangedHandler;
+import com.aquabasilea.coursedef.model.CourseDef;
+import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.aquabasilea.coursebooker.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static com.aquabasilea.coursebooker.states.CourseBookingState.*;
-import static com.aquabasilea.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.awaitility.Awaitility.await;
