@@ -11,8 +11,10 @@ import java.util.List;
 
 public class RunAquabasileaExtractor {
 
+   private static final String DEBUG_CONFIG_FILE = "config/debug-aquabasilea-kurs-bucher-config.yml";
+
    public static void main(String[] args) {
-      AquabasileaCourseExtractor aquabasileaWebNavigator = AquabasileaCourseExtractorImpl.createAndInitAquabasileaWebNavigator();
+      AquabasileaCourseExtractor aquabasileaWebNavigator = AquabasileaCourseExtractorImpl.createAndInitAquabasileaWebNavigator(DEBUG_CONFIG_FILE);
       long start = System.currentTimeMillis();
       ExtractedAquabasileaCourses extractedAquabasileaCourses = aquabasileaWebNavigator.extractAquabasileaCourses(List.of("Migros Fitnesscenter Clarastrasse", "Fitnesspark Heuwaage", "Migros Fitnesscenter Aquabasilea"));
       Duration duration = Duration.ofMillis(System.currentTimeMillis() - start);

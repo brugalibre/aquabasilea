@@ -1,5 +1,6 @@
 package com.aquabasilea.web.extractcourses.impl;
 
+import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandlerImpl;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
@@ -38,8 +39,22 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
       this.aquabasileaCourseExtractorHelper = new AquabasileaCourseExtractorHelper(this.webNavigatorHelper, this.errorHandler);
    }
 
+   /**
+    * Creates a new {@link AquabasileaCourseExtractor} which uses the default properties {@link AquabasileaWebConst#AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES}
+    *
+    * @return a new {@link AquabasileaCourseExtractor}
+    */
    public static AquabasileaCourseExtractor createAndInitAquabasileaWebNavigator() {
-      AquabasileaCourseExtractorImpl aquabasileaWebNavigator = new AquabasileaCourseExtractorImpl(AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
+      return createAndInitAquabasileaWebNavigator(AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
+   }
+
+   /**
+    * Creates a new {@link AquabasileaCourseExtractor} which uses the given properties-file
+    *
+    * @return a new {@link AquabasileaCourseExtractor}
+    */
+   public static AquabasileaCourseExtractor createAndInitAquabasileaWebNavigator(String propertiesFile) {
+      AquabasileaCourseExtractorImpl aquabasileaWebNavigator = new AquabasileaCourseExtractorImpl(propertiesFile);
       aquabasileaWebNavigator.initWebDriver();
       return aquabasileaWebNavigator;
    }

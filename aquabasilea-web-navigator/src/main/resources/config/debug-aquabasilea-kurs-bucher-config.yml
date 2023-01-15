@@ -1,0 +1,3 @@
+minutesToStartDryRunEarlier: 90
+loginPage: https://login.migros.ch/login
+coursePage: https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm/

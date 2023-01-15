@@ -48,8 +48,23 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       this.timeOutRetries = 4;
    }
 
+   /**
+    * Creates an {@link AquabasileaWebCourseBookerImpl} for the given parameters
+    * If <code>dryRun</code> is set to <code>true</code> a course is selected but not booked in order to test the implementation
+    *
+    * @param userName                                the username
+    * @param userPassword                            the password of the user
+    * @param dryRun                                  <code>true</code> if its a dry run or <code>false</code> if it's a real booking
+    * @param duration2WaitUntilCourseBecomesBookable the {@link Duration} the {@link AquabasileaWebCourseBookerImpl} waits if a course
+    *                                                is not yet bookable. After that {@link Duration} a booking or dry-run will fail
+    * @return a  {@link AquabasileaWebCourseBookerImpl}
+    */
    public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, char[] userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
-      AquabasileaWebCourseBookerImpl aquabasileaWebNavigator = new AquabasileaWebCourseBookerImpl(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
+      return createAndInitAquabasileaWebNavigator(userName, userPassword, dryRun, duration2WaitUntilCourseBecomesBookable, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
+   }
+
+   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, char[] userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable, String propertiesFile) {
+      AquabasileaWebCourseBookerImpl aquabasileaWebNavigator = new AquabasileaWebCourseBookerImpl(userName, userPassword, propertiesFile);
       aquabasileaWebNavigator.initWebDriver();
       aquabasileaWebNavigator.init(dryRun, duration2WaitUntilCourseBecomesBookable);
       return aquabasileaWebNavigator;
@@ -156,7 +171,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
               .build();
    }
 
-   private void logError(String errorMsg,String logErrorMsg, ErrorHandler errorHandler, Exception e) {
+   private void logError(String errorMsg, String logErrorMsg, ErrorHandler errorHandler, Exception e) {
       errorHandler.handleError(errorMsg);
       LOG.error(logErrorMsg, e);
       webNavigatorHelper.takeScreenshot(e.getClass().getSimpleName());

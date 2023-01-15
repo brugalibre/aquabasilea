@@ -5,11 +5,16 @@ import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 public class RunAquabasileaNavigator {
+
+   private static final String DEBUG_CONFIG_FILE = "config/debug-aquabasilea-kurs-bucher-config.yml";
 
    public static void main(String[] args) {
 
@@ -31,7 +36,7 @@ public class RunAquabasileaNavigator {
       if (args.length >= 3) {
          dryRun = Boolean.parseBoolean(args[2]);
       }
-      AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier());
+      AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier(), DEBUG_CONFIG_FILE);
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, courseInstructor, courseDateAndTime, "Migros Fitnesscenter Aquabasilea"));
       printErrors(dryRun, courseBookingEndResult);
    }
