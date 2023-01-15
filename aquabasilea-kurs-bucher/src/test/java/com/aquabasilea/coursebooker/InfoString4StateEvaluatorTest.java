@@ -15,10 +15,11 @@ import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class InfoString4StateEvaluatorTest {
+
+   private static final AquabasileaCourseBookerConfig CONFIG = mockAquabasileaCourseBookerConfig();
 
    @Test
    void getInfoString4StateInit() {
@@ -29,7 +30,7 @@ class InfoString4StateEvaluatorTest {
       currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
-      String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.INIT, currentCourse);
+      String actualInfoString4State = new InfoString4StateEvaluator(CONFIG).getInfoString4State(CourseBookingState.INIT, currentCourse);
 
       // Then
       assertThat(actualInfoString4State, is(TextResources.INFO_TEXT_INIT));
@@ -44,7 +45,7 @@ class InfoString4StateEvaluatorTest {
       currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
-      String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.PAUSED, currentCourse);
+      String actualInfoString4State = new InfoString4StateEvaluator(CONFIG).getInfoString4State(CourseBookingState.PAUSED, currentCourse);
 
       // Then
       assertThat(actualInfoString4State, is(TextResources.INFO_TEXT_APP_PAUSED));
@@ -62,7 +63,7 @@ class InfoString4StateEvaluatorTest {
       LocalDateTime dryRunOrBookingDate = courseDate.minusMinutes(min2StartEarlier);
       String dryRunOrBookingDateAsString = DateUtil.toString(dryRunOrBookingDate, Locale.GERMAN);
       String expectedInfoString = String.format(TextResources.INFO_TEXT_IDLE_BEFORE_BOOKING, currentCourse.getCourseName(), DateUtil.toString(courseDate, Locale.GERMAN), dryRunOrBookingDateAsString);
-      AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
+      AquabasileaCourseBookerConfig config = mockAquabasileaCourseBookerConfig();
       when(config.getDurationToStartBookerEarlier()).thenReturn(Duration.ofMinutes(min2StartEarlier));
 
       // When
@@ -70,6 +71,7 @@ class InfoString4StateEvaluatorTest {
 
       // Then
       assertThat(actualInfoString4State, is(expectedInfoString));
+      verify(config.refresh());
    }
 
    @Test
@@ -84,7 +86,7 @@ class InfoString4StateEvaluatorTest {
       LocalDateTime dryRunOrBookingDate = courseDate.minusMinutes(min2StartEarlier);
       String dryRunOrBookingDateAsString = DateUtil.toString(dryRunOrBookingDate, Locale.GERMAN);
       String expectedInfoString = String.format(TextResources.INFO_TEXT_IDLE_BEFORE_DRY_RUN, currentCourse.getCourseName(), DateUtil.toString(courseDate, Locale.GERMAN), dryRunOrBookingDateAsString);
-      AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
+      AquabasileaCourseBookerConfig config = mockAquabasileaCourseBookerConfig();
       when(config.getDurationToStartDryRunEarlier()).thenReturn(Duration.ofMinutes(min2StartEarlier));
 
       // When
@@ -104,7 +106,7 @@ class InfoString4StateEvaluatorTest {
       currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
-      String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.BOOKING, currentCourse);
+      String actualInfoString4State = new InfoString4StateEvaluator(CONFIG).getInfoString4State(CourseBookingState.BOOKING, currentCourse);
 
       // Then
       assertThat(actualInfoString4State, is(String.format(TextResources.INFO_TEXT_BOOKING_COURSE, courseName)));
@@ -120,7 +122,7 @@ class InfoString4StateEvaluatorTest {
       currentCourse.setCourseDate(LocalDateTime.now());
 
       // When
-      String actualInfoString4State = new InfoString4StateEvaluator(null).getInfoString4State(CourseBookingState.BOOKING_DRY_RUN, currentCourse);
+      String actualInfoString4State = new InfoString4StateEvaluator(CONFIG).getInfoString4State(CourseBookingState.BOOKING_DRY_RUN, currentCourse);
 
       // Then
       assertThat(actualInfoString4State, is(String.format(TextResources.INFO_TEXT_BOOKING_COURSE_DRY_RUN, courseName)));
@@ -131,5 +133,11 @@ class InfoString4StateEvaluatorTest {
       currentCourse.setCourseName(courseName);
       currentCourse.setCourseDate(LocalDateTime.of(LocalDate.now(), LocalTime.of(Integer.parseInt(hour), Integer.parseInt(min))));
       return currentCourse;
+   }
+
+   private static AquabasileaCourseBookerConfig mockAquabasileaCourseBookerConfig() {
+      AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig = mock(AquabasileaCourseBookerConfig.class);
+      when(aquabasileaCourseBookerConfig.refresh()).thenReturn(aquabasileaCourseBookerConfig);
+      return aquabasileaCourseBookerConfig;
    }
 }

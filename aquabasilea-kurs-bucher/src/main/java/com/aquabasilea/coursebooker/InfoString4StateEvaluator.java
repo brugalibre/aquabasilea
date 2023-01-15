@@ -27,6 +27,7 @@ public class InfoString4StateEvaluator {
     * @return a String depending on the given {@link CourseBookingState}, the given {@link Course} and the {@link InitializationResult}
     */
    public String getInfoString4State(CourseBookingState courseBookingState, Course currentCourse) {
+      aquabasileaCourseBookerConfig.refresh();
       return switch (courseBookingState) {
          case INIT -> TextResources.INFO_TEXT_INIT;
          case IDLE_BEFORE_BOOKING -> getInfoString4IdleBeforeBooking(currentCourse);

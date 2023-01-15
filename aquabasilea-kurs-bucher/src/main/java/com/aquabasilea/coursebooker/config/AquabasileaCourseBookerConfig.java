@@ -30,6 +30,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    private static final String AQUABASILEA_COURSE_BOOKER_CONFIG_FILE = "config/aquabasilea-kurs-bucher-config.yml";
    private static final YamlService YAML_SERVICE = new YamlService();
    private Integer secondsToStartBookerEarlier;
+   private Integer minutesToStartDryRunEarlier;
    private Duration durationToStartDryRunEarlier;
    private Duration durationToStartBookerEarlier;
    private String courseConfigFile;
@@ -46,6 +47,14 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
 
    public void setDaysToBookCourseEarlier(int daysToBookCourseEarlier) {
       this.daysToBookCourseEarlier = daysToBookCourseEarlier;
+   }
+
+   public void setSecondsToStartBookerEarlier(Integer secondsToStartBookerEarlier) {
+      this.secondsToStartBookerEarlier = secondsToStartBookerEarlier;
+   }
+
+   public void setMinutesToStartDryRunEarlier(Integer minutesToStartDryRunEarlier) {
+      this.minutesToStartDryRunEarlier = minutesToStartDryRunEarlier;
    }
 
    void setDurationToStartBookerEarlier(Duration durationToStartBookerEarlier) {
@@ -80,6 +89,9 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       }
       if (nonNull(externalReadConfig.secondsToStartBookerEarlier)) {
          this.durationToStartBookerEarlier = Duration.ofSeconds(externalReadConfig.secondsToStartBookerEarlier);
+      }
+      if (nonNull(externalReadConfig.minutesToStartDryRunEarlier)) {
+         this.durationToStartDryRunEarlier = Duration.ofMinutes(externalReadConfig.minutesToStartDryRunEarlier);
       }
    }
 

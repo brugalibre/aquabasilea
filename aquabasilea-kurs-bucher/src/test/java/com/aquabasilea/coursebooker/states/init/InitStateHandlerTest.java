@@ -17,8 +17,7 @@ import java.util.UUID;
 import static com.aquabasilea.coursebooker.model.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class InitStateHandlerTest {
 
@@ -45,6 +44,7 @@ class InitStateHandlerTest {
       assertThat(initializationResult.getCurrentCourse(), is(notNullValue()));
       assertThat(initializationResult.getCurrentCourse().getCourseDate().getDayOfMonth(), is(now.plusDays(7).getDayOfMonth()));
       assertThat(initializationResult.getCurrentCourse().getCourseDate().getMonthValue(), is(now.plusDays(7).getMonthValue()));
+      verify(tcb.aquabasileaCourseBookerConfig.refresh());
    }
 
    @Test
@@ -109,7 +109,7 @@ class InitStateHandlerTest {
       private TestCaseBuilder() {
          this.weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
          this.courseDefRepository = mock(CourseDefRepository.class);
-         this.aquabasileaCourseBookerConfig = new AquabasileaCourseBookerConfig();
+         this.aquabasileaCourseBookerConfig = spy(new AquabasileaCourseBookerConfig());
          this.courseDefs = new ArrayList<>();
       }
 

@@ -51,6 +51,7 @@ public class InitStateHandler {
     * @return an {@link InitializationResult} containing the next {@link Course} as well as the next {@link CourseBookingState}
     */
    public InitializationResult evaluateNextCourseAndState(String userId) {
+      aquabasileaCourseBookerConfig.refresh();
       WeeklyCourses weeklyCourses = weeklyCoursesRepository.getByUserId(userId);
       return getCourseAndTimeUntilStart(weeklyCourses);
    }
