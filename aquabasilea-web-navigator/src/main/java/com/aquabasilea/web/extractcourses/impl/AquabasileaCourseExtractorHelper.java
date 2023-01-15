@@ -62,7 +62,7 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
     * @return a {@link AquabasileaCourse}
     */
    public AquabasileaCourse evalCourseDetailsAndCreateAquabasileaCourse(WebElement courseButton) {
-      LOG.info("Evaluate AquabasileaCourse for button [{}]", courseButton.getText());
+      LOG.debug("Evaluate AquabasileaCourse for button [{}]", courseButton.getText());
       openCourseDetailDialogAndAwaitReadiness(courseButton);
       AquabasileaCourse aquabasileaCourse = evalCourseDetailsAndCreateAquabasileaCourse();
       LOG.info("Evaluated AquabasileaCourse [{}]", aquabasileaCourse);

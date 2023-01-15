@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
  */
 public record AquabasileaCourse(LocalDateTime courseDate, String courseLocation, String courseName,
                                 String courseInstructor) {
-   // no-op
+   @Override
+   public String toString() {
+      return "courseName='%s', courseLocation='%s', courseDate='%s', courseInstructor'=%s'"
+              .formatted(courseName(), courseLocation(), courseDate(), courseInstructor());
+   }
 }
 

@@ -39,12 +39,14 @@ public class CourseBookerHelper {
       if (dryRun) {
          return (bookButton, errorHandler) -> {
             closeCourseDialog(errorHandler);
+            LOG.info("Dry run successfully!");
             return CourseClickedResult.COURSE_BOOKING_ABORTED;
          };
       } else {
          return (bookButton, errorHandler) -> {
             this.aquabasileaNavigatorHelper.clickButtonOrHandleError(() -> bookButton, errorHandler, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
             bookButton.ifPresent(webElement -> closeCourseDialog(errorHandler));
+            LOG.info("Course booking successfully!");
             return CourseClickedResult.COURSE_BOOKED;
          };
       }
@@ -59,7 +61,7 @@ public class CourseBookerHelper {
     * Throwing an Exception would lead in a wrong CourseClickedResult
     */
    private void closeCourseDialog(ErrorHandler errorHandler) {
-      LOG.info("Trying to close the dialog");
+      LOG.debug("Trying to close the dialog");
       WebElement cancelBookingButton = getOptionalCancelBooking();
       aquabasileaNavigatorHelper.clickButton(cancelBookingButton, errorHandler);
    }

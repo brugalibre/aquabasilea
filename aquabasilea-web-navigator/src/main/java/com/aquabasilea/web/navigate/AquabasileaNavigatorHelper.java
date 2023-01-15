@@ -122,7 +122,7 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
       if (buttonWebElement.isPresent()) {
          waitForElementToBeClickable(buttonWebElement.get(), WAIT_UNTIL_BUTTON_BECOMES_CLICKABLE_INTERVAL);
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
-         LOG.info("Button found which contains an inner child from type {} and with text {}. Retries left {}", childHtmlTag, childInnerHtmlText, retries);
+         LOG.info("Button found with text '{}' which contains an inner child from type {}", childInnerHtmlText, childHtmlTag);
       } else if (retries > 0) {
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
          retries--;

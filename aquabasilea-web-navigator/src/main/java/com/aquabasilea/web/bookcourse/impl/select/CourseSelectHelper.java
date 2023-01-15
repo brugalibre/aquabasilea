@@ -142,11 +142,7 @@ public class CourseSelectHelper {
          if (isEquals(courseBookDetails, aquabasileaCourse)) {
             return aquabasileaCourseButton;
          } else {
-            LOG.warn("No match!");
-            LOG.warn("Course-name is equal: {}", courseBookDetails.courseName().equals(aquabasileaCourse.courseName()));
-            LOG.warn("Course-location is equal: {}", courseBookDetails.courseLocation().equals(aquabasileaCourse.courseLocation()));
-            LOG.warn("Course-date is equal: {}", courseBookDetails.courseDate().equals(aquabasileaCourse.courseDate()));
-            LOG.warn("Course-instructor is equal: {}", courseBookDetails.courseInstructor().equals(aquabasileaCourse.courseInstructor()));
+            logWarningCourseNotMatching(courseBookDetails, aquabasileaCourse);
          }
       }
       return null;
@@ -169,7 +165,7 @@ public class CourseSelectHelper {
    private CourseClickedResult clickSelectedCourseLoginIfNecessaryAndBook(boolean courseSelected, String courseName, ErrorHandler errorHandler) {
       if (courseSelected) {
          this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), 10000);
-         LOG.info("Course selected..");
+         LOG.info("Course {} selected. Now either do booking or cancel", courseName);
          WebElement courseDetails = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE);
          Optional<WebElement> loginButton = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
          Optional<WebElement> bookCourseButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
@@ -224,6 +220,14 @@ public class CourseSelectHelper {
       }
       this.aquabasileaNavigatorHelper.takeScreenshot(String.format("course '%s' selection", courseName));
       errorHandler.handleError(errorMsg);
+   }
+
+   private static void logWarningCourseNotMatching(CourseBookDetails courseBookDetails, AquabasileaCourse aquabasileaCourse) {
+      LOG.warn("No match for course {}!", aquabasileaCourse);
+      LOG.debug("Course-name is equal: {}", courseBookDetails.courseName().equals(aquabasileaCourse.courseName()));
+      LOG.debug("Course-location is equal: {}", courseBookDetails.courseLocation().equals(aquabasileaCourse.courseLocation()));
+      LOG.debug("Course-date is equal: {}", courseBookDetails.courseDate().equals(aquabasileaCourse.courseDate()));
+      LOG.debug("Course-instructor is equal: {}", courseBookDetails.courseInstructor().equals(aquabasileaCourse.courseInstructor()));
    }
 
    private interface BookingAndCloseButtonMissingCallbackHandler {
