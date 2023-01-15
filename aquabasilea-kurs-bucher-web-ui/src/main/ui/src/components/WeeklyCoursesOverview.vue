@@ -44,6 +44,8 @@
           <td>
             <div style="display: flex">
               <button
+                  :disabled="courseBookingStateDto.state === 'BOOKING'"
+                  v-bind:class="{ 'table-button': courseBookingStateDto.state !== 'BOOKING', 'inactive-table-button': courseBookingStateDto.state === 'BOOKING'}"
                   v-c-tooltip="{content: getPauseButtonToolTipText(), placement: 'top'}"
                   class="pause-button table-button"
                   v-on:click="pauseCourseAndRefresh(course)">
@@ -53,9 +55,10 @@
           <td>
             <div style="display: flex">
               <button
+                  :disabled="courseBookingStateDto.state === 'BOOKING'"
                   v-c-tooltip="{content: getDeleteButtonToolTipText(), placement: 'top'}"
                   class="delete-button table-button"
-                  v-bind:class="{ 'table-button': !course.isPaused, 'inactive-table-button': course.isPaused}"
+                  v-bind:class="{ 'table-button': !course.isPaused, 'inactive-table-button': course.isPaused || courseBookingStateDto.state === 'BOOKING'}"
                   v-on:click="deleteCourseAndRefresh(course)">
               </button>
             </div>
