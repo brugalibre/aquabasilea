@@ -16,12 +16,4 @@ public record CourseFilterCriterion (FilterType filterType, List<String> filterV
    public static CourseFilterCriterion of(FilterType filterType, String filterValue) {
       return new CourseFilterCriterion(filterType, List.of(filterValue));
    }
-
-   public FilterType getFilterType() {
-      return filterType;
-   }
-
-   public List<String> getFilterValues() {
-      return filterValues;
-   }
 }

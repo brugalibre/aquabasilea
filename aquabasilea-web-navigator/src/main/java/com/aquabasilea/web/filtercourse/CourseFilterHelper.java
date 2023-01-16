@@ -76,11 +76,12 @@ public class CourseFilterHelper {
     * Then clicks on the criterion, matching our filter
     */
    private void applyFilterCriterion(ErrorHandler errorHandler, WebElement filterArea, CourseFilterCriterion courseFilterCriterion) {
-      FilterType filterType = courseFilterCriterion.getFilterType();
+      LOG.info("Apply filter {}", courseFilterCriterion);
+      FilterType filterType = courseFilterCriterion.filterType();
       expandAllFilterCriteria(filterArea, errorHandler, courseFilterCriterion, filterType);
 
       // Click the criteria
-      for (String filterValue : courseFilterCriterion.getFilterValues()) {
+      for (String filterValue : courseFilterCriterion.filterValues()) {
          By filterValueXPath = filterType.createXPath(HTML_TAG_INPUT, HTML_VALUE_ATTR, filterValue);
          aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(filterArea, filterValueXPath);
          aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, filterValueXPath, errorHandler, filterValue);
@@ -98,7 +99,7 @@ public class CourseFilterHelper {
    }
 
    private void expandAdditionallyFilterCriteria(WebElement filterArea, ErrorHandler errorHandler, CourseFilterCriterion courseFilterCriterion) {
-      for (String additionallyFilterCriteriaName : courseFilterCriterion.getFilterType().getAdditionallyFilterCriteriaNames()) {
+      for (String additionallyFilterCriteriaName : courseFilterCriterion.filterType().getAdditionallyFilterCriteriaNames()) {
          aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(filterArea, HTML_TAG_SPAN, additionallyFilterCriteriaName);
          aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, additionallyFilterCriteriaName, HTML_TAG_SPAN, errorHandler, additionallyFilterCriteriaName);
       }

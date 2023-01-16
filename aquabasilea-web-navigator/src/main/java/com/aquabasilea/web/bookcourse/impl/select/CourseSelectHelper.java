@@ -20,8 +20,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
+import static com.zeiterfassung.web.common.constant.BaseWebConst.*;
 import static java.util.Objects.nonNull;
 
 /**
@@ -167,6 +166,12 @@ public class CourseSelectHelper {
          if (bookCourseButtonOpt.isPresent()) {
             return courseBookerHelper.cancelOrBookCourse(bookCourseButtonOpt.get(), errorHandler);
          } else {
+            Optional<WebElement> courseAlreadyBookedHint = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_DIV_TYPE, WEB_ELEMENT_COURSE_ALREADY_BOOKED_VALUE);
+            if (courseAlreadyBookedHint.isPresent()){
+               LOG.warn("Course is fully booked..");
+               handleBookButtonNotAvailable(courseName, errorHandler, courseDetails);
+               return CourseClickedResult.COURSE_NOT_BOOKABLE;
+            }
             LOG.warn("Neither booking nor login button present..");
             return missingBookingAndCloseButtonCallbackHandler.handleBookingAndCloseButtonMissing(courseName, errorHandler, courseDetails);
          }
@@ -179,7 +184,7 @@ public class CourseSelectHelper {
       long millis2WaitUntilCourseBecomesBookable = this.duration2WaitUntilCourseBecomesBookable.get().toMillis();
       long millis2Wait = millis2WaitUntilCourseBecomesBookable + DURATION_TO_WAIT_ADDITIONAL_UNTIL_A_COURSE_BECAME_BOOKABLE.toMillis();
       if (millis2Wait < 0) {
-         LOG.info("Time is up, course seems to be fully booked. time2WaitUntilCourseBecomesBookable={}", millis2WaitUntilCourseBecomesBookable);
+         LOG.info("Time is up, mission abort! time2WaitUntilCourseBecomesBookable={}", millis2WaitUntilCourseBecomesBookable);
          // and we have to assume, that the course is already bookable. Meaning: The course is already full (or we are not logged in)
          handleBookButtonNotAvailable(courseName, errorHandler, courseDetails);
          return CourseClickedResult.COURSE_NOT_BOOKABLE;
@@ -192,8 +197,8 @@ public class CourseSelectHelper {
    }
 
    private void handleBookButtonNotAvailable(String courseName, ErrorHandler errorHandler, WebElement courseDetails) {
-      getCloseBookingDialogButtonAndClick(courseDetails);
       this.aquabasileaNavigatorHelper.takeScreenshot("no-booking-button");
+      getCloseBookingDialogButtonAndClick(courseDetails);
       String errorMsg = String.format("Booking Button not found! The course '%s' is not bookable", courseName);
       errorHandler.handleError(errorMsg);
    }

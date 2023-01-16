@@ -26,8 +26,8 @@ public class RunAquabasileaNavigator {
    }
 
    private static void run(String[] args) {
-      String courseName = "Aqua Gym 50 Min.";
-      String courseInstructor = "Barbara W.";
+      String courseName = "Fitness Trampolin 45 Min.";
+      String courseInstructor = "Sandra G.";
       String username = args[0];
       char[] password = args[1].toCharArray();
       LocalDateTime courseDateAndTime = getCourseDateAndTime();
@@ -37,14 +37,16 @@ public class RunAquabasileaNavigator {
          dryRun = Boolean.parseBoolean(args[2]);
       }
       AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier(), DEBUG_CONFIG_FILE);
+      long start = System.currentTimeMillis();
       CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, courseInstructor, courseDateAndTime, "Migros Fitnesscenter Aquabasilea"));
+      System.out.println("Booker done, duration: " + Duration.ofMillis(start - System.currentTimeMillis()));
       printErrors(dryRun, courseBookingEndResult);
    }
 
    private static LocalDateTime getCourseDateAndTime() {
       LocalDate now = LocalDate.now();
       LocalDate date = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth() + 1);
-      return LocalDateTime.of(date, LocalTime.of(17, 45));
+      return LocalDateTime.of(date, LocalTime.of(12, 15));
    }
 
    private static Supplier<Duration> getDurationUntilIsBookableSupplier() {

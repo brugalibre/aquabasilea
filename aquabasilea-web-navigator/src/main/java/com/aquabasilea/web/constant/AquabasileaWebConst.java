@@ -38,6 +38,7 @@ public class AquabasileaWebConst {
    public static final String WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME = "data-test-id";
 
    // Book a place
+   public static final String WEB_ELEMENT_COURSE_ALREADY_BOOKED_VALUE = "Platz leider ausgebucht";
    public static final String WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT = "Platz buchen";
    public static final String WEB_ELEMENT_CANCEL_SPOT_BUTTON_TEXT = "Platz stornieren";
    public static final String WEB_ELEMENT_CLOSE_BOOK_COURSE_BUTTON_TEXT = "schliessen";
