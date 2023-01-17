@@ -174,7 +174,7 @@ public class AquabasileaCourseBooker implements Runnable {
          try {
             Thread.sleep(STAY_IDLE_INTERVAL);
          } catch (InterruptedException e) {
-            LOG.info("Interrupted during pausing for user [{}]!", this.userContext);
+            LOG.debug("Interrupted during pausing for user [{}]!", this.userContext);
             break;
          }
       }
@@ -198,7 +198,7 @@ public class AquabasileaCourseBooker implements Runnable {
          LOG.info("Done idle for user [{}]", this.userContext);
          getNextState();
       } catch (InterruptedException e) {
-         LOG.error(this.getClass().getSimpleName() + " was interrupted!", e);
+         LOG.debug(this.getClass().getSimpleName() + " was interrupted!", e);
          // maybe we were paused externally -> don't overwrite that
          if (state != PAUSED) {
             setState(INIT);
