@@ -69,6 +69,8 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
             return String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
          case COURSE_BOOKING_ABORTED:
             return String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
+         case COURSE_BOOKING_SKIPPED:
+            return String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
             LOG.error("Warning! Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
             return null;
