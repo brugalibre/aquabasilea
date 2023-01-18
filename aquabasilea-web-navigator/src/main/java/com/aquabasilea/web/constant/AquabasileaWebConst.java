@@ -52,6 +52,9 @@ public class AquabasileaWebConst {
    public static final String WEB_ELEMENT_ANMELDE_BUTTON_TEXT = "ANMELDEN";
    public static final String LOGIN_FAILED_ERROR_MSG_ID = "error-message";
 
+   public static final String MIGROS_ACOUNT_LOGIN_ICON = "a-accountloginicon__icon";
+   public static final String MIGROS_ACCOUNT_TILE_PROFILE_LINK = "m-tile__profile-link";
+
    // on select-course page
    public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT = "Jetzt einloggen";
    public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT = "Abmelden";

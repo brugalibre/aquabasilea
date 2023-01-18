@@ -41,14 +41,20 @@ public class AquabasileaLoginHelper {
 
    /**
     * Small hack: After the user is logged in, using the login page and returned to the booking page, we have to click
-    * the 'Jetzt einloggen' Button in order to make the previous login effective
+    * the 'Jetzt einloggen' Button in order to make the previous login effective.
+    * If a {@link TimeoutException} occurs and we first log out and try to log in again. Sometimes a logout is not possible (since something is blocking the button)
+    * In that case, a login is not necessary and also this click on the login-button
     */
    public void clickLoginButton() {
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT), 20000);
-      WebElement nowLogInButton = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
-      nowLogInButton.click();
-      aquabasileaNavigatorHelper.waitForInvisibilityOfElement(nowLogInButton);
-      LOG.info("Login button clicked");
+      LOG.info("Try to click Login button before navigating to course page");
+      By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis());
+      Optional<WebElement> nowLogInButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
+      nowLogInButtonOpt.ifPresent(nowLogInButton -> {
+         nowLogInButton.click();
+         aquabasileaNavigatorHelper.waitForInvisibilityOfElement(nowLogInButton);
+         LOG.info("Login button clicked");
+      });
    }
 
    /**

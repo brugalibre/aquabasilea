@@ -47,6 +47,7 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     */
    public void clickButtonOrHandleError(WebElement searchContext, String buttonInnerHtmlText, String buttonInnerHtmlTag, ErrorHandler errorHandler, String elementIdentifier) {
       Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContext, buttonInnerHtmlTag, buttonInnerHtmlText, HTML_BUTTON_TYPE);
+      waitForWaitingAnimationToDisappear();
       this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, CLICK_BUTTON_RETRIES_IF_ERROR);
    }
 
@@ -117,7 +118,7 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
 
    private void findAndWaitUntilButtonBecameClickableInternal(Supplier<Optional<WebElement>> buttonWebElementSupplier, String childHtmlTag, String childInnerHtmlText, int retries) {
       // Wait until the loading animation disappears (maybe it's not shown at all, but maybe it is. You never know)
-      waitForInvisibilityOfElementBy(By.cssSelector(AquabasileaWebConst.LOADING_ANIMATION_CLASS_NAME), WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS.toMillis());
+      waitForWaitingAnimationToDisappear();
       Optional<WebElement> buttonWebElement = buttonWebElementSupplier.get();
       if (buttonWebElement.isPresent()) {
          waitForElementToBeClickable(buttonWebElement.get(), WAIT_UNTIL_BUTTON_BECOMES_CLICKABLE_INTERVAL);
@@ -131,6 +132,10 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
       } else {
          LOG.error("No button found which contains an inner child from type {} and with text {}!", childHtmlTag, childInnerHtmlText);
       }
+   }
+
+   private void waitForWaitingAnimationToDisappear() {
+      waitForInvisibilityOfElementBy(By.cssSelector(AquabasileaWebConst.LOADING_ANIMATION_CLASS_NAME), WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS.toMillis());
    }
 }
 

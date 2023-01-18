@@ -18,6 +18,7 @@ import com.aquabasilea.web.util.ErrorUtil;
 import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigator;
 import com.zeiterfassung.web.common.inout.PropertyReader;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
+import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
@@ -35,6 +38,7 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<AquabasileaNavigatorHelper> implements AquabasileaWebCourseBooker {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebCourseBookerImpl.class);
+   private char[] userPassword4Retries; // After a login, the password array is reset. If a timeout occurs, we might need to re-logging -> restore pw
    private int timeOutRetries;
    private final String coursePage;
    private CourseSelectWithRetryHelper courseSelectWithRetryHelper;
@@ -46,6 +50,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       PropertyReader propertyReader = new PropertyReader(propertiesName);
       this.coursePage = propertyReader.readValue(COURSE_PAGE);
       this.timeOutRetries = 4;
+      this.userPassword4Retries = Arrays.copyOf(userPassword, userPassword.length);
    }
 
    /**
@@ -85,6 +90,25 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       }
    }
 
+   /**
+    * Sets the {@link #userPassword4Retries} as the <code>userPassword</code> of this {@link com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator}
+    * Also the {@link #userPassword4Retries} is cloned, so it remains immutable when the <code>userPassword</code> gets filled-up with zeros
+    */
+   private void setUserPassword() {
+      super.setUserPassword(userPassword4Retries);
+      this.userPassword4Retries = Arrays.copyOf(userPassword4Retries, userPassword4Retries.length);
+   }
+
+   @Override
+   public void login() {
+      if (isAlreadyLoggedIn()) {
+         LOG.warn("Already logged in!");
+      } else {
+         setUserPassword();
+         super.login();
+      }
+   }
+
    private CourseBookingEndResult handleTimeOutException(CourseBookDetails courseBookDetails, ErrorHandler errorHandler, TimeoutException e) {
       this.timeOutRetries--;
       String errorMsg = String.format("TimeoutException while selecting and booking the course '%s'. Retries left: %s", courseBookDetails.courseName(), timeOutRetries);
@@ -103,6 +127,7 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       courseFilterHelper.applyCriteriaFilter(courseBookDetails, errorHandler);
       CourseClickedResult courseClickedResult = courseSelectWithRetryHelper.selectAndBookCourseWithRetry(courseBookDetails, errorHandler);
       logout();
+      Arrays.fill(userPassword4Retries, '0');
       return buildCourseBookingEndResult(courseBookDetails.courseName(), errorHandler, null, courseClickedResult);
    }
 
@@ -175,5 +200,11 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       errorHandler.handleError(errorMsg);
       LOG.error(logErrorMsg, e);
       webNavigatorHelper.takeScreenshot(e.getClass().getSimpleName());
+   }
+
+   private boolean isAlreadyLoggedIn() {
+      Optional<WebElement> accountLoginIconOpt = webNavigatorHelper.findWebElementBy(null, By.className(MIGROS_ACOUNT_LOGIN_ICON));
+      Optional<WebElement> accountTitleProfileLinkOpt = webNavigatorHelper.findWebElementBy(null, By.className(MIGROS_ACCOUNT_TILE_PROFILE_LINK));
+      return accountLoginIconOpt.isPresent() || accountTitleProfileLinkOpt.isPresent();
    }
 }
