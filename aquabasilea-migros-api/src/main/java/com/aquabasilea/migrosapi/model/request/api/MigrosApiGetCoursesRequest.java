@@ -1,6 +1,6 @@
 package com.aquabasilea.migrosapi.model.request.api;
 
-import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public record MigrosApiGetCoursesRequest(List<String> courseCenterIds, List<Stri
    public static final String DEFAULT_TAKE = "8";
 
    /**
-    * Creates a new {@link MigrosApGetCoursesResponse} with the given course-center-ids, the day-ids and the course-titles
+    * Creates a new {@link MigrosApiGetCoursesResponse} with the given course-center-ids, the day-ids and the course-titles
     *
     * @param courseCenterIds the relevant center-ids
     * @param dayIds          the relevant day-ids
@@ -35,7 +35,7 @@ public record MigrosApiGetCoursesRequest(List<String> courseCenterIds, List<Stri
    }
 
    /**
-    * Creates a new {@link MigrosApGetCoursesResponse} with the given course-center-ids and the day-ids.
+    * Creates a new {@link MigrosApiGetCoursesResponse} with the given course-center-ids and the day-ids.
     * The value of <code>take</code> will be set to {@value MigrosApiGetCoursesRequest#DEFAULT_TAKE}
     *
     * @param courseCenterIds the relevant center-ids

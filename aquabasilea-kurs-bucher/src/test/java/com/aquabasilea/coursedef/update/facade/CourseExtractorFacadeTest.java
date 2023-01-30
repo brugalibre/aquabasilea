@@ -3,7 +3,7 @@ package com.aquabasilea.coursedef.update.facade;
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.model.course.CourseLocation;
 import com.aquabasilea.coursedef.model.CourseDef;
-import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosCourse;
 import com.aquabasilea.migrosapi.service.MigrosApi;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
@@ -88,8 +88,8 @@ class CourseExtractorFacadeTest {
    private static MigrosApi mockMigrosApi(String courseInstructor, String courseName, String centerId) {
       MigrosApi migrosApi = mock(MigrosApi.class);
       List<MigrosCourse> courses = List.of(new MigrosCourse(LocalDateTime.now(), centerId, courseName, courseInstructor));
-      MigrosApGetCoursesResponse migrosApGetCoursesResponse = new MigrosApGetCoursesResponse(courses);
-      when(migrosApi.getCourses(any())).thenReturn(migrosApGetCoursesResponse);
+      MigrosApiGetCoursesResponse migrosApiGetCoursesResponse = new MigrosApiGetCoursesResponse(courses);
+      when(migrosApi.getCourses(any())).thenReturn(migrosApiGetCoursesResponse);
       return migrosApi;
    }
 }

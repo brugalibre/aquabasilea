@@ -6,7 +6,7 @@ import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.coursedef.model.repository.mapping.CoursesDefEntityMapper;
 import com.aquabasilea.coursedef.model.repository.mapping.CoursesDefEntityMapperImpl;
 import com.aquabasilea.migrosapi.model.request.api.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.service.MigrosApi;
 import com.aquabasilea.migrosapi.service.MigrosApiImpl;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
@@ -58,8 +58,8 @@ public class CourseExtractorFacade {
       switch (aquabasileaCourseBookerConfig.getCourseDefExtractorType()) {
          case MIGROS_API -> {
             MigrosApiGetCoursesRequest migrosApiGetCoursesRequest = getMigrosApiGetCoursesRequest(courseLocations);
-            MigrosApGetCoursesResponse migrosApGetCoursesResponse = migrosApiSupplier.get().getCourses(migrosApiGetCoursesRequest);
-            return map2CourseDefsAndSetUserId(userId, migrosApGetCoursesResponse);
+            MigrosApiGetCoursesResponse migrosApiGetCoursesResponse = migrosApiSupplier.get().getCourses(migrosApiGetCoursesRequest);
+            return map2CourseDefsAndSetUserId(userId, migrosApiGetCoursesResponse);
          }
          case AQUABASILEA_WEB -> {
             ExtractedAquabasileaCourses extractedAquabasileaCourses = aquabasileaCourseExtractorSupplier.get().extractAquabasileaCourses(map2CourseLocationNames(courseLocations));
@@ -87,8 +87,8 @@ public class CourseExtractorFacade {
       return setUserId(userId, map2CourseDefs(extractedAquabasileaCourses));
    }
 
-   private List<CourseDef> map2CourseDefsAndSetUserId(String userId, MigrosApGetCoursesResponse migrosApGetCoursesResponse) {
-      return setUserId(userId, map2CourseDefs(migrosApGetCoursesResponse));
+   private List<CourseDef> map2CourseDefsAndSetUserId(String userId, MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {
+      return setUserId(userId, map2CourseDefs(migrosApiGetCoursesResponse));
    }
 
    private List<CourseDef> setUserId(String userId, List<CourseDef> courseDefs) {
@@ -102,7 +102,7 @@ public class CourseExtractorFacade {
       return coursesDefEntityMapper.mapAquabasileaCourses2CourseDefs(extractedAquabasileaCourses.getAquabasileaCourses());
    }
 
-   private List<CourseDef> map2CourseDefs(MigrosApGetCoursesResponse migrosApGetCoursesResponse) {
-      return coursesDefEntityMapper.mapMigrosCourses2CourseDefs(migrosApGetCoursesResponse.courses());
+   private List<CourseDef> map2CourseDefs(MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {
+      return coursesDefEntityMapper.mapMigrosCourses2CourseDefs(migrosApiGetCoursesResponse.courses());
    }
 }

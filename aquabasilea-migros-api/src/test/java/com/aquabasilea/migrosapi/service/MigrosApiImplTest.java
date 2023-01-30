@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.service;
 
 import com.aquabasilea.migrosapi.model.request.api.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosCourse;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
@@ -36,7 +36,7 @@ class MigrosApiImplTest {
               .build();
 
       // When
-      MigrosApGetCoursesResponse coursesResponse = migrosApi.getCourses(MigrosApiGetCoursesRequest.of(List.of("129", "139")));
+      MigrosApiGetCoursesResponse coursesResponse = migrosApi.getCourses(MigrosApiGetCoursesRequest.of(List.of("129", "139")));
 
       // Then
       assertThat(coursesResponse.courses().size(), is(2));
@@ -48,7 +48,7 @@ class MigrosApiImplTest {
       assertThat(course2Opt.get().centerId(), is("139"));
    }
 
-   private static Optional<MigrosCourse> findCourse4Name(MigrosApGetCoursesResponse coursesResponse, String courseName) {
+   private static Optional<MigrosCourse> findCourse4Name(MigrosApiGetCoursesResponse coursesResponse, String courseName) {
       return coursesResponse.courses()
               .stream()
               .filter(course -> course.courseName().equals(courseName))

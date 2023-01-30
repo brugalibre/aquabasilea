@@ -2,7 +2,7 @@ package com.aquabasilea.migrosapi.service;
 
 import com.aquabasilea.migrosapi.model.request.api.MigrosApiBookCourseRequest;
 import com.aquabasilea.migrosapi.model.request.api.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosApiBookCourseResponse;
 
 /**
@@ -22,7 +22,7 @@ public interface MigrosApi {
     * Searches all courses which matches the criteria defined in the {@link MigrosApiGetCoursesRequest}
     *
     * @param migrosApiGetCoursesRequest the {@link MigrosApiGetCoursesRequest} which defines the search criteria for courses
-    * @return a {@link MigrosApGetCoursesResponse} with the result of the found courses
+    * @return a {@link MigrosApiGetCoursesResponse} with the result of the found courses
     */
-   MigrosApGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest);
+   MigrosApiGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest);
 }

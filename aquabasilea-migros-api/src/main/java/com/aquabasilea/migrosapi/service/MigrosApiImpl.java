@@ -8,7 +8,7 @@ import com.aquabasilea.migrosapi.model.request.api.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.model.response.MigrosBookCourseResponse;
 import com.aquabasilea.migrosapi.model.response.MigrosGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.response.MigrosResponseCourse;
-import com.aquabasilea.migrosapi.model.response.api.MigrosApGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.model.response.api.MigrosCourse;
 import com.aquabasilea.migrosapi.service.response.MigrosBookCourseResponseReader;
@@ -64,9 +64,9 @@ public class MigrosApiImpl implements MigrosApi {
    }
 
    @Override
-   public MigrosApGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
+   public MigrosApiGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
       List<MigrosResponseCourse> migrosResponseCourses = getMigrosCourses(migrosApiGetCoursesRequest);
-      return new MigrosApGetCoursesResponse(migrosCourseMapper.mapToMigrosCourses(migrosResponseCourses));
+      return new MigrosApiGetCoursesResponse(migrosCourseMapper.mapToMigrosCourses(migrosResponseCourses));
    }
 
    private List<MigrosResponseCourse> getMigrosCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
