@@ -103,6 +103,8 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    public void login() {
       if (isAlreadyLoggedIn()) {
          LOG.warn("Already logged in!");
+      } else if (isUsernameInputFieldNotPresent()) {
+         LOG.warn("Not already logged in but no username input found! Skip login..");
       } else {
          setUserPassword();
          super.login();
@@ -127,7 +129,6 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       courseFilterHelper.applyCriteriaFilter(courseBookDetails, errorHandler);
       CourseClickedResult courseClickedResult = courseSelectWithRetryHelper.selectAndBookCourseWithRetry(courseBookDetails, errorHandler);
       logout();
-      Arrays.fill(userPassword4Retries, '0');
       return buildCourseBookingEndResult(courseBookDetails.courseName(), errorHandler, null, courseClickedResult);
    }
 
@@ -187,7 +188,8 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       return buildCourseBookingEndResult(courseName, errorHandler, e, COURSE_NOT_SELECTED_EXCEPTION_OCCURRED);
    }
 
-   private static CourseBookingEndResult buildCourseBookingEndResult(String courseName, ErrorHandler errorHandler, Exception exception, CourseClickedResult courseClickedResult) {
+   private CourseBookingEndResult buildCourseBookingEndResult(String courseName, ErrorHandler errorHandler, Exception exception, CourseClickedResult courseClickedResult) {
+      Arrays.fill(userPassword4Retries, '0');
       return CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withException(exception)
@@ -206,5 +208,10 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       Optional<WebElement> accountLoginIconOpt = webNavigatorHelper.findWebElementBy(null, By.className(MIGROS_ACOUNT_LOGIN_ICON));
       Optional<WebElement> accountTitleProfileLinkOpt = webNavigatorHelper.findWebElementBy(null, By.className(MIGROS_ACCOUNT_TILE_PROFILE_LINK));
       return accountLoginIconOpt.isPresent() || accountTitleProfileLinkOpt.isPresent();
+   }
+
+   private boolean isUsernameInputFieldNotPresent() {
+      return this.webNavigatorHelper.findWebElementBy(null, By.id(this.getUserNameInputFieldId()))
+              .isEmpty();
    }
 }

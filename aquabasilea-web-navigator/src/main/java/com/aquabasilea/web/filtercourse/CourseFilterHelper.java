@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.*;
@@ -61,13 +62,18 @@ public class CourseFilterHelper {
 
    private void applyFilterCriteria(CourseFilter courseFilter, ErrorHandler errorHandler) {
       LOG.info("Filtering courses for courseFilter {}...", courseFilter);
-      removeDefaultCourseLocationAndOtherFilters(errorHandler);
       for (CourseFilterCriterion courseFilterCriterion : courseFilter.getCourseFilterCriteria()) {
-         WebElement filterArea = aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
-         applyFilterCriterion(errorHandler, filterArea, courseFilterCriterion);
+         applyFilterCriterion(errorHandler, courseFilterCriterion);
       }
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE), 20000);
+      waitForWebelementToBecomeVisible(WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
       LOG.info("Done filtering courses");
+   }
+
+   private WebElement getFilterArea() {
+      By xPathBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(xPathBy, WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
+      waitForWebelementToBecomeVisible(WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
+      return aquabasileaNavigatorHelper.getElement(xPathBy);
    }
 
    /**
@@ -75,53 +81,82 @@ public class CourseFilterHelper {
     * First expand the specific filter section / sections depending on the criteria.
     * Then clicks on the criterion, matching our filter
     */
-   private void applyFilterCriterion(ErrorHandler errorHandler, WebElement filterArea, CourseFilterCriterion courseFilterCriterion) {
+   private void applyFilterCriterion(ErrorHandler errorHandler, CourseFilterCriterion courseFilterCriterion) {
       LOG.info("Apply filter {}", courseFilterCriterion);
       FilterType filterType = courseFilterCriterion.filterType();
-      expandAllFilterCriteria(filterArea, errorHandler, courseFilterCriterion, filterType);
 
+      Optional<WebElement> webElementWhichContainsSelectedCriteria = getWebElementWhichContainsSelectedCriteria(filterType);
+      boolean areAllFiltersAlreadySelected = areAllFiltersAlreadySelected(courseFilterCriterion, webElementWhichContainsSelectedCriteria);
+      // If there are already all criteria selected -> abort, nothing to do
+      if (areAllFiltersAlreadySelected) {
+         return;
+      } else if (webElementWhichContainsSelectedCriteria.isPresent()) {
+         unselectAllSelectedCriteria(errorHandler, webElementWhichContainsSelectedCriteria.get());
+      }
+
+      waitForWebelementToBecomeVisible(WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
+      expandAllFilterCriteria(errorHandler, courseFilterCriterion, filterType);
       // Click the criteria
       for (String filterValue : courseFilterCriterion.filterValues()) {
          By filterValueXPath = filterType.createXPath(HTML_TAG_INPUT, HTML_VALUE_ATTR, filterValue);
-         aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(filterArea, filterValueXPath);
-         aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, filterValueXPath, errorHandler, filterValue);
+         aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(this::getFilterArea, filterValueXPath);
+         aquabasileaNavigatorHelper.clickButtonOrHandleError(this::getFilterArea, filterValueXPath, errorHandler, filterValue);
       }
 
       // Click the filter-criterion button again -> collapse filter criteria and apply the filter
-      aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, filterType.getUiElementText(), HTML_TAG_SPAN, errorHandler, filterType.getUiElementText());
-      aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(filterArea, HTML_TAG_SPAN, filterType.getUiElementText());
+      aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(this::getFilterArea, HTML_TAG_SPAN, filterType.getUiElementText());
+      aquabasileaNavigatorHelper.clickButtonOrHandleError(this::getFilterArea, filterType.getUiElementText(), HTML_TAG_SPAN, errorHandler, filterType.getUiElementText());
    }
 
-   private void expandAllFilterCriteria(WebElement filterArea, ErrorHandler errorHandler, CourseFilterCriterion courseFilterCriterion, FilterType filterType) {
-      aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(filterArea, HTML_TAG_SPAN, filterType.getUiElementText());
-      aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, filterType.getUiElementText(), HTML_TAG_SPAN, errorHandler, filterType.getUiElementText());
-      expandAdditionallyFilterCriteria(filterArea, errorHandler, courseFilterCriterion);
+   private void unselectAllSelectedCriteria(ErrorHandler errorHandler, WebElement webElementWhichContainsSelectedCriteria) {
+      // If not but the web-element which contains all selected criteria is present, then at least one criterion is missing -> just remove all and start over...
+      List<WebElement> selectedCourseFilterCriteriaButtons = getAllSelectedCourseFilterCriteriaButtons(webElementWhichContainsSelectedCriteria);
+      selectedCourseFilterCriteriaButtons.forEach(selectedCriterionButton -> aquabasileaNavigatorHelper.clickButton(selectedCriterionButton, errorHandler));
+      waitForWebelementToBecomeVisible(WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
    }
 
-   private void expandAdditionallyFilterCriteria(WebElement filterArea, ErrorHandler errorHandler, CourseFilterCriterion courseFilterCriterion) {
+   private Optional<WebElement> getWebElementWhichContainsSelectedCriteria(FilterType filterType) {
+      waitForWebelementToBecomeVisible(WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
+      By webElementAllSelectedCriteriaBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_SELECTED_COURSE_FILTERS_PREFIX_ATTR_NAME + filterType.getUiElementText());
+      return aquabasileaNavigatorHelper.findWebElementBy(getFilterArea(), webElementAllSelectedCriteriaBy);
+   }
+
+   private boolean areAllFiltersAlreadySelected(CourseFilterCriterion courseFilterCriterion, Optional<WebElement> selectedFiltersWebElement) {
+      if (!selectedFiltersWebElement.isPresent()) {
+         return false;
+      }
+
+      List<WebElement> selectedCourseFilterCriteriaButtons = getSelectedCourseFilterCriteriaButtons4Filter(courseFilterCriterion, selectedFiltersWebElement.get());
+      return selectedCourseFilterCriteriaButtons.size() == courseFilterCriterion.filterValues().size();
+   }
+
+   private List<WebElement> getSelectedCourseFilterCriteriaButtons4Filter(CourseFilterCriterion courseFilterCriterion, WebElement selectedFiltersWebElement) {
+      return courseFilterCriterion.filterValues()
+              .stream()
+              .map(filterValue -> aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(selectedFiltersWebElement, HTML_BUTTON_TYPE, filterValue))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .toList();
+   }
+
+   private List<WebElement> getAllSelectedCourseFilterCriteriaButtons(WebElement selectedFiltersWebElement) {
+      return aquabasileaNavigatorHelper.findAllWebElementsByPredicateAndBy(selectedFiltersWebElement, By.tagName(HTML_BUTTON_TYPE), webElement -> true);
+   }
+
+   private void expandAllFilterCriteria(ErrorHandler errorHandler, CourseFilterCriterion courseFilterCriterion, FilterType filterType) {
+      aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(this::getFilterArea, HTML_TAG_SPAN, filterType.getUiElementText());
+      aquabasileaNavigatorHelper.clickButtonOrHandleError(this::getFilterArea, filterType.getUiElementText(), HTML_TAG_SPAN, errorHandler, filterType.getUiElementText());
+      expandAdditionallyFilterCriteria(errorHandler, courseFilterCriterion);
+   }
+
+   private void expandAdditionallyFilterCriteria(ErrorHandler errorHandler, CourseFilterCriterion courseFilterCriterion) {
       for (String additionallyFilterCriteriaName : courseFilterCriterion.filterType().getAdditionallyFilterCriteriaNames()) {
-         aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(filterArea, HTML_TAG_SPAN, additionallyFilterCriteriaName);
-         aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, additionallyFilterCriteriaName, HTML_TAG_SPAN, errorHandler, additionallyFilterCriteriaName);
+         aquabasileaNavigatorHelper.waitUntilButtonBecameClickable(this::getFilterArea, HTML_TAG_SPAN, additionallyFilterCriteriaName);
+         aquabasileaNavigatorHelper.clickButtonOrHandleError(this::getFilterArea, additionallyFilterCriteriaName, HTML_TAG_SPAN, errorHandler, additionallyFilterCriteriaName);
       }
    }
 
-   private void removeDefaultCourseLocationAndOtherFilters(ErrorHandler errorHandler) {
-      WebElement filterArea = aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE);
-      removeAllFilters(filterArea);
-      // Anyway... Doesn't matter if there was a 'clear all filters'-Button, the default-course location has to be removed independently
-      aquabasileaNavigatorHelper.clickButtonOrHandleError(filterArea, WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_BUTTON_VALUE, HTML_TAG_SPAN, errorHandler, WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_BUTTON_VALUE);
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
-   }
-
-   /**
-    * Remove all filters. If there are any filters set, then there is also a 'clear all filters' button.
-    * This is also necessary, otherwise some filters are reapplied as soon as the course-location filter is set
-    */
-   private void removeAllFilters(WebElement filterArea) {
-      aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(filterArea, HTML_BUTTON_TYPE, WEB_BUTTON_CLEAR_ALL_FILTERS)
-              .ifPresent(webElement -> {
-                 webElement.click();
-                 aquabasileaNavigatorHelper.waitForInvisibilityOfElement(webElement);
-              });
+   private void waitForWebelementToBecomeVisible(String webElementContentAttrName, String webElementContentAttrValue) {
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, webElementContentAttrName, webElementContentAttrValue), 40000);
    }
 }

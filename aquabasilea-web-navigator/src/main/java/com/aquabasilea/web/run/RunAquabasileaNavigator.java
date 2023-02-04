@@ -5,10 +5,7 @@ import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
@@ -26,8 +23,8 @@ public class RunAquabasileaNavigator {
    }
 
    private static void run(String[] args) {
-      String courseName = "Fitness Trampolin 45 Min.";
-      String courseInstructor = "Sandra G.";
+      String courseName = "Yoga 90' G1";
+      String courseInstructor = "Ladina B.";
       String username = args[0];
       char[] password = args[1].toCharArray();
       LocalDateTime courseDateAndTime = getCourseDateAndTime();
@@ -46,7 +43,7 @@ public class RunAquabasileaNavigator {
    private static LocalDateTime getCourseDateAndTime() {
       LocalDate now = LocalDate.now();
       LocalDate date = LocalDate.of(now.getYear(), now.getMonth(), now.getDayOfMonth() + 1);
-      return LocalDateTime.of(date, LocalTime.of(12, 15));
+      return LocalDateTime.of(date, LocalTime.of(19, 15));
    }
 
    private static Supplier<Duration> getDurationUntilIsBookableSupplier() {

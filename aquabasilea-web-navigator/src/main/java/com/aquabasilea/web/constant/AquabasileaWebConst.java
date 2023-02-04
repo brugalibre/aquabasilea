@@ -6,7 +6,7 @@ public class AquabasileaWebConst {
 
    // Time outs
    public static final int DEFAULT_TIMEOUT = 400;
-   public static final Duration WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR = Duration.ofMillis(150000);
+   public static final Duration WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR = Duration.ofMillis(220_000);
    public static final Duration WAIT_FOR_COURSE_TABLE_TO_APPEAR = Duration.ofSeconds(10);
 
    /**
@@ -36,6 +36,7 @@ public class AquabasileaWebConst {
    // Course results field
    public static final String WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE = "course-table";
    public static final String WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME = "data-test-id";
+   public static final String WEB_ELEMENT_SELECTED_COURSE_FILTERS_PREFIX_ATTR_NAME = "selected-filters-list-";
 
    // Book a place
    public static final String WEB_ELEMENT_COURSE_ALREADY_BOOKED_VALUE = "Platz leider ausgebucht";

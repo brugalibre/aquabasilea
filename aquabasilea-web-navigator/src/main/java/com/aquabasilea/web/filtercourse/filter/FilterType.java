@@ -50,6 +50,7 @@ public enum FilterType {
          case COURSE_NAME:
             // the webpage appends the amount of matches for the given course name.
             // We don't care so ignore
+            attrValue = attrValue.substring(0, attrValue.indexOf("\'"));
             return WebNavigateUtil.createStartsWithXPathBy(tagName, attrName, attrValue);
          case DAY_OF_WEEK:
          case COURSE_LOCATION:// fall through
