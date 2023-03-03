@@ -39,8 +39,7 @@ class CourseBookingAlertSenderTest {
       String expectedMsg = String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       TestAlertSendService alertSendService = spy(new TestAlertSendService());
-      AlertSendConfigProviderImpl alertSendConfigProvider = CONFIG_PROVIDER;
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(alertSendConfigProvider, conf -> alertSendService);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
               .withCourseName(courseName)
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
@@ -109,6 +108,26 @@ class CourseBookingAlertSenderTest {
 
       // When
       courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+
+      // Then
+      verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
+   }
+
+ @Test
+   void consumeAndSendSmsDryRunFailed_Aborted() throws AlertSendException {
+      // Given
+      String courseName = "courseName";
+      String expectedMsg = String.format(TextResources.COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
+      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedMsg, List.of(CONSUMER_USER.phoneNr()));
+      AlertSendService alertSendService = mock(AlertSendService.class);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
+      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
+              .withCourseName(courseName)
+              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
+              .build();
+
+      // When
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));

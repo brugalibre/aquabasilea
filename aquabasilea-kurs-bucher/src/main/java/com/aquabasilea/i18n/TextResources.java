@@ -34,6 +34,7 @@ public class TextResources {
    public static final String
            COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";
    public static final String COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF = "Kurs '%s' wurde nicht gebucht! Der Kurs existiert im offiziellen Migros-Kursprogramm nicht";
+   public static final String COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF = "Testlauf für Kurs '%s' abgebrochen! Der Kurs existiert im offiziellen Migros-Kursprogramm nicht";
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";
 
