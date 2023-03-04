@@ -8,19 +8,15 @@ import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
-import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.error.ErrorHandlerImpl;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
-import com.aquabasilea.web.login.AquabasileaLoginHelper;
-import com.aquabasilea.web.navigate.AquabasileaNavigatorHelper;
+import com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator;
 import com.aquabasilea.web.util.ErrorUtil;
-import com.zeiterfassung.web.common.impl.navigate.BaseWebNavigator;
 import com.zeiterfassung.web.common.inout.PropertyReader;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +28,9 @@ import java.util.function.Supplier;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
-public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<AquabasileaNavigatorHelper> implements AquabasileaWebCourseBooker {
+public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNavigator implements AquabasileaWebCourseBooker {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebCourseBookerImpl.class);
    private char[] userPassword4Retries; // After a login, the password array is reset. If a timeout occurs, we might need to re-logging -> restore pw
@@ -43,7 +38,6 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
    private final String coursePage;
    private CourseSelectWithRetryHelper courseSelectWithRetryHelper;
    private CourseFilterHelper courseFilterHelper;
-   private AquabasileaLoginHelper aquabasileaLoginHelper;
 
    public AquabasileaWebCourseBookerImpl(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
@@ -132,31 +126,6 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       return buildCourseBookingEndResult(courseBookDetails.courseName(), errorHandler, null, courseClickedResult);
    }
 
-   @Override
-   protected AquabasileaNavigatorHelper createWebNavigatorHelper(WebDriver webDriver) {
-      return new AquabasileaNavigatorHelper(webDriver);
-   }
-
-   @Override
-   protected WebElement findLoginSubmitButton() {
-      return this.webNavigatorHelper.getWebElementByTageNameAndInnerHtmlValue(null, HTML_BUTTON_TYPE, AquabasileaWebConst.WEB_ELEMENT_ANMELDE_BUTTON_TEXT);
-   }
-
-   @Override
-   protected String getUserPasswordInputFieldId() {
-      return AquabasileaWebConst.WEB_ELEMENT_PWD_FIELD_ID;
-   }
-
-   @Override
-   protected String getUserNameInputFieldId() {
-      return AquabasileaWebConst.WEB_ELEMENT_USER_NAME_FIELD_ID;
-   }
-
-   @Override
-   protected String getLoginSubmitButtonId() {
-      return null; // Submitbutton unfortunately doesn't have an id
-   }
-
    private void navigate2CoursePage() {
       navigate2CoursePageInternal(false);
    }
@@ -168,12 +137,6 @@ public class AquabasileaWebCourseBookerImpl extends BaseWebNavigator<Aquabasilea
       }
       // yes, this may take a veeeeeeeeeeeeery long time
       waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
-   }
-
-   @Override
-   public void initWebDriver() {
-      super.initWebDriver();
-      this.aquabasileaLoginHelper = new AquabasileaLoginHelper(this.webNavigatorHelper, this::login);
    }
 
    private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
