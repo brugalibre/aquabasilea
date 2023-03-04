@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
@@ -20,13 +21,16 @@ public class AquabasileaLoginHelper {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaLoginHelper.class);
    private final LoginCallback loginCallback;
+   private final Duration waitForCourseTableToAppear;
    private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
    private final ButtonClickHelper buttonClickHelper;
 
-   public AquabasileaLoginHelper(AquabasileaNavigatorHelper aquabasileaNavigatorHelper, LoginCallback loginCallback) {
+   public AquabasileaLoginHelper(AquabasileaNavigatorHelper aquabasileaNavigatorHelper, LoginCallback loginCallback,
+                                 Duration waitForCourseTableToAppear) {
       this.aquabasileaNavigatorHelper = aquabasileaNavigatorHelper;
       this.buttonClickHelper = new ButtonClickHelper(aquabasileaNavigatorHelper);
       this.loginCallback = loginCallback;
+      this.waitForCourseTableToAppear = waitForCourseTableToAppear;
    }
 
    /**
@@ -52,11 +56,11 @@ public class AquabasileaLoginHelper {
    public void clickLoginButton() {
       LOG.info("Try to click Login button before navigating to course page");
       By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis());
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear.toMillis());
       Optional<WebElement> nowLogInButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
       ErrorHandlerImpl errorHandler = new ErrorHandlerImpl();
       buttonClickHelper.clickButtonOrHandleErrorRecursively(() -> nowLogInButtonOpt, errorHandler::handleElementNotFound, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, 1);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis());
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear.toMillis());
    }
 
    /**

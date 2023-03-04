@@ -5,7 +5,6 @@ import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 import com.aquabasilea.web.bookcourse.impl.select.CourseSelectHelper;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
-import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
@@ -15,8 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.function.Supplier;
-
-import static com.aquabasilea.web.constant.AquabasileaWebConst.PAGE_REFRESH_DURATION;
 
 /**
  * After the {@link CourseFilterHelper} has filtered the courses, the {@link CourseSelectWithRetryHelper}
@@ -28,7 +25,7 @@ import static com.aquabasilea.web.constant.AquabasileaWebConst.PAGE_REFRESH_DURA
  * For this the <code>duration2WaitUntilCourseBecomesBookable</code> is used to determine the remaining time to wait until the course should be bookable.
  * Before each selecting, the filter are reapplied, since they may get lost during a refresh of the page
  * <p>
- * Additionally, between each retry it waits the {@link AquabasileaWebConst#PAGE_REFRESH_DURATION} time until the course-page is refreshed and ready to retry
+ * Additionally, between each retry it waits a configurable amount of time until the course-page is refreshed and ready to retry
  */
 public class CourseSelectWithRetryHelper {
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebCourseBookerImpl.class);
@@ -39,9 +36,10 @@ public class CourseSelectWithRetryHelper {
    private final Runnable pageRefresher;
 
    public CourseSelectWithRetryHelper(CourseSelectHelper courseSelectHelper, CourseFilterHelper courseFilterHelper,
-                                      Runnable pageRefresher, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
+                                      Runnable pageRefresher, Supplier<Duration> duration2WaitUntilCourseBecomesBookable,
+                                      Duration pageRefreshDuration) {
       this.duration2WaitUntilCourseBecomesBookable = duration2WaitUntilCourseBecomesBookable;
-      this.pageRefreshDuration = PAGE_REFRESH_DURATION;
+      this.pageRefreshDuration = pageRefreshDuration;
       this.courseSelectHelper = courseSelectHelper;
       this.courseFilterHelper = courseFilterHelper;
       this.pageRefresher = pageRefresher;

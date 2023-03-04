@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.DEFAULT_TIMEOUT;
-import static com.aquabasilea.web.constant.AquabasileaWebConst.WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS;
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 
 public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
@@ -25,12 +24,15 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
    private static final int CLICK_BUTTON_RETRIES_IF_ERROR = 10;
    private static final int RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE = 3;
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaNavigatorHelper.class);
-   private static final Duration WAIT_UNTIL_BUTTON_BECOMES_CLICKABLE_INTERVAL = Duration.ofMillis(20000);
+   private final Duration durationUntilButtonBecomesClickable;
+   private final Duration durationUntilLoadingAnimationDisappear;
    private final ButtonClickHelper buttonClickHelper;
 
-   public AquabasileaNavigatorHelper(WebDriver webDriver) {
+   public AquabasileaNavigatorHelper(WebDriver webDriver, Duration durationUntilLoadingAnimationDisappear) {
       super(webDriver);
       this.buttonClickHelper = new ButtonClickHelper(this);
+      this.durationUntilLoadingAnimationDisappear = durationUntilLoadingAnimationDisappear;
+      this.durationUntilButtonBecomesClickable = Duration.ofMillis(20000);
    }
 
    /**
@@ -123,7 +125,7 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
       waitForWaitingAnimationToDisappear();
       Optional<WebElement> buttonWebElement = buttonWebElementSupplier.get();
       if (buttonWebElement.isPresent()) {
-         waitForElementToBeClickable(buttonWebElement.get(), WAIT_UNTIL_BUTTON_BECOMES_CLICKABLE_INTERVAL);
+         waitForElementToBeClickable(buttonWebElement.get(), durationUntilButtonBecomesClickable);
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
          LOG.info("Button found with text '{}' which contains an inner child from type {}", childInnerHtmlText, childHtmlTag);
       } else if (retries > 0) {
@@ -137,7 +139,7 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
    }
 
    private void waitForWaitingAnimationToDisappear() {
-      waitForInvisibilityOfElementBy(By.cssSelector(AquabasileaWebConst.LOADING_ANIMATION_CLASS_NAME), WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS.toMillis());
+      waitForInvisibilityOfElementBy(By.cssSelector(AquabasileaWebConst.LOADING_ANIMATION_CLASS_NAME), durationUntilLoadingAnimationDisappear.toMillis());
    }
 }
 

@@ -2,3 +2,7 @@ minutesToStartDryRunEarlier: 90
 loginPage: https://login.migros.ch/login
 coursePage: https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm/
 implicitWaitTimeOut: 3
+millis_to_wait_until_course_table_appears: 43500
+millis_to_wait_until_book_dialog_appears: 16000
+page_refresh_duration_ms: 14300
+millis_wait_until_loading_animation_disappears: 44900

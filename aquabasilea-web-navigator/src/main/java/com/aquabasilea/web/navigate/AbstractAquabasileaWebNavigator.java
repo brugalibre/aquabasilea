@@ -7,23 +7,27 @@ import com.zeiterfassung.web.common.inout.PropertyReader;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import static com.aquabasilea.web.constant.AquabasileaWebConst.COURSE_PAGE;
+import java.time.Duration;
+
 import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
 
 public abstract class AbstractAquabasileaWebNavigator extends BaseWebNavigator<AquabasileaNavigatorHelper> {
 
-   protected final String coursePage;
+   private final Duration waitForCourseTableToAppear;
+   private final Duration durationUntilLoadingAnimationDisappears;
+   protected final PropertyReader propertyReader;
    protected AquabasileaLoginHelper aquabasileaLoginHelper;
 
    public AbstractAquabasileaWebNavigator(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
-      PropertyReader propertyReader = new PropertyReader(propertiesName);
-      this.coursePage = propertyReader.readValue(COURSE_PAGE);
+      this.propertyReader = new PropertyReader(propertiesName);
+      this.durationUntilLoadingAnimationDisappears = AquabasileaWebConst.getWaitUntilLoadingAnimationDisappearsDuration(propertyReader);
+      this.waitForCourseTableToAppear = AquabasileaWebConst.getWaitForCourseTableToAppearDuration(propertyReader);
    }
 
    @Override
    protected AquabasileaNavigatorHelper createWebNavigatorHelper(WebDriver webDriver) {
-      return new AquabasileaNavigatorHelper(webDriver);
+      return new AquabasileaNavigatorHelper(webDriver, durationUntilLoadingAnimationDisappears);
    }
 
    @Override
@@ -49,6 +53,6 @@ public abstract class AbstractAquabasileaWebNavigator extends BaseWebNavigator<A
    @Override
    public void initWebDriver() {
       super.initWebDriver();
-      this.aquabasileaLoginHelper = new AquabasileaLoginHelper(this.webNavigatorHelper, this::login);
+      this.aquabasileaLoginHelper = new AquabasileaLoginHelper(this.webNavigatorHelper, this::login, waitForCourseTableToAppear);
    }
 }

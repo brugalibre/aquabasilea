@@ -20,7 +20,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.*;
+import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
+import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 import static java.util.Objects.nonNull;
 
 /**
@@ -47,17 +48,22 @@ public class CourseSelectHelper {
     * This is the additional time we wait after the course became bookable
     */
    private static final Duration DURATION_TO_WAIT_ADDITIONAL_UNTIL_A_COURSE_BECAME_BOOKABLE = Duration.ofSeconds(60);
+   private final Duration waitForCourseTableToAppear;
+   private final Duration waitForBookDialogToAppear;
    private final Supplier<Duration> duration2WaitUntilCourseBecomesBookable;
    private final CourseBookerHelper courseBookerHelper;
    private final AquabasileaNavigatorHelper aquabasileaNavigatorHelper;
    private final BookingAndCloseButtonMissingCallbackHandler missingBookingAndCloseButtonCallbackHandler;
 
    public CourseSelectHelper(CourseBookerHelper courseBookerHelper, AquabasileaNavigatorHelper aquabasileaNavigatorHelper,
-                             Supplier<Duration> duration2WaitUntilCourseBecomesBookable, boolean dryRun) {
+                             Supplier<Duration> duration2WaitUntilCourseBecomesBookable, boolean dryRun,
+                             Duration waitForCourseTableToAppear, Duration waitForBookDialogToAppear) {
       this.aquabasileaNavigatorHelper = aquabasileaNavigatorHelper;
       // It may happen, that the AquabasileaWebNavigator was started slightly to early and has to wait, until the booking button becomes available
       this.duration2WaitUntilCourseBecomesBookable = duration2WaitUntilCourseBecomesBookable;
       this.courseBookerHelper = courseBookerHelper;
+      this.waitForCourseTableToAppear = waitForCourseTableToAppear;
+      this.waitForBookDialogToAppear = waitForBookDialogToAppear;
       missingBookingAndCloseButtonCallbackHandler = (courseName, errorHandler, courseDetails) -> {
          if (dryRun) {
             return CourseClickedResult.COURSE_BOOKING_ABORTED;
@@ -151,15 +157,15 @@ public class CourseSelectHelper {
    }
 
    private Optional<WebElement> getCourseTableWebElement() {
-      LOG.info("Waiting for the course-table to appear (max. {}s)", WAIT_FOR_COURSE_TABLE_TO_APPEAR.toSeconds());
+      LOG.info("Waiting for the course-table to appear (max. {}s)", waitForCourseTableToAppear.toSeconds());
       By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis());
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear.toMillis());
       return this.aquabasileaNavigatorHelper.findWebElementBy(null, courseTableBy);
    }
 
    private CourseClickedResult clickSelectedCourseLoginIfNecessaryAndBook(boolean courseSelected, String courseName, ErrorHandler errorHandler) {
       if (courseSelected) {
-         this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), 10000);
+         this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), waitForBookDialogToAppear.toMillis());
          LOG.info("Course {} selected. Now either do booking or cancel", courseName);
          WebElement courseDetails = this.aquabasileaNavigatorHelper.getWebElementByNameTagNameAndValue(null, HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE);
          Optional<WebElement> bookCourseButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_BUTTON_TYPE, WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT);
@@ -167,7 +173,7 @@ public class CourseSelectHelper {
             return courseBookerHelper.cancelOrBookCourse(bookCourseButtonOpt.get(), errorHandler);
          } else {
             Optional<WebElement> courseAlreadyBookedHint = this.aquabasileaNavigatorHelper.findWebElementByTageNameAndInnerHtmlValue(courseDetails, HTML_DIV_TYPE, WEB_ELEMENT_COURSE_ALREADY_BOOKED_VALUE);
-            if (courseAlreadyBookedHint.isPresent()){
+            if (courseAlreadyBookedHint.isPresent()) {
                LOG.warn("Course is fully booked..");
                handleBookButtonNotAvailable(courseName, errorHandler, courseDetails);
                return CourseClickedResult.COURSE_NOT_BOOKABLE;

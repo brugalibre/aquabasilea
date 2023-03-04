@@ -8,12 +8,12 @@ import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
+import com.aquabasilea.web.constant.AquabasileaWebConst;
 import com.aquabasilea.web.error.ErrorHandler;
 import com.aquabasilea.web.error.ErrorHandlerImpl;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
 import com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator;
 import com.aquabasilea.web.util.ErrorUtil;
-import com.zeiterfassung.web.common.inout.PropertyReader;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -35,14 +35,11 @@ public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNaviga
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebCourseBookerImpl.class);
    private char[] userPassword4Retries; // After a login, the password array is reset. If a timeout occurs, we might need to re-logging -> restore pw
    private int timeOutRetries;
-   private final String coursePage;
    private CourseSelectWithRetryHelper courseSelectWithRetryHelper;
    private CourseFilterHelper courseFilterHelper;
 
    public AquabasileaWebCourseBookerImpl(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
-      PropertyReader propertyReader = new PropertyReader(propertiesName);
-      this.coursePage = propertyReader.readValue(COURSE_PAGE);
       this.timeOutRetries = 4;
       this.userPassword4Retries = Arrays.copyOf(userPassword, userPassword.length);
    }
@@ -131,6 +128,7 @@ public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNaviga
    }
 
    private void navigate2CoursePageInternal(boolean clickLoginButton) {
+      String coursePage = propertyReader.readValue(COURSE_PAGE);
       navigateToPage(coursePage);
       if (clickLoginButton) {
          aquabasileaLoginHelper.clickLoginButton();
@@ -141,9 +139,12 @@ public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNaviga
 
    private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       this.courseFilterHelper = new CourseFilterHelper(this.webNavigatorHelper);
+      Duration waitForCourseTableToAppear = AquabasileaWebConst.getWaitForCourseTableToAppearDuration(propertyReader);
+      Duration pageRefreshDuration = AquabasileaWebConst.getPageRefreshDuration(propertyReader);
+      Duration waitForBookDialogToAppear = AquabasileaWebConst.getWaitForBookDialogToAppearDuration(propertyReader);
       CourseBookerHelper courseBookerHelper = new CourseBookerHelper(this.webNavigatorHelper, dryRun);
-      CourseSelectHelper courseSelectHelper = new CourseSelectHelper(courseBookerHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun);
-      this.courseSelectWithRetryHelper = new CourseSelectWithRetryHelper(courseSelectHelper, this.courseFilterHelper, this::navigate2CoursePage, duration2WaitUntilCourseBecomesBookable);
+      CourseSelectHelper courseSelectHelper = new CourseSelectHelper(courseBookerHelper, this.webNavigatorHelper, duration2WaitUntilCourseBecomesBookable, dryRun, waitForCourseTableToAppear, waitForBookDialogToAppear);
+      this.courseSelectWithRetryHelper = new CourseSelectWithRetryHelper(courseSelectHelper, this.courseFilterHelper, this::navigate2CoursePage, duration2WaitUntilCourseBecomesBookable, pageRefreshDuration);
    }
 
    private CourseBookingEndResult handleExceptionAndBuildResult(String courseName, ErrorHandler errorHandler, Exception e) {

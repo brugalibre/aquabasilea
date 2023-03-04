@@ -99,6 +99,7 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
    }
 
    private void navigate2CoursePageAndAwaitReadiness() {
+      String coursePage = propertyReader.readValue(COURSE_PAGE);
       navigateToPage(coursePage);
       waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
    }

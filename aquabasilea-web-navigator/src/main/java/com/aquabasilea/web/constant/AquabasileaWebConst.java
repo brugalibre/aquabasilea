@@ -1,5 +1,7 @@
 package com.aquabasilea.web.constant;
 
+import com.zeiterfassung.web.common.inout.PropertyReader;
+
 import java.time.Duration;
 
 public class AquabasileaWebConst {
@@ -7,14 +9,12 @@ public class AquabasileaWebConst {
    // Time outs
    public static final int DEFAULT_TIMEOUT = 400;
    public static final Duration WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR = Duration.ofMillis(220_000);
-   public static final Duration WAIT_FOR_COURSE_TABLE_TO_APPEAR = Duration.ofSeconds(10);
 
-   /**
-    * The time a refresh of the page takes
-    */
-   public static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(13);
+   private static final Duration WAIT_FOR_COURSE_TABLE_TO_APPEAR = Duration.ofSeconds(40);
+   private static final Duration WAIT_FOR_BOOK_DIALOG_TO_APPEAR = Duration.ofSeconds(15);
+   private static final Duration PAGE_REFRESH_DURATION = Duration.ofSeconds(13);
+   private static final Duration WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS = Duration.ofSeconds(40);
 
-   public static final Duration WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS = Duration.ofSeconds(10);
    public static final String LOADING_ANIMATION_CLASS_NAME = "sc-dkmKIT iBFRfU";
 
    public static final String COURSE_PAGE = "coursePage";
@@ -63,5 +63,50 @@ public class AquabasileaWebConst {
 
    private AquabasileaWebConst() {
       // privé
+   }
+
+   /**
+    * Returns the duration which the web-driver waits until a loading animation disappears. It's either the default value
+    * or the configured one, using the property <code>millis_wait_until_loading_animation_disappears</code>
+    *
+    * @param propertyReader the {@link PropertyReader} to read the configured value from the yml/properties file
+    * @return the duration which the web-driver waits until a loading animation disappears
+    */
+   public static Duration getWaitUntilLoadingAnimationDisappearsDuration(PropertyReader propertyReader) {
+      String durationToWaitUntilLoadingAnimationDisappear = propertyReader.readValueOrDefault(
+              "millis_wait_until_loading_animation_disappears", String.valueOf(WAIT_UNTIL_LOADING_ANIMATION_DISAPPEARS.toMillis()));
+      return Duration.ofMillis(Integer.parseInt(durationToWaitUntilLoadingAnimationDisappear));
+   }
+
+   /**
+    * Returns the duration the web-driver waits until it expects the page to be loaded. It's either the default value
+    * or the configured one, using the property <code>page_refresh_duration_ms</code>
+    *
+    * @param propertyReader the {@link PropertyReader} to read the configured value from the yml/properties file
+    * @return the duration the web-driver waits until it expects the page to be loaded
+    */
+   public static Duration getPageRefreshDuration(PropertyReader propertyReader) {
+      String pageRefreshDuration = propertyReader.readValueOrDefault(
+              "page_refresh_duration_ms", String.valueOf(PAGE_REFRESH_DURATION.toMillis()));
+      return Duration.ofMillis(Integer.parseInt(pageRefreshDuration));
+   }
+
+   /**
+    * Returns the duration which the web-driver waits until the course table appears, e.g. after the page was reloaded. It's either the default value
+    * or the configured one, using the property <code>millis_to_wait_until_course_table_appears</code>
+    *
+    * @param propertyReader the {@link PropertyReader} to read the configured value from the yml/properties file
+    * @return the duration which the web-driver waits until the course table appears
+    */
+   public static Duration getWaitForCourseTableToAppearDuration(PropertyReader propertyReader) {
+      String durationToWaitUntilCourseTableAppears = propertyReader.readValueOrDefault(
+              "millis_to_wait_until_course_table_appears", String.valueOf(WAIT_FOR_COURSE_TABLE_TO_APPEAR.toMillis()));
+      return Duration.ofMillis(Integer.parseInt(durationToWaitUntilCourseTableAppears));
+   }
+
+   public static Duration getWaitForBookDialogToAppearDuration(PropertyReader propertyReader) {
+      String durationToWaitUntilBookDialogAppears = propertyReader.readValueOrDefault(
+              "millis_to_wait_until_book_dialog_appears", String.valueOf(WAIT_FOR_BOOK_DIALOG_TO_APPEAR.toMillis()));
+      return Duration.ofMillis(Integer.parseInt(durationToWaitUntilBookDialogAppears));
    }
 }
