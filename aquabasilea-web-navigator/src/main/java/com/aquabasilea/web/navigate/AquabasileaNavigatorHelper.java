@@ -109,32 +109,30 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
    public void waitUntilButtonBecameClickable(Supplier<WebElement> searchContextSuppIn, By by) {
       Supplier<WebElement> searchContextSupp = searchContextSuppIn == null ? () -> null : searchContextSuppIn;
       Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findWebElementBy(searchContextSupp.get(), by);
-      String childHtmlTag = buttonWebElementSupplier.get().map(WebElement::getText).orElse("unknown inner html");
-      String childInnerHtmlText = buttonWebElementSupplier.get().map(WebElement::getTagName).orElse("unknown tag-name");
-      findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, childHtmlTag, childInnerHtmlText, RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
+      findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, by.toString(), RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
    }
 
    private void findAndWaitUntilButtonBecameClickable(Supplier<WebElement> searchContextSuppIn, String childHtmlTag, String childInnerHtmlText) {
       Supplier<WebElement> searchContextSupp = searchContextSuppIn == null ? () -> null : searchContextSuppIn;
-      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContextSupp.get(), childHtmlTag, childInnerHtmlText, HTML_BUTTON_TYPE);
-      findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, childHtmlTag, childInnerHtmlText, RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
+      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContextSupp.get(), childHtmlTag, childInnerHtmlText, HTML_BUTTON_TYPE);String buttonSearchCriterion4Log = String.format("inner child type=%s and inner-html text=%s", childHtmlTag, childInnerHtmlText);
+      findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, buttonSearchCriterion4Log, RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
    }
 
-   private void findAndWaitUntilButtonBecameClickableInternal(Supplier<Optional<WebElement>> buttonWebElementSupplier, String childHtmlTag, String childInnerHtmlText, int retries) {
+   private void findAndWaitUntilButtonBecameClickableInternal(Supplier<Optional<WebElement>> buttonWebElementSupplier, String buttonSearchCriterion4Log, int retries) {
       // Wait until the loading animation disappears (maybe it's not shown at all, but maybe it is. You never know)
       waitForWaitingAnimationToDisappear();
       Optional<WebElement> buttonWebElement = buttonWebElementSupplier.get();
       if (buttonWebElement.isPresent()) {
          waitForElementToBeClickable(buttonWebElement.get(), durationUntilButtonBecomesClickable);
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
-         LOG.info("Button found with text '{}' which contains an inner child from type {}", childInnerHtmlText, childHtmlTag);
+         LOG.info("Button found which matched the search criterion '{}'", buttonSearchCriterion4Log);
       } else if (retries > 0) {
          WebNavigateUtil.waitForMilliseconds(DEFAULT_TIMEOUT);
          retries--;
-         LOG.warn("No button found which contains an inner child from type {} and with text {}! Let's retry - retries left {}", childHtmlTag, childInnerHtmlText, retries);
-         findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, childHtmlTag, childInnerHtmlText, retries);
+         LOG.warn("No button found which matched the search criterion '{}'! Let's retry - retries left {}", buttonSearchCriterion4Log, retries);
+         findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, buttonSearchCriterion4Log, retries);
       } else {
-         LOG.error("No button found which contains an inner child from type {} and with text {}!", childHtmlTag, childInnerHtmlText);
+         LOG.error("No button found which matched the search criterion '{}'!", buttonSearchCriterion4Log);
       }
    }
 

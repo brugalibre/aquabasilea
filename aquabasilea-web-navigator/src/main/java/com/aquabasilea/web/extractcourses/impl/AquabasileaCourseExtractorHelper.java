@@ -24,7 +24,7 @@ import static com.zeiterfassung.web.common.constant.BaseWebConst.*;
 import static java.util.Objects.*;
 
 public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNavigatorHelper,
-                                               ErrorHandler errorHandler) {
+                                               ErrorHandler errorHandler, Duration waitForBookDialogToAppear) {
    private static final String COURSE_INSTRUCTOR_PATTERN = "(^[a-zA-Z]+[ ][A-Z]([.]$))";
    private static final String PLACES_AVAILABLE_PATTERN = "(([\\d]{1,2})[\\/]([\\d]{1,2}))\\s?(?:.)+";
    private static final String TIME_OF_DAY_SEPARATOR = " - ";
@@ -110,7 +110,7 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
 
    private void openCourseDetailDialogAndAwaitReadiness(WebElement courseDetails) {
       webNavigatorHelper.clickButton(courseDetails, errorHandler);
-      webNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), Duration.ofMillis(20000));
+      webNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), waitForBookDialogToAppear);
    }
 
    private List<String> courseDetailElements(WebElement courseDetailDialog) {

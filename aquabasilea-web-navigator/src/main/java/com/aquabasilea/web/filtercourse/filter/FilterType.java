@@ -29,6 +29,7 @@ public enum FilterType {
       this.uiElementText = uiElementText;
       this.additionallyFilterCriteriaNames = Collections.emptyList();
    }
+
    FilterType(String uiElementText, String... additionallyUiElementTextArray) {
       this.uiElementText = uiElementText;
       this.additionallyFilterCriteriaNames = Arrays.asList(additionallyUiElementTextArray);
@@ -56,6 +57,6 @@ public enum FilterType {
          case COURSE_LOCATION:// fall through
             return WebNavigateUtil.createXPathBy(tagName, attrName, attrValue);
       }
-      return null;
+      throw new IllegalStateException("FilterType " + this + "not implemented! Sorry.. :(");
    }
 }

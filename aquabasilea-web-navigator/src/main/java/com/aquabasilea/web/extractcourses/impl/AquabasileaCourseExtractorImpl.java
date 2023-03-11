@@ -14,6 +14,7 @@ import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.List;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
@@ -36,7 +37,7 @@ public class AquabasileaCourseExtractorImpl extends AbstractAquabasileaWebNaviga
    @Override
    public void initWebDriver() {
       super.initWebDriver();
-      this.aquabasileaCourseExtractorHelper = new AquabasileaCourseExtractorHelper(this.webNavigatorHelper, this.errorHandler);
+      this.aquabasileaCourseExtractorHelper = new AquabasileaCourseExtractorHelper(this.webNavigatorHelper, this.errorHandler, Duration.ofMillis(20000));
    }
 
    /**
