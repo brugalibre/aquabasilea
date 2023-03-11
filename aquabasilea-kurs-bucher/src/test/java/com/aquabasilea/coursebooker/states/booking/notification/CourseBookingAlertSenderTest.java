@@ -94,6 +94,26 @@ class CourseBookingAlertSenderTest {
    }
 
    @Test
+   void consumeAndSendSmsBookingFailed_NotBookableFullyBookead() throws AlertSendException {
+      // Given
+      String courseName = "courseName";
+      String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_FULLY_BOOKED, courseName);
+      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedMsg, List.of(CONSUMER_USER.phoneNr()));
+      AlertSendService alertSendService = mock(AlertSendService.class);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
+      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
+              .withCourseName(courseName)
+              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED)
+              .build();
+
+      // When
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+
+      // Then
+      verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
+   }
+
+   @Test
    void consumeAndSendSmsBookingFailed_Aborted() throws AlertSendException {
       // Given
       String courseName = "courseName";

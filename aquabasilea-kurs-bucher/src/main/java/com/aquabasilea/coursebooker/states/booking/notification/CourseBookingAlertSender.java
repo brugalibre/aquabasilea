@@ -83,6 +83,8 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
             return String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName);
          case COURSE_NOT_BOOKABLE:
             return String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
+         case COURSE_NOT_BOOKABLE_FULLY_BOOKED:
+            return String.format(TextResources.COURSE_NOT_BOOKABLE_FULLY_BOOKED, courseName);
          case COURSE_NOT_SELECTED_NO_SINGLE_RESULT:
             return String.format(TextResources.COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT, courseName);
          case COURSE_NOT_SELECTED_EXCEPTION_OCCURRED:

@@ -181,7 +181,7 @@ public class CourseSelectHelper {
             if (courseAlreadyBookedHint.isPresent()) {
                LOG.warn("Course is fully booked..");
                handleBookButtonNotAvailable(courseName, errorHandler, courseDetails);
-               return CourseClickedResult.COURSE_NOT_BOOKABLE;
+               return CourseClickedResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED;
             }
             LOG.warn("Neither booking nor login button present..");
             return missingBookingAndCloseButtonCallbackHandler.handleBookingAndCloseButtonMissing(courseName, errorHandler, courseDetails);

@@ -30,6 +30,7 @@ public class TextResources {
    // Booking
    public static final String COURSE_SUCCESSFULLY_BOOKED = "Kurs '%s' erfolgreich gebucht";
    public static final String COURSE_NOT_BOOKABLE = "Kurs '%s' konnte nicht gebucht werden!";
+   public static final String COURSE_NOT_BOOKABLE_FULLY_BOOKED = "Kurs '%s' konnte nicht gebucht werden, da er bereits ausgebucht ist";
    public static final String COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT = "Kurs '%s' konnte nicht gebucht werden, da nicht eindeutig gefiltert werden konnte!";
    public static final String
            COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";

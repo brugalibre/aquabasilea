@@ -8,7 +8,7 @@ apply from: '../test.gradle'
 apply from: '../aquabasilea.gradle'
 
 group 'com.aquabasilea'
-version '1.0.1-SNAPSHOT'
+version '1.0.2-SNAPSHOT'
 
 repositories {
     mavenLocal()

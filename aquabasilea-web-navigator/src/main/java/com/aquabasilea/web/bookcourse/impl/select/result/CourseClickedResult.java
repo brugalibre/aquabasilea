@@ -7,6 +7,11 @@ public enum CourseClickedResult {
    COURSE_NOT_BOOKABLE,
 
    /**
+    * Course is not bookable, because there is no space left
+    */
+   COURSE_NOT_BOOKABLE_FULLY_BOOKED,
+
+   /**
     * Course successfully booked
     */
    COURSE_BOOKED,
