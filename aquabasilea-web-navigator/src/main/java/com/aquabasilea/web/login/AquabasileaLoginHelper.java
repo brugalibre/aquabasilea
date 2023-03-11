@@ -41,9 +41,9 @@ public class AquabasileaLoginHelper {
    public void login(WebElement loginButton) {
       // Since there is an overlay placed over the button, selenium can't click the button directly
       aquabasileaNavigatorHelper.executeClickButtonScript(loginButton);
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(By.id(WEB_ELEMENT_USER_NAME_FIELD_ID), 2000);
+      aquabasileaNavigatorHelper.waitForVisibilityOfElement(By.id(WEB_ELEMENT_USER_NAME_FIELD_ID), Duration.ofMillis(2000));
       loginCallback.login();
-      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), 25000);
+      aquabasileaNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), Duration.ofMillis(25000));
       LOG.info("Login successful");
    }
 
@@ -56,11 +56,11 @@ public class AquabasileaLoginHelper {
    public void clickLoginButton() {
       LOG.info("Try to click Login button before navigating to course page");
       By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear.toMillis());
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear);
       Optional<WebElement> nowLogInButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
       ErrorHandlerImpl errorHandler = new ErrorHandlerImpl();
       buttonClickHelper.clickButtonOrHandleErrorRecursively(() -> nowLogInButtonOpt, errorHandler::handleElementNotFound, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, 1);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear.toMillis());
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear);
    }
 
    /**

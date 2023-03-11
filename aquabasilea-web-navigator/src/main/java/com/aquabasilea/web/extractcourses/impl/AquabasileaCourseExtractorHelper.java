@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -109,7 +110,7 @@ public record AquabasileaCourseExtractorHelper(AquabasileaNavigatorHelper webNav
 
    private void openCourseDetailDialogAndAwaitReadiness(WebElement courseDetails) {
       webNavigatorHelper.clickButton(courseDetails, errorHandler);
-      webNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), 20000);
+      webNavigatorHelper.waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME, WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE), Duration.ofMillis(20000));
    }
 
    private List<String> courseDetailElements(WebElement courseDetailDialog) {

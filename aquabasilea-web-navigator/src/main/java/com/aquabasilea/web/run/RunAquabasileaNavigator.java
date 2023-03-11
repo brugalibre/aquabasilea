@@ -23,8 +23,8 @@ public class RunAquabasileaNavigator {
    }
 
    private static void run(String[] args) {
-      String courseName = "Yoga 90' G1";
-      String courseInstructor = "Ladina B.";
+      String courseName = "Functional Grouptraining 50'";
+      String courseInstructor = "EricS";
       String username = args[0];
       char[] password = args[1].toCharArray();
       LocalDateTime courseDateAndTime = getCourseDateAndTime();
@@ -35,7 +35,7 @@ public class RunAquabasileaNavigator {
       }
       AquabasileaWebCourseBooker aquabasileaWebCourseBooker = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, password, dryRun, getDurationUntilIsBookableSupplier(), DEBUG_CONFIG_FILE);
       long start = System.currentTimeMillis();
-      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, courseInstructor, courseDateAndTime, "Migros Fitnesscenter Aquabasilea"));
+      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBooker.selectAndBookCourse(new CourseBookDetails(courseName, courseInstructor, courseDateAndTime, "Fitnesspark Glattpark"));
       System.out.println("Booker done, duration: " + Duration.ofMillis(start - System.currentTimeMillis()));
       printErrors(dryRun, courseBookingEndResult);
    }

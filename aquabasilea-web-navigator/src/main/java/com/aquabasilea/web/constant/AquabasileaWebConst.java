@@ -24,14 +24,7 @@ public class AquabasileaWebConst {
    // Filter fields
    public static final String WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE = "filter";
    public static final String WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME = "data-test-id";
-
-   public static final String WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_BUTTON_VALUE = "Migros Fitnesscenter Aquabasilea";
    public static final String WEB_BUTTON_FILTER_RESULTS_SHOW_MORE_VALUE = "Mehr anzeigen";
-   public static final String WEB_BUTTON_CLEAR_ALL_FILTERS = "Alle Filter zurücksetzen";
-   public static final String WEB_BUTTON_COURSE_LOCATION_FILTER_BUTTON_VALUE = "Center";
-   public static final String WEB_BUTTON_FITNESSCENTER_FILTER_BUTTON_VALUE = "Fitnesscenter";
-   public static final String WEB_BUTTON_FITNESSPARK_FILTER_BUTTON_VALUE = "Fitnesspark";
-   public static final String WEB_BUTTON_MIGROS_FITNESSCENTER_AQUABASILEA_CRITERION_BUTTON_VALUE = "Migros Fitnesscenter Aquabasilea";
 
    // Course results field
    public static final String WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE = "course-table";
@@ -41,7 +34,6 @@ public class AquabasileaWebConst {
    // Book a place
    public static final String WEB_ELEMENT_COURSE_ALREADY_BOOKED_VALUE = "Platz leider ausgebucht";
    public static final String WEB_ELEMENT_BOOK_SPOT_BUTTON_TEXT = "Platz buchen";
-   public static final String WEB_ELEMENT_CANCEL_SPOT_BUTTON_TEXT = "Platz stornieren";
    public static final String WEB_ELEMENT_CLOSE_BOOK_COURSE_BUTTON_TEXT = "schliessen";
    public static final String WEB_ELEMENT_BOOK_DIALOG_ATTR_NAME = "data-test-id";
    public static final String WEB_ELEMENT_BOOK_DIALOG_ATTR_VALUE = "course-detail-container";
