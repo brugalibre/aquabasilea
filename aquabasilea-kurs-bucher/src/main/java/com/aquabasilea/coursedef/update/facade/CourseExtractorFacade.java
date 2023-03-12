@@ -5,10 +5,11 @@ import com.aquabasilea.coursebooker.model.course.CourseLocation;
 import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.coursedef.model.repository.mapping.CoursesDefEntityMapper;
 import com.aquabasilea.coursedef.model.repository.mapping.CoursesDefEntityMapperImpl;
-import com.aquabasilea.migrosapi.model.request.api.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.model.response.api.MigrosApiGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.getcourse.request.api.MigrosApiGetCoursesRequest;
+import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.service.MigrosApi;
 import com.aquabasilea.migrosapi.service.MigrosApiImpl;
+import com.aquabasilea.migrosapi.service.security.api.BearerTokenProvider;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
 import com.aquabasilea.web.extractcourses.model.ExtractedAquabasileaCourses;
@@ -42,7 +43,8 @@ public class CourseExtractorFacade {
    }
 
    public static CourseExtractorFacade getCourseExtractorFacade() {
-      return new CourseExtractorFacade(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator, MigrosApiImpl::new);
+      MigrosApi migrosApi = new MigrosApiImpl(getBearerTokenProvider());
+      return new CourseExtractorFacade(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator, () -> migrosApi);
    }
 
    /**
@@ -105,4 +107,11 @@ public class CourseExtractorFacade {
    private List<CourseDef> map2CourseDefs(MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {
       return coursesDefEntityMapper.mapMigrosCourses2CourseDefs(migrosApiGetCoursesResponse.courses());
    }
+
+   private static BearerTokenProvider getBearerTokenProvider() {
+      return (username, userPwd) -> {
+         throw new IllegalStateException("Read only MigrosApi!");
+      };
+   }
+
 }

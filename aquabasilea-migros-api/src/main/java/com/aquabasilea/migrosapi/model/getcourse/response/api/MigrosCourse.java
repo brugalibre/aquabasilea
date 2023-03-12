@@ -1,4 +1,4 @@
-package com.aquabasilea.migrosapi.model.response.api;
+package com.aquabasilea.migrosapi.model.getcourse.response.api;
 
 import java.time.LocalDateTime;
 

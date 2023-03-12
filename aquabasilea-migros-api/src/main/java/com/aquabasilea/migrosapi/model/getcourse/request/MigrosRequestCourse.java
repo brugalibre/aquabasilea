@@ -1,4 +1,4 @@
-package com.aquabasilea.migrosapi.model.request;
+package com.aquabasilea.migrosapi.model.getcourse.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

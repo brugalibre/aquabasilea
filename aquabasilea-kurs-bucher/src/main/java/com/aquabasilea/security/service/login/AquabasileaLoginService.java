@@ -47,7 +47,7 @@ public class AquabasileaLoginService {
       boolean isLoggedIn = tryLoginRecursively(aquabasileaLogin);
       if (!isLoggedIn) {
          LOG.error("Could not verify login infos!");
-         throw new CredentialsNotValidException(TextResources.MIGROS_FITNESS_CREDENTIALS_NOT_VALID.formatted(new Object[]{username}));
+         throw new CredentialsNotValidException(TextResources.MIGROS_FITNESS_CREDENTIALS_NOT_VALID.formatted(username));
       }
       return true;
    }
@@ -55,7 +55,7 @@ public class AquabasileaLoginService {
    /*
     * Yes this has to be done recursively, since the browser-start may fail under ubuntu..
     */
-   private boolean tryLoginRecursively(AquabasileaLogin aquabasileaLogin) {
+   private static boolean tryLoginRecursively(AquabasileaLogin aquabasileaLogin) {
       int counter = RETRIES;
       while (counter > 0) {
          try {

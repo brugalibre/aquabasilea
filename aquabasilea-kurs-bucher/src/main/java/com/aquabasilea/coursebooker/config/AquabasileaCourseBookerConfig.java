@@ -1,5 +1,6 @@
 package com.aquabasilea.coursebooker.config;
 
+import com.aquabasilea.coursebooker.service.booking.facade.AquabasileaCourseBookerType;
 import com.aquabasilea.coursedef.update.facade.CourseDefExtractorType;
 import com.brugalibre.util.config.yml.YmlConfig;
 import com.brugalibre.util.file.yml.YamlService;
@@ -36,6 +37,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    private String courseConfigFile;
    private int daysToBookCourseEarlier;
    private CourseDefExtractorType courseDefExtractorType;
+   private AquabasileaCourseBookerType aquabasileaCourseBookerType;
 
    public AquabasileaCourseBookerConfig() {
       init(AQUABASILEA_COURSE_BOOKER_CONFIG_FILE);
@@ -43,6 +45,11 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
 
    public AquabasileaCourseBookerConfig(String configFile) {
       init(configFile);
+   }
+
+   @Override
+   public void setConfigFile(String configFile) {
+      this.courseConfigFile = configFile;
    }
 
    public void setDaysToBookCourseEarlier(int daysToBookCourseEarlier) {
@@ -71,6 +78,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       this.durationToStartDryRunEarlier = DURATION_TO_START_DRY_RUN_EARLIER;
       this.daysToBookCourseEarlier = DAYS_TO_BOOK_COURSE_EARLIER;
       this.courseDefExtractorType = CourseDefExtractorType.AQUABASILEA_WEB;
+      this.aquabasileaCourseBookerType = AquabasileaCourseBookerType.AQUABASILEA_WEB;
    }
 
    /**
@@ -86,6 +94,9 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       AquabasileaCourseBookerConfig externalReadConfig = YAML_SERVICE.readYamlIgnoreMissingFile(courseConfigFile, getClass());
       if (nonNull(externalReadConfig.getCourseDefExtractorType())) {
          this.courseDefExtractorType = externalReadConfig.courseDefExtractorType;
+      }
+      if (nonNull(externalReadConfig.getAquabasileaCourseBookerType())) {
+         this.aquabasileaCourseBookerType = externalReadConfig.aquabasileaCourseBookerType;
       }
       if (nonNull(externalReadConfig.secondsToStartBookerEarlier)) {
          this.durationToStartBookerEarlier = Duration.ofSeconds(externalReadConfig.secondsToStartBookerEarlier);
@@ -128,13 +139,25 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       this.secondsToStartBookerEarlier = secondsToStartBookerEarlier;
    }
 
+   public AquabasileaCourseBookerType getAquabasileaCourseBookerType() {
+      return aquabasileaCourseBookerType;
+   }
+
+   public void setAquabasileaCourseBookerType(AquabasileaCourseBookerType aquabasileaCourseBookerType) {
+      this.aquabasileaCourseBookerType = aquabasileaCourseBookerType;
+   }
+
    @Override
    public String toString() {
       return "AquabasileaCourseBookerConfig{" +
-              "durationToStartDryRunEarlier=" + durationToStartDryRunEarlier +
+              "secondsToStartBookerEarlier=" + secondsToStartBookerEarlier +
+              ", minutesToStartDryRunEarlier=" + minutesToStartDryRunEarlier +
+              ", durationToStartDryRunEarlier=" + durationToStartDryRunEarlier +
               ", durationToStartBookerEarlier=" + durationToStartBookerEarlier +
               ", courseConfigFile='" + courseConfigFile + '\'' +
               ", daysToBookCourseEarlier=" + daysToBookCourseEarlier +
+              ", courseDefExtractorType=" + courseDefExtractorType +
+              ", aquabasileaCourseBookerType=" + aquabasileaCourseBookerType +
               '}';
    }
 }

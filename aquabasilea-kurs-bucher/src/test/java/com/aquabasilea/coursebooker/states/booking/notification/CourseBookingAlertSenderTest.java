@@ -196,6 +196,28 @@ class CourseBookingAlertSenderTest {
    }
 
    @Test
+   void consumeAndSendSmsBookingFailedWithException_ButNoActualException() throws AlertSendException {
+      // Given
+      String courseName = "courseName";
+      String exceptionMsg = "";
+      String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
+      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedMsg, List.of(CONSUMER_USER.phoneNr()));
+      AlertSendService alertSendService = mock(AlertSendService.class);
+      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
+      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
+              .withCourseName(courseName)
+              .withException(null)
+              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)
+              .build();
+
+      // When
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+
+      // Then
+      verify(alertSendService).sendAlert(any(), any());
+   }
+
+   @Test
    void consumeAndSendSmsDryRunSuccessful_Aborted() throws AlertSendException {
       // Given
       String courseName = "courseName";
@@ -236,9 +258,12 @@ class CourseBookingAlertSenderTest {
    }
 
    @Test
-   void consumeAndSendSmsDryRunNoSmsSend_InvalidClickResult() throws AlertSendException {
+   void consumeAndSendSmsDryRunFailed_NotBookable() throws AlertSendException {
+      // Note: This test is an equivalent to the migros-api with a failed dry run -> not bookable is returned
       // Given
       String courseName = "courseName";
+      String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
+      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
       CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
@@ -250,7 +275,7 @@ class CourseBookingAlertSenderTest {
       courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
-      verify(alertSendService, never()).sendAlert(any(), any());
+      verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
    }
 
    @Test

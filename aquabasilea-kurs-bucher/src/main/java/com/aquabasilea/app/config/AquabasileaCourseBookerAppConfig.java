@@ -24,7 +24,7 @@ import org.springframework.context.annotation.*;
 import static com.aquabasilea.coursebooker.service.weeklycourses.WeeklyCoursesService.WEEKLY_COURSES_SERVICE;
 
 @Configuration
-@ComponentScan(basePackages = {"com.aquabasilea.service", "com.aquabasilea.app.initialize", "com.aquabasilea.coursebooker"})
+@ComponentScan(basePackages = {"com.aquabasilea.security.service", "com.aquabasilea.app.initialize", "com.aquabasilea.coursebooker"})
 @Import({AquabasileaCourseBookerPersistenceConfig.class})
 public class AquabasileaCourseBookerAppConfig {
 
@@ -62,7 +62,8 @@ public class AquabasileaCourseBookerAppConfig {
 
    @DependsOn({STATISTICS_SERVICE_BEAN, USER_CONFIG_REPOSITORY_BEAN, COURSE_DEF_REPOSITORY_BEAN, WEEKLY_COURSES_SERVICE})
    @Bean(name = COURSE_DEF_UPDATER_BEAN)
-   public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository, @Autowired StatisticsService statisticsService,
+   public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository,
+                                               @Autowired StatisticsService statisticsService,
                                                @Autowired UserConfigRepository userConfigRepository,
                                                @Autowired WeeklyCoursesService weeklyCoursesService) {
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(CourseExtractorFacade.getCourseExtractorFacade(),

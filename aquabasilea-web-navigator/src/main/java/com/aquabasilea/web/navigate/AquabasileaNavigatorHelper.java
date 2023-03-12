@@ -114,7 +114,8 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
 
    private void findAndWaitUntilButtonBecameClickable(Supplier<WebElement> searchContextSuppIn, String childHtmlTag, String childInnerHtmlText) {
       Supplier<WebElement> searchContextSupp = searchContextSuppIn == null ? () -> null : searchContextSuppIn;
-      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContextSupp.get(), childHtmlTag, childInnerHtmlText, HTML_BUTTON_TYPE);String buttonSearchCriterion4Log = String.format("inner child type=%s and inner-html text=%s", childHtmlTag, childInnerHtmlText);
+      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContextSupp.get(), childHtmlTag, childInnerHtmlText, HTML_BUTTON_TYPE);
+      String buttonSearchCriterion4Log = String.format("inner child type=%s and inner-html text=%s", childHtmlTag, childInnerHtmlText);
       findAndWaitUntilButtonBecameClickableInternal(buttonWebElementSupplier, buttonSearchCriterion4Log, RETRY_COUNT_WHEN_BUTTON_NOT_AVAILABLE_WHEN_BECOMING_CLICKABLE);
    }
 

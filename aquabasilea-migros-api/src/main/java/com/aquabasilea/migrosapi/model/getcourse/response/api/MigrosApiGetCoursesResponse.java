@@ -1,13 +1,14 @@
-package com.aquabasilea.migrosapi.model.response.api;
+package com.aquabasilea.migrosapi.model.getcourse.response.api;
 
+import com.aquabasilea.migrosapi.model.security.api.AuthenticationContainer;
 import com.aquabasilea.migrosapi.service.MigrosApi;
-import com.aquabasilea.migrosapi.model.request.api.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.model.book.api.MigrosApiBookCourseRequest;
 
 import java.util.List;
 
 /**
  * The {@link MigrosApiGetCoursesResponse} defines the response from the {@link MigrosApi} for a
- * {@link MigrosApi#bookCourse(MigrosApiBookCourseRequest)} call
+ * {@link MigrosApi#bookCourse(AuthenticationContainer, MigrosApiBookCourseRequest)} call
  *
  * @param courses the found {@link MigrosCourse}
  */

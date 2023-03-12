@@ -1,6 +1,6 @@
-package com.aquabasilea.migrosapi.service.response;
+package com.aquabasilea.migrosapi.service.book;
 
-import com.aquabasilea.migrosapi.model.response.MigrosBookCourseResponse;
+import com.aquabasilea.migrosapi.model.getcourse.response.MigrosBookCourseResponse;
 import com.brugalibre.common.http.service.response.AbstractHttpResponseReader;
 
 public class MigrosBookCourseResponseReader extends AbstractHttpResponseReader<MigrosBookCourseResponse> {
@@ -11,6 +11,6 @@ public class MigrosBookCourseResponseReader extends AbstractHttpResponseReader<M
 
    @Override
    public MigrosBookCourseResponse createErrorResponse(Exception e, String url) {
-      return null;
+      return new MigrosBookCourseResponse();
    }
 }

@@ -2,18 +2,20 @@ package com.aquabasilea.coursebooker;
 
 import com.aquabasilea.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursebooker.service.booking.facade.AquabasileaCourseBookerFacadeFactory;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
 import com.aquabasilea.coursebooker.states.booking.BookingStateHandler;
 import com.aquabasilea.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
+import com.aquabasilea.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.coursebooker.states.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.coursebooker.states.init.InitializationResult;
+import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.util.DateUtil;
-import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
-import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,17 +52,17 @@ public class AquabasileaCourseBooker implements Runnable {
    /**
     * Constructor only for testing purpose!
     *
-    * @param userContext                    the {@link UserContext}
-    * @param weeklyCoursesRepository        the {@link WeeklyCoursesRepository}
-    * @param courseDefRepository            the {@link CourseDefRepository}
-    * @param aquabasileaCourseBookerConfig  the {@link AquabasileaCourseBookerConfig}
-    * @param aquabasileaWebCourseBookerSupp the {@link Supplier} for a {@link AquabasileaWebCourseBooker}
-    * @param courseBookerThread             the {@link Thread} which controls this {@link AquabasileaCourseBooker}
+    * @param userContext                   the {@link UserContext}
+    * @param weeklyCoursesRepository       the {@link WeeklyCoursesRepository}
+    * @param courseDefRepository           the {@link CourseDefRepository}
+    * @param aquabasileaCourseBookerConfig the {@link AquabasileaCourseBookerConfig}
+    * @param aquabasileaCourseBookerFacade the {@link AquabasileaCourseBookerFacade} which implements the actual booking
+    * @param courseBookerThread            the {@link Thread} which controls this {@link AquabasileaCourseBooker}
     */
    AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
                            AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
-                           Supplier<AquabasileaWebCourseBooker> aquabasileaWebCourseBookerSupp, Thread courseBookerThread) {
-      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaWebCourseBookerSupp);
+                           AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade, Thread courseBookerThread) {
+      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerFacade);
       this.userContext = userContext;
       init(aquabasileaCourseBookerConfig, weeklyCoursesRepository, courseDefRepository, courseBookerThread);
    }
@@ -68,13 +70,15 @@ public class AquabasileaCourseBooker implements Runnable {
    /**
     * Creates a new {@link AquabasileaCourseBooker}
     *
-    * @param weeklyCoursesRepository WeeklyCoursesRepository
-    * @param courseDefRepository     the {@link CourseDefRepository}
-    * @param courseBookerThread      the {@link Thread} which controls this {@link AquabasileaCourseBooker}
+    * @param userContext                          the {@link UserContext} for the specific user
+    * @param weeklyCoursesRepository              the {@link WeeklyCoursesRepository} to get and store a {@link WeeklyCourses}
+    * @param courseDefRepository                  the {@link CourseDefRepository} for get and store the {@link CourseDef}s
+    * @param aquabasileaCourseBookerFacadeFactory the {@link AquabasileaCourseBookerFacadeFactory} in order to create an {@link AquabasileaCourseBookerFacade}
+    * @param courseBookerThread                   the Thread which controls this {@link AquabasileaCourseBooker}
     */
    public AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
-                                  Thread courseBookerThread) {
-      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, getAquabasileaWebNavigatorSupplier(userContext));
+                                  AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory, Thread courseBookerThread) {
+      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, getAquabasileaCourseBookerFacade(aquabasileaCourseBookerFacadeFactory, userContext));
       this.userContext = userContext;
       init(new AquabasileaCourseBookerConfig(), weeklyCoursesRepository, courseDefRepository, courseBookerThread);
    }
@@ -254,9 +258,9 @@ public class AquabasileaCourseBooker implements Runnable {
       }
    }
 
-   private Supplier<AquabasileaWebCourseBooker> getAquabasileaWebNavigatorSupplier(UserContext userContext) {
-      return () -> AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(userContext.username(), userContext.userPwdSupplier.get(),
-              state == BOOKING_DRY_RUN, this::getDurationLeftBeforeCourseBecomesBookableSupplier);
+   private AquabasileaCourseBookerFacade getAquabasileaCourseBookerFacade(AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory, UserContext userContext) {
+      return aquabasileaCourseBookerFacadeFactory.createNewAquabasileaCourseBookerFacade(userContext.username(), userContext.userPwdSupplier,
+              this::getDurationLeftBeforeCourseBecomesBookableSupplier);
    }
 
    /**

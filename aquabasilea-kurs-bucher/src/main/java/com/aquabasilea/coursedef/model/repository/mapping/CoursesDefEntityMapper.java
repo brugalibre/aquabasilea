@@ -3,7 +3,7 @@ package com.aquabasilea.coursedef.model.repository.mapping;
 import com.aquabasilea.coursebooker.model.course.CourseLocation;
 import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.coursedef.persistence.CourseDefEntity;
-import com.aquabasilea.migrosapi.model.response.api.MigrosCourse;
+import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosCourse;
 import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
 import com.brugalibre.common.domain.mapper.CommonDomainModelMapper;
 import com.brugalibre.domain.user.mapper.UserEntityMapper;

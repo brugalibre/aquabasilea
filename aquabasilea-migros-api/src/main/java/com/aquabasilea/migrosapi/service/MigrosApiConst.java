@@ -15,4 +15,6 @@ public class MigrosApiConst {
    public static final String MIGROS_BOOK_COURSE_REQUEST_BODY = "{\"language\":\"de\",\"centerId\":" + CENTER_ID_PLACEHOLDER + ",\"courseIdTac\":" + COURSE_ID_TAC_PLACEHOLDER + "}";
    public static final String MIGROS_BOOKING_URL = "https://blfa-api.migros.ch/kp/api/Booking?";
    public static final String MIGROS_GET_COURSES_URL = "https://blfa-api.migros.ch/kp/api/Courselist/all?";
+   // we book a course 3'000ms after a course became bookable. E.g. course is scheduled at 15:15 -> we book it at 15:15 and 3s
+   public static final long BOOK_COURSE_OFFSET_MS = 3000;
 }

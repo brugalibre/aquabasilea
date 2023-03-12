@@ -5,9 +5,11 @@ import com.aquabasilea.coursebooker.model.course.weeklycourses.CourseComparator;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
+import com.aquabasilea.coursebooker.states.booking.facade.BookingContext;
+import com.aquabasilea.coursebooker.states.booking.facade.CourseBookContainer;
 import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.util.PlUtil;
-import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
@@ -18,9 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static com.aquabasilea.coursebooker.states.CourseBookingState.BOOKING;
+import static com.aquabasilea.coursebooker.states.CourseBookingState.BOOKING_DRY_RUN;
 
 /**
  * The {@link BookingStateHandler} handles the state of the actual booking
@@ -28,11 +30,12 @@ import static com.aquabasilea.coursebooker.states.CourseBookingState.BOOKING;
  */
 public class BookingStateHandler {
    private static final Logger LOG = LoggerFactory.getLogger(BookingStateHandler.class);
-   private final Supplier<AquabasileaWebCourseBooker> aquabasileaWebCourseBookerSupp;
+   private final AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade;
    private final WeeklyCoursesRepository weeklyCoursesRepository;
 
-   public BookingStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, Supplier<AquabasileaWebCourseBooker> aquabasileaWebCourseBookerSupp) {
-      this.aquabasileaWebCourseBookerSupp = aquabasileaWebCourseBookerSupp;
+   public BookingStateHandler(WeeklyCoursesRepository weeklyCoursesRepository,
+                              AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade) {
+      this.aquabasileaCourseBookerFacade = aquabasileaCourseBookerFacade;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
    }
 
@@ -49,11 +52,11 @@ public class BookingStateHandler {
       if (!currentCourse.getHasCourseDef()) {
          return handleCourseWithoutCourseDef(userId, currentCourse);
       }
-      LOG.info("About going to {} the course [{}] for user [{}]", state == BOOKING ? "book" : "dry-run the booking",
+      LOG.info("About going to {} the course [{}] for user [{}]", state == BOOKING ? "book" : "dry-run",
               currentCourse.getCourseName(), userId);
-      CourseBookDetails courseBookDetails = createCourseBookDetails(currentCourse);
+      CourseBookContainer courseBookContainer = createCourseBookContainer(currentCourse, state);
       PlUtil.INSTANCE.startLogInfo("Course booker");
-      CourseBookingEndResult courseBookingEndResult = aquabasileaWebCourseBookerSupp.get().selectAndBookCourse(courseBookDetails);
+      CourseBookingEndResult courseBookingEndResult = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
       LOG.info("Course booking for user [{}] is done. Result is {}", userId, courseBookingEndResult);
       PlUtil.INSTANCE.endLogInfo();
       resumeCoursesUntil(userId, currentCourse);
@@ -90,8 +93,9 @@ public class BookingStateHandler {
               .build();
    }
 
-   private static CourseBookDetails createCourseBookDetails(Course currentCourse) {
-      return new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
+   private CourseBookContainer createCourseBookContainer(Course currentCourse, CourseBookingState state) {
+      CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
               currentCourse.getCourseDate(), currentCourse.getCourseLocation().getCourseLocationName());
+      return new CourseBookContainer(courseBookDetails, new BookingContext(state == BOOKING_DRY_RUN));
    }
 }

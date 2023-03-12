@@ -6,6 +6,7 @@ import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.model.statistics.BookingStatisticsUpdater;
+import com.aquabasilea.coursebooker.service.booking.facade.AquabasileaCourseBookerFacadeFactory;
 import com.aquabasilea.coursebooker.service.statistics.StatisticsService;
 import com.aquabasilea.coursebooker.states.booking.notification.CourseBookingAlertSender;
 import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class AquabasileaCourseBookerInitializer implements Initializer {
    private final AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder;
    private final WeeklyCoursesRepository weeklyCoursesRepository;
+   private final AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory;
    private final StatisticsService statisticsService;
    private final CourseDefRepository courseDefRepository;
    private final SecretStoreService secretStoreService;
@@ -28,11 +30,13 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
    public AquabasileaCourseBookerInitializer(AquabasileaCourseBookerHolder AquabasileaCourseBookerHolder,
                                              WeeklyCoursesRepository weeklyCoursesRepository,
                                              CourseDefRepository courseDefRepository, StatisticsService statisticsService,
+                                             AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory,
                                              SecretStoreService secretStoreService) {
       this.aquabasileaCourseBookerHolder = AquabasileaCourseBookerHolder;
       this.secretStoreService = secretStoreService;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
       this.statisticsService = statisticsService;
+      this.aquabasileaCourseBookerFacadeFactory = aquabasileaCourseBookerFacadeFactory;
       this.courseDefRepository = courseDefRepository;
    }
 
@@ -45,7 +49,7 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
 
    private AquabasileaCourseBooker createAquabasileaCourseBooker(UserAddedEvent userAddedEvent) {
       AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(createUserContext(userAddedEvent), weeklyCoursesRepository,
-              courseDefRepository, createAquabasileaCourseBookerThread());
+              courseDefRepository, aquabasileaCourseBookerFacadeFactory, createAquabasileaCourseBookerThread());
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender(AlertSendConfigProviderImpl.of()));
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new BookingStatisticsUpdater(statisticsService));
       aquabasileaCourseBookerSupplier.aquabasileaCourseBooker = aquabasileaCourseBooker;

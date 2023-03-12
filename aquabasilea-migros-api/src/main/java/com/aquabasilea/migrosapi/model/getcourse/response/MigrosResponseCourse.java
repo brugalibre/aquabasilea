@@ -1,7 +1,10 @@
-package com.aquabasilea.migrosapi.model.response;
+package com.aquabasilea.migrosapi.model.getcourse.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Objects;
 
 import static java.util.Objects.nonNull;
@@ -19,6 +22,7 @@ public class MigrosResponseCourse {
    private String instructor;
    private String location;
    private String start;
+   private LocalDateTime startAsLocalDateTime;
    private boolean booked;
    private boolean bookable;
 
@@ -83,8 +87,18 @@ public class MigrosResponseCourse {
       return start;
    }
 
+   public LocalDateTime getStartAsLocalDateTime() {
+      return startAsLocalDateTime;
+   }
+
+
    public void setStart(String start) {
       this.start = start;
+      if (nonNull(start)) {
+         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+         TemporalAccessor parsedTemporalAccessor = dateTimeFormatter.parse(start);
+         this.startAsLocalDateTime = LocalDateTime.from(parsedTemporalAccessor);
+      }
    }
 
    public boolean isBooked() {

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -66,6 +67,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
       switch (courseBookingEndResult.getCourseClickedResult()) {
          case COURSE_NOT_SELECTED_NO_SINGLE_RESULT: // fall through
          case COURSE_NOT_SELECTED_EXCEPTION_OCCURRED: // fall through
+         case COURSE_NOT_BOOKABLE: // fall through
             return String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
          case COURSE_BOOKING_ABORTED:
             return String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
@@ -100,6 +102,9 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
 
    private static String getExceptionMsg(CourseBookingEndResult courseBookingEndResult) {
       Exception exception = courseBookingEndResult.getException();
+      if (isNull(exception)) {
+         return "Fehler im Mapping, keine Exception! (Domi flick dis zügs..)";
+      }
       return exception.getClass().getSimpleName() + ":\n" + exception.getMessage();
    }
 }

@@ -1,9 +1,10 @@
-package com.aquabasilea.migrosapi.model.response;
+package com.aquabasilea.migrosapi.model.getcourse.response;
 
 import com.brugalibre.common.http.model.response.CommonHttpResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -36,7 +37,12 @@ public class MigrosGetCoursesResponse extends CommonHttpResponse {
     * @return the single matched course or <code>null</code> if there is more than one
     */
    public String getSingleCourseIdTac() {
-      return courses.size() == 1 ? String.valueOf(courses.get(0).getCourseIdTac()) : null;
+      return courses.stream()
+              .sorted(Comparator.comparing(MigrosResponseCourse::getStartAsLocalDateTime))
+              .map(MigrosResponseCourse::getCourseIdTac)
+              .findFirst()
+              .map(String::valueOf)
+              .orElse(null);
    }
 
    public Exception getException() {

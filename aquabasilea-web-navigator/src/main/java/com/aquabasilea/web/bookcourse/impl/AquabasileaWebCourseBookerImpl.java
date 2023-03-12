@@ -14,7 +14,6 @@ import com.aquabasilea.web.error.ErrorHandlerImpl;
 import com.aquabasilea.web.filtercourse.CourseFilterHelper;
 import com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator;
 import com.aquabasilea.web.util.ErrorUtil;
-import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -28,7 +27,6 @@ import java.util.function.Supplier;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
 public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNavigator implements AquabasileaWebCourseBooker {
 
@@ -125,16 +123,6 @@ public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNaviga
 
    private void navigate2CoursePage() {
       navigate2CoursePageInternal(false);
-   }
-
-   private void navigate2CoursePageInternal(boolean clickLoginButton) {
-      String coursePage = propertyReader.readValue(COURSE_PAGE);
-      navigateToPage(coursePage);
-      if (clickLoginButton) {
-         aquabasileaLoginHelper.clickLoginButton();
-      }
-      // yes, this may take a veeeeeeeeeeeeery long time
-      waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
    }
 
    private void init(boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {

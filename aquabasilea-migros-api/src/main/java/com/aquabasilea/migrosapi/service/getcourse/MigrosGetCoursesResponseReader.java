@@ -1,6 +1,6 @@
-package com.aquabasilea.migrosapi.service.response;
+package com.aquabasilea.migrosapi.service.getcourse;
 
-import com.aquabasilea.migrosapi.model.response.MigrosGetCoursesResponse;
+import com.aquabasilea.migrosapi.model.getcourse.response.MigrosGetCoursesResponse;
 import com.brugalibre.common.http.service.response.AbstractHttpResponseReader;
 
 public class MigrosGetCoursesResponseReader extends AbstractHttpResponseReader<MigrosGetCoursesResponse> {

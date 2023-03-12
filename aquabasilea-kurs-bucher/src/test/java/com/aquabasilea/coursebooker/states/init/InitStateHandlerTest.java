@@ -44,7 +44,7 @@ class InitStateHandlerTest {
       assertThat(initializationResult.getCurrentCourse(), is(notNullValue()));
       assertThat(initializationResult.getCurrentCourse().getCourseDate().getDayOfMonth(), is(now.plusDays(7).getDayOfMonth()));
       assertThat(initializationResult.getCurrentCourse().getCourseDate().getMonthValue(), is(now.plusDays(7).getMonthValue()));
-      verify(tcb.aquabasileaCourseBookerConfig.refresh());
+      verify(tcb.aquabasileaCourseBookerConfig).refresh();
    }
 
    @Test
