@@ -128,6 +128,7 @@ public class MigrosApiImpl implements MigrosApi {
       if (migrosBookContext.dryRun()) {
          return handleDryRun(migrosApiBookCourseRequest, courseIdTac, bearerToken);
       }
+      LOG.info("Got a non-null bearer token={} and courseIdTac={}", nonNull(bearerToken), courseIdTac);
       waitUntilCourseIsBookable(migrosBookContext.duration2WaitUntilCourseBecomesBookable());
       MigrosBookCourseResponse migrosBookCourseResponse = createAndPostBookCourseRequest(migrosApiBookCourseRequest.centerId(), courseIdTac);
       LOG.info("Booking result for course '{}' is '{}'", migrosApiBookCourseRequest.courseName(), migrosBookCourseResponse.getCourseBookResult());

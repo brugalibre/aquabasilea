@@ -62,6 +62,7 @@ public class AquabasileaLoginService {
             return aquabasileaLogin.doLogin();
          } catch (Exception e) {
             LOG.error("Error during login!", e);
+            aquabasileaLogin.logout();
             counter--;
          }
       }

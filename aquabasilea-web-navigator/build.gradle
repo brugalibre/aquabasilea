@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'com.brugalibre', name: 'web-navigator', version: '1.0.4-SNAPSHOT'
+    implementation group: 'com.brugalibre', name: 'web-navigator', version: '1.0.5-SNAPSHOT'
     compileOnly 'org.slf4j:slf4j-api:2.0.5'
 }
 

@@ -60,6 +60,10 @@ public abstract class AbstractAquabasileaWebNavigator extends BaseWebNavigator<A
       if (clickLoginButton) {
          aquabasileaLoginHelper.clickLoginButton();
       }
+      wait4Navigate2CoursePageCompleted();
+   }
+
+   protected void wait4Navigate2CoursePageCompleted() {
       // yes, this may take a veeeeeeeeeeeeery long time
       waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
    }

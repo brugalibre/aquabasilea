@@ -51,13 +51,7 @@ public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
       boolean isLoginSuccessful = this.webNavigatorHelper.findWebElementById(LOGIN_FAILED_ERROR_MSG_ID)
               .isEmpty();
       navigate2CoursePageInternal(true);
-      waitUntilLoginCompleted();
       logout();
       return isLoginSuccessful;
-   }
-
-   protected void waitUntilLoginCompleted() {
-      // yes, this may take a veeeeeeeeeeeeery long time
-      waitForVisibilityOfElement(WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_NAME, WEB_ELEMENT_CRITERIA_FILTER_TABLE_ATTR_VALUE), WAIT_FOR_CRITERIA_FILTER_TABLE_TO_APPEAR.toMillis());
    }
 }
