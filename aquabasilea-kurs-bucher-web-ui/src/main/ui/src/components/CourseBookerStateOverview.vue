@@ -17,6 +17,13 @@
         v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
       {{ courseBookingStateDto.pauseOrResumeButtonText }}
     </CButton>
+    <CButton
+        color="info"
+        class="container-element-left"
+        :disabled="courseBookingStateDto.state === 'BOOKING' || !this.getCurrentCourse?.id"
+        v-on:click="bookCurrentCourseDryRun(this.getCurrentCourse.id)">
+     Starte Testlauf
+    </CButton>
     <CAccordion>
       <CAccordionItem :item-key="1">
         <CAccordionHeader>
@@ -82,7 +89,7 @@ export default {
       } else {
         this.$emit('refreshCourseStateOverview');
       }
-    },
+    }
   },
   mounted() {
     this.fetchCourseBookingStateDto();

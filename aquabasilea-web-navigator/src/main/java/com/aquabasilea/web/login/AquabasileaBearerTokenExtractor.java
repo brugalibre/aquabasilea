@@ -2,9 +2,9 @@ package com.aquabasilea.web.login;
 
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v108.network.Network;
-import org.openqa.selenium.devtools.v108.network.model.Request;
-import org.openqa.selenium.devtools.v108.network.model.RequestWillBeSent;
+import org.openqa.selenium.devtools.v113.network.Network;
+import org.openqa.selenium.devtools.v113.network.model.Request;
+import org.openqa.selenium.devtools.v113.network.model.RequestWillBeSent;
 import org.openqa.selenium.remote.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,27 +1,89 @@
 package com.aquabasilea.coursebooker.states.booking;
 
+import com.aquabasilea.coursebooker.model.course.CourseLocation;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.Course.CourseBuilder;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
 import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
 import com.aquabasilea.coursebooker.states.CourseBookingState;
+import com.aquabasilea.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
+import com.aquabasilea.coursebooker.states.booking.facade.BookingContext;
+import com.aquabasilea.coursebooker.states.booking.facade.CourseBookContainer;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 
+import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKED;
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_SKIPPED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class BookingStateHandlerTest {
    private static final String USER_ID = "123";
+
+   @Test
+    void testBookCourseWithIdAndCheckResumedCourses() {
+
+      // Given
+      LocalDateTime courseDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 15));
+      String courseName1 = "Kurs-99";
+      String courseName2 = "Kurs-88";
+      String courseName3 = "Kurs-77";
+      String courseId1 = "1";
+      String courseId2 = "2";
+      String courseId3 = "3";
+      AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade = mock(AquabasileaCourseBookerFacade.class);
+      CourseBookingEndResult courseBookingEndResult = new CourseBookingEndResult(courseName1, COURSE_BOOKED, List.of(), null);
+      CourseBookContainer expectedCourseBookContainer =  new CourseBookContainer(new CourseBookDetails(courseName1, null,
+              courseDate, CourseLocation.FITNESSPARK_GLATTPARK.getCourseLocationName()), new BookingContext(false));
+      when(aquabasileaCourseBookerFacade.selectAndBookCourse(eq(expectedCourseBookContainer))).thenReturn(courseBookingEndResult);
+      TestCaseBuilder tcb = new TestCaseBuilder()
+                .withCourse(CourseBuilder.builder()
+                        .withCourseDate(courseDate)
+                        .withCourseName(courseName1)
+                        .withId(courseId1)
+                        .withCourseLocation(CourseLocation.FITNESSPARK_GLATTPARK)
+                        .withHasCourseDef(true)
+                        .withIsPaused(false)
+                        .build())
+               .withCourse(CourseBuilder.builder()
+                        .withCourseDate(LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(10, 15)))
+                        .withCourseName(courseName2)
+                        .withId(courseId2)
+                        .withHasCourseDef(true)
+                        .withIsPaused(true)
+                        .build())
+               .withCourse(CourseBuilder.builder()
+                        .withCourseDate(LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(10, 15)))
+                        .withCourseName(courseName3)
+                        .withId(courseId3)
+                        .withHasCourseDef(true)
+                        .withIsPaused(true)
+                        .build())
+                .withCourseBookingFacade(aquabasileaCourseBookerFacade)
+                .build();
+
+        // When
+        CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0).getId(), tcb.currentBookingState);
+
+        // When
+        assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKED));
+        WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.getByUserId(USER_ID);
+        // Earliest course must be resumed
+        assertThat(weeklyCourses.getCourseById(courseId2).getIsPaused(), is(false));
+        // But the last not
+        assertThat(weeklyCourses.getCourseById(courseId3).getIsPaused(), is(true));
+   }
 
    @Test
    void testBookCourseWithoutCourseDef() {
@@ -114,15 +176,16 @@ class BookingStateHandlerTest {
 
    private static class TestCaseBuilder {
       private final WeeklyCoursesRepository weeklyCoursesRepository;
-      private final BookingStateHandler bookingStateHandler;
       private final WeeklyCourses weeklyCourses;
       private final CourseBookingState currentBookingState;
+      private AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade;
+      private BookingStateHandler bookingStateHandler;
 
       private TestCaseBuilder() {
          this.weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
-         this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, null);
          this.weeklyCourses = new WeeklyCourses(USER_ID);
          this.currentBookingState = CourseBookingState.BOOKING;
+         this.aquabasileaCourseBookerFacade = null;
       }
 
       private TestCaseBuilder withCourse(Course course) {
@@ -132,11 +195,17 @@ class BookingStateHandlerTest {
 
       private TestCaseBuilder build() {
          mockWeeklyCoursesRepository();
+         this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerFacade);
          return this;
       }
 
       private void mockWeeklyCoursesRepository() {
          when(weeklyCoursesRepository.getByUserId(USER_ID)).thenReturn(weeklyCourses);
       }
+
+       public TestCaseBuilder withCourseBookingFacade(AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade) {
+          this.aquabasileaCourseBookerFacade = aquabasileaCourseBookerFacade;
+          return this;
+       }
    }
 }

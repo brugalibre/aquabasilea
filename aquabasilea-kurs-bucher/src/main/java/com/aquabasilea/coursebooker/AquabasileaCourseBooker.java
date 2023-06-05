@@ -17,6 +17,7 @@ import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,6 +143,24 @@ public class AquabasileaCourseBooker implements Runnable {
       return infoString4StateEvaluator.getInfoString4State(this.state, getCurrentCourse());
    }
 
+   /**
+    * Does the actual booking or dry-run of the current Course but only, if there is a {@link CourseDef}
+    * for the given course. If the value of <code>withNotification</code> is <code>true</code> then all consumers listening
+    * for the course-booking result are notified
+    *
+    * @param courseId           the id of the {@link Course} to book
+    * @param courseBookingState the current {@link CourseBookingState}
+    * @param withNotification   if <code>true</code> then the consumes are notified about the result of the booking.
+    * @return a {@link CourseBookingEndResult} with details about the booking
+    */
+   public CourseBookingEndResult bookCourse(CourseBookingState courseBookingState, String courseId, boolean withNotification) {
+      CourseBookingEndResult courseBookingEndResult = bookingStateHandler.bookCourse(userContext.id, courseId, courseBookingState);
+      if (withNotification) {
+         notifyResult2Consumers(courseBookingEndResult, courseBookingState);
+      }
+      return courseBookingEndResult;
+   }
+
    private void handleCurrentState() {
       switch (this.state) {
          case INIT:
@@ -154,7 +173,7 @@ public class AquabasileaCourseBooker implements Runnable {
          case BOOKING: // fall through
          case BOOKING_DRY_RUN:
             CourseBookingEndResult courseBookingResult = bookingStateHandler.bookCourse(userContext.id, getCurrentCourse(), state);
-            notifyResult2Consumers(courseBookingResult);
+            notifyResult2Consumers(courseBookingResult, this.state);
             getNextState();
             break;
          case STOP:
@@ -168,8 +187,8 @@ public class AquabasileaCourseBooker implements Runnable {
       }
    }
 
-   private void notifyResult2Consumers(CourseBookingEndResult courseBookingResult) {
-      courseBookingEndResultConsumers.forEach(courseBookingEndResultConsumer -> courseBookingEndResultConsumer.consumeResult(ConsumerUser.of(userContext), courseBookingResult, this.state));
+   private void notifyResult2Consumers(CourseBookingEndResult courseBookingResult, CourseBookingState courseBookingState) {
+      courseBookingEndResultConsumers.forEach(courseBookingEndResultConsumer -> courseBookingEndResultConsumer.consumeResult(ConsumerUser.of(userContext), courseBookingResult, courseBookingState));
    }
 
    private void pauseApp() {

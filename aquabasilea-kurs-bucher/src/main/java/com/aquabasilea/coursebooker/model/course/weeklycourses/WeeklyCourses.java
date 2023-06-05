@@ -1,6 +1,7 @@
 package com.aquabasilea.coursebooker.model.course.weeklycourses;
 
 import com.aquabasilea.coursebooker.model.course.weeklycourses.exception.CourseAlreadyExistsException;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.exception.NoCourseFoundException;
 import com.aquabasilea.coursedef.model.CourseDef;
 import com.aquabasilea.i18n.TextResources;
 import com.brugalibre.common.domain.model.AbstractDomainModel;
@@ -175,5 +176,20 @@ public class WeeklyCourses extends AbstractDomainModel {
       LocalTime courseTime = course.getCourseDate().toLocalTime();
       return courseDateCourseDef.getDayOfWeek() == course.getCourseDate().getDayOfWeek()
               && (courseDefTime.getHour() == courseTime.getHour() && courseDefTime.getMinute() == courseTime.getMinute());
+   }
+
+   /**
+    * Returns the {@link Course} for the given id
+    *
+    * @param courseId the id of the course to retrieve
+    * @return the {@link Course} for the given id
+    * @throws NoCourseFoundException if there is no course with the given
+    */
+   public Course getCourseById(String courseId) {
+      Course course4Id = getCourse4Id(courseId);
+      if (isNull(course4Id)) {
+         throw new NoCourseFoundException(this.id, courseId);
+      }
+      return course4Id;
    }
 }

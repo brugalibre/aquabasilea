@@ -9,6 +9,10 @@ export default {
             axios.put(AQUABASILEA_COURSE_BOOKER_API_URL + '/pauseOrResume', null, {headers: authHeader()})
                 .catch(error => console.error("Error occurred while pausing or resuming", error));
         },
+        bookCurrentCourseDryRun: function (courseId) {
+            axios.put(AQUABASILEA_COURSE_BOOKER_API_URL + '/bookCourseDryRun/' + courseId, null,{headers: authHeader()})
+                .catch(error => console.error("Error occurred while pausing or resuming", error));
+        },
         fetchCourseBookingStateDto: function () {
             axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/state', {headers: authHeader()})
                 .then(response => response.data)

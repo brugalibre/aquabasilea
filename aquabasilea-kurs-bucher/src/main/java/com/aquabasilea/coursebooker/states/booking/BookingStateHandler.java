@@ -43,6 +43,25 @@ public class BookingStateHandler {
     * Does the actual booking or dry-run of the current Course but only, if there is a {@link CourseDef}
     * for the given course.
     *
+    * @param userId             the id uf the {@link User} whose {@link Course}s are resumed
+    * @param courseId           the id of the {@link Course} to book
+    * @param courseBookingState the current {@link CourseBookingState}
+    * @return a {@link CourseBookingEndResult} with details about the booking
+    */
+   public CourseBookingEndResult bookCourse(String userId, String courseId, CourseBookingState courseBookingState) {
+      Course courseById = getCourseById(userId, courseId);
+      return bookCourse(userId, courseById, courseBookingState);
+   }
+
+   private Course getCourseById(String userId, String courseId) {
+      WeeklyCourses weeklyCourses = weeklyCoursesRepository.getByUserId(userId);
+      return weeklyCourses.getCourseById(courseId);
+   }
+
+   /**
+    * Does the actual booking or dry-run of the current Course but only, if there is a {@link CourseDef}
+    * for the given course.
+    *
     * @param userId        the id uf the {@link User} whose {@link Course}s are resumed
     * @param currentCourse the {@link Course} to book
     * @param state         the current {@link CourseBookingState}

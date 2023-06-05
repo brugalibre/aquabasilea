@@ -1,6 +1,6 @@
 @echo off
 Rem Aquabasilea konstants
-set baseWorkspaceDir="F:\Dominic\Documents\Eigene Dateien\Programmierung\Java only"
+set baseWorkspaceDir="C:\Users\domin\programmierung"
 set aquabasileaKursBucherJarName=aquabasilea-kurs-bucher-rest-app-1.0-SNAPSHOT.jar
 set aquabasileaKursBuchenBaseDir="%baseWorkspaceDir%\aquabasilea\"
 set aquabasileaKursBuchenBuildOutputDir=%aquabasileaKursBuchenBaseDir%aquabasilea-kurs-bucher-rest-app\build\libs\%aquabasileaKursBucherJarName%

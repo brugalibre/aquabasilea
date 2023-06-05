@@ -24,22 +24,25 @@ class WeeklyCoursesTest {
       // Given
       WeeklyCourses weeklyCourses = new WeeklyCourses();
       LocalDateTime courseDate = LocalDateTime.now();
-      String courseId = "123";
+      String courseId1 = "123";
+      String courseId2 = "1234";
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
-              .withId(courseId)
+              .withId(courseId1)
               .build()));
 
       // When
       weeklyCourses.addCourse(CourseBuilder.builder()
               .withCourseName(COURSE_2)
               .withCourseDate(courseDate)
-              .withId(courseId)
+              .withId(courseId2)
               .build());
 
       // Then
       assertThat(weeklyCourses.getCourses().size(), is(2));
+      Course course2 = weeklyCourses.getCourseById(courseId2);
+      assertThat(course2.getCourseName(), is(COURSE_2));
    }
 
    @Test
