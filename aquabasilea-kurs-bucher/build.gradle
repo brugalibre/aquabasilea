@@ -20,17 +20,17 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.1-SNAPSHOT'
+    compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.2-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-util', version: '1.0.1-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-notification', version: '1.0.1-SNAPSHOT'
-    implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0.4-SNAPSHOT'
+    implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0.5-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-migros-api', version: '1.0.0-SNAPSHOT'
 
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'
 
     compileOnly 'org.slf4j:slf4j-api:2.0.5'
 
-    testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.1-SNAPSHOT'
+    testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.2-SNAPSHOT'
     testImplementation 'org.hibernate:hibernate-core:6.1.5.Final'
     testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.0.0'

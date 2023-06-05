@@ -1,1 +1,6 @@
 rootProject.name = 'aquabasilea'
+include 'aquabasilea-kurs-bucher'
+include 'aquabasilea-kurs-bucher-rest-app'
+include 'aquabasilea-kurs-bucher-web-ui'
+include 'aquabasilea-migros-api'
+include 'aquabasilea-web-navigator'
