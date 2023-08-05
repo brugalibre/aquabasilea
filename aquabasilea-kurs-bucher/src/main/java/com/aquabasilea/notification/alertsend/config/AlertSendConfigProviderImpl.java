@@ -1,7 +1,7 @@
 package com.aquabasilea.notification.alertsend.config;
 
-import com.aquabasilea.security.securestorage.SecretStorage;
-import com.aquabasilea.security.securestorage.util.KeyUtils;
+import com.aquabasilea.application.security.securestorage.SecretStorage;
+import com.aquabasilea.application.security.securestorage.util.KeyUtils;
 import com.brugalibre.notification.config.AlertSendConfig;
 import com.brugalibre.notification.config.AlertSendConfigProvider;
 import com.brugalibre.util.file.yml.YamlService;

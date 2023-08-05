@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.app;
 
-import com.aquabasilea.app.config.AquabasileaCourseBookerAppConfig;
+import com.aquabasilea.application.config.AquabasileaCourseBookerAppConfig;
 import com.brugalibre.common.domain.app.config.CommonAppPersistenceConfig;
 import com.brugalibre.common.security.app.config.CommonAppSecurityConfig;
 import org.springframework.context.annotation.ComponentScan;

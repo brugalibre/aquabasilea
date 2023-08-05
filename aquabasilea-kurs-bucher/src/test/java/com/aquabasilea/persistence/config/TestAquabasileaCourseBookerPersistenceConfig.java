@@ -1,7 +1,7 @@
 package com.aquabasilea.persistence.config;
 
-import com.aquabasilea.app.config.AquabasileaCourseBookerAppConfig;
-import com.aquabasilea.app.config.AquabasileaCourseBookerPersistenceConfig;
+import com.aquabasilea.application.config.AquabasileaCourseBookerAppConfig;
+import com.aquabasilea.application.config.AquabasileaCourseBookerPersistenceConfig;
 import com.brugalibre.common.domain.app.config.CommonAppPersistenceConfig;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;

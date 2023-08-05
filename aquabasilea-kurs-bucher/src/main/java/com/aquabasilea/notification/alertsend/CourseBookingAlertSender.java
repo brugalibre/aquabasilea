@@ -3,7 +3,7 @@ package com.aquabasilea.notification.alertsend;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
-import com.aquabasilea.i18n.TextResources;
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.brugalibre.notification.api.AlertSendService;
 import com.brugalibre.notification.config.AlertSendConfig;
