@@ -3,7 +3,7 @@ package com.aquabasilea.domain.course;
 import com.aquabasilea.domain.course.exception.CourseAlreadyExistsException;
 import com.aquabasilea.domain.course.exception.NoCourseFoundException;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
-import com.aquabasilea.i18n.TextResources;
+import com.aquabasilea.application.i18n.TextResources;
 import com.brugalibre.common.domain.model.AbstractDomainModel;
 
 import java.time.LocalDateTime;

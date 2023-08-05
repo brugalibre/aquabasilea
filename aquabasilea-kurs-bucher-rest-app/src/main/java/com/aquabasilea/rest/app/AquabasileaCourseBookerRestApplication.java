@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.app;
 
-import com.aquabasilea.app.exception.GlobalExceptionHandler;
+import com.aquabasilea.application.exception.GlobalExceptionHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

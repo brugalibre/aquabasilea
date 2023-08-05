@@ -1,7 +1,6 @@
 package com.aquabasilea.rest.model.coursebooker;
 
-import com.aquabasilea.i18n.TextResources;
-
+import com.aquabasilea.application.i18n.TextResources;
 
 public class CourseBookingStateDto {
    private final String stateMsg;

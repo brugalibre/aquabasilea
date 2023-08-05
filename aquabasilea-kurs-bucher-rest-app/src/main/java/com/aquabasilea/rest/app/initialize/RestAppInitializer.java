@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.app.initialize;
 
-import com.aquabasilea.app.initialize.api.AquabasileaAppInitializer;
+import com.aquabasilea.application.initialize.api.AquabasileaAppInitializer;
 import com.aquabasilea.rest.api.security.AquabasileaUserRegisteredObserver;
 import com.brugalibre.common.security.rest.service.UserRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ public class RestAppInitializer {
    }
 
    @EventListener
+   @SuppressWarnings("unused")
    public void onApplicationEvent(final ServletWebServerInitializedEvent event /*unused*/) {
       createAndAddUserRegisteredObserver();
       aquabasileaAppInitializer.initialize4ExistingUsers();

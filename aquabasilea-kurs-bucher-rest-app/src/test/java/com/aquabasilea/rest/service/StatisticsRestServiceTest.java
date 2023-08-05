@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.service;
 
-import com.aquabasilea.coursebooker.model.statistics.Statistics;
-import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
+import com.aquabasilea.domain.statistics.model.Statistics;
+import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.rest.config.TestAquabasileaCourseBookerRestAppConfig;
 import com.aquabasilea.rest.model.statistic.StatisticsDto;
 import com.aquabasilea.rest.service.statistics.StatisticsRestService;

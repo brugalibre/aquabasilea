@@ -1,9 +1,9 @@
 package com.aquabasilea.rest.service.statistics;
 
-import com.aquabasilea.coursebooker.service.statistics.StatisticsService;
-import com.aquabasilea.i18n.TextResources;
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.statistic.StatisticsDto;
+import com.aquabasilea.service.statistics.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
