@@ -11,11 +11,11 @@ import java.util.Locale;
 @Component
 public class LocaleProvider {
 
-   private LocaleProvider() {
-      // private
+   public Locale getCurrentLocale() {
+      return Locale.GERMAN;
    }
 
-   public static Locale getCurrentLocale() {
+   public static Locale getDefaultLocale () {
       return Locale.GERMAN;
    }
 }

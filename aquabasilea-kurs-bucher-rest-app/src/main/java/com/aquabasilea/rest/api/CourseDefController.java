@@ -1,8 +1,8 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.coursebooker.model.course.CourseLocation;
-import com.aquabasilea.rest.model.CourseLocationDto;
+import com.aquabasilea.domain.course.CourseLocation;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
+import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
 import com.aquabasilea.rest.service.coursedef.CourseDefRestService;
 import com.brugalibre.common.security.user.service.IUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;

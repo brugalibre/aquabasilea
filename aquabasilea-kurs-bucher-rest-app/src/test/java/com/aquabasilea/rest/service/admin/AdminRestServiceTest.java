@@ -1,15 +1,18 @@
 package com.aquabasilea.rest.service.admin;
 
-import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.coursebooker.model.course.CourseLocation;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
-import com.aquabasilea.coursebooker.model.statistics.Statistics;
-import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
+import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
+import com.aquabasilea.domain.statistics.model.Statistics;
+import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.rest.config.TestAquabasileaCourseBookerRestAppConfig;
+import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.admin.AdminOverviewDto;
 import com.aquabasilea.rest.model.admin.Course4AdminViewDto;
 import com.aquabasilea.rest.service.statistics.StatisticsRestService;
+import com.aquabasilea.service.admin.AdminService;
+import com.aquabasilea.service.statistics.StatisticsService;
 import com.brugalibre.domain.contactpoint.mobilephone.model.MobilePhone;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
@@ -62,8 +65,8 @@ class AdminRestServiceTest {
       // Given
       String courseName1 = "Kurs 1";
       String courseName2 = "Kurs 2";
-      AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder = getAquabasileaCourseBookerHolder(courseName1, courseName2);
-      AdminRestService adminRestService = new AdminRestService(statisticsRestService, aquabasileaCourseBookerHolder, userRepository);
+      AdminService adminService = new AdminService(new StatisticsService(statisticsRepository), getAquabasileaCourseBookerHolder(courseName1, courseName2), userRepository);
+      AdminRestService adminRestService = new AdminRestService(adminService, new LocaleProvider(), statisticsRestService);
       createStatistics(userId1, 4, 2);
       createStatistics(userId2, 12, 3);
 
@@ -83,7 +86,9 @@ class AdminRestServiceTest {
       // Given
       AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder = new AquabasileaCourseBookerHolder();
       aquabasileaCourseBookerHolder.putForUserId(userIdWithoutCurrentCourse, mock(AquabasileaCourseBooker.class));
-      AdminRestService adminRestService = new AdminRestService(statisticsRestService, aquabasileaCourseBookerHolder, userRepository);
+      AdminService adminService = new AdminService(new StatisticsService(statisticsRepository), aquabasileaCourseBookerHolder, userRepository);
+      AdminRestService adminRestService = new AdminRestService(adminService, new LocaleProvider(), statisticsRestService);
+
       createStatistics(userId1, 0, 0);
       createStatistics(userId2, 0, 0);
 

@@ -2,11 +2,11 @@ package com.aquabasilea.app.initialize.coursebooker;
 
 import com.aquabasilea.app.initialize.api.UserAddedEvent;
 import com.aquabasilea.app.initialize.persistence.PersistenceInitializer;
-import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
-import com.aquabasilea.coursebooker.model.userconfig.repository.UserConfigRepository;
+import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
+import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
+import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
 import org.awaitility.Duration;

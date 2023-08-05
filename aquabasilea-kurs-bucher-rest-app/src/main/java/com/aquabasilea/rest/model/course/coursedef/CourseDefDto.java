@@ -1,9 +1,9 @@
 package com.aquabasilea.rest.model.course.coursedef;
 
-import com.aquabasilea.coursedef.model.CourseDef;
+import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.rest.i18n.LocaleProvider;
-import com.aquabasilea.rest.model.CourseLocationDto;
+import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
 import com.aquabasilea.search.SearchableAttribute;
 import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -28,7 +28,7 @@ public record CourseDefDto(@SearchableAttribute String courseName,
    public static CourseDefDto of(CourseDef courseDef) {
       String dayOfWeekName = courseDef.courseDate()
               .getDayOfWeek()
-              .getDisplayName(TextStyle.FULL, LocaleProvider.getCurrentLocale());
+              .getDisplayName(TextStyle.FULL, LocaleProvider.getDefaultLocale());
       return new CourseDefDto(courseDef.courseName(),
               courseDef.courseInstructor(),
               dayOfWeekName,
@@ -38,7 +38,7 @@ public record CourseDefDto(@SearchableAttribute String courseName,
    }
 
    public String getCourseRepresentation() {
-      String dateRep = DateUtil.toString(courseDefDate.toLocalDate(), LocaleProvider.getCurrentLocale());
+      String dateRep = DateUtil.toString(courseDefDate.toLocalDate(), LocaleProvider.getDefaultLocale());
       return String.format(TextResources.COURSE_REPRESENTATION, courseName, courseInstructor, dayOfWeek, dateRep,
               timeOfTheDay, courseLocationDto.courseLocationName());
    }

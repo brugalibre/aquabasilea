@@ -1,6 +1,6 @@
 package com.aquabasilea.app.exception;
 
-import com.aquabasilea.notification.config.AlertSendConfigProviderImpl;
+import com.aquabasilea.notification.alertsend.config.AlertSendConfigProviderImpl;
 import com.brugalibre.notification.send.ApplicationErrorAlertSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

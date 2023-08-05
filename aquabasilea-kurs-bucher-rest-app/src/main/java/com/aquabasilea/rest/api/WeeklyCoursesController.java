@@ -2,7 +2,7 @@ package com.aquabasilea.rest.api;
 
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
-import com.aquabasilea.rest.service.WeeklyCoursesRestService;
+import com.aquabasilea.rest.service.course.WeeklyCoursesRestService;
 import com.brugalibre.common.security.user.service.IUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

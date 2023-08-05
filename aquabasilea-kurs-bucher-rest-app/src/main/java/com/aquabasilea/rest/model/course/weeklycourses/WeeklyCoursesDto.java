@@ -1,9 +1,9 @@
 package com.aquabasilea.rest.model.course.weeklycourses;
 
 
-import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.CourseComparator;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.CourseComparator;
+import com.aquabasilea.domain.course.WeeklyCourses;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import java.util.List;

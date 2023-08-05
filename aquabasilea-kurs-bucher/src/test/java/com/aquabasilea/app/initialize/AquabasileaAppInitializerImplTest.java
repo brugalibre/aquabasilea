@@ -4,20 +4,20 @@ import com.aquabasilea.app.initialize.api.UserAddedEvent;
 import com.aquabasilea.app.initialize.coursebooker.AquabasileaCourseBookerInitializer;
 import com.aquabasilea.app.initialize.persistence.PersistenceInitializer;
 import com.aquabasilea.app.initialize.usercredentials.UserCredentialsInitializer;
-import com.aquabasilea.coursebooker.model.course.CourseLocation;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
-import com.aquabasilea.coursebooker.model.userconfig.UserConfig;
-import com.aquabasilea.coursebooker.model.userconfig.repository.UserConfigRepository;
-import com.aquabasilea.coursebooker.service.statistics.StatisticsService;
-import com.aquabasilea.coursebooker.service.userconfig.UserConfigService;
-import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
-import com.aquabasilea.coursedef.update.CourseDefUpdater;
-import com.aquabasilea.coursedef.update.facade.CourseExtractorFacade;
+import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
+import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
+import com.aquabasilea.domain.userconfig.model.UserConfig;
+import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.security.securestorage.WriteSecretToKeyStore;
 import com.aquabasilea.security.service.login.AquabasileaLoginService;
 import com.aquabasilea.security.service.securestorage.SecretStoreService;
+import com.aquabasilea.service.statistics.StatisticsService;
+import com.aquabasilea.service.userconfig.UserConfigService;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.login.AquabasileaLogin;
 import com.brugalibre.domain.contactpoint.mobilephone.model.MobilePhone;
@@ -41,8 +41,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = TestAquabasileaCourseBookerPersistenceConfig.class)
 class AquabasileaAppInitializerImplTest {
 
-   public static final String TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE = "F:\\Dominic\\Documents\\Eigene Dateien\\Programmierung\\Java only\\aquabasilea\\aquabasilea-kurs-bucher\\src\\" +
-           "test\\resources\\aquabasilea.keystore";
+   public static final String TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE = "C:\\Users\\domin\\programmierung\\aquabasilea\\aquabasilea-kurs-bucher\\src\\test\\resources\\aquabasilea.keystore";
    public static final String KEY_STORE_PASSWORD = "test123";
    public static final String USERNAME_1 = "username1";
    public static final String USERNAME_2 = "username2";
