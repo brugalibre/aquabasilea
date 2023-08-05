@@ -1,30 +1,30 @@
 package com.aquabasilea.app.config;
 
-import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.impl.WeeklyCoursesRepositoryImpl;
-import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
-import com.aquabasilea.coursebooker.model.statistics.repository.impl.StatisticsRepositoryImpl;
-import com.aquabasilea.coursebooker.model.userconfig.repository.UserConfigRepository;
-import com.aquabasilea.coursebooker.model.userconfig.repository.impl.UserConfigRepositoryImpl;
-import com.aquabasilea.coursebooker.persistence.course.weeklycourses.dao.WeeklyCoursesDao;
-import com.aquabasilea.coursebooker.persistence.statistic.dao.StatisticsDao;
-import com.aquabasilea.coursebooker.persistence.userconfig.dao.UserConfigDao;
-import com.aquabasilea.coursebooker.service.statistics.StatisticsService;
-import com.aquabasilea.coursebooker.service.userconfig.UserConfigService;
-import com.aquabasilea.coursebooker.service.weeklycourses.WeeklyCoursesService;
-import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
-import com.aquabasilea.coursedef.model.repository.impl.CourseDefRepositoryImpl;
-import com.aquabasilea.coursedef.persistence.dao.CoursesDefDao;
-import com.aquabasilea.coursedef.service.CourseDefUpdaterService;
-import com.aquabasilea.coursedef.update.CourseDefUpdater;
-import com.aquabasilea.coursedef.update.facade.CourseExtractorFacade;
+import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.course.repository.impl.WeeklyCoursesRepositoryImpl;
+import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.domain.coursedef.model.repository.impl.CourseDefRepositoryImpl;
+import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
+import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
+import com.aquabasilea.domain.coursedef.update.service.CourseDefUpdaterService;
+import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
+import com.aquabasilea.domain.statistics.model.repository.impl.StatisticsRepositoryImpl;
+import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
+import com.aquabasilea.domain.userconfig.repository.impl.UserConfigRepositoryImpl;
+import com.aquabasilea.persistence.coursedef.dao.CoursesDefDao;
+import com.aquabasilea.persistence.courses.dao.WeeklyCoursesDao;
+import com.aquabasilea.persistence.statistics.dao.StatisticsDao;
+import com.aquabasilea.persistence.userconfig.dao.UserConfigDao;
+import com.aquabasilea.service.courses.WeeklyCoursesService;
+import com.aquabasilea.service.statistics.StatisticsService;
+import com.aquabasilea.service.userconfig.UserConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
-import static com.aquabasilea.coursebooker.service.weeklycourses.WeeklyCoursesService.WEEKLY_COURSES_SERVICE;
+import static com.aquabasilea.service.courses.WeeklyCoursesService.WEEKLY_COURSES_SERVICE;
 
 @Configuration
-@ComponentScan(basePackages = {"com.aquabasilea.security.service", "com.aquabasilea.app.initialize", "com.aquabasilea.coursebooker"})
+@ComponentScan(basePackages = {"com.aquabasilea.security.service", "com.aquabasilea.app.initialize", "com.aquabasilea.persistence", "com.aquabasilea.service"})
 @Import({AquabasileaCourseBookerPersistenceConfig.class})
 public class AquabasileaCourseBookerAppConfig {
 
@@ -32,12 +32,11 @@ public class AquabasileaCourseBookerAppConfig {
     * Name of the {@link WeeklyCoursesRepository}-Bean
     */
    public static final String WEEKLY_COURSES_REPOSITORY_BEAN = "weeklyCoursesRepository";
-   public static final String WEEKLY_COURSES_SERVICE_BEAN = "weeklyCoursesService";
    public static final String USER_CONFIG_REPOSITORY_BEAN = "userConfigRepository";
    public static final String COURSE_DEF_REPOSITORY_BEAN = "courseDefRepository";
    public static final String STATISTICS_REPOSITORY_BEAN = "statisticsRepository";
    public static final String COURSE_DEF_UPDATER_SERVICE_BEAN = "courseDefUpdaterService";
-   public static final String COURSE_DEF_UPDATER_BEAN = "courseDefService";
+   public static final String COURSE_DEF_UPDATER_BEAN = "courseDefUpdater";
    public static final String STATISTICS_SERVICE_BEAN = "statisticsService";
 
    @Bean(name = WEEKLY_COURSES_REPOSITORY_BEAN)
@@ -72,12 +71,11 @@ public class AquabasileaCourseBookerAppConfig {
       return courseDefUpdater;
    }
 
-   @DependsOn({COURSE_DEF_UPDATER_BEAN, USER_CONFIG_REPOSITORY_BEAN, COURSE_DEF_REPOSITORY_BEAN})
+   @DependsOn({COURSE_DEF_UPDATER_BEAN, USER_CONFIG_REPOSITORY_BEAN})
    @Bean(name = COURSE_DEF_UPDATER_SERVICE_BEAN)
    public CourseDefUpdaterService getCourseDefUpdaterService(@Autowired CourseDefUpdater courseDefUpdater,
-                                                             @Autowired CourseDefRepository courseDefRepository,
                                                              @Autowired UserConfigRepository userConfigRepository) {
-      return new CourseDefUpdaterService(courseDefUpdater, courseDefRepository, new UserConfigService(userConfigRepository));
+      return new CourseDefUpdaterService(courseDefUpdater, new UserConfigService(userConfigRepository));
    }
 }
 

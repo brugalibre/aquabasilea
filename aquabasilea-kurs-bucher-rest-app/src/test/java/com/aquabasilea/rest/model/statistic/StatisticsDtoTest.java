@@ -1,6 +1,7 @@
 package com.aquabasilea.rest.model.statistic;
 
-import com.aquabasilea.coursebooker.model.statistics.Statistics;
+import com.aquabasilea.domain.statistics.model.Statistics;
+import com.aquabasilea.domain.statistics.model.StatisticsOverview;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -19,12 +20,13 @@ class StatisticsDtoTest {
       Statistics statistics = new Statistics("123");
       statistics.setBookingFailedCounter(61);
       statistics.setBookingSuccessfulCounter(79);
+      StatisticsOverview statisticsOverview = new StatisticsOverview(statistics, statistics.getTotalBookingsCounter(), statistics.getBookingSuccessRate());
       LocalDateTime lastCourseDefUpdate = LocalDateTime.of(2022, Month.APRIL, 1, 12, 15);
       statistics.setLastCourseDefUpdate(lastCourseDefUpdate);
       statistics.setNextCourseDefUpdate(lastCourseDefUpdate.plusDays(7));
 
       // When
-      StatisticsDto statisticsDto = StatisticsDto.of(statistics, Locale.GERMAN, "1h, 1min");
+      StatisticsDto statisticsDto = StatisticsDto.of(statisticsOverview, Locale.GERMAN, "1h, 1min");
 
       // Then
       assertThat(statisticsDto.bookingSuccessRate(), is(56.4));
@@ -37,9 +39,10 @@ class StatisticsDtoTest {
 
       // Given
       Statistics statistics = new Statistics("1234");
+      StatisticsOverview statisticsOverview = new StatisticsOverview(statistics, 0, 0);
 
       // When
-      StatisticsDto statisticsDto = StatisticsDto.of(statistics, Locale.GERMAN, "1h, 1min");
+      StatisticsDto statisticsDto = StatisticsDto.of(statisticsOverview, Locale.GERMAN, "1h, 1min");
 
       // Then
       assertThat(statisticsDto.bookingSuccessRate(), is(0.0));

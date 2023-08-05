@@ -2,14 +2,14 @@ package com.aquabasilea.app.initialize.persistence;
 
 import com.aquabasilea.app.initialize.Initializer;
 import com.aquabasilea.app.initialize.api.UserAddedEvent;
-import com.aquabasilea.coursebooker.model.course.CourseLocation;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.model.statistics.Statistics;
-import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
-import com.aquabasilea.coursebooker.model.userconfig.DefaultUserConfig;
-import com.aquabasilea.coursebooker.model.userconfig.UserConfig;
-import com.aquabasilea.coursebooker.model.userconfig.repository.UserConfigRepository;
+import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.statistics.model.Statistics;
+import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
+import com.aquabasilea.domain.userconfig.model.DefaultUserConfig;
+import com.aquabasilea.domain.userconfig.model.UserConfig;
+import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

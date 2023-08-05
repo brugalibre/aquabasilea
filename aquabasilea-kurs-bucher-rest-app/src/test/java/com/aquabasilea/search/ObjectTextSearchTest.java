@@ -1,8 +1,8 @@
 package com.aquabasilea.search;
 
-import com.aquabasilea.coursebooker.model.course.CourseLocation;
-import com.aquabasilea.coursebooker.model.course.LocalDateTimeBuilder;
-import com.aquabasilea.coursedef.model.CourseDef;
+import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.LocalDateTimeBuilder;
+import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import org.junit.jupiter.api.Test;
 

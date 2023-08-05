@@ -2,16 +2,16 @@ package com.aquabasilea.app.initialize.coursebooker;
 
 import com.aquabasilea.app.initialize.Initializer;
 import com.aquabasilea.app.initialize.api.UserAddedEvent;
-import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
-import com.aquabasilea.coursebooker.model.statistics.BookingStatisticsUpdater;
-import com.aquabasilea.coursebooker.service.booking.facade.AquabasileaCourseBookerFacadeFactory;
-import com.aquabasilea.coursebooker.service.statistics.StatisticsService;
-import com.aquabasilea.coursebooker.states.booking.notification.CourseBookingAlertSender;
-import com.aquabasilea.coursedef.model.repository.CourseDefRepository;
-import com.aquabasilea.notification.config.AlertSendConfigProviderImpl;
+import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
+import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
+import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.domain.statistics.service.BookingStatisticsUpdater;
+import com.aquabasilea.notification.alertsend.CourseBookingAlertSender;
+import com.aquabasilea.notification.alertsend.config.AlertSendConfigProviderImpl;
 import com.aquabasilea.security.service.securestorage.SecretStoreService;
+import com.aquabasilea.service.statistics.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

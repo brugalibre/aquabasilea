@@ -15,16 +15,18 @@ import java.time.Duration;
 public class StatisticsRestService {
 
    private final StatisticsService statisticsService;
+   private final LocaleProvider localeProvider;
    private final RuntimeMXBean runtimeMXBean;
 
    @Autowired
-   public StatisticsRestService(StatisticsService statisticsService) {
+   public StatisticsRestService(StatisticsService statisticsService, LocaleProvider localeProvider) {
+      this.localeProvider = localeProvider;
       this.statisticsService = statisticsService;
       this.runtimeMXBean = ManagementFactory.getRuntimeMXBean();
    }
 
    public StatisticsDto getStatisticDtoByUserId(String userId) {
-      return StatisticsDto.of(statisticsService.getByUserId(userId), LocaleProvider.getCurrentLocale(), getDurationString());
+      return StatisticsDto.of(statisticsService.getStatisticsOverviewByUserId(userId), localeProvider.getCurrentLocale(), getDurationString());
    }
 
    public String getDurationString() {

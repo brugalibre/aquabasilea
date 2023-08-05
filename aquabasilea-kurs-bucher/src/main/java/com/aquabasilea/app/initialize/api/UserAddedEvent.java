@@ -1,6 +1,6 @@
 package com.aquabasilea.app.initialize.api;
 
-import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.brugalibre.domain.user.model.User;
 
 /**

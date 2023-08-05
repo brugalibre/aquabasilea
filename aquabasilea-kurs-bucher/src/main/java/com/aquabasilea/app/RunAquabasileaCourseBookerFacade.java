@@ -1,10 +1,10 @@
 package com.aquabasilea.app;
 
-import com.aquabasilea.coursebooker.service.booking.apimigros.MigrosApiProvider;
-import com.aquabasilea.coursebooker.service.booking.facade.AquabasileaCourseBookerFacadeFactory;
-import com.aquabasilea.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
-import com.aquabasilea.coursebooker.states.booking.facade.BookingContext;
-import com.aquabasilea.coursebooker.states.booking.facade.CourseBookContainer;
+import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiProvider;
+import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.BookingContext;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
 import com.aquabasilea.util.DateUtil;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;

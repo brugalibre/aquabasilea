@@ -1,8 +1,8 @@
 package com.aquabasilea.rest.model.course;
 
-import com.aquabasilea.coursebooker.model.course.weeklycourses.Course;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.Course.CourseBuilder;
-import com.aquabasilea.coursebooker.model.course.weeklycourses.WeeklyCourses;
+import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.Course.CourseBuilder;
+import com.aquabasilea.domain.course.WeeklyCourses;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
 import org.junit.jupiter.api.Test;
 
