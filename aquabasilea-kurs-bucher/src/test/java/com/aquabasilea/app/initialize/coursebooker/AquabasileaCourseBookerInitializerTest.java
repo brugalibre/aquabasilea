@@ -1,26 +1,57 @@
 package com.aquabasilea.app.initialize.coursebooker;
 
 import com.aquabasilea.app.initialize.api.UserAddedEvent;
+import com.aquabasilea.app.initialize.persistence.PersistenceInitializer;
 import com.aquabasilea.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.coursebooker.AquabasileaCourseBookerHolder;
+import com.aquabasilea.coursebooker.model.course.weeklycourses.repository.WeeklyCoursesRepository;
+import com.aquabasilea.coursebooker.model.statistics.repository.StatisticsRepository;
+import com.aquabasilea.coursebooker.model.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.i18n.TextResources;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
+import org.awaitility.Duration;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.await;
 
 @SpringBootTest(classes = TestAquabasileaCourseBookerPersistenceConfig.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AquabasileaCourseBookerInitializerTest {
 
    @Autowired
    private AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer;
 
+   private final AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder = new AquabasileaCourseBookerHolder();
+
    @Autowired
-   private AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder;
+   private PersistenceInitializer persistenceInitializer;
+   @Autowired
+   private WeeklyCoursesRepository weeklyCoursesRepository;
+   @Autowired
+   private StatisticsRepository statisticsRepository;
+   @Autowired
+   private UserConfigRepository userConfigRepository;
+
+   @BeforeAll
+   public void setup() {
+      weeklyCoursesRepository.deleteAll();
+      statisticsRepository.deleteAll();
+      userConfigRepository.deleteAll();
+   }
+
+   @AfterAll
+   public void cleanup() {
+      weeklyCoursesRepository.deleteAll();
+      statisticsRepository.deleteAll();
+      userConfigRepository.deleteAll();
+   }
 
    @Test
    void testInitializeAquabasileaCourseBookerInitializer() {
@@ -29,13 +60,15 @@ class AquabasileaCourseBookerInitializerTest {
       UserAddedEvent userAddedEvent = createUserAddedEvent("peter", userId);
 
       // When
+      persistenceInitializer.initialize(userAddedEvent);// is needed otherwise the course-booker crashes since there is no weekly course
       aquabasileaCourseBookerInitializer.initialize(userAddedEvent);
+      await().atMost(new Duration(30, TimeUnit.SECONDS)).until(() -> {
+         AquabasileaCourseBooker aquabasileaCourseBooker = aquabasileaCourseBookerHolder.getForUserId(userId);
+         return TextResources.INFO_TEXT_INIT.equals(aquabasileaCourseBooker.getInfoString4State());
+      });
 
       // Then
-      AquabasileaCourseBooker aquabasileaCourseBooker = aquabasileaCourseBookerHolder.getForUserId(userId);
-      assertThat(aquabasileaCourseBooker, is(notNullValue()));
-      String infoString4State = aquabasileaCourseBooker.getInfoString4State();
-      assertThat(infoString4State, is(TextResources.INFO_TEXT_INIT));
+      // success
    }
 
    private static UserAddedEvent createUserAddedEvent(String username, String userId) {
