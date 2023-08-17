@@ -4,6 +4,7 @@ import com.aquabasilea.domain.course.CourseLocation;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.coursedef.update.notify.CourseDefUpdatedNotifier;
+import com.aquabasilea.domain.coursedef.update.notify.OnCourseDefsUpdatedContext;
 import com.aquabasilea.domain.coursedef.update.service.CourseDefUpdaterService;
 import com.aquabasilea.service.userconfig.UserConfigService;
 import com.brugalibre.domain.user.model.User;
@@ -80,7 +81,9 @@ public class CourseDefService implements CourseDefUpdatedNotifier {
     }
 
     @Override
-    public void courseDefsUpdated(String userId, List<CourseDef> updatedCourseDefs) {
+    public void courseDefsUpdated(OnCourseDefsUpdatedContext onCourseDefsUpdatedContext) {
+        String userId = onCourseDefsUpdatedContext.userId();
+        List<CourseDef> updatedCourseDefs = onCourseDefsUpdatedContext.updatedCourseDefs();
         synchronized (userId2CachedCourseDefs) {
             userId2CachedCourseDefs.put(userId, updatedCourseDefs);
         }

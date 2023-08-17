@@ -4,6 +4,9 @@ import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.application.initialize.coursebooker.AquabasileaCourseBookerInitializer;
 import com.aquabasilea.application.initialize.persistence.PersistenceInitializer;
 import com.aquabasilea.application.initialize.usercredentials.UserCredentialsInitializer;
+import com.aquabasilea.application.security.securestorage.WriteSecretToKeyStore;
+import com.aquabasilea.application.security.service.login.AquabasileaLoginService;
+import com.aquabasilea.application.security.service.securestorage.SecretStoreService;
 import com.aquabasilea.domain.course.CourseLocation;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
@@ -13,9 +16,6 @@ import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.domain.userconfig.model.UserConfig;
 import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
-import com.aquabasilea.application.security.securestorage.WriteSecretToKeyStore;
-import com.aquabasilea.application.security.service.login.AquabasileaLoginService;
-import com.aquabasilea.application.security.service.securestorage.SecretStoreService;
 import com.aquabasilea.service.statistics.StatisticsService;
 import com.aquabasilea.service.userconfig.UserConfigService;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
@@ -91,7 +91,7 @@ class AquabasileaAppInitializerImplTest {
 
       Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractorSupplier = () -> list -> List::of;
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(new CourseExtractorFacade(aquabasileaCourseExtractorSupplier, () -> null),
-              statisticsService, courseDefRepository, userConfigRepository);
+              statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
 
       UserAddedEvent userAddedEvent1 = createUserAddedEvent(USERNAME_1, userId1, password1, phoneNr);
       UserAddedEvent userAddedEvent2 = createUserAddedEvent(USERNAME_2, userId2, password2, phoneNr);

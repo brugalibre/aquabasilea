@@ -1,13 +1,15 @@
 package com.aquabasilea.domain.coursedef.update;
 
 import com.aquabasilea.domain.course.CourseLocation;
-import com.aquabasilea.domain.userconfig.model.UserConfig;
-import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
 import com.aquabasilea.domain.coursedef.update.notify.CourseDefUpdatedNotifier;
-import com.aquabasilea.service.statistics.StatisticsService;
+import com.aquabasilea.domain.coursedef.update.notify.CourseDefUpdaterStartedNotifier;
+import com.aquabasilea.domain.coursedef.update.notify.OnCourseDefsUpdatedContext;
+import com.aquabasilea.domain.coursedef.update.notify.OnSchedulerStartContext;
+import com.aquabasilea.domain.userconfig.model.UserConfig;
+import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -32,28 +35,30 @@ public class CourseDefUpdater {
    // Repositories
    private final CourseDefRepository courseDefRepository;
    private final UserConfigRepository userConfigRepository;
-   private final StatisticsService statisticsService;
+   private final Function<String, Boolean> courseDefUpdateNecessary4User;
 
    private final CourseExtractorFacade courseExtractorFacade;
    private final ExecutorService executorService;
    private final CourseDefUpdaterScheduler courseDefUpdaterScheduler;
    private final List<CourseDefUpdatedNotifier> courseDefUpdatedNotifiers;
+   private final List<CourseDefUpdaterStartedNotifier> courseDefUpdaterStartedNotifiers;
    private final Map<String, Boolean> userId2IsCourseDefUpdateRunningMap;
 
-   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, StatisticsService statisticsService, CourseDefRepository courseDefRepository,
-                           UserConfigRepository userConfigRepository) {
-      this(courseExtractorFacade, statisticsService, courseDefRepository, userConfigRepository, new CourseDefUpdateDate());
+   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, Function<String, Boolean> courseDefUpdateNecessary4User,
+                           CourseDefRepository courseDefRepository, UserConfigRepository userConfigRepository) {
+      this(courseExtractorFacade, courseDefUpdateNecessary4User, courseDefRepository, userConfigRepository, new CourseDefUpdateDate());
    }
 
-   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, StatisticsService statisticsService,
+   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, Function<String, Boolean> courseDefUpdateNecessary4User,
                            CourseDefRepository courseDefRepository, UserConfigRepository userConfigRepository, CourseDefUpdateDate courseDefUpdateDate) {
       this.courseExtractorFacade = courseExtractorFacade;
       this.userConfigRepository = userConfigRepository;
       this.courseDefRepository = courseDefRepository;
-      this.statisticsService = statisticsService;
+      this.courseDefUpdateNecessary4User = courseDefUpdateNecessary4User;
       this.executorService = Executors.newSingleThreadExecutor();
       this.courseDefUpdaterScheduler = new CourseDefUpdaterScheduler(this::updateCourseDefsAsRunnable, courseDefUpdateDate);
       this.courseDefUpdatedNotifiers = new ArrayList<>();
+      this.courseDefUpdaterStartedNotifiers = new ArrayList<>();
       this.userId2IsCourseDefUpdateRunningMap = new HashMap<>();
    }
 
@@ -66,8 +71,9 @@ public class CourseDefUpdater {
     */
    public void startScheduler(String userId) {
       LocalDateTime nextCourseDefUpdate = this.courseDefUpdaterScheduler.startScheduler(userId);
-      statisticsService.setNextCourseDefUpdate(userId, nextCourseDefUpdate);
-      if (statisticsService.needsCourseDefUpdate(userId)) {
+      OnSchedulerStartContext onSchedulerStartContext = new OnSchedulerStartContext(userId, nextCourseDefUpdate);
+      courseDefUpdaterStartedNotifiers.forEach(courseDefStartedNotifier -> courseDefStartedNotifier.onSchedulerStarted(onSchedulerStartContext));
+      if (courseDefUpdateNecessary4User.apply(userId)) {
          this.updateAquabasileaCourses(userId);
       }
    }
@@ -92,10 +98,9 @@ public class CourseDefUpdater {
          userId2IsCourseDefUpdateRunningMap.put(userId, true);
          LOG.info("Updating course-defs..");
          LocalDateTime start = LocalDateTime.now();
-         updateAquabasileaCoursesInternal(userId, userConfig.getCourseLocations());
+         updateAquabasileaCoursesInternal(userId, userConfig.getCourseLocations(), start);
          Duration duration = Duration.ofMillis(start.until(LocalDateTime.now(), ChronoUnit.MILLIS));
          LOG.info("Updating course-defs done, duration: {}", duration);
-         updateStatistics(userId, start);
       } catch (Exception e) {
          LOG.error("Error while executing the CourseDefUpdater!", e);
       } finally {
@@ -103,26 +108,12 @@ public class CourseDefUpdater {
       }
    }
 
-   private void updateStatistics(String userId, LocalDateTime dateWhenUpdateStarted) {
-      Duration durationUntilNextUpdate = courseDefUpdaterScheduler.calcDelayUntilNextUpdate();
-      LocalDateTime nextCourseDefUpdate;
-      // If there are exactly 24h between a schedule, then 'scheduledFuture.getDelay' returns 0s -> calculate the next iteration by adding the update-cycle
-      // No idea why that's like this... but its true
-      if (durationUntilNextUpdate.toMinutes() == 0) {
-         nextCourseDefUpdate = dateWhenUpdateStarted.plusNanos(CourseDefUpdaterScheduler.getCourseDefUpdateCycle().toNanos());
-      } else {
-         nextCourseDefUpdate = dateWhenUpdateStarted.plusNanos(durationUntilNextUpdate.toNanos());
-      }
-      LOG.info("Updating statistics: Updated started at '{}', next update is at '{}'", dateWhenUpdateStarted, nextCourseDefUpdate);
-      statisticsService.setLastCourseDefUpdate(userId, dateWhenUpdateStarted);
-      statisticsService.setNextCourseDefUpdate(userId, nextCourseDefUpdate);
-   }
-
-   private void updateAquabasileaCoursesInternal(String userId, List<CourseLocation> courseLocations) {
+   private void updateAquabasileaCoursesInternal(String userId, List<CourseLocation> courseLocations, LocalDateTime dateWhenUpdateStarted) {
       List<CourseDef> courseDefs = courseExtractorFacade.extractAquabasileaCourses(userId, courseLocations);
       courseDefRepository.deleteAllByUserId(userId);
       courseDefRepository.saveAll(courseDefs);
-      courseDefUpdatedNotifiers.forEach(courseDefUpdatedNotifier -> courseDefUpdatedNotifier.courseDefsUpdated(userId, courseDefs));
+      OnCourseDefsUpdatedContext onCourseDefsUpdatedContext = new OnCourseDefsUpdatedContext(userId, courseDefs, dateWhenUpdateStarted , courseDefUpdaterScheduler.calcDelayUntilNextUpdate());
+      courseDefUpdatedNotifiers.forEach(courseDefUpdatedNotifier -> courseDefUpdatedNotifier.courseDefsUpdated(onCourseDefsUpdatedContext));
    }
 
    /**
@@ -136,5 +127,8 @@ public class CourseDefUpdater {
 
    public void addCourseDefUpdatedNotifier(CourseDefUpdatedNotifier courseDefUpdatedNotifier) {
       courseDefUpdatedNotifiers.add(requireNonNull(courseDefUpdatedNotifier));
+   }
+   public void addCourseDefStartedNotifier(CourseDefUpdaterStartedNotifier courseDefUpdaterStartedNotifier) {
+      courseDefUpdaterStartedNotifiers.add(requireNonNull(courseDefUpdaterStartedNotifier));
    }
 }

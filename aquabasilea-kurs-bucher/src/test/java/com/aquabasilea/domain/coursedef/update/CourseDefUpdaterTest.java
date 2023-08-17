@@ -8,6 +8,7 @@ import com.aquabasilea.domain.coursedef.update.facade.CourseDefExtractorType;
 import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
 import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
+import com.aquabasilea.domain.statistics.service.CourseDefStatisticsUpdater;
 import com.aquabasilea.domain.userconfig.model.UserConfig;
 import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
@@ -86,7 +87,8 @@ class CourseDefUpdaterTest {
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
       TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, courseName, 50, "peter");
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService, courseDefRepository, userConfigRepository);
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
+      addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       // Start 2 times, but it should only execute one time
@@ -123,7 +125,8 @@ class CourseDefUpdaterTest {
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
       TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, courseName, 0, "karl");
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService, courseDefRepository, userConfigRepository, courseDefUpdateDate);
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository, courseDefUpdateDate);
+      addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       courseDefUpdater.startScheduler(USER_ID_WITH_PREV_UPDATE);
@@ -158,7 +161,8 @@ class CourseDefUpdaterTest {
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
       TestAquabasileaCourseExtractor aquabasileaCourseExtractor = createNewTestAquabasileaCourseExtractor(courseLocation, courseDate, courseName, 0, "karl");
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService, courseDefRepository, userConfigRepository);
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
+      addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       courseDefUpdater.startScheduler(USER_ID_WITH_PREV_UPDATE);
@@ -185,8 +189,9 @@ class CourseDefUpdaterTest {
       String timeOfTheDayAsString = localDateTimeAsString.substring(localDateTimeAsString.indexOf(", ") + 1);
       CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(now.getDayOfWeek(), timeOfTheDayAsString);
       AquabasileaCourse defaultAquabasileaCourse = createDefaultAquabasileaCourse();
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(defaultAquabasileaCourse), statisticsService,
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(defaultAquabasileaCourse), statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository, courseDefUpdateDate);
+      addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       // start scheduler and execute update immediately, although the update is scheduled one day from one. But since there was no update at all, do it initially
@@ -212,8 +217,9 @@ class CourseDefUpdaterTest {
       String localDateTimeAsString = DateUtil.getTimeAsString(nowPlusOneDay);
       CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(nowPlusOneDay.getDayOfWeek(), localDateTimeAsString);
       TestAquabasileaCourseExtractor aquabasileaCourseExtractor = new TestAquabasileaCourseExtractor(List.of(createDefaultAquabasileaCourse()), 0);
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService,
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseExtractorFacade(aquabasileaCourseExtractor), statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository, courseDefUpdateDate);
+      addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       courseDefUpdater.startScheduler(USER_ID);
@@ -227,6 +233,12 @@ class CourseDefUpdaterTest {
       assertThat(statistics.getNextCourseDefUpdate().toLocalDate(), is(expectedNextCourseDefUpdate.toLocalDate()));
       assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getHour(), is(expectedNextCourseDefUpdate.toLocalTime().getHour()));
       assertThat(statistics.getNextCourseDefUpdate().toLocalTime().getMinute(), is(expectedNextCourseDefUpdate.toLocalTime().getMinute()));
+   }
+
+   private void addCourseDefStatisticsUpdater(CourseDefUpdater courseDefUpdater) {
+      CourseDefStatisticsUpdater courseDefStatisticsUpdater = new CourseDefStatisticsUpdater(statisticsService);
+      courseDefUpdater.addCourseDefUpdatedNotifier(courseDefStatisticsUpdater);
+      courseDefUpdater.addCourseDefStartedNotifier(courseDefStatisticsUpdater);
    }
 
    private TestAquabasileaCourseExtractor createNewTestAquabasileaCourseExtractor(CourseLocation courseLocation,
