@@ -12,7 +12,6 @@ import com.aquabasilea.migrosapi.model.getcourse.response.MigrosGetCoursesRespon
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosResponseCourse;
 import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiGetCoursesResponse;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosCourse;
 import com.aquabasilea.migrosapi.model.security.api.AuthenticationContainer;
 import com.aquabasilea.migrosapi.service.book.MigrosBookCourseResponseReader;
 import com.aquabasilea.migrosapi.service.getcourse.MigrosGetCoursesResponseReader;
@@ -20,15 +19,18 @@ import com.aquabasilea.migrosapi.service.security.MigrosApiBearerTokenProviderIm
 import com.aquabasilea.migrosapi.service.security.api.BearerTokenProvider;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.service.HttpService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.migrosapi.model.getcourse.request.api.MigrosApiGetCoursesRequest.DEFAULT_TAKE;
 import static com.aquabasilea.migrosapi.service.MigrosApiConst.*;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public class MigrosApiImpl implements MigrosApi {
@@ -69,6 +71,7 @@ public class MigrosApiImpl implements MigrosApi {
       this.migrosBookCourseRequestBody = MIGROS_BOOK_COURSE_REQUEST_BODY;
    }
 
+   /*
    public static void main(String[] args) {
       MigrosApiImpl migrosApi = new MigrosApiImpl();
       List<MigrosCourse> migrosResponseCours = migrosApi.getCourses(MigrosApiGetCoursesRequest.of(List.of(args))).courses();
@@ -85,6 +88,7 @@ public class MigrosApiImpl implements MigrosApi {
       }
       System.out.println("============================");
    }
+    */
 
    @Override
    public MigrosApiGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
@@ -128,7 +132,7 @@ public class MigrosApiImpl implements MigrosApi {
       if (migrosBookContext.dryRun()) {
          return handleDryRun(migrosApiBookCourseRequest, courseIdTac, bearerToken);
       }
-      LOG.info("Got a non-null bearer token={} and courseIdTac={}", nonNull(bearerToken), courseIdTac);
+      LOG.info("Got a non-null bearer token={} and courseIdTac={}", StringUtils.isNotEmpty(bearerToken), courseIdTac);
       waitUntilCourseIsBookable(migrosBookContext.duration2WaitUntilCourseBecomesBookable());
       MigrosBookCourseResponse migrosBookCourseResponse = createAndPostBookCourseRequest(migrosApiBookCourseRequest.centerId(), courseIdTac);
       LOG.info("Booking result for course '{}' is '{}'", migrosApiBookCourseRequest.courseName(), migrosBookCourseResponse.getCourseBookResult());
@@ -138,24 +142,42 @@ public class MigrosApiImpl implements MigrosApi {
    private void waitUntilCourseIsBookable(Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
       try {
          LOG.info("Going to wait for {}s plus {}ms offset until the course will be bookable..", duration2WaitUntilCourseBecomesBookable.get().getSeconds(), BOOK_COURSE_OFFSET_MS);
-         Thread.sleep(duration2WaitUntilCourseBecomesBookable.get().toMillis() + BOOK_COURSE_OFFSET_MS);
+         long effectiveSleep = Math.max(0, duration2WaitUntilCourseBecomesBookable.get().toMillis() + BOOK_COURSE_OFFSET_MS);
+         Thread.sleep(effectiveSleep);
       } catch (InterruptedException e) {
          LOG.warn("Interrupted while waiting for the course to become bookable! Time left: {}", duration2WaitUntilCourseBecomesBookable.get().toMillis());
       }
    }
 
    private MigrosApiBookCourseResponse handleDryRun(MigrosApiBookCourseRequest migrosApiBookCourseRequest, String courseIdTac, String bearerToken) {
-      if (nonNull(courseIdTac) && nonNull(bearerToken)) {
+      if (isValidRequestValues(courseIdTac, bearerToken)) {
          LOG.info("Dry run for course '{}' successful", migrosApiBookCourseRequest.courseName());
          return new MigrosApiBookCourseResponse(CourseBookResult.COURSE_BOOKING_DRY_RUN_SUCCESSFUL, "");
       }
-      String errorMsg = "Dry run for course '%s' failed! Evaluated courseIdTac=%s, evaluatedBearerToken:%s".formatted(migrosApiBookCourseRequest.courseName(), courseIdTac, bearerToken);
+      String bearerTokenLogMsg = StringUtils.isNotEmpty(bearerToken) ? "yes" : "null";
+      String errorMsg = "Dry run for course '%s' failed! DurationToWait=%s, Evaluated courseIdTac=%s, evaluatedBearerToken:%s"
+              .formatted(migrosApiBookCourseRequest.courseName(), getDuration(migrosApiBookCourseRequest), courseIdTac, bearerTokenLogMsg);
       LOG.error(errorMsg, courseIdTac, bearerToken);
       return new MigrosApiBookCourseResponse(CourseBookResult.COURSE_BOOKING_DRY_RUN_FAILED, errorMsg);
    }
 
+   private static boolean isValidRequestValues(String courseIdTac, String bearerToken) {
+      return nonNull(courseIdTac)
+              && StringUtils.isNotEmpty(bearerToken);
+   }
+
+   private static long getDuration(MigrosApiBookCourseRequest migrosApiBookCourseRequest) {
+      Supplier<Duration> durationSupplier = migrosApiBookCourseRequest.migrosBookContext().duration2WaitUntilCourseBecomesBookable();
+      return durationSupplier.get()
+              .get(ChronoUnit.SECONDS);
+   }
+
    private String getAndSetBearerAuthentication(AuthenticationContainer authenticationContainer) {
       String bearerToken = bearerTokenProvider.getBearerToken(authenticationContainer.username(), authenticationContainer.userPwdSupplier());
+      if (isNull(bearerToken)) {
+         LOG.warn("Bearer token is null, change to empty String");
+         bearerToken = "";// avoid setting a null value as credentials since this leads to an NPE
+      }
       httpService.setCredentials(bearerToken);
       return bearerToken;
    }
