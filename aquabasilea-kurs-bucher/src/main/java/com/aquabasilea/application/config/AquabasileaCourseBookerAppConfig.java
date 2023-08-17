@@ -9,6 +9,7 @@ import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
 import com.aquabasilea.domain.coursedef.update.service.CourseDefUpdaterService;
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.domain.statistics.model.repository.impl.StatisticsRepositoryImpl;
+import com.aquabasilea.domain.statistics.service.CourseDefStatisticsUpdater;
 import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.domain.userconfig.repository.impl.UserConfigRepositoryImpl;
 import com.aquabasilea.persistence.coursedef.dao.CoursesDefDao;
@@ -67,8 +68,11 @@ public class AquabasileaCourseBookerAppConfig {
                                                @Autowired UserConfigRepository userConfigRepository,
                                                @Autowired WeeklyCoursesService weeklyCoursesService) {
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(CourseExtractorFacade.getCourseExtractorFacade(),
-              statisticsService, courseDefRepository, userConfigRepository);
-      courseDefUpdater.addCourseDefUpdatedNotifier(weeklyCoursesService::updateCoursesAfterCourseDefUpdate);
+              statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
+      courseDefUpdater.addCourseDefUpdatedNotifier(onCourseDefsUpdatedContext -> weeklyCoursesService.updateCoursesAfterCourseDefUpdate(onCourseDefsUpdatedContext.userId(), onCourseDefsUpdatedContext.updatedCourseDefs()));
+      CourseDefStatisticsUpdater courseDefStatisticsUpdater = new CourseDefStatisticsUpdater(statisticsService);
+      courseDefUpdater.addCourseDefUpdatedNotifier(courseDefStatisticsUpdater);
+      courseDefUpdater.addCourseDefStartedNotifier(courseDefStatisticsUpdater);
       return courseDefUpdater;
    }
 
