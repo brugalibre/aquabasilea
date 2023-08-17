@@ -22,13 +22,13 @@ import static java.util.Objects.nonNull;
 public class CourseDefUpdaterScheduler {
    private static final Logger LOG = LoggerFactory.getLogger(CourseDefUpdaterScheduler.class);
    private final ScheduledExecutorService scheduledExecutorService;
-   private final Consumer<String> courseUpdateConsumer;
+   private final Consumer<String> courseDefUpdater;
    private final CourseDefUpdateDate courseDefUpdateDate;
    private ScheduledFuture<?> scheduledFuture;
 
-   public CourseDefUpdaterScheduler(Consumer<String> courseUpdateConsumer, CourseDefUpdateDate courseDefUpdateDate) {
+   public CourseDefUpdaterScheduler(Consumer<String> courseDefUpdater, CourseDefUpdateDate courseDefUpdateDate) {
       this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-      this.courseUpdateConsumer = courseUpdateConsumer;
+      this.courseDefUpdater = courseDefUpdater;
       this.courseDefUpdateDate = courseDefUpdateDate;
    }
 
@@ -44,7 +44,7 @@ public class CourseDefUpdaterScheduler {
       Duration delayUntilTheNextUpdate = getCourseDefUpdateCycle();
       LOG.info("Wait {} until first execution", initDelay);
       LOG.info("Wait {} after first execution until next", delayUntilTheNextUpdate);
-      this.scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> courseUpdateConsumer.accept(userId),
+      this.scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> courseDefUpdater.accept(userId),
               initDelay.toMinutes(), delayUntilTheNextUpdate.toMinutes(), TimeUnit.MINUTES);
       return LocalDateTime.now().plusMinutes(initDelay.toMinutes());
    }
