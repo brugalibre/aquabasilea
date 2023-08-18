@@ -11,6 +11,9 @@ import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.callback.CourseBookingStateChangedHandler;
+import com.aquabasilea.domain.coursebooker.states.idle.IdleContext;
+import com.aquabasilea.domain.coursebooker.states.idle.IdleStateHandler;
+import com.aquabasilea.domain.coursebooker.states.idle.IdleStateResult;
 import com.aquabasilea.domain.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.domain.coursebooker.states.init.InitializationResult;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
@@ -31,19 +34,17 @@ import static java.util.Objects.isNull;
 /**
  * The {@link AquabasileaCourseBooker} is the heart of the aquabasilea-course-booking application
  */
-public class AquabasileaCourseBooker implements Runnable {
+public class AquabasileaCourseBooker {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseBooker.class);
-   private static final int STAY_IDLE_INTERVAL = 500;
 
-   private final BookingStateHandler bookingStateHandler;
    private final UserContext userContext;
-   private boolean isRunning;
    private CourseBookingState state;
    private InitializationResult initializationResult;
-   private InitStateHandler initStateHandler;
 
-   private Thread courseBookerThread;
+   private final BookingStateHandler bookingStateHandler;
+   private InitStateHandler initStateHandler;
+   private IdleStateHandler idleStateHandler;
    private InfoString4StateEvaluator infoString4StateEvaluator;
 
    private List<CourseBookingStateChangedHandler> courseBookingStateChangedHandlers;
@@ -57,14 +58,13 @@ public class AquabasileaCourseBooker implements Runnable {
     * @param courseDefRepository           the {@link CourseDefRepository}
     * @param aquabasileaCourseBookerConfig the {@link AquabasileaCourseBookerConfig}
     * @param aquabasileaCourseBookerFacade the {@link AquabasileaCourseBookerFacade} which implements the actual booking
-    * @param courseBookerThread            the {@link Thread} which controls this {@link AquabasileaCourseBooker}
     */
    AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
                            AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
-                           AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade, Thread courseBookerThread) {
+                           AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade) {
       this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerFacade);
       this.userContext = userContext;
-      init(aquabasileaCourseBookerConfig, weeklyCoursesRepository, courseDefRepository, courseBookerThread);
+      init(aquabasileaCourseBookerConfig, weeklyCoursesRepository, courseDefRepository);
    }
 
    /**
@@ -74,47 +74,32 @@ public class AquabasileaCourseBooker implements Runnable {
     * @param weeklyCoursesRepository              the {@link WeeklyCoursesRepository} to get and store a {@link WeeklyCourses}
     * @param courseDefRepository                  the {@link CourseDefRepository} for get and store the {@link CourseDef}s
     * @param aquabasileaCourseBookerFacadeFactory the {@link AquabasileaCourseBookerFacadeFactory} in order to create an {@link AquabasileaCourseBookerFacade}
-    * @param courseBookerThread                   the Thread which controls this {@link AquabasileaCourseBooker}
     */
    public AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
-                                  AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory, Thread courseBookerThread) {
+                                  AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory) {
       this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, getAquabasileaCourseBookerFacade(aquabasileaCourseBookerFacadeFactory, userContext));
       this.userContext = userContext;
-      init(new AquabasileaCourseBookerConfig(), weeklyCoursesRepository, courseDefRepository, courseBookerThread);
+      init(new AquabasileaCourseBookerConfig(), weeklyCoursesRepository, courseDefRepository);
    }
 
    private void init(AquabasileaCourseBookerConfig bookerConfig, WeeklyCoursesRepository weeklyCoursesRepository,
-                     CourseDefRepository courseDefRepository, Thread courseBookerThread) {
+                     CourseDefRepository courseDefRepository) {
+      this.idleStateHandler = new IdleStateHandler();
       this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, courseDefRepository, bookerConfig);
-      this.isRunning = true;
-      this.courseBookerThread = courseBookerThread;
       this.infoString4StateEvaluator = new InfoString4StateEvaluator(bookerConfig);
       this.courseBookingStateChangedHandlers = new ArrayList<>();
       this.courseBookingEndResultConsumers = new ArrayList<>();
       setState(PAUSED);
    }
 
-   /**
-    * Starts this {@link AquabasileaCourseBooker}
-    */
    public void start() {
-      this.courseBookerThread.start();
-   }
-
-   @Override
-   public void run() {
-      LOG.info("AquabasileaCourseBooker started for user [{}]", this.userContext);
       setState(INIT);
-      while (isRunning) {
-         handleCurrentState();
-      }
-      LOG.info("AquabasileaCourseBooker finished for user [{}]", this.userContext);
+      LOG.info("AquabasileaCourseBooker started for user [{}]", this.userContext);
    }
 
    public void stop() {
-      this.isRunning = false;
+      LOG.info("AquabasileaCourseBooker stopped for user [{}]", this.userContext);
       setState(STOP);
-      this.courseBookerThread.interrupt();
    }
 
    /**
@@ -125,13 +110,15 @@ public class AquabasileaCourseBooker implements Runnable {
    public void pauseOrResume() {
       if (this.isIdle() || this.isPaused()) {
          setState(this.isIdle() ? PAUSED : INIT);
-         this.courseBookerThread.interrupt();
       }
    }
 
+   /**
+    * Updates the internal schedule of {@link Course}s which are going to be booked
+    */
    public void refreshCourses() {
       if (this.isIdle()) {
-         this.courseBookerThread.interrupt();
+         setState(REFRESH_COURSES);
       }
    }
 
@@ -160,29 +147,18 @@ public class AquabasileaCourseBooker implements Runnable {
       return courseBookingEndResult;
    }
 
-   private void handleCurrentState() {
+   void handleCurrentState() {
+      LOG.info("Handling state {} for user [{}]", this.state, this.userContext);
       switch (this.state) {
-         case INIT:
-            handleInitializeState();
-            break;
-         case IDLE_BEFORE_BOOKING:
-         case IDLE_BEFORE_DRY_RUN:
-            handleIdleState(this.initializationResult.getDurationUtilDryRunOrBookingBegin());
-            break;
-         case BOOKING: // fall through
-         case BOOKING_DRY_RUN:
+         case INIT -> handleInitializeState();
+         case PAUSED -> pauseApp();
+         case IDLE_BEFORE_BOOKING, IDLE_BEFORE_DRY_RUN -> handleIdleState();
+         case BOOKING, BOOKING_DRY_RUN -> {
             CourseBookingEndResult courseBookingResult = bookingStateHandler.bookCourse(userContext.id, getCurrentCourse(), state);
             notifyResult2Consumers(courseBookingResult, this.state);
             getNextState();
-            break;
-         case STOP:
-            stop();
-            break;
-         case PAUSED:
-            pauseApp();
-            break;
-         default:
-            throw new IllegalStateException("Unhandled state '" + this.state + "'");
+         }
+         default -> throw new IllegalStateException("Unhandled state '" + this.state + "'");
       }
    }
 
@@ -191,40 +167,22 @@ public class AquabasileaCourseBooker implements Runnable {
    }
 
    private void pauseApp() {
-      LOG.info("Handling state {} for user [{}]", PAUSED, this.userContext);
-      while (isRunning) {
-         try {
-            Thread.sleep(STAY_IDLE_INTERVAL);
-         } catch (InterruptedException e) {
-            LOG.debug("Interrupted during pausing for user [{}]!", this.userContext);
-            break;
-         }
-      }
+      IdleContext idleContext = IdleContext.isPaused(userContext);
+      IdleStateResult idleStateResult = idleStateHandler.handleIdleState(idleContext);
+      setState(idleStateResult.nextState());
    }
 
    private void handleInitializeState() {
-      LOG.info("Handling state {} for user [{}]", INIT, this.userContext);
       this.initializationResult = initStateHandler.evaluateNextCourseAndState(userContext.id);
       initStateHandler.saveUpdatedWeeklyCourses(initializationResult);
       setState(initializationResult.getNextCourseBookingState());
    }
-
-   private void handleIdleState(Duration duration2StayIdle) {
-      try {
-         long timeStayIdle = duration2StayIdle.toMillis();
-         LOG.info("Going idle for {} for user [{}]", duration2StayIdle, this.userContext);
-         while (timeStayIdle > 0) {
-            Thread.sleep(Math.min(timeStayIdle, STAY_IDLE_INTERVAL));
-            timeStayIdle = timeStayIdle - STAY_IDLE_INTERVAL;
-         }
-         LOG.info("Done idle for user [{}]", this.userContext);
-         getNextState();
-      } catch (InterruptedException e) {
-         LOG.debug(this.getClass().getSimpleName() + " was interrupted!", e);
-         // maybe we were paused externally -> don't overwrite that
-         if (state != PAUSED) {
-            setState(INIT);
-         }
+   private void handleIdleState() {
+      IdleContext idleContext = IdleContext.of(initializationResult.getDurationUtilDryRunOrBookingBegin(), state, userContext);
+      IdleStateResult idleStateResult = idleStateHandler.handleIdleState(idleContext);
+      // is we are paused, don't change it
+      if (state != PAUSED) {
+         setState(idleStateResult.nextState());
       }
    }
 
@@ -235,7 +193,7 @@ public class AquabasileaCourseBooker implements Runnable {
    }
 
    private void getNextState() {
-      setState(CourseBookingState.getNextState(this.state));
+      setState(state.next());
    }
 
    public boolean isIdle() {
@@ -252,7 +210,7 @@ public class AquabasileaCourseBooker implements Runnable {
    }
 
    public boolean isPaused() {
-      return state == PAUSED;
+      return idleStateHandler.isPausing();
    }
 
    public void addCourseBookingStateChangedHandler(CourseBookingStateChangedHandler courseBookingStateChangedHandler) {
