@@ -43,8 +43,8 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
    @Override
    public void initialize(UserAddedEvent userAddedEvent) {
       AquabasileaCourseBooker aquabasileaCourseBooker = createAquabasileaCourseBooker(userAddedEvent);
-      aquabasileaCourseBooker.start();
       aquabasileaCourseBookerHolder.putForUserId(userAddedEvent.userId(), aquabasileaCourseBooker);
+      aquabasileaCourseBooker.start();
    }
 
    private AquabasileaCourseBooker createAquabasileaCourseBooker(UserAddedEvent userAddedEvent) {
