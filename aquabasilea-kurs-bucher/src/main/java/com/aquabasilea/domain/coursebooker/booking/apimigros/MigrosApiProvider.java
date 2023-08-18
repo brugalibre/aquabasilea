@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursebooker.booking.apimigros;
 
-import com.aquabasilea.domain.coursebooker.booking.facade.authentication.AquabasileaWebBearerTokenProviderImpl;
+import com.aquabasilea.domain.coursebooker.booking.apimigros.security.AquabasileaWebBearerTokenProviderImpl;
 import com.aquabasilea.migrosapi.service.MigrosApi;
 import com.aquabasilea.migrosapi.service.MigrosApiImpl;
 import org.springframework.stereotype.Service;

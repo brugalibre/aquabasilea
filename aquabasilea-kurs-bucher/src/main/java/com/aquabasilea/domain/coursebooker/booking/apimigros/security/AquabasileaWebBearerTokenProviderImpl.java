@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.coursebooker.booking.facade.authentication;
+package com.aquabasilea.domain.coursebooker.booking.apimigros.security;
 
 import com.aquabasilea.migrosapi.service.security.api.BearerTokenProvider;
 import com.aquabasilea.web.login.AquabasileaBearerTokenExtractor;
