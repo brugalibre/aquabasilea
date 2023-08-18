@@ -62,6 +62,7 @@ class AquabasileaCourseBookerFacadeFactoryTest {
       // Then
       verify(migrosApi).bookCourse(eq(expectedAuthContainer), eq(migrosApiBookCourseRequest1));
       verify(migrosApi).bookCourse(eq(expectedAuthContainer), eq(migrosApiBookCourseRequest2));
+      verify(config, times(2)).refresh();
 
       assertThat(courseBookingEndResult1.getCourseClickedResult(), is(com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKED));
       assertThat(courseBookingEndResult2.getCourseClickedResult(), is(com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKED));

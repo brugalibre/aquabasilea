@@ -227,7 +227,8 @@ class AquabasileaCourseBookerTest {
 
       // When
       tcb.aquabasileaCourseBooker.start();
-      await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() -> aquabasileaWebNavigator.isBookingDone);
+      await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() ->
+              List.of(INIT, IDLE_BEFORE_DRY_RUN, BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP).equals(testCourseBookingStateChangedHandler.stateHistory));
 
       // Then
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
