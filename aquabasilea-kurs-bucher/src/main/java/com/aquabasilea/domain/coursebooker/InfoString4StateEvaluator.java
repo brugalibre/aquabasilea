@@ -1,10 +1,10 @@
 package com.aquabasilea.domain.coursebooker;
 
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.init.InitializationResult;
-import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
-import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.util.DateUtil;
 
 import java.time.Duration;
@@ -29,13 +29,13 @@ public class InfoString4StateEvaluator {
    public String getInfoString4State(CourseBookingState courseBookingState, Course currentCourse) {
       aquabasileaCourseBookerConfig.refresh();
       return switch (courseBookingState) {
-         case INIT -> TextResources.INFO_TEXT_INIT;
+         case INIT, REFRESH_COURSES -> TextResources.INFO_TEXT_INIT;
          case IDLE_BEFORE_BOOKING -> getInfoString4IdleBeforeBooking(currentCourse);
          case IDLE_BEFORE_DRY_RUN -> getInfoString4IdleBeforeDryRun(currentCourse);
          case BOOKING -> String.format(TextResources.INFO_TEXT_BOOKING_COURSE, currentCourse.getCourseName());
          case BOOKING_DRY_RUN -> String.format(TextResources.INFO_TEXT_BOOKING_COURSE_DRY_RUN, currentCourse.getCourseName());
          case PAUSED -> TextResources.INFO_TEXT_APP_PAUSED;
-         default -> "";
+         case STOP -> TextResources.INFO_TEXT_APP_STOPPED;
       };
    }
 

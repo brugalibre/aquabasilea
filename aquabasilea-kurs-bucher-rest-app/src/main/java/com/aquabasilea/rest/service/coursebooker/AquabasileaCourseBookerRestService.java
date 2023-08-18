@@ -34,7 +34,7 @@ public class AquabasileaCourseBookerRestService {
         return switch (courseBookingState) {
             case PAUSED -> com.aquabasilea.rest.model.coursebooker.CourseBookingState.PAUSED;
             case BOOKING, BOOKING_DRY_RUN -> com.aquabasilea.rest.model.coursebooker.CourseBookingState.BOOKING;
-            case IDLE_BEFORE_BOOKING, IDLE_BEFORE_DRY_RUN, INIT, STOP -> com.aquabasilea.rest.model.coursebooker.CourseBookingState.IDLE;
+            case IDLE_BEFORE_BOOKING, IDLE_BEFORE_DRY_RUN, INIT, REFRESH_COURSES, STOP -> com.aquabasilea.rest.model.coursebooker.CourseBookingState.IDLE;
         };
     }
 

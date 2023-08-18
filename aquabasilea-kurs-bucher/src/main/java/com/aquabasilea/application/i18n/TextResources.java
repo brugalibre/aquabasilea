@@ -2,7 +2,7 @@ package com.aquabasilea.application.i18n;
 
 public class TextResources {
 
-   private TextResources(){
+    private TextResources(){
       // private
    }
 
@@ -24,6 +24,7 @@ public class TextResources {
    public static final String INFO_TEXT_IDLE_BEFORE_DRY_RUN = "Kurs '%s' am %s. Testlauf startet am %s.";
    public static final String INFO_TEXT_IDLE_BEFORE_BOOKING = "Kurs '%s' am %s. Buchung startet am %s.";
    public static final String INFO_TEXT_APP_PAUSED = "Applikation pausiert";
+   public static final String INFO_TEXT_APP_STOPPED = "Applikation beendet";
    public static final String INFO_TEXT_BOOKING_COURSE = "Buchung von Kurs '%s' läuft";
    public static final String INFO_TEXT_BOOKING_COURSE_DRY_RUN = "Buchung von Kurs '%s' läuft (Testlauf)";
 

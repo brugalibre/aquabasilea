@@ -1,5 +1,6 @@
 package com.aquabasilea.domain.coursebooker.states;
 
+import com.aquabasilea.domain.course.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 
 public enum CourseBookingState {
@@ -9,6 +10,11 @@ public enum CourseBookingState {
     * for the actual booking of the course?
     */
    INIT,
+
+   /**
+    * This state indicates that the {@link AquabasileaCourseBooker} is refreshing its {@link Course}s
+    */
+   REFRESH_COURSES,
 
    /**
     * In this state, the {@link AquabasileaCourseBooker} is waiting until the next dry-run
@@ -41,14 +47,18 @@ public enum CourseBookingState {
     */
    PAUSED;
 
-   public static CourseBookingState getNextState(CourseBookingState courseBookingState) {
+   public CourseBookingState next() {
+      return getNextState(this);
+   }
+
+   private static CourseBookingState getNextState(CourseBookingState courseBookingState) {
       switch (courseBookingState) {
          case IDLE_BEFORE_BOOKING:
             return BOOKING;
          case IDLE_BEFORE_DRY_RUN:
             return BOOKING_DRY_RUN;
          case BOOKING:
-         case BOOKING_DRY_RUN:
+         case BOOKING_DRY_RUN, REFRESH_COURSES, PAUSED:
             return INIT;
       }
       throw new IllegalStateException("Unknown state '" + courseBookingState + "'!");
