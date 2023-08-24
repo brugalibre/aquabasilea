@@ -1,11 +1,16 @@
 package com.aquabasilea.search;
 
 import com.aquabasilea.reflection.ReflectionUtil;
+import com.aquabasilea.rest.i18n.LocaleProvider;
+import com.aquabasilea.util.DateUtil;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,6 +33,9 @@ import static java.util.Objects.nonNull;
 public class ObjectTextSearch {
    private static final String WORD_SEPARATOR = " ";
 
+   @Autowired
+   private LocaleProvider localeProvider;
+
    /**
     * A match below 66.7% is not really representative sometimes... So that's why we only want to count those above 66.7%
     */
@@ -38,8 +46,9 @@ public class ObjectTextSearch {
     * For testing purpose only!
     * @param matchThreshold the value a course must match to be selected
     */
-   ObjectTextSearch (double matchThreshold) {
+   ObjectTextSearch (double matchThreshold, LocaleProvider localeProvider) {
       this.matchThreshold = matchThreshold;
+      this.localeProvider = localeProvider;
    }
 
    public ObjectTextSearch() {
@@ -82,7 +91,7 @@ public class ObjectTextSearch {
     * The JaroWinklerDistance works best, if there are no spaces in the word. So e.g. the objects searchable attribute
     * 'the foo' should be split in 'the' and 'foo' in order to increase accuracy when searching with the filter 'foo test'
     */
-   private static List<String> getSearchableAttrsFromObject(Object object) {
+   private List<String> getSearchableAttrsFromObject(Object object) {
       return extractAnnotatedSearchableAttrsFrom(object).stream()
               .map(searchableAttr -> searchableAttr.split(WORD_SEPARATOR))
               .map(Arrays::asList)
@@ -90,7 +99,7 @@ public class ObjectTextSearch {
               .toList();
    }
 
-   private static List<String> extractAnnotatedSearchableAttrsFrom(Object object) {
+   private List<String> extractAnnotatedSearchableAttrsFrom(Object object) {
       List<String> searchableObjectAttrs = new ArrayList<>();
       for (Field declaredField : object.getClass().getDeclaredFields()) {
          SearchableAttribute searchableAttributeAnnotation = declaredField.getAnnotation(SearchableAttribute.class);
@@ -101,7 +110,7 @@ public class ObjectTextSearch {
       return searchableObjectAttrs;
    }
 
-   private static List<String> extractAnnotatedSearchableAttrsFromObjectAndField(Object object, Field declaredField) {
+   private List<String> extractAnnotatedSearchableAttrsFromObjectAndField(Object object, Field declaredField) {
       List<String> searchableObjectAttrs = new ArrayList<>();
       Object fieldValue;
       try {
@@ -109,6 +118,8 @@ public class ObjectTextSearch {
          fieldValue = declaredField.get(object);
          if (fieldValue instanceof String fieldValueAString) {
             searchableObjectAttrs.add(fieldValueAString);
+         } else if (fieldValue instanceof LocalDateTime) {
+            extractValueFromLocalDateTime(searchableObjectAttrs, (LocalDateTime) fieldValue);
          } else if (!ReflectionUtil.isPrimitive(fieldValue)) {
             searchableObjectAttrs.addAll(getSearchableAttrsFromObject(fieldValue));
          }
@@ -116,6 +127,14 @@ public class ObjectTextSearch {
          throw new IllegalStateException(e);
       }
       return searchableObjectAttrs;
+   }
+
+   private void extractValueFromLocalDateTime(List<String> searchableObjectAttrs, LocalDateTime fieldValue) {
+      extractValueFromLocalDate(searchableObjectAttrs, fieldValue.toLocalDate());
+   }
+
+   private void extractValueFromLocalDate(List<String> searchableObjectAttrs, LocalDate courseDate) {
+      searchableObjectAttrs.add(DateUtil.toString(courseDate, localeProvider.getCurrentLocale()));
    }
 
    private Double applyJaroWinklerDistance(String courseDefRepresentationElement, String singleWordFilter) {
