@@ -2,6 +2,7 @@ package com.aquabasilea.search;
 
 import com.aquabasilea.reflection.ReflectionUtil;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -25,19 +26,24 @@ import static java.util.Objects.nonNull;
  */
 @Component
 public class ObjectTextSearch {
+   private static final String WORD_SEPARATOR = " ";
 
-   private static final int MAX_FILTER_RESULTS = 10;
    /**
     * A match below 66.7% is not really representative sometimes... So that's why we only want to count those above 66.7%
     */
-   private static final double MATCH_THRESHOLD = 0.667;
-   private static final String WORD_SEPARATOR = " ";
-   private final int maxFilterResults;
-   private final double matchThreshold;
+   @Value("${application.search.maxThreshold:0.667}")
+   private double matchThreshold;
+
+   /**
+    * For testing purpose only!
+    * @param matchThreshold the value a course must match to be selected
+    */
+   ObjectTextSearch (double matchThreshold) {
+      this.matchThreshold = matchThreshold;
+   }
 
    public ObjectTextSearch() {
-      this.maxFilterResults = MAX_FILTER_RESULTS;
-      this.matchThreshold = MATCH_THRESHOLD;
+      // no-op
    }
 
    /**
@@ -49,13 +55,13 @@ public class ObjectTextSearch {
     * @param <T>            the actual type of the given List of Objects
     * @return a filtered and ordered list of matches, limited to <code>maxFilterResults</code> results
     */
+   @SuppressWarnings("unchecked")
    public <T> List<T> getWeightedObjects4Filter(List<T> objects2Filter, String filter) {
       return objects2Filter.stream()
               .map(weightAndMap2WeightedObjects(filter))
               .sorted(Comparator.comparing(WeightedObject::weight).reversed())
               .filter(WeightedObject::hasWeight)
               .map(WeightedObject::object)
-              .limit(maxFilterResults)
               .map(o -> (T) o)
               .toList();
    }

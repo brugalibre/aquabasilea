@@ -31,6 +31,7 @@ class ObjectTextSearchTest {
       String filterWith2Words = "functional aqua";
       String functionalTraining = "Functional training";
       TestCaseBuilder tcb = new TestCaseBuilder()
+              .withMatchThreshold(0.677)
               .withCourseDef(new CourseDef("1", USER_ID, friday, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
               .withCourseDef(new CourseDef("2", USER_ID, friday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, functionalTraining, COURSE_INSTRUCTOR))
               .withCourseDef(new CourseDef("3", USER_ID, friday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "BeBo Fit (Beckenboden Fit)", COURSE_INSTRUCTOR))
@@ -61,6 +62,7 @@ class ObjectTextSearchTest {
       String filter = "16:15 aqua functional";// 'aqua' should not mislead the best search result..
       String functionalTraining = "Functional training";
       TestCaseBuilder tcb = new TestCaseBuilder()
+              .withMatchThreshold(0.7)
               .withCourseDef(new CourseDef("1", USER_ID, friday_1615, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
               .withCourseDef(new CourseDef("2", USER_ID, friday_1315, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
               .withCourseDef(new CourseDef("3", USER_ID, monday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2", COURSE_INSTRUCTOR))
@@ -78,14 +80,20 @@ class ObjectTextSearchTest {
    private static final class TestCaseBuilder {
       private final ObjectTextSearch objectTextSearch;
       private final List<CourseDefDto> courseDefDtos;
+      private double matchThreshold = 0.677;
 
       private TestCaseBuilder() {
          this.courseDefDtos = new ArrayList<>();
-         this.objectTextSearch = new ObjectTextSearch();
+         this.objectTextSearch = new ObjectTextSearch(matchThreshold);
       }
 
       private TestCaseBuilder withCourseDef(CourseDef courseDef) {
          this.courseDefDtos.add(CourseDefDto.of(courseDef));
+         return this;
+      }
+
+      private TestCaseBuilder withMatchThreshold(double matchThreshold) {
+         this.matchThreshold = matchThreshold;
          return this;
       }
 

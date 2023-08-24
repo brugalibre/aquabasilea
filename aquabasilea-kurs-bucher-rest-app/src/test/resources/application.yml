@@ -1,4 +1,6 @@
 application:
+  search:
+    maxThreshold: 0.677
   security:
     keyStorePassword: pwd
     aquabasileaKeyStoreName: ./aquabasilea.keystore
