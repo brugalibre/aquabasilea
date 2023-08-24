@@ -3,6 +3,7 @@ package com.aquabasilea.search;
 import com.aquabasilea.domain.course.CourseLocation;
 import com.aquabasilea.domain.course.LocalDateTimeBuilder;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
+import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import org.junit.jupiter.api.Test;
 
@@ -77,6 +78,35 @@ class ObjectTextSearchTest {
       assertThat(weightedCourseDefDtos4Filter.get(1).timeOfTheDay(), is(timeOfTheDayOfSecondBestMatch));
    }
 
+   @Test
+   void testFilterCoursesWithSameCourseNameLocationButDifferentCourseDate() {
+      // Given
+      String timeOfTheDayOfBestMatch = "13:15";
+      LocalDate fridayCourseDate = LocalDate.of(2021, Month.NOVEMBER, 19);
+      LocalDateTime friday_1315 = LocalDateTime.of(fridayCourseDate, LocalDateTimeBuilder.createLocalTime(timeOfTheDayOfBestMatch));
+      LocalDate mondayCourseDate = LocalDate.of(2021, Month.NOVEMBER, 29);
+      LocalDateTime monday_1315 = LocalDateTime.of(mondayCourseDate, LocalDateTimeBuilder.createLocalTime(timeOfTheDayOfBestMatch));
+      LocalDateTime tuesday = LocalDateTime.of(LocalDate.of(2021, Month.NOVEMBER, 16), LocalTime.of(10, 15));
+      LocalDateTime thursday = LocalDateTime.of(LocalDate.of(2021, Month.NOVEMBER, 18), LocalTime.of(9, 15));
+      String filter = "Montag";
+      String functionalTraining = "Functional training";
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withMatchThreshold(0.7)
+              .withCourseDef(new CourseDef("1", USER_ID, friday_1315, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("2", USER_ID, monday_1315, CourseLocation.FITNESSPARK_HEUWAAGE, functionalTraining, COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("3", USER_ID, tuesday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant 2", COURSE_INSTRUCTOR))
+              .withCourseDef(new CourseDef("4", USER_ID, thursday, CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA, "Irrelevant", COURSE_INSTRUCTOR))
+              .build();
+
+      // When
+      List<CourseDefDto> weightedCourseDefDtos4Filter = tcb.objectTextSearch.getWeightedObjects4Filter(tcb.courseDefDtos, filter);
+
+      // Then
+      assertThat(weightedCourseDefDtos4Filter.get(0).courseDefDate(), is(monday_1315));
+      assertThat(weightedCourseDefDtos4Filter.get(1).courseDefDate(), is(thursday));
+      assertThat(weightedCourseDefDtos4Filter.get(2).courseDefDate(), is(tuesday));
+   }
+
    private static final class TestCaseBuilder {
       private final ObjectTextSearch objectTextSearch;
       private final List<CourseDefDto> courseDefDtos;
@@ -84,7 +114,7 @@ class ObjectTextSearchTest {
 
       private TestCaseBuilder() {
          this.courseDefDtos = new ArrayList<>();
-         this.objectTextSearch = new ObjectTextSearch(matchThreshold);
+         this.objectTextSearch = new ObjectTextSearch(matchThreshold, new LocaleProvider());
       }
 
       private TestCaseBuilder withCourseDef(CourseDef courseDef) {

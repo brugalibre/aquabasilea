@@ -17,7 +17,7 @@ public record CourseDefDto(@SearchableAttribute String courseName,
                            @SearchableAttribute String dayOfWeek,
                            @SearchableAttribute String timeOfTheDay,
                            @SearchableAttribute CourseLocationDto courseLocationDto,
-                           LocalDateTime courseDefDate) {
+                           @SearchableAttribute LocalDateTime courseDefDate) {
 
    /**
     * Creates a new {@link CourseDefDto}
