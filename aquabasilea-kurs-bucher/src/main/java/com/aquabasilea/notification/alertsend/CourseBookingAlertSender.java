@@ -1,9 +1,9 @@
 package com.aquabasilea.notification.alertsend;
 
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
-import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.brugalibre.notification.api.AlertSendService;
 import com.brugalibre.notification.config.AlertSendConfig;
@@ -58,7 +58,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
          case BOOKING_DRY_RUN:
             return getMessage4ResultDryRun(courseBookingEndResult, courseName);
          default:
-            LOG.error("Warning! Unhandled state [{}]", courseBookingState);
+            LOG.error("Warning! getMessage4Result: Unhandled state [{}]", courseBookingState);
             return null;
       }
    }
@@ -74,7 +74,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
          case COURSE_BOOKING_SKIPPED:
             return String.format(TextResources.COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
-            LOG.error("Warning! Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
+            LOG.error("Warning! getMessage4ResultDryRun: Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
             return null;
       }
    }
@@ -95,7 +95,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
          case COURSE_BOOKING_SKIPPED:
             return String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
-            LOG.error("Warning! Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
+            LOG.error("Warning! getMessage4ResultBooked: Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
             return null;
       }
    }
