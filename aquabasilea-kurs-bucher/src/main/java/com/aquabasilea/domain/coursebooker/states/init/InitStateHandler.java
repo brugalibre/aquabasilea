@@ -5,7 +5,6 @@ import com.aquabasilea.domain.course.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
-import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.util.DateUtil;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
@@ -32,14 +31,12 @@ public class InitStateHandler {
    private final static Logger LOG = LoggerFactory.getLogger(InitStateHandler.class);
 
    private final WeeklyCoursesRepository weeklyCoursesRepository;
-   private final CourseDefRepository courseDefRepository;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
-   public InitStateHandler(WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
+   public InitStateHandler(WeeklyCoursesRepository weeklyCoursesRepository,
                            AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
-      this.courseDefRepository = courseDefRepository;
    }
 
    /**
@@ -129,20 +126,5 @@ public class InitStateHandler {
               .stream()
               .filter(not(Course::getIsPaused))
               .collect(Collectors.toList());
-   }
-
-   /**
-    * During the initializing state the course-dates of the {@link Course}s may be updated, when this date lays in the past
-    * Additionally the {@link Course#getHasCourseDef()} must be updated, when this course-date has changed
-    *
-    * @param initializationResult the {@link InitializationResult} which resulted from a {@link InitStateHandler#evaluateNextCourseAndState(String)} call
-    */
-   public void saveUpdatedWeeklyCourses(InitializationResult initializationResult) {
-      updateCoursesHasCourseDef(initializationResult.getUpdatedWeeklyCourses());
-   }
-
-   void updateCoursesHasCourseDef(WeeklyCourses weeklyCourses) {
-      weeklyCourses.updateCoursesHasCourseDef(courseDefRepository.getAllByUserId(weeklyCourses.getUserId()));
-      weeklyCoursesRepository.save(weeklyCourses);
    }
 }
