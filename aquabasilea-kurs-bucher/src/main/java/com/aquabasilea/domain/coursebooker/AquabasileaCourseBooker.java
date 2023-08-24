@@ -3,6 +3,7 @@ package com.aquabasilea.domain.coursebooker;
 import com.aquabasilea.domain.course.Course;
 import com.aquabasilea.domain.course.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.course.service.WeeklyCoursesUpdater;
 import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
@@ -45,6 +46,7 @@ public class AquabasileaCourseBooker {
    private final BookingStateHandler bookingStateHandler;
    private InitStateHandler initStateHandler;
    private IdleStateHandler idleStateHandler;
+   private WeeklyCoursesUpdater weeklyCoursesUpdater;
    private InfoString4StateEvaluator infoString4StateEvaluator;
 
    private List<CourseBookingStateChangedHandler> courseBookingStateChangedHandlers;
@@ -85,7 +87,8 @@ public class AquabasileaCourseBooker {
    private void init(AquabasileaCourseBookerConfig bookerConfig, WeeklyCoursesRepository weeklyCoursesRepository,
                      CourseDefRepository courseDefRepository) {
       this.idleStateHandler = new IdleStateHandler();
-      this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, courseDefRepository, bookerConfig);
+      this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, bookerConfig);
+      this.weeklyCoursesUpdater = new WeeklyCoursesUpdater(weeklyCoursesRepository, courseDefRepository);
       this.infoString4StateEvaluator = new InfoString4StateEvaluator(bookerConfig);
       this.courseBookingStateChangedHandlers = new ArrayList<>();
       this.courseBookingEndResultConsumers = new ArrayList<>();
@@ -174,7 +177,7 @@ public class AquabasileaCourseBooker {
 
    private void handleInitializeState() {
       this.initializationResult = initStateHandler.evaluateNextCourseAndState(userContext.id);
-      initStateHandler.saveUpdatedWeeklyCourses(initializationResult);
+      weeklyCoursesUpdater.updateCoursesHasCourseDef(initializationResult.getUpdatedWeeklyCourses());
       setState(initializationResult.getNextCourseBookingState());
    }
    private void handleIdleState() {
