@@ -69,8 +69,8 @@ class AquabasileaCourseBookerInitializerTest {
    @Test
    void testInitializeAquabasileaCourseBookerInitializer() {
       // Given
-      LocalDate date = LocalDate.of(2023, 8, 26);
-      LocalDateTime courseDate = LocalDateTime.of(date, LocalTime.of(12, 30));
+      LocalDate date = LocalDate.now().plusDays(2);
+      LocalDateTime courseDate = LocalDateTime.of(date, LocalTime.now().plusHours(1));
       String userId = "1234";
       String courseName = "name";
       UserAddedEvent userAddedEvent = createUserAddedEvent("peter", userId);
