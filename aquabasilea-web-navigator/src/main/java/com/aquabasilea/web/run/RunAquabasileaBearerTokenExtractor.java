@@ -1,7 +1,6 @@
 package com.aquabasilea.web.run;
 
 import com.aquabasilea.web.login.AquabasileaBearerTokenExtractor;
-import com.aquabasilea.web.login.AquabasileaLogin;
 
 public class RunAquabasileaBearerTokenExtractor {
 
@@ -23,5 +22,8 @@ public class RunAquabasileaBearerTokenExtractor {
       AquabasileaBearerTokenExtractor aquabasileaLogin = AquabasileaBearerTokenExtractor.createAquabasileaBearerTokenExtractor(username, password, DEBUG_CONFIG_FILE);
       String bearerToken = aquabasileaLogin.extractBearerToken();
       System.err.println(bearerToken);
+      if (bearerToken == null) {
+         throw new IllegalStateException("Kein Bearer Token extrahiert!");
+      }
    }
 }
