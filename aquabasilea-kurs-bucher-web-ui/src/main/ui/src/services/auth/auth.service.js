@@ -1,4 +1,5 @@
 import axios from 'axios';
+import authHeader from "@/services/auth/auth-header";
 
 const API_URL = '/api/auth/';
 
@@ -11,6 +12,10 @@ class AuthService {
                 }
                 return response.data;
             });
+    }
+
+    changePassword(changeUserPasswordRequest) {
+        return axios.post(API_URL + 'changePassword', changeUserPasswordRequest, {headers: authHeader()});
     }
 
     logout() {

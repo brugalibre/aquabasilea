@@ -4,7 +4,7 @@ import com.aquabasilea.application.initialize.api.AquabasileaAppInitializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.application.initialize.coursebooker.AquabasileaCourseBookerInitializer;
 import com.aquabasilea.application.initialize.persistence.PersistenceInitializer;
-import com.aquabasilea.application.initialize.usercredentials.UserCredentialsInitializer;
+import com.aquabasilea.application.initialize.usercredentials.UserCredentialsHandler;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
 import com.brugalibre.domain.user.model.User;
@@ -21,7 +21,7 @@ import java.util.List;
 public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer {
 
    private final static Logger LOG = LoggerFactory.getLogger(AquabasileaAppInitializerImpl.class);
-   private final UserCredentialsInitializer userCredentialsInitializer;
+   private final UserCredentialsHandler userCredentialsHandler;
    private final PersistenceInitializer persistenceInitializer;
    private final AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer;
    private final CourseDefUpdater courseDefUpdater;
@@ -30,13 +30,13 @@ public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer 
 
    @Autowired
    public AquabasileaAppInitializerImpl(PersistenceInitializer persistenceInitializer,
-                                        UserCredentialsInitializer userCredentialsInitializer,
+                                        UserCredentialsHandler userCredentialsHandler,
                                         AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer,
                                         CourseDefUpdater courseDefUpdater,
                                         UserRepository userRepository,
                                         UserRoleConfigService userRoleConfigService) {
       this.persistenceInitializer = persistenceInitializer;
-      this.userCredentialsInitializer = userCredentialsInitializer;
+      this.userCredentialsHandler = userCredentialsHandler;
       this.aquabasileaCourseBookerInitializer = aquabasileaCourseBookerInitializer;
       this.userRoleConfigService = userRoleConfigService;
       this.courseDefUpdater = courseDefUpdater;
@@ -52,7 +52,7 @@ public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer 
    @Override
    public void initialize(UserAddedEvent userAddedEvent) {
       LOG.info("Initialize for new user [{}]", userAddedEvent.userId());
-      userCredentialsInitializer.initialize(userAddedEvent);
+      userCredentialsHandler.initialize(userAddedEvent);
       persistenceInitializer.initialize(userAddedEvent);
       courseDefUpdater.startScheduler(userAddedEvent.userId());
       aquabasileaCourseBookerInitializer.initialize(userAddedEvent);

@@ -10,7 +10,7 @@ apply from: '../aquabasilea.gradle'
 apply from: '../aquabasilea-dependencies.gradle'
 
 group 'com.aquabasilea'
-version '1.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 mainClassName = 'com.aquabasilea.run.RunAquabasileaCourseBookerRunner'
 
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.2-SNAPSHOT'
+    compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.3-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-util', version: '1.0.1-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-notification', version: '1.0.1-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0.6-SNAPSHOT'
@@ -30,7 +30,7 @@ dependencies {
 
     compileOnly 'org.slf4j:slf4j-api:2.0.5'
 
-    testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.2-SNAPSHOT'
+    testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.3-SNAPSHOT'
     testImplementation 'org.hibernate:hibernate-core:6.1.5.Final'
     testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.0.0'
