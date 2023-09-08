@@ -13,8 +13,11 @@ import com.aquabasilea.domain.statistics.service.BookingStatisticsUpdater;
 import com.aquabasilea.notification.alertsend.CourseBookingAlertSender;
 import com.aquabasilea.notification.alertsend.config.AlertSendConfigProviderImpl;
 import com.aquabasilea.service.statistics.StatisticsService;
+import com.brugalibre.notification.api.v1.alerttype.AlertType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AquabasileaCourseBookerInitializer implements Initializer {
@@ -49,7 +52,7 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
    private AquabasileaCourseBooker createAquabasileaCourseBooker(UserAddedEvent userAddedEvent) {
       AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(createUserContext(userAddedEvent), weeklyCoursesRepository,
               courseDefRepository, aquabasileaCourseBookerFacadeFactory);
-      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender(AlertSendConfigProviderImpl.of()));
+      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender(AlertSendConfigProviderImpl.of(() -> List.of(AlertType.SMS))));
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new BookingStatisticsUpdater(statisticsService));
       new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker);
       return aquabasileaCourseBooker;

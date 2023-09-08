@@ -2,8 +2,8 @@ package com.aquabasilea.application.initialize.persistence;
 
 import com.aquabasilea.application.initialize.Initializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
-import com.aquabasilea.domain.course.CourseLocation;
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;

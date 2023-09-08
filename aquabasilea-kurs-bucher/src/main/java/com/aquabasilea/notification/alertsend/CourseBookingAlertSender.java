@@ -5,11 +5,11 @@ import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.brugalibre.notification.api.AlertSendService;
+import com.brugalibre.notification.api.v1.service.AlertSendService;
 import com.brugalibre.notification.config.AlertSendConfig;
 import com.brugalibre.notification.config.AlertSendConfigProvider;
-import com.brugalibre.notification.send.AlertSendInfos;
-import com.brugalibre.notification.send.BasicAlertSender;
+import com.brugalibre.notification.send.common.model.AlertSendInfos;
+import com.brugalibre.notification.send.common.service.BasicAlertSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,19 +44,32 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
    public void consumeResult(ConsumerUser consumerUser, CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
       String msg = getMessage4Result(courseBookingEndResult, courseBookingState);
       if (nonNull(msg)) {
-         AlertSendInfos alertSendInfos = new AlertSendInfos(msg, List.of(consumerUser.phoneNr()));
+         String title = getTitle4Result(courseBookingEndResult, courseBookingState);
+         AlertSendInfos alertSendInfos = new AlertSendInfos(title, msg, List.of(consumerUser.phoneNr()));
          sendMessage(alertSendInfos);
       }
    }
 
    private String getMessage4Result(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
       String courseName = courseBookingEndResult.getCourseName();
-
       switch (courseBookingState) {
          case BOOKING:
             return getMessage4ResultBooked(courseBookingEndResult, courseName);
          case BOOKING_DRY_RUN:
             return getMessage4ResultDryRun(courseBookingEndResult, courseName);
+         default:
+            LOG.error("Warning! getMessage4Result: Unhandled state [{}]", courseBookingState);
+            return null;
+      }
+   }
+
+   private String getTitle4Result(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
+      String courseName = courseBookingEndResult.getCourseName();
+      switch (courseBookingState) {
+         case BOOKING:
+            return TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
+         case BOOKING_DRY_RUN:
+            return TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
          default:
             LOG.error("Warning! getMessage4Result: Unhandled state [{}]", courseBookingState);
             return null;
