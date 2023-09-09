@@ -1,6 +1,6 @@
 package com.aquabasilea.application.security.service.login;
 
-import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.web.login.AquabasileaLogin;
 import com.brugalibre.domain.user.model.User;

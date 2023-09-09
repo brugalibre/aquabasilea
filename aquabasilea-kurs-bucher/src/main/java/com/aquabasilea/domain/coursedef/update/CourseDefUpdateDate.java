@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursedef.update;
 
-import com.aquabasilea.domain.course.LocalDateTimeBuilder;
+import com.aquabasilea.domain.course.model.LocalDateTimeBuilder;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 
 import java.time.DayOfWeek;

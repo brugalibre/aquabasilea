@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursedef.model.repository.mapping;
 
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.persistence.coursedef.CourseDefEntity;
 import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosCourse;

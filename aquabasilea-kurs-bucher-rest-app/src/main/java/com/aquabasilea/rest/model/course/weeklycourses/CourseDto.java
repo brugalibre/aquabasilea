@@ -2,8 +2,8 @@ package com.aquabasilea.rest.model.course.weeklycourses;
 
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
 import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

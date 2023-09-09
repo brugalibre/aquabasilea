@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.course;
+package com.aquabasilea.domain.course.model;
 
 import com.brugalibre.common.domain.model.DomainModel;
 

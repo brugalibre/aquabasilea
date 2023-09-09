@@ -1,9 +1,9 @@
 package com.aquabasilea.domain.coursebooker;
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.Course.CourseBuilder;
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.Course.CourseBuilder;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.config.TestAquabasileaCourseBookerConfig;
@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.aquabasilea.domain.course.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
+import static com.aquabasilea.domain.course.model.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.*;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;

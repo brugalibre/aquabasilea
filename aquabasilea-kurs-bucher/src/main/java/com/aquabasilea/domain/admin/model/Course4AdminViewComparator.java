@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.admin.model;
 
-import com.aquabasilea.domain.course.CourseDateComparator;
+import com.aquabasilea.domain.course.model.CourseDateComparator;
 
 public class Course4AdminViewComparator implements java.util.Comparator<Course4AdminView> {
     @Override

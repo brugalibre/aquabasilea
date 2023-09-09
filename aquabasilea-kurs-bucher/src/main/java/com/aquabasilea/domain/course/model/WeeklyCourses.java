@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.course;
+package com.aquabasilea.domain.course.model;
 
 import com.aquabasilea.domain.course.exception.CourseAlreadyExistsException;
 import com.aquabasilea.domain.course.exception.NoCourseFoundException;

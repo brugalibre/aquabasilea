@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.userconfig.model;
 
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.brugalibre.common.domain.model.AbstractDomainModel;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.course;
+package com.aquabasilea.domain.course.model;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;

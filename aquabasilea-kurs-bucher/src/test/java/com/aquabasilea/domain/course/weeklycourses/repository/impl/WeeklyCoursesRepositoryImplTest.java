@@ -1,8 +1,8 @@
 package com.aquabasilea.domain.course.weeklycourses.repository.impl;
 
 import com.aquabasilea.domain.course.repository.impl.WeeklyCoursesRepositoryImpl;
-import com.aquabasilea.domain.course.Course.CourseBuilder;
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.Course.CourseBuilder;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.persistence.courses.WeeklyCoursesEntity;
 import com.aquabasilea.persistence.courses.dao.WeeklyCoursesDao;

@@ -1,8 +1,8 @@
 package com.aquabasilea.domain.coursebooker.states.booking;
 
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.CourseComparator;
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.CourseComparator;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;

@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.course.repository;
 
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.brugalibre.domain.user.repository.UserRelatedRepository;
 
 /**

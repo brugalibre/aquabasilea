@@ -5,7 +5,7 @@ import com.aquabasilea.domain.admin.model.Course4AdminView;
 import com.aquabasilea.domain.admin.model.Course4AdminViewComparator;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.statistics.model.StatisticsOverview;
 import com.aquabasilea.service.statistics.StatisticsService;
 import com.brugalibre.domain.user.model.User;

@@ -1,6 +1,6 @@
 package com.aquabasilea.service.userconfig;
 
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.userconfig.model.UserConfig;
 import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.brugalibre.domain.user.model.User;

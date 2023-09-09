@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursebooker.booking.apimigros;
 
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
 import com.aquabasilea.migrosapi.model.book.api.MigrosApiBookCourseRequest;

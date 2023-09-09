@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.course.service;
 
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 

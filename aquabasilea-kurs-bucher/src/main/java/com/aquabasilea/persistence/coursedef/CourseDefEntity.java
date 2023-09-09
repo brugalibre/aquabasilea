@@ -1,6 +1,6 @@
 package com.aquabasilea.persistence.coursedef;
 
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.brugalibre.common.domain.persistence.DomainEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

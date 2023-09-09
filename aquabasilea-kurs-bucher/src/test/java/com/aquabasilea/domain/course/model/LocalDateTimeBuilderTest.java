@@ -1,5 +1,6 @@
-package com.aquabasilea.domain.course;
+package com.aquabasilea.domain.course.model;
 
+import com.aquabasilea.domain.course.model.LocalDateTimeBuilder;
 import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

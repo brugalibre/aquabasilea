@@ -7,7 +7,7 @@ import com.aquabasilea.application.initialize.usercredentials.UserCredentialsHan
 import com.aquabasilea.application.security.securestorage.WriteSecretToKeyStore;
 import com.aquabasilea.application.security.service.login.AquabasileaLoginService;
 import com.aquabasilea.application.security.service.securestorage.SecretStoreService;
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;

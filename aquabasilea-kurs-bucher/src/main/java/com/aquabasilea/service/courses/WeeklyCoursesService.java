@@ -2,9 +2,9 @@ package com.aquabasilea.service.courses;
 
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.WeeklyCourses;
-import com.aquabasilea.domain.course.WeeklyCoursesOverview;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
+import com.aquabasilea.domain.course.model.WeeklyCoursesOverview;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.brugalibre.domain.user.model.User;

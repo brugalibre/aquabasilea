@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.course.repository.mapping;
 
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.persistence.courses.WeeklyCoursesEntity;
 import com.brugalibre.common.domain.mapper.CommonDomainModelMapper;
 import com.brugalibre.domain.user.mapper.UserEntityMapper;

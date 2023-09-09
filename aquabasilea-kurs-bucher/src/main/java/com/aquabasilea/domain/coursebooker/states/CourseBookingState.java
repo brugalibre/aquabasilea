@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursebooker.states;
 
-import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 
 public enum CourseBookingState {

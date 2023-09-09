@@ -1,8 +1,8 @@
 package com.aquabasilea.domain.course.weeklycourses;
 
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.Course.CourseBuilder;
-import com.aquabasilea.domain.course.WeeklyCourses;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.Course.CourseBuilder;
+import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.exception.CourseAlreadyExistsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
