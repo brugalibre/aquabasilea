@@ -4,12 +4,55 @@ public class TestRequestResponse {
 
    public static String COURSE_NAME_1 = "Aqua Power 50 Min.";
    public static String COURSE_NAME_2 = "Pilates G1";
+   public static String CENTER_ID_1 = "129";
+   public static String CENTER_ID_2 = "139";
 
    static final String GET_COURSES_REQUEST = "{\"language\":\"de\",\"skip\":0,\"take\":8,\"selectMethod\":2,\"memberIdTac\":0,\"centerIds\":[129,139],\"daytimeIds\":[],\"weekdayIds\":[],\"coursetitles\":[]}";
    static final String GET_COURSE_TAC_ID_REQUEST = "{\"language\":\"de\",\"skip\":0,\"take\":8,\"selectMethod\":2,\"memberIdTac\":0,\"centerIds\":[139],\"daytimeIds\":[],\"weekdayIds\":[7],\"coursetitles\":[{\"centerId\": 139,\"coursetitle\":\"" + COURSE_NAME_1 + "\"}]}";
    static final String BOOK_COURSE_REQUEST = "";
 
    static final String BOOK_COURSE_RESPONSE = "{";
+
+   static final String GET_BOOKED_COURSES_RESPONSE = "[\n" +
+           "{\n" +
+           "\"centerId\": " + CENTER_ID_2 + ",\n" +
+           "\"centerIdTac\": 80,\n" +
+           "\"courseIdTac\": 18012472,\n" +
+           "\"title\": \"" + COURSE_NAME_1 + "\",\n" +
+           "\"description\": \"deepWork ist athletisch, einfach, anstrengend, und doch ganz anders als alle bekannten Programme - ein Workout voller Energie! Die deepWork Bewegungsabläufe sind so konzipiert, dass sie sich immer in der Verbindung zwischen Anspannung und Entspannung befinden und mit Atemübungen kombiniert werden.\",\n" +
+           "\"activity\": \"\",\n" +
+           "\"instructor\": \" Gemma M.\",\n" +
+           "\"location\": \" Gym 1\",\n" +
+           "\"start\": \"2023-09-10T11:15:00\",\n" +
+           "\"end\": \"2023-09-10T12:05:00\",\n" +
+           "\"maxPersons\": 30,\n" +
+           "\"actualPersons\": 3,\n" +
+           "\"booked\": true,\n" +
+           "\"bookable\": false,\n" +
+           "\"bookingIdTac\": 18173491,\n" +
+           "\"reservationDescription\": \"\",\n" +
+           "\"linkCalendar\": \"course/139/18012472.ics\"\n" +
+           "\t},\n" +
+           "\t{\n" +
+           "\"centerId\": " + CENTER_ID_1 + ",\n" +
+           "\"centerIdTac\": 80,\n" +
+           "\"courseIdTac\": 34515942,\n" +
+           "\"title\": \"" + COURSE_NAME_2 + "\",\n" +
+           "\"description\": \"Solem Ipsum dubsum\",\n" +
+           "\"activity\": \"\",\n" +
+           "\"instructor\": \" Emma M.\",\n" +
+           "\"location\": \" Gym 2\",\n" +
+           "\"start\": \"2023-08-12T11:15:00\",\n" +
+           "\"end\": \"2023-08-12T12:05:00\",\n" +
+           "\"maxPersons\": 30,\n" +
+           "\"actualPersons\": 5,\n" +
+           "\"booked\": true,\n" +
+           "\"bookable\": false,\n" +
+           "\"bookingIdTac\": 18173491,\n" +
+           "\"reservationDescription\": \"\",\n" +
+           "\"linkCalendar\": \"course/139/34515942.ics\"\n" +
+           "\t}\n" +
+           "]";
 
    static final String GET_COURSES_RESPONSE = "{" +
            "    \"memberIdTac\": 0," +

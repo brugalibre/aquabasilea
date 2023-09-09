@@ -1,6 +1,6 @@
 package com.aquabasilea.migrosapi.service.security;
 
-import com.aquabasilea.migrosapi.service.security.api.BearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
 
 import java.util.function.Supplier;
 

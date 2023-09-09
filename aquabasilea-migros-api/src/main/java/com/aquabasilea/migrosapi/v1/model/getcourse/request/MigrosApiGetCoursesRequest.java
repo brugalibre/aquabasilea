@@ -1,11 +1,11 @@
-package com.aquabasilea.migrosapi.model.getcourse.request.api;
+package com.aquabasilea.migrosapi.v1.model.getcourse.request;
 
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiGetCoursesResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
 
 import java.util.List;
 
 /**
- * Defines a request for getting all courses for  the given locations
+ * Defines a request for getting all courses for the given locations, days and or course-titles
  *
  * @param courseCenterIds the ids of the relevant course-centers
  * @param dayIds          the ids of the relevant day. Monday e.g. would be '1', Tuesday '2' and so on
@@ -18,7 +18,7 @@ public record MigrosApiGetCoursesRequest(List<String> courseCenterIds, List<Stri
                                          String take) {
 
    /**
-    * When nothing else is defined we search alway for courses of the current week
+    * When nothing else is defined we search always for courses of the current week
     */
    public static final String DEFAULT_TAKE = "8";
 

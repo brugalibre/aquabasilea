@@ -1,14 +1,16 @@
 package com.aquabasilea.migrosapi.service;
 
-import com.aquabasilea.migrosapi.model.book.api.CourseBookResult;
-import com.aquabasilea.migrosapi.model.book.api.MigrosApiBookCourseRequest;
-import com.aquabasilea.migrosapi.model.book.api.MigrosBookContext;
-import com.aquabasilea.migrosapi.model.getcourse.request.api.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiBookCourseResponse;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiGetCoursesResponse;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosCourse;
-import com.aquabasilea.migrosapi.model.security.api.AuthenticationContainer;
-import com.aquabasilea.migrosapi.service.security.api.BearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.model.book.CourseBookResult;
+import com.aquabasilea.migrosapi.v1.model.book.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.MigrosBookContext;
+import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
+import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
+import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.service.MigrosApi;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
 import org.junit.jupiter.api.Test;
@@ -53,12 +55,43 @@ class MigrosApiImplTest {
       // Then
       serverTestCaseBuilder.stop();
       assertThat(coursesResponse.courses().size(), is(2));
-      Optional<MigrosCourse> course1Opt = findCourse4Name(coursesResponse, COURSE_NAME_1);
+      Optional<MigrosCourse> course1Opt = findCourse4Name(coursesResponse.courses(), COURSE_NAME_1);
       assertThat(course1Opt.isPresent(), is(true));
-      assertThat(course1Opt.get().centerId(), is("129"));
-      Optional<MigrosCourse> course2Opt = findCourse4Name(coursesResponse, COURSE_NAME_2);
+      assertThat(course1Opt.get().centerId(), is(CENTER_ID_1));
+      Optional<MigrosCourse> course2Opt = findCourse4Name(coursesResponse.courses(), COURSE_NAME_2);
       assertThat(course2Opt.isPresent(), is(true));
-      assertThat(course2Opt.get().centerId(), is("139"));
+      assertThat(course2Opt.get().centerId(), is(CENTER_ID_2));
+   }
+
+   @Test
+   void getBookedCourses() {
+      // Given
+      int port = 8282;
+      String path = "/kp/api/Booking?";
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + path, "", BEARER_TOKEN_PROVIDER);
+      Supplier<char[]> userPwdSupplier = ""::toCharArray;
+      String username = "peter";
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+              .withHost(HOST)
+              .withRequestResponse(path)
+              .withMethod("GET")
+              .withResponseBody(GET_BOOKED_COURSES_RESPONSE)
+              .withHeader(new Header(AuthConst.AUTHORIZATION, BEARER_TOKEN))
+              .buildRequestResponse()
+              .build();
+
+      // When
+      MigrosApiGetBookedCoursesResponse migrosApiGetBookedCoursesResponse = migrosApi.getBookedCourses(new AuthenticationContainer(username, userPwdSupplier));
+
+      // Then
+      serverTestCaseBuilder.stop();
+      assertThat(migrosApiGetBookedCoursesResponse.courses().size(), is(2));
+      Optional<MigrosCourse> course1Opt = findCourse4Name(migrosApiGetBookedCoursesResponse.courses(), COURSE_NAME_1);
+      assertThat(course1Opt.isPresent(), is(true));
+      assertThat(course1Opt.get().centerId(), is(CENTER_ID_2));
+      Optional<MigrosCourse> course2Opt = findCourse4Name(migrosApiGetBookedCoursesResponse.courses(), COURSE_NAME_2);
+      assertThat(course2Opt.isPresent(), is(true));
+      assertThat(course2Opt.get().centerId(), is(CENTER_ID_1));
    }
 
    @Test
@@ -292,9 +325,8 @@ class MigrosApiImplTest {
       assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_BOOKING_DRY_RUN_FAILED));
    }
 
-   private static Optional<MigrosCourse> findCourse4Name(MigrosApiGetCoursesResponse coursesResponse, String courseName) {
-      return coursesResponse.courses()
-              .stream()
+   private static Optional<MigrosCourse> findCourse4Name(List<MigrosCourse> courses, String courseName) {
+      return courses.stream()
               .filter(course -> course.courseName().equals(courseName))
               .findFirst();
    }
