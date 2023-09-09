@@ -1,6 +1,7 @@
 package com.aquabasilea.migrosapi.service.getcourse;
 
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosGetCoursesResponse;
+import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.response.AbstractHttpResponseReader;
 
 public class MigrosGetCoursesResponseReader extends AbstractHttpResponseReader<MigrosGetCoursesResponse> {
@@ -10,7 +11,7 @@ public class MigrosGetCoursesResponseReader extends AbstractHttpResponseReader<M
    }
 
    @Override
-   public MigrosGetCoursesResponse createErrorResponse(Exception e, String url) {
-      return new MigrosGetCoursesResponse(e, url);
+   public ResponseWrapper createErrorResponse(Exception e, String url) {
+      return ResponseWrapper.error(e, url);
    }
 }

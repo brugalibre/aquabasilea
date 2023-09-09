@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.aquabasilea'
-version '1.0.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 apply from: '../aquabasilea-dependencies.gradle'
 apply from: '../aquabasilea.gradle'
@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
 
-    implementation group: 'com.brugalibre', name: 'common-app-http', version: '1.0.0-SNAPSHOT'
+    implementation group: 'com.brugalibre', name: 'common-app-http', version: '1.0.2-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-test', version: '1.0.0-SNAPSHOT'
     compileOnly 'org.slf4j:slf4j-api:2.0.5'
 }

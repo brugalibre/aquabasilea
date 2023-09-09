@@ -1,12 +1,11 @@
 package com.aquabasilea.migrosapi.model.getcourse.response;
 
-import com.aquabasilea.migrosapi.model.book.api.CourseBookResult;
-import com.brugalibre.common.http.model.response.CommonHttpResponse;
+import com.aquabasilea.migrosapi.v1.model.book.CourseBookResult;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-public class MigrosBookCourseResponse extends CommonHttpResponse {
+public class MigrosBookCourseResponse {
    private int bookingIdTac;
    private int code;
    private String message;

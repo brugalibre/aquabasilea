@@ -1,4 +1,4 @@
-package com.aquabasilea.migrosapi.model.security.api;
+package com.aquabasilea.migrosapi.v1.model.security;
 
 import java.util.function.Supplier;
 

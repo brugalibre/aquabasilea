@@ -1,4 +1,4 @@
-package com.aquabasilea.migrosapi.model.book.api;
+package com.aquabasilea.migrosapi.v1.model.book;
 
 import java.time.Duration;
 import java.util.function.Supplier;
