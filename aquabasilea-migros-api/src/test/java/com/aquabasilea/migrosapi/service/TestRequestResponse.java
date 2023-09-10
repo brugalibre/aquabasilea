@@ -17,7 +17,7 @@ public class TestRequestResponse {
    static final String BOOK_COURSE_FAILED_RESPONSE = "{\"bookingIdTac\":0,\"code\":1,\"message\":\"" + TECHNISCHES_PROBLEM_1507 + "\"}";
 
    static final String BOOKING_ID_TAC = "18178989";
-   static final String CANCEL_COURSE_TAC_ID_REQUEST = "{\"language\":\"de\",\"bookingIdTac\":" + BOOKING_ID_TAC + "}";
+   static final String CANCEL_COURSE_TAC_ID_REQUEST = "{\"language\":\"de\",\"bookingIdTac\":\"" + BOOKING_ID_TAC + "\"}";
    static final String CANCEL_COURSE_TAC_ID_RESPONSE = "{\"bookingIdTac\":18178989,\"code\":0,\"message\":null}";
 
    static final String GET_BOOKED_COURSES_RESPONSE = "[\n" +
