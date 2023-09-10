@@ -11,7 +11,10 @@ public class TestRequestResponse {
    static final String GET_COURSE_TAC_ID_REQUEST = "{\"language\":\"de\",\"skip\":0,\"take\":8,\"selectMethod\":2,\"memberIdTac\":0,\"centerIds\":[139],\"daytimeIds\":[],\"weekdayIds\":[7],\"coursetitles\":[{\"centerId\": 139,\"coursetitle\":\"" + COURSE_NAME_1 + "\"}]}";
    static final String BOOK_COURSE_REQUEST = "";
 
-   static final String BOOK_COURSE_RESPONSE = "{";
+   static final String BOOK_COURSE_RESPONSE = "{\"bookingIdTac\":14891205,\"code\":0,\"message\":null}";
+
+   static final String TECHNISCHES_PROBLEM_1507 = "Technisches Problem 1507 (1507)";
+   static final String BOOK_COURSE_FAILED_RESPONSE = "{\"bookingIdTac\":0,\"code\":1,\"message\":\"" + TECHNISCHES_PROBLEM_1507 + "\"}";
 
    static final String GET_BOOKED_COURSES_RESPONSE = "[\n" +
            "{\n" +
