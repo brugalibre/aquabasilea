@@ -2,18 +2,21 @@ package com.aquabasilea.migrosapi.service;
 
 import com.aquabasilea.migrosapi.mapper.MigrosCourseMapper;
 import com.aquabasilea.migrosapi.mapper.MigrosCourseMapperImpl;
+import com.aquabasilea.migrosapi.model.book.response.MigrosCancelCourseResponse;
 import com.aquabasilea.migrosapi.model.getcourse.request.MigrosGetCoursesRequest;
 import com.aquabasilea.migrosapi.model.getcourse.request.MigrosRequestCourse;
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosBookCourseResponse;
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosResponseCourse;
 import com.aquabasilea.migrosapi.service.book.MigrosBookCourseResponseReader;
+import com.aquabasilea.migrosapi.service.book.MigrosCancelCourseResponseReader;
 import com.aquabasilea.migrosapi.service.book.MigrosGetBookedCoursesResponseReader;
 import com.aquabasilea.migrosapi.service.getcourse.MigrosGetCoursesResponseReader;
-import com.aquabasilea.migrosapi.service.security.MigrosApiBearerTokenProviderImpl;
+import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
 import com.aquabasilea.migrosapi.v1.model.book.request.MigrosBookContext;
 import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.v1.model.book.response.MigrosApiCancelCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
@@ -22,6 +25,7 @@ import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
 import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
 import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
+import com.brugalibre.common.http.model.method.HttpMethod;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.HttpService;
@@ -50,14 +54,6 @@ public class MigrosApiImpl implements MigrosApi {
    private final String migrosGetCoursesUrl;
    private final String migrosGetCoursesRequestBody;
    private final String migrosBookCourseRequestBody;
-
-   /**
-    * Creates a default {@link MigrosApiImpl} with the {@link MigrosApiBearerTokenProviderImpl}
-    * as well as default config values
-    */
-   public MigrosApiImpl() {
-      this(new MigrosApiBearerTokenProviderImpl());
-   }
 
    /**
     * Creates a default {@link MigrosApiImpl} with the given {@link BearerTokenProvider}
@@ -127,6 +123,16 @@ public class MigrosApiImpl implements MigrosApi {
                       .replace(COURSE_TITLES_PLACEHOLDER, joinStrings2String(migrosGetCoursesRequest.courseTitles()))
                       .replace(WEEK_DAY_PLACEHOLDER, joinStrings2String(migrosGetCoursesRequest.dayIds()))
               , migrosGetCoursesUrl);
+   }
+
+   @Override
+   public MigrosApiCancelCourseResponse cancelCourse(AuthenticationContainer authenticationContainer, MigrosApiCancelCourseRequest migrosApiCancelCourseRequest) {
+      LOG.info("Cancel booked course {}", migrosApiCancelCourseRequest.courseBookingId());
+      getAndSetBearerAuthentication(authenticationContainer);
+      HttpRequest cancelCourseRequest = HttpRequest.getHttpRequest(HttpMethod.DELETE, "", migrosCourseBookUrl);
+      ResponseWrapper<MigrosCancelCourseResponse> responseWrapper = httpService.callRequestAndParse(new MigrosCancelCourseResponseReader(), cancelCourseRequest);
+      logResponse(responseWrapper, cancelCourseRequest);
+      return MigrosApiCancelCourseResponse.of(responseWrapper.httpResponse(), migrosApiCancelCourseRequest.courseBookingId());
    }
 
    @Override

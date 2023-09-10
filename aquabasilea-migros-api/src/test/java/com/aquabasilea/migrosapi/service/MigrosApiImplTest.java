@@ -1,8 +1,11 @@
 package com.aquabasilea.migrosapi.service;
 
+import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
 import com.aquabasilea.migrosapi.v1.model.book.request.MigrosBookContext;
 import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.v1.model.book.response.CourseCancelResult;
+import com.aquabasilea.migrosapi.v1.model.book.response.MigrosApiCancelCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
@@ -361,6 +364,36 @@ class MigrosApiImplTest {
       serverTestCaseBuilder.stop();
       assertThat(migrosApiBookCourseResponse.errorMsg(), is("Dry run for course 'Aqua Power 50 Min.' failed! DurationToWait=3600, Evaluated courseIdTac=14389398, evaluatedBearerToken:null"));
       assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_BOOKING_DRY_RUN_FAILED));
+   }
+
+   @Test
+   void cancelCourse() {
+      // Given
+      int port = 8282;
+      String bookCoursePath = "/kp/api/Booking?";
+      String bookingIdTac = "2";
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + bookCoursePath, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+              .withHost(HOST)
+              .withRequestResponse(bookCoursePath)
+              .withMethod("DELETE")
+              .withRequestBody(CANCEL_COURSE_TAC_ID_REQUEST)
+              .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
+              .withHeader(new Header(AuthConst.AUTHORIZATION, BEARER_TOKEN))
+              .buildRequestResponse()
+              .build();
+
+      // When
+      String username = "username";
+
+      Supplier<char[]> userPwd = "pasd"::toCharArray;
+      AuthenticationContainer authenticationContainer = new AuthenticationContainer(username, userPwd);
+      MigrosApiCancelCourseRequest migrosApiCancelCourseRequest = new MigrosApiCancelCourseRequest(bookingIdTac);
+      MigrosApiCancelCourseResponse migrosApiBookCourseResponse = migrosApi.cancelCourse(authenticationContainer, migrosApiCancelCourseRequest);
+
+      // Then
+      serverTestCaseBuilder.stop();
+      assertThat(migrosApiBookCourseResponse.courseCancelResult(), is(CourseCancelResult.COURSE_CANCELED));
    }
 
    private static Optional<MigrosCourse> findCourse4Name(List<MigrosCourse> courses, String courseName) {
