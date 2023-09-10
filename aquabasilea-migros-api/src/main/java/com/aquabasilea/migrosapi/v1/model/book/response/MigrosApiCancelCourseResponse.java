@@ -10,7 +10,6 @@ public record MigrosApiCancelCourseResponse(CourseCancelResult courseCancelResul
 
     private static CourseCancelResult getCourseCancelResult(MigrosCancelCourseResponse migrosCancelCourseResponse, String expectedBookingIdTac) {
         if (requestWasSuccessful(migrosCancelCourseResponse, expectedBookingIdTac)) {
-
             return CourseCancelResult.COURSE_CANCELED;
         }
         return CourseCancelResult.COURSE_CANCEL_FAILED;

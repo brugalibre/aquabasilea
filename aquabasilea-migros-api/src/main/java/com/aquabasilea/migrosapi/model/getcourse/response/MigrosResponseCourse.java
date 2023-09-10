@@ -22,12 +22,21 @@ public class MigrosResponseCourse {
    private String instructor;
    private String location;
    private String start;
+   private int bookingIdTac;
    private LocalDateTime startAsLocalDateTime;
    private boolean booked;
    private boolean bookable;
 
    public MigrosResponseCourse() {
       // empty for jackson
+   }
+
+   public int getBookingIdTac() {
+      return bookingIdTac;
+   }
+
+   public void setBookingIdTac(int bookingIdTac) {
+      this.bookingIdTac = bookingIdTac;
    }
 
    public int getCenterId() {
