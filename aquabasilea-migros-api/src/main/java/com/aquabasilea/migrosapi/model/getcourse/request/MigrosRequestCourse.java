@@ -36,6 +36,7 @@ public class MigrosRequestCourse {
    }
 
    public CharSequence toJson() {
+      //return JsonUtil.createJsonFromObject(this);
       return "{\"centerId\": " + centerId + ",\"coursetitle\":\"" + coursetitle + "\"}";
    }
 }

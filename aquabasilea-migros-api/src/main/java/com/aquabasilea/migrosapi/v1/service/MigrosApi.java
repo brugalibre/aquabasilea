@@ -1,6 +1,8 @@
 package com.aquabasilea.migrosapi.v1.service;
 
+import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.response.MigrosApiCancelCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
@@ -21,6 +23,15 @@ public interface MigrosApi {
     * @return a {@link MigrosApiBookCourseResponse} with the result of the booking request
     */
    MigrosApiBookCourseResponse bookCourse(AuthenticationContainer authenticationContainer, MigrosApiBookCourseRequest migrosApiBookCourseRequest);
+
+    /**
+     * Cancels a course which was booked previously.
+     *
+     * @param authenticationContainer      the {@link AuthenticationContainer} which defines credentials for a given user
+     * @param migrosApiCancelCourseRequest the request which defines the course to cancel
+     * @return a {@link MigrosApiCancelCourseResponse} with the result of the cancel-request
+     */
+    MigrosApiCancelCourseResponse cancelCourse(AuthenticationContainer authenticationContainer, MigrosApiCancelCourseRequest migrosApiCancelCourseRequest);
 
    /**
     * Searches all booked courses for the user which is authenticated by the given {@link AuthenticationContainer}
