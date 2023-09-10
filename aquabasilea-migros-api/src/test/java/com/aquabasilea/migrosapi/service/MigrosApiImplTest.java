@@ -1,8 +1,8 @@
 package com.aquabasilea.migrosapi.service;
 
-import com.aquabasilea.migrosapi.v1.model.book.CourseBookResult;
-import com.aquabasilea.migrosapi.v1.model.book.MigrosApiBookCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.MigrosBookContext;
+import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.request.MigrosBookContext;
+import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
 import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;

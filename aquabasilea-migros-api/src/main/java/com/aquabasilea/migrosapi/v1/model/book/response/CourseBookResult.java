@@ -1,4 +1,4 @@
-package com.aquabasilea.migrosapi.v1.model.book;
+package com.aquabasilea.migrosapi.v1.model.book.response;
 
 public enum CourseBookResult {
 

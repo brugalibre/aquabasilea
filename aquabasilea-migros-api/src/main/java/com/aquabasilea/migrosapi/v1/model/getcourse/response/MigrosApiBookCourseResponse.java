@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.v1.model.getcourse.response;
 
-import com.aquabasilea.migrosapi.v1.model.book.CourseBookResult;
-import com.aquabasilea.migrosapi.v1.model.book.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
 import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
 
