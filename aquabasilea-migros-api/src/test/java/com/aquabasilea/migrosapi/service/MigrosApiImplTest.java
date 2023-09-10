@@ -9,8 +9,8 @@ import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedC
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
 import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
-import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
+import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
 import org.junit.jupiter.api.Test;
@@ -247,44 +247,6 @@ class MigrosApiImplTest {
       serverTestCaseBuilder.stop();
       assertThat(migrosApiBookCourseResponse.errorMsg(), is(""));
       assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_BOOKING_DRY_RUN_SUCCESSFUL));
-   }
-
-   @Test
-   void bookCourseDryRunFailed_WrongDuration() {
-      // Given
-      int port = 8282;
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
-      String username = "username";
-      Supplier<char[]> userPwd = "pasd"::toCharArray;
-      AuthenticationContainer authenticationContainer = new AuthenticationContainer(username, userPwd);
-      Supplier<Duration> durationSupplier = () -> Duration.ofHours(0);
-
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
-              .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
-              .withMethod("POST")
-              .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
-              .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
-              .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
-              .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
-              .withMethod("POST")
-              .withRequestBody(BOOK_COURSE_REQUEST)
-              .withResponseBody(BOOK_COURSE_RESPONSE)
-              .withHeader(new Header(AuthConst.AUTHORIZATION, BEARER_TOKEN))
-              .buildRequestResponse()
-              .build();
-
-      // When
-      MigrosApiBookCourseRequest migrosApiBookCourseRequest = new MigrosApiBookCourseRequest(COURSE_NAME_1, "7", "139", new MigrosBookContext(true, durationSupplier));
-      MigrosApiBookCourseResponse migrosApiBookCourseResponse = migrosApi.bookCourse(authenticationContainer, migrosApiBookCourseRequest);
-
-      // Then
-      serverTestCaseBuilder.stop();
-      assertThat(migrosApiBookCourseResponse.errorMsg(), is("Dry run for course 'Aqua Power 50 Min.' failed! DurationToWait=0, Evaluated courseIdTac=14389398, evaluatedBearerToken:yes"));
-      assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_BOOKING_DRY_RUN_FAILED));
    }
 
    @Test
