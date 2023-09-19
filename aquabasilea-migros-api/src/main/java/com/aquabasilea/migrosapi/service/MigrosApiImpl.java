@@ -51,10 +51,8 @@ public class MigrosApiImpl implements MigrosApi {
    private final HttpService httpService;
    private final BookCourseHelper bookCourseHelper;
 
-   private final String migrosCourseBookUrl;
    private final String migrosGetCoursesUrl;
    private final String migrosGetCoursesRequestBody;
-   private final String migrosBookCourseRequestBody;
 
    /**
     * Creates a default {@link MigrosApiImpl} with the given {@link BearerTokenProvider}
@@ -65,21 +63,19 @@ public class MigrosApiImpl implements MigrosApi {
    }
 
    MigrosApiImpl(String migrosCourseBookUrl, String migrosGetCoursesUrl, BearerTokenProvider bearerTokenProvider) {
-      this.migrosCourseBookUrl = migrosCourseBookUrl;
       this.migrosGetCoursesUrl = migrosGetCoursesUrl;
       this.bearerTokenProvider = bearerTokenProvider;
       this.httpService = new HttpService(30);
       this.migrosCourseMapper = new MigrosCourseMapperImpl();
       this.migrosGetCoursesRequestBody = MIGROS_GET_COURSES_REQUEST_BODY;
-      this.migrosBookCourseRequestBody = MIGROS_BOOK_COURSE_REQUEST_BODY;
-      this.bookCourseHelper = new BookCourseHelper(migrosCourseBookUrl);
+      this.bookCourseHelper = new BookCourseHelper(migrosCourseBookUrl, MIGROS_BOOK_COURSE_REQUEST_BODY);
    }
 
    @Override
    public MigrosApiGetBookedCoursesResponse getBookedCourses(AuthenticationContainer authenticationContainer) {
       LOG.info("Fetching booked courses for user {}", authenticationContainer.username());
       getAndSetBearerAuthentication(authenticationContainer);
-      HttpRequest httpGetCourseRequest = HttpRequest.getHttpGetRequest(migrosCourseBookUrl);
+      HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest();
       ResponseWrapper<List<MigrosResponseCourse>> responseWrapper = httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest);
       logResponse(responseWrapper, httpGetCourseRequest);
       return new MigrosApiGetBookedCoursesResponse(migrosCourseMapper.mapToMigrosCourses(responseWrapper.httpResponse()));
@@ -205,14 +201,9 @@ public class MigrosApiImpl implements MigrosApi {
    }
 
    private MigrosBookCourseResponse createAndPostBookCourseRequest(String centerId, String courseIdTac) {
-      HttpRequest httpBookRequest = getBookCourseHttpRequest(centerId, courseIdTac);
+      HttpRequest httpBookRequest = bookCourseHelper.getBookCourseHttpRequest(centerId, courseIdTac);
       LOG.info("Created Http-Request {}", httpBookRequest);
       return httpService.callRequestParseAndUnwrap(new MigrosBookCourseResponseReader(), httpBookRequest);
-   }
-
-   private HttpRequest getBookCourseHttpRequest(String centerId, String courseIdTac) {
-      return HttpRequest.getHttpPostRequest(migrosBookCourseRequestBody.replace(CENTER_ID_PLACEHOLDER, centerId)
-              .replace(COURSE_ID_TAC_PLACEHOLDER, courseIdTac), migrosCourseBookUrl);
    }
 
    private static String joinStrings2String(List<String> elements) {
