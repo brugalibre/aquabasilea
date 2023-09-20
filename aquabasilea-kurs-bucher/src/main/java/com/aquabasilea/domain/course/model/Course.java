@@ -11,6 +11,7 @@ public class Course extends AbstractDomainModel {
    private String courseInstructor;
    private LocalDateTime courseDate;
    private CourseLocation courseLocation;
+   private String bookingIdTac;
 
    private boolean isPaused;
    private boolean hasCourseDef;
@@ -65,6 +66,14 @@ public class Course extends AbstractDomainModel {
 
    public void setCourseInstructor(String courseInstructor) {
       this.courseInstructor = courseInstructor;
+   }
+
+   public String getBookingIdTac() {
+      return bookingIdTac;
+   }
+
+   public void setBookingIdTac(String bookingIdTac) {
+      this.bookingIdTac = bookingIdTac;
    }
 
    @Override

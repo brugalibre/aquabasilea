@@ -1,13 +1,20 @@
 package com.aquabasilea.domain.coursebooker.booking.apimigros;
 
+import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.course.repository.mapping.CoursesEntityMapper;
+import com.aquabasilea.domain.course.repository.mapping.CoursesEntityMapperImpl;
+import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
-import com.aquabasilea.migrosapi.model.book.api.MigrosApiBookCourseRequest;
-import com.aquabasilea.migrosapi.model.book.api.MigrosBookContext;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiBookCourseResponse;
-import com.aquabasilea.migrosapi.model.security.api.AuthenticationContainer;
-import com.aquabasilea.migrosapi.service.MigrosApi;
+import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.v1.model.book.request.MigrosBookContext;
+import com.aquabasilea.migrosapi.v1.model.book.response.MigrosApiCancelCourseResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
+import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
+import com.aquabasilea.migrosapi.v1.service.MigrosApi;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
@@ -17,32 +24,51 @@ import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MigrosApiCourseBookerFacadeImpl {
+public class MigrosApiCourseBookerFacadeImpl implements AquabasileaCourseBookerFacade {
 
-   private final MigrosApiProvider migrosApiProvider;
+   private final MigrosApi migrosApi;
+   private final CoursesEntityMapper coursesEntityMapper;
 
-   public MigrosApiCourseBookerFacadeImpl(MigrosApiProvider migrosApiProvider) {
-      this.migrosApiProvider = migrosApiProvider;
+   private final Supplier<Duration> duration2WaitUntilCourseBecomesBookable;
+   private final Supplier<char[]> userPasswordSupplier;
+   private final String userName;
+
+   public MigrosApiCourseBookerFacadeImpl(MigrosApi migrosApi, String userName,
+                                          Supplier<char[]> userPasswordSupplier,
+                                          Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
+      this.migrosApi = migrosApi;
+      this.userName = userName;
+      this.coursesEntityMapper = new CoursesEntityMapperImpl();
+      this.userPasswordSupplier = userPasswordSupplier;
+      this.duration2WaitUntilCourseBecomesBookable = duration2WaitUntilCourseBecomesBookable;
    }
 
-   /**
-    * Creates a {@link AquabasileaCourseBookerFacade} which uses the {@link MigrosApi} for the actual booking or a dry run.
-    * <b>Note:</b> For each call we need to create a new instance!
-    *
-    * @param userName                                the user's name
-    * @param userPassword                            the user's password supplier
-    * @param duration2WaitUntilCourseBecomesBookable the {@link Duration} which the {@link MigrosApi} waits until the course is bookable
-    * @return a {@link AquabasileaCourseBookerFacade} based on the {@link MigrosApi}
-    */
-   public AquabasileaCourseBookerFacade createMigrosApiCourseBookerImpl(String userName, Supplier<char[]> userPassword, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
-      MigrosApi migrosApi = migrosApiProvider.getNewMigrosApi();
-      return courseBookContainer -> {
-         CourseBookDetails courseBookDetails = courseBookContainer.courseBookDetails();
-         AuthenticationContainer authenticationContainer = new AuthenticationContainer(userName, userPassword);
-         MigrosApiBookCourseRequest migrosApiBookCourseRequest = getMigrosApiBookCourseRequest(duration2WaitUntilCourseBecomesBookable, courseBookContainer);
-         MigrosApiBookCourseResponse migrosApiBookCourseResponse = migrosApi.bookCourse(authenticationContainer, migrosApiBookCourseRequest);
-         return mapApiResponse2CourseBookingEndResult(courseBookDetails.courseName(), migrosApiBookCourseResponse);
+   @Override
+   public List<Course> getBookedCourses() {
+      MigrosApiGetBookedCoursesResponse migrosApiGetBookedCoursesResponse = migrosApi.getBookedCourses(getAuthenticationContainer());
+      return coursesEntityMapper.mapMigrosCourses2Courses(migrosApiGetBookedCoursesResponse.courses());
+   }
+
+   @Override
+   public CourseCancelResult cancelCourses(String bookingId) {
+      MigrosApiCancelCourseRequest migrosApiCancelCourseRequest = new MigrosApiCancelCourseRequest(bookingId);
+      MigrosApiCancelCourseResponse migrosApiCancelCourseResponse = migrosApi.cancelCourse(getAuthenticationContainer(), migrosApiCancelCourseRequest);
+      return map2CourseCanelResult(migrosApiCancelCourseResponse.courseCancelResult());
+   }
+
+   private static CourseCancelResult map2CourseCanelResult(com.aquabasilea.migrosapi.v1.model.book.response.CourseCancelResult courseCancelResult) {
+      return switch (courseCancelResult){
+         case COURSE_CANCELED -> CourseCancelResult.COURSE_CANCELED;
+         case COURSE_CANCEL_FAILED -> CourseCancelResult.COURSE_CANCEL_FAILED;
       };
+   }
+
+   @Override
+   public CourseBookingEndResult selectAndBookCourse(CourseBookContainer courseBookContainer) {
+      CourseBookDetails courseBookDetails = courseBookContainer.courseBookDetails();
+      MigrosApiBookCourseRequest migrosApiBookCourseRequest = getMigrosApiBookCourseRequest(duration2WaitUntilCourseBecomesBookable, courseBookContainer);
+      MigrosApiBookCourseResponse migrosApiBookCourseResponse = migrosApi.bookCourse(getAuthenticationContainer(), migrosApiBookCourseRequest);
+      return mapApiResponse2CourseBookingEndResult(courseBookDetails.courseName(), migrosApiBookCourseResponse);
    }
 
    private static CourseBookingEndResult mapApiResponse2CourseBookingEndResult(String courseName, MigrosApiBookCourseResponse migrosApiBookCourseResponse) {
@@ -78,5 +104,9 @@ public class MigrosApiCourseBookerFacadeImpl {
       String weekDayValue = String.valueOf(courseBookDetails.courseDate().getDayOfWeek().getValue());
       MigrosBookContext migrosBookContext = new MigrosBookContext(dryRun, duration2WaitUntilCourseBecomesBookable);
       return new MigrosApiBookCourseRequest(courseBookDetails.courseName(), weekDayValue, courseLocation.getId(), migrosBookContext);
+   }
+
+   private AuthenticationContainer getAuthenticationContainer() {
+      return new AuthenticationContainer(userName, userPasswordSupplier);
    }
 }

@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursebooker.booking.facade;
 
-import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiCourseBookerFacadeImpl;
+import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiCourseBookerFactory;
 import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiProvider;
 import com.aquabasilea.domain.coursebooker.booking.webmigros.MigrosWebCourseBookerFacadeImpl;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @Service
 public class AquabasileaCourseBookerFacadeFactory {
 
-   private final MigrosApiCourseBookerFacadeImpl migrosApiCourseBookerFactory;
+   private final MigrosApiCourseBookerFactory migrosApiCourseBookerFactory;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
    @Autowired
@@ -23,7 +23,7 @@ public class AquabasileaCourseBookerFacadeFactory {
    }
 
    public AquabasileaCourseBookerFacadeFactory(MigrosApiProvider migrosApiProvider, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
-      this.migrosApiCourseBookerFactory = new MigrosApiCourseBookerFacadeImpl(migrosApiProvider);
+      this.migrosApiCourseBookerFactory = new MigrosApiCourseBookerFactory(migrosApiProvider);
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
    }
 

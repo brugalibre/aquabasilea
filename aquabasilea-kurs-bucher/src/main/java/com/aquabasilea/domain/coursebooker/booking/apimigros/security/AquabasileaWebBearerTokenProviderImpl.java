@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursebooker.booking.apimigros.security;
 
-import com.aquabasilea.migrosapi.service.security.api.BearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
 import com.aquabasilea.web.login.AquabasileaBearerTokenExtractor;
 import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;

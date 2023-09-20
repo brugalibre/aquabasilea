@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.service.course;
 
-import com.aquabasilea.domain.course.WeeklyCoursesOverview;
+import com.aquabasilea.domain.course.model.WeeklyCoursesOverview;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;

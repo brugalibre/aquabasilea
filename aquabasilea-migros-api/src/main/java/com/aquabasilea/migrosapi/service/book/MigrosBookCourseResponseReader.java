@@ -19,6 +19,6 @@ public class MigrosBookCourseResponseReader extends AbstractHttpResponseReader<M
       MigrosBookCourseResponse migrosBookCourseResponse = new MigrosBookCourseResponse();
       migrosBookCourseResponse.setMessage(e.getMessage());
       migrosBookCourseResponse.setCode(COURSE_NOT_SELECTED_EXCEPTION_OCCURRED.getErrorCode());
-      return new ResponseWrapper<>(migrosBookCourseResponse, false, e, url);
+      return new ResponseWrapper<>(migrosBookCourseResponse, 500, e, url);
    }
 }

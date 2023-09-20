@@ -2,6 +2,7 @@
 package com.aquabasilea.domain.coursebooker.states.booking.facade;
 
 import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 
@@ -29,6 +30,7 @@ public interface AquabasileaCourseBookerFacade {
     * Cancel a previously booked {@link Course} for the given booking-id
     *
     * @param bookingId the id of the booking which represents the booking arrangement
+    * @return a {@link CourseCancelResult} which indicates weather or not the cancel was successful
     */
-   void cancelCourses(String bookingId);
+   CourseCancelResult cancelCourses(String bookingId);
 }
