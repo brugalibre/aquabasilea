@@ -532,9 +532,11 @@ class AquabasileaCourseBookerTest {
    private static class TestAquabasileaWebCourseBooker implements AquabasileaCourseBookerFacade {
       private final CourseClickedResult courseClickedResult;
       private String effectivelyBookedCourse;
+      private List<String> canceledBookingIds;
 
       private TestAquabasileaWebCourseBooker(CourseClickedResult courseClickedResult) {
          this.courseClickedResult = courseClickedResult;
+         this.canceledBookingIds = new ArrayList<>();
       }
 
       @Override
@@ -545,6 +547,16 @@ class AquabasileaCourseBookerTest {
                  .withCourseName(courseBookDetails.courseName())
                  .withCourseClickedResult(courseClickedResult)
                  .build();
+      }
+
+      @Override
+      public List<Course> getBookedCourses() {
+         return List.of();
+      }
+
+      @Override
+      public void cancelCourses(String bookingId) {
+         canceledBookingIds.add(bookingId);
       }
    }
 
