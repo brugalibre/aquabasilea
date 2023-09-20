@@ -17,11 +17,11 @@ import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MigrosApiCourseBookerFactory {
+public class MigrosApiCourseBookerFacadeImpl {
 
    private final MigrosApiProvider migrosApiProvider;
 
-   public MigrosApiCourseBookerFactory(MigrosApiProvider migrosApiProvider) {
+   public MigrosApiCourseBookerFacadeImpl(MigrosApiProvider migrosApiProvider) {
       this.migrosApiProvider = migrosApiProvider;
    }
 

@@ -1,10 +1,10 @@
 package com.aquabasilea.domain.coursebooker.booking.facade;
 
-import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiCourseBookerFactory;
+import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiCourseBookerFacadeImpl;
 import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiProvider;
 import com.aquabasilea.domain.coursebooker.booking.webmigros.MigrosWebCourseBookerFacadeImpl;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @Service
 public class AquabasileaCourseBookerFacadeFactory {
 
-   private final MigrosApiCourseBookerFactory migrosApiCourseBookerFactory;
+   private final MigrosApiCourseBookerFacadeImpl migrosApiCourseBookerFactory;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
    @Autowired
@@ -23,7 +23,7 @@ public class AquabasileaCourseBookerFacadeFactory {
    }
 
    public AquabasileaCourseBookerFacadeFactory(MigrosApiProvider migrosApiProvider, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
-      this.migrosApiCourseBookerFactory = new MigrosApiCourseBookerFactory(migrosApiProvider);
+      this.migrosApiCourseBookerFactory = new MigrosApiCourseBookerFacadeImpl(migrosApiProvider);
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
    }
 
