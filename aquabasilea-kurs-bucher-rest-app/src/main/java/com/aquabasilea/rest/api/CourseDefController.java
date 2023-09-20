@@ -1,6 +1,6 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
 import com.aquabasilea.rest.service.coursedef.CourseDefRestService;

@@ -1,4 +1,4 @@
-package com.aquabasilea.migrosapi.v1.service.security;
+package com.aquabasilea.migrosapi.v1.service.security.bearertoken;
 
 
 import java.util.function.Supplier;

@@ -85,3 +85,7 @@ matisch reaktiviert.
 Jeweils nach dem Test,- sowie dem scharfen Buchen wird eine SMS versendet, mit Informationen über den Ausgang. Die Nr, an
 die die SMS gesendet wird, wird bei der Registrierung angegeben werden und kann unter 
 piranha.synology.me:9000/migros-kurs-bucher/profile geändert werden.
+
+
+Star dev:
+--server.port=8080 -Dspring.profiles.active=dev

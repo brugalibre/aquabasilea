@@ -5,6 +5,7 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.config.TestAquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
@@ -532,11 +533,9 @@ class AquabasileaCourseBookerTest {
    private static class TestAquabasileaWebCourseBooker implements AquabasileaCourseBookerFacade {
       private final CourseClickedResult courseClickedResult;
       private String effectivelyBookedCourse;
-      private List<String> canceledBookingIds;
 
       private TestAquabasileaWebCourseBooker(CourseClickedResult courseClickedResult) {
          this.courseClickedResult = courseClickedResult;
-         this.canceledBookingIds = new ArrayList<>();
       }
 
       @Override
@@ -555,8 +554,8 @@ class AquabasileaCourseBookerTest {
       }
 
       @Override
-      public void cancelCourses(String bookingId) {
-         canceledBookingIds.add(bookingId);
+      public CourseCancelResult cancelCourses(String bookingId) {
+         return CourseCancelResult.COURSE_CANCELED;
       }
    }
 

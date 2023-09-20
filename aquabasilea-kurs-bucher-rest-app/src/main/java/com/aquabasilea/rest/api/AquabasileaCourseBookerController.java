@@ -1,12 +1,15 @@
 package com.aquabasilea.rest.api;
 
-import com.aquabasilea.domain.course.Course;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
 import com.aquabasilea.rest.service.coursebooker.AquabasileaCourseBookerRestService;
 import com.brugalibre.common.security.user.service.IUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/v1/aquabasilea-course-booker")
 @RestController
@@ -30,6 +33,17 @@ public class AquabasileaCourseBookerController {
    @GetMapping(path = "/state")
    public CourseBookingStateDto getStatus() {
       return aquabasileaCourseBookerRestService.getCourseBookingStateDto(userProvider.getCurrentUserId());
+   }
+
+   @GetMapping(path = "/booked-courses")
+   public List<CourseDto> getBookedCourses() {
+      return aquabasileaCourseBookerRestService.getBookedCourses(userProvider.getCurrentUserId());
+   }
+
+   @DeleteMapping(path = "/cancel/{bookingId}")
+   public int cancelCourse(@PathVariable String bookingId) {
+      aquabasileaCourseBookerRestService.cancelCourse(userProvider.getCurrentUserId(), bookingId);
+      return HttpStatus.OK.value();
    }
 
    /**

@@ -20,7 +20,7 @@ public class TestRequestResponse {
    static final String CANCEL_COURSE_TAC_ID_REQUEST = "{\"language\":\"de\",\"bookingIdTac\":\"" + BOOKING_ID_TAC + "\"}";
    static final String CANCEL_COURSE_TAC_ID_RESPONSE = "{\"bookingIdTac\":18178989,\"code\":0,\"message\":null}";
 
-   static final String GET_BOOKED_COURSES_RESPONSE = "[\n" +
+   public static final String GET_BOOKED_COURSES_RESPONSE = "[\n" +
            "{\n" +
            "\"centerId\": " + CENTER_ID_2 + ",\n" +
            "\"centerIdTac\": 80,\n" +

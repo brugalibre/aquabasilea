@@ -1,6 +1,7 @@
 package com.aquabasilea.domain.coursebooker.booking.webmigros;
 
 import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
@@ -30,7 +31,7 @@ public record MigrosWebCourseBookerFacadeImpl(String username, Supplier<char[]> 
    }
 
    @Override
-   public void cancelCourses(String bookingId) {
+   public CourseCancelResult cancelCourses(String bookingId) {
       throw new IllegalStateException("Not implemented!");
    }
 }

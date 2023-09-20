@@ -24,7 +24,7 @@ import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedC
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
-import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.HttpService;

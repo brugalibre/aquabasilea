@@ -3,9 +3,9 @@ package com.aquabasilea.domain.coursedef.update.facade;
 import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosApiGetCoursesResponse;
-import com.aquabasilea.migrosapi.model.getcourse.response.api.MigrosCourse;
-import com.aquabasilea.migrosapi.service.MigrosApi;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
+import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
+import com.aquabasilea.migrosapi.v1.service.MigrosApi;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.extractcourses.model.AquabasileaCourse;
 import com.aquabasilea.web.extractcourses.model.ExtractedAquabasileaCourses;
@@ -87,7 +87,7 @@ class CourseExtractorFacadeTest {
 
    private static MigrosApi mockMigrosApi(String courseInstructor, String courseName, String centerId) {
       MigrosApi migrosApi = mock(MigrosApi.class);
-      List<MigrosCourse> courses = List.of(new MigrosCourse(LocalDateTime.now(), centerId, courseName, courseInstructor));
+      List<MigrosCourse> courses = List.of(new MigrosCourse(LocalDateTime.now(), centerId, courseName, courseInstructor, null));
       MigrosApiGetCoursesResponse migrosApiGetCoursesResponse = new MigrosApiGetCoursesResponse(courses);
       when(migrosApi.getCourses(any())).thenReturn(migrosApiGetCoursesResponse);
       return migrosApi;

@@ -13,7 +13,7 @@ import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCourses
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
 import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
-import com.aquabasilea.migrosapi.v1.service.security.BearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.common.http.model.method.HttpMethod;
 import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
@@ -31,6 +31,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class MigrosApiImplTest {
 
+   private static final int PORT = 8282;
+   private static final String GET_COURSES_PATH = "/kp/api/Courselist/all?";
+   private static final String BOOK_COURSE_PATH = "/kp/api/Booking?";
    private static final String HOST = "http://127.0.0.1";
    private static final String BEARER_TOKEN = "bearer-token";
    private static final BearerTokenProvider BEARER_TOKEN_PROVIDER = (username, pwd) -> BEARER_TOKEN;
@@ -39,10 +42,9 @@ class MigrosApiImplTest {
    @Test
    void getCourses() {
       // Given
-      int port = 8282;
       String path = "/kp/api/Courselist/all?";
-      MigrosApi migrosApi = new MigrosApiImpl("", HOST + ":" + port + path, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl("", HOST + ":" + PORT + path, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
               .withRequestResponse(path)
               .withMethod("POST")
@@ -69,12 +71,11 @@ class MigrosApiImplTest {
    @Test
    void getBookedCourses() {
       // Given
-      int port = 8282;
       String path = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + path, "", BEARER_TOKEN_PROVIDER);
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + path, "", BEARER_TOKEN_PROVIDER);
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
               .withRequestResponse(path)
               .withMethod("GET")
@@ -100,11 +101,10 @@ class MigrosApiImplTest {
    @Test
    void bookCourse() {
       // Given
-      int port = 8282;
       String getCoursesPath = "/kp/api/Courselist/all?";
       String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + bookCoursePath, HOST + ":" + PORT + getCoursesPath, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
               .withRequestResponse(getCoursesPath)
               .withMethod("POST")
@@ -134,22 +134,20 @@ class MigrosApiImplTest {
       assertThat(migrosApiBookCourseResponse.errorMsg(), is(nullValue()));
       assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_BOOKED));
    }
+
    @Test
    void bookCourseFailed_CourseFullyBooked() {
       // Given
-      int port = 8282;
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + GET_COURSES_PATH, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
+              .withRequestResponse(GET_COURSES_PATH)
               .withMethod("POST")
               .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
               .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
               .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
               .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod("POST")
               .withRequestBody(BOOK_COURSE_REQUEST)
               .withResponseBody(BOOK_COURSE_FAILED_RESPONSE)
@@ -175,23 +173,20 @@ class MigrosApiImplTest {
    @Test
    void bookCourseFailed_ExceptionDuringBooking() {
       // Given
-      int port = 8282;
       String username = "username";
       Supplier<char[]> userPwd = "pasd"::toCharArray;
       String expectedErrorMsg = "Unexpected end-of-input: expected close marker for Object (start marker at [Source: (String)\" {\";";
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, BEARER_TOKEN_PROVIDER);
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + GET_COURSES_PATH, BEARER_TOKEN_PROVIDER);
       String invalidResponseBody = " {";// invalid response body in order to get an exception
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
+              .withRequestResponse(GET_COURSES_PATH)
               .withMethod("POST")
               .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
               .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
               .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
               .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod("POST")
               .withRequestBody(BOOK_COURSE_REQUEST)
               .withResponseBody(invalidResponseBody)
@@ -214,19 +209,16 @@ class MigrosApiImplTest {
    @Test
    void bookCourse_WithoutBearerToken() {
       // Given
-      int port = 8282;
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, NULL_BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + GET_COURSES_PATH, NULL_BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
+              .withRequestResponse(GET_COURSES_PATH)
               .withMethod("POST")
               .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
               .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
               .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
               .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod("POST")
               .withRequestBody(BOOK_COURSE_REQUEST)
               .withResponseBody(BOOK_COURSE_RESPONSE)
@@ -251,20 +243,17 @@ class MigrosApiImplTest {
    @Test
    void bookCourse_ExceptionDuringHttpCall() {
       // Given
-      int port = 8282;
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
       String expectedErrorMsg = "Upsidupsi";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + GET_COURSES_PATH, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
+              .withRequestResponse(GET_COURSES_PATH)
               .withMethod("POST")
               .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
               .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
               .withHeader(new Header(AuthConst.AUTHORIZATION, BEARER_TOKEN))
               .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod("POST")
               .withRequestBody(BOOK_COURSE_REQUEST)
               .withResponseBody(BOOK_COURSE_RESPONSE)
@@ -294,19 +283,16 @@ class MigrosApiImplTest {
    @Test
    void bookCourseDryRunSuccessful() {
       // Given
-      int port = 8284;
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + GET_COURSES_PATH, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
+              .withRequestResponse(GET_COURSES_PATH)
               .withMethod("POST")
               .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
               .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
               .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
               .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod("POST")
               .withRequestBody(BOOK_COURSE_REQUEST)
               .withResponseBody(BOOK_COURSE_RESPONSE)
@@ -332,24 +318,21 @@ class MigrosApiImplTest {
    @Test
    void bookCourseDryRunFailed_NoBearerToken() {
       // Given
-      int port = 8282;
-      String getCoursesPath = "/kp/api/Courselist/all?";
-      String bookCoursePath = "/kp/api/Booking?";
       String username = "username";
       Supplier<char[]> userPwd = "pasd"::toCharArray;
       AuthenticationContainer authenticationContainer = new AuthenticationContainer(username, userPwd);
       Supplier<Duration> durationSupplier = () -> Duration.ofHours(1);
 
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + getCoursesPath, NULL_BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + GET_COURSES_PATH, NULL_BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(getCoursesPath)
+              .withRequestResponse(GET_COURSES_PATH)
               .withMethod("POST")
               .withRequestBody(GET_COURSE_TAC_ID_REQUEST)
               .withResponseBody(GET_COURSE_TAC_ID_RESPONSE)
               .withHeader(new Header(AuthConst.AUTHORIZATION, ""))
               .buildRequestResponse()
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod("POST")
               .withRequestBody(BOOK_COURSE_REQUEST)
               .withResponseBody(BOOK_COURSE_RESPONSE)
@@ -372,10 +355,10 @@ class MigrosApiImplTest {
       // Given
       String username = "username";
       Supplier<char[]> userPwd = "pasd"::toCharArray;
-      int port = 8282;
+      int PORT = 8282;
       String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + bookCoursePath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + bookCoursePath, HOST + ":" + PORT + bookCoursePath, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
               .withRequestResponse(bookCoursePath)
               .withMethod(HttpMethod.DELETE.name())
@@ -398,12 +381,10 @@ class MigrosApiImplTest {
    @Test
    void cancelCourseDueToException() {
       // Given
-      int port = 8282;
-      String bookCoursePath = "/kp/api/Booking?";
-      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + port + bookCoursePath, HOST + ":" + port + bookCoursePath, BEARER_TOKEN_PROVIDER);
-      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(port)
+      MigrosApi migrosApi = new MigrosApiImpl(HOST + ":" + PORT + BOOK_COURSE_PATH, HOST + ":" + PORT + BOOK_COURSE_PATH, BEARER_TOKEN_PROVIDER);
+      DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(bookCoursePath)
+              .withRequestResponse(BOOK_COURSE_PATH)
               .withMethod(HttpMethod.DELETE.name())
               .withRequestBody(CANCEL_COURSE_TAC_ID_REQUEST)
               .withResponseBody("{")

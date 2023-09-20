@@ -33,7 +33,7 @@ public class RunAquabasileaCourseBookerFacade {
          dryRun = Boolean.parseBoolean(args[2]);
       }
       Supplier<Duration> durationUntilIsBookableSupplier = getDurationUntilIsBookableSupplier(courseDateAndTime);
-      AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory = new AquabasileaCourseBookerFacadeFactory(new MigrosApiProvider());
+      AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory = new AquabasileaCourseBookerFacadeFactory(new MigrosApiProvider(0));
       AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade = aquabasileaCourseBookerFacadeFactory.createNewAquabasileaCourseBookerFacade(username, () -> password, durationUntilIsBookableSupplier);
       long start = System.currentTimeMillis();
       CourseBookContainer courseBookContainer = getCourseBookContainer(courseName, courseLocationName, courseDateAndTime, dryRun);

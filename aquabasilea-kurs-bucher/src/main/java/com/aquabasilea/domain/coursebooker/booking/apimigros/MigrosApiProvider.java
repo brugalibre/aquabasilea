@@ -1,8 +1,13 @@
 package com.aquabasilea.domain.coursebooker.booking.apimigros;
 
 import com.aquabasilea.domain.coursebooker.booking.apimigros.security.AquabasileaWebBearerTokenProviderImpl;
-import com.aquabasilea.migrosapi.service.MigrosApi;
 import com.aquabasilea.migrosapi.service.MigrosApiImpl;
+import com.aquabasilea.migrosapi.v1.service.MigrosApi;
+import com.aquabasilea.migrosapi.v1.service.security.BearerTokenValidator;
+import com.aquabasilea.migrosapi.v1.service.security.bearertoken.AutoRenewBearerTokenProvider;
+import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Supplier;
@@ -13,8 +18,10 @@ import static java.util.Objects.requireNonNull;
 public class MigrosApiProvider {
    private final Supplier<MigrosApi> migrosApiSup;
 
-   public MigrosApiProvider() {
-      this.migrosApiSup = () -> new MigrosApiImpl(new AquabasileaWebBearerTokenProviderImpl());
+   @Autowired
+   public MigrosApiProvider(@Value("${application.security.bearerTokenTtl:0}") int ttl) {
+      BearerTokenProvider bearerTokenProvider = new AutoRenewBearerTokenProvider(new AquabasileaWebBearerTokenProviderImpl(), ttl, new BearerTokenValidator());
+      this.migrosApiSup = () -> new MigrosApiImpl(bearerTokenProvider);
    }
 
    public MigrosApiProvider(MigrosApi migrosApi) {

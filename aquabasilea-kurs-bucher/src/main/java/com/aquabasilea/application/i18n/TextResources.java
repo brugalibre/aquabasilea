@@ -14,6 +14,7 @@ public class TextResources {
    public static final String TOOLTIP_COURSE_HAS_NO_COURSE_DEF = "Achtung! Dieser Kurs kann nicht gebucht werden.\nDer Kurs existiert im offiziellen Migros-Kursprogramm nicht";
    public static final String TOOLTIP_COURSE_IS_PAUSED = "Dieser Kurs ist pausiert, bis der nächste aktive Kurs gebucht wurde";
    public static final String TOOLTIP_COURSE_IS_CURRENT_COURSE = "Dieser Kurs wird als nächstes gebucht. Kursinstruktor:in ist %s";
+   public static final String TOOLTIP_BOOKED_COURSE = "Kurs %s um %s Uhr, @%s Kursinstruktor:in ist %s";
 
    // Statistics
    public static final String UPTIME_YEARS_AND_MONTH = "%s Jahre, %s Monate";
