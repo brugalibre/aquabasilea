@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import VueLoading from 'vue-loading-overlay';
 import Multiselect from "@vueform/multiselect";
+import * as ConfirmDialog from 'vuejs-confirm-dialog'
 import {
     CAccordion,
     CAccordionBody,
@@ -36,6 +37,7 @@ createApp(App)
     .component('Multiselect', Multiselect)
     .directive('c-tooltip', vctooltip)
     .use(router)
+    .use(ConfirmDialog)
     .use(store)
     .use(VueLoading, {
         color: '#0095c9'

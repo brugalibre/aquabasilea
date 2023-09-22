@@ -12,6 +12,12 @@
               @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
               @refreshCourseStateOverview="refreshCourseStateOverview()">
           </course-booker-state-overview>
+          <booked-courses-overview
+              class="tile course-state-overview"
+              :key="bookedCoursesRefreshKey"
+              @error-occurred="errorOccurred"
+              @refreshBookedCourses="refreshBookedCourses()">
+          </booked-courses-overview>
           <add-course
               class="tile"
               :key="addCourseRefreshKey"
@@ -40,6 +46,7 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import CourseBookerStateOverview from "@/components/CourseBookerStateOverview";
 import WeeklyCoursesOverview from "@/components/WeeklyCoursesOverview";
+import BookedCoursesOverview from "@/components/bookedcourses/BookedCoursesOverview";
 import AddCourse from "@/components/AddCourse";
 import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
 import RouterConstants from "@/router-constants";
@@ -52,6 +59,7 @@ export default {
     AddCourse,
     Loading,
     WeeklyCoursesOverview,
+    BookedCoursesOverview,
     CourseBookerStateOverview
   },
   data() {
@@ -62,6 +70,7 @@ export default {
       stagingMsg: 'Migros-Kurs-Bucher Webapplikation',
       courseStateOverviewRefreshKey: 0,
       weeklyCoursesRefreshKey: 0,
+      bookedCoursesRefreshKey: 0,
       addCourseRefreshKey: 0,
     };
   },
@@ -115,6 +124,12 @@ export default {
         this.errorDetails = null;
       }, 1000);
       console.log('weeklyCourses & courseStateOverview refreshed: ' + this.weeklyCoursesRefreshKey + ', ' + this.courseStateOverviewRefreshKey);
+    },
+    refreshBookedCourses: function () {
+      setTimeout(() => {
+        this.bookedCoursesRefreshKey += 1;
+      }, 2000);
+      console.log('bookedCoursesRefreshKey refreshed: ' + this.bookedCoursesRefreshKey);
     },
     refreshAddCourse: function () {
       this.$store.dispatch('aquabasilea/setIsLoading', true);

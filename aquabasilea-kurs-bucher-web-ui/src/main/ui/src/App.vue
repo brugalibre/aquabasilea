@@ -109,6 +109,13 @@ export default {
   justify-content: center;
 }
 
+.centered-flex-items-center {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .content-left-side {
   max-width: 410px;
   display: flex;

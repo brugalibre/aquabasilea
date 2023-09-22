@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public record CourseDto(String id, String courseName, String courseInstructor, String dayOfWeek, String timeOfTheDay,
                         LocalDateTime courseDate, CourseLocationDto courseLocationDto, boolean isPaused,
-                        boolean hasCourseDef, boolean isCurrentCourse, String tooltipText) {
+                        boolean hasCourseDef, boolean isCurrentCourse, String tooltipText, String bookingIdTac) {
 
    public static Course map2Course(CourseDto courseDto) {
       String currentId = isNull(courseDto.id) ? UUID.randomUUID().toString() : courseDto.id;
@@ -45,11 +45,14 @@ public record CourseDto(String id, String courseName, String courseInstructor, S
    public static CourseDto of(Course course, boolean isCurrentCourse, Locale locale) {
       return new CourseDto(course.getId(), course.getCourseName(), course.getCourseInstructor(), course.getCourseDate().getDayOfWeek().getDisplayName(TextStyle.FULL, locale),
               DateUtil.getTimeAsString(course.getCourseDate()), course.getCourseDate(), CourseLocationDto.of(course.getCourseLocation()),
-              course.getIsPaused(), course.getHasCourseDef(), isCurrentCourse, getTooltipText(course, isCurrentCourse));
+              course.getIsPaused(), course.getHasCourseDef(), isCurrentCourse, getTooltipText(course, isCurrentCourse), course.getBookingIdTac());
    }
 
    private static String getTooltipText(Course course, boolean isCurrentCourse) {
-      if (!course.getHasCourseDef()) {
+      if (course.getBookingIdTac() != null) {
+         return TextResources.TOOLTIP_BOOKED_COURSE.formatted(course.getCourseName(), DateUtil.getTimeAsString(course.getCourseDate()),
+                 course.getCourseLocation().getCourseLocationName(), course.getCourseInstructor());
+      } else if (!course.getHasCourseDef()) {
          return TextResources.TOOLTIP_COURSE_HAS_NO_COURSE_DEF;
       } else if (course.getIsPaused()) {
          return TextResources.TOOLTIP_COURSE_IS_PAUSED;
