@@ -1,4 +1,4 @@
-package com.aquabasilea.rest.api;
+package com.aquabasilea.rest.api.statistics;
 
 import com.aquabasilea.rest.model.statistic.StatisticsDto;
 import com.aquabasilea.rest.service.statistics.StatisticsRestService;

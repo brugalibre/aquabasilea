@@ -257,9 +257,10 @@ public class AquabasileaCourseBooker {
    /**
     * {@link UserContext} is used to provide the {@link AquabasileaCourseBooker} an username and password for browser authentication
     *
-    * @param id       the id
-    * @param username the username
-    * @param phoneNr  the phoneNr
+    * @param id              the id
+    * @param username        the username
+    * @param phoneNr         the phoneNr
+    * @param userPwdSupplier a {@link Supplier} which always provides a fresh instance of the password, even if it has been changed
     */
    public record UserContext(String id, String username, String phoneNr, Supplier<char[]> userPwdSupplier) {
       @Override
