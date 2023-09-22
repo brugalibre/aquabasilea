@@ -1,7 +1,6 @@
 package com.aquabasilea.notification.alertsend;
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.application.security.securestorage.util.KeyUtils;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
@@ -29,7 +28,8 @@ import static org.mockito.Mockito.*;
 class CourseBookingAlertSenderTest {
 
    public static final String ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML = "alert/test-aquabasilea-alert-notification.yml";
-   public static final AlertSendConfigProviderImpl CONFIG_PROVIDER = new AlertSendConfigProviderImpl(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML, KeyUtils.AQUABASILEA_ALERT_KEYSTORE, () -> List.of(AlertType.SMS));
+   public static final AlertSendConfigProviderImpl CONFIG_PROVIDER = new AlertSendConfigProviderImpl(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML,
+           "test-aquabasilea-alert.keystore", "test-aquabasilea-keystore.keystore", () -> List.of(AlertType.SMS));
    private static final ConsumerUser CONSUMER_USER = new ConsumerUser("1234", "1234");
 
    @Test
@@ -37,8 +37,10 @@ class CourseBookingAlertSenderTest {
       // Given
       String courseName = "courseName";
       String apiKey = "abc-123-apikey";
-      String expectedTitle = "success";
-      String expectedMsg = String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName);
+      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
+      String expectedMsg = String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName)
+              + "\n\n"
+              + String.format(TextResources.SMS_TEXT_CANCEL_BOOKED_COURSE, TextResources.CANCEL_BOOKED_COURSE_SMS_CODE, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       TestAlertSendService alertSendService = spy(new TestAlertSendService());
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
@@ -59,7 +61,7 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsBookingFailed_NoSingleResultSelection() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -80,7 +82,7 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsBookingFailed_NotBookable() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -98,10 +100,10 @@ class CourseBookingAlertSenderTest {
    }
 
    @Test
-   void consumeAndSendSmsBookingFailed_NotBookableFullyBookead() throws AlertSendException {
+   void consumeAndSendSmsBookingFailed_NotBookableFullyBooked() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_FULLY_BOOKED, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -122,7 +124,7 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsBookingFailed_Aborted() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -143,7 +145,7 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsDryRunFailed_Aborted() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -181,10 +183,10 @@ class CourseBookingAlertSenderTest {
    @Test
    void consumeAndSendSmsBookingFailedNPE() throws AlertSendException {
       // Given
-      String expectedTitle = "error!";
       String exceptionDetailMsg = "hoppla da hats getschädderet";
       NullPointerException exception = new NullPointerException(exceptionDetailMsg);
       String courseName = "courseName";
+      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
       String exceptionMsg = exception.getClass().getSimpleName() + ":\n" + exceptionDetailMsg;
       String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
@@ -226,7 +228,7 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsDryRunSuccessful_Aborted() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -247,7 +249,7 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsDryRunFailed_NoSingleSearchResult() throws AlertSendException {
       // Given
       String courseName = "courseName";
-      String expectedTitle = "error!";
+      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -268,8 +270,8 @@ class CourseBookingAlertSenderTest {
    void consumeAndSendSmsDryRunFailed_NotBookable() throws AlertSendException {
       // Note: This test is an equivalent to the migros-api with a failed dry run -> not bookable is returned
       // Given
-      String expectedTitle = "error!";
       String courseName = "courseName";
+      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
@@ -289,8 +291,8 @@ class CourseBookingAlertSenderTest {
    @Test
    void consumeAndSendSmsDryRunFailed_Exception() throws AlertSendException {
       // Given
-      String expectedTitle = "error!";
       String courseName = "courseName";
+      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
       String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);

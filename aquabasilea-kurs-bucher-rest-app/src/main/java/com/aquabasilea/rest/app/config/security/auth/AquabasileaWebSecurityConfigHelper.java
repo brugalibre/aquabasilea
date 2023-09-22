@@ -5,6 +5,8 @@ import com.brugalibre.persistence.user.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import static com.aquabasilea.rest.api.smsinbound.SmsInboundRestApiController.API_V_1_SMS_INBOUND;
+
 @Service
 public class AquabasileaWebSecurityConfigHelper implements WebSecurityConfigHelper {
 
@@ -22,6 +24,11 @@ public class AquabasileaWebSecurityConfigHelper implements WebSecurityConfigHelp
          return new String[]{API_V_1_ADMIN};
       }
       return new String[]{};
+   }
+
+   @Override
+   public String[] getOptionalPermittedPatterns() {
+      return new String[]{API_V_1_SMS_INBOUND + "/**"};
    }
 
    @Override

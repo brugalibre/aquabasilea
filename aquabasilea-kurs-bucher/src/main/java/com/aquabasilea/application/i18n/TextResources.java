@@ -32,7 +32,7 @@ public class TextResources {
    // Booking
    public static final String COURSE_DRY_RUN_RESULTS = "Migros-Kurs-Bucher: Ergebnisse für Kurs '%s' (Testlauf)";
    public static final String COURSE_BOOKING_RESULTS = "Migros-Kurs-Bucher: Ergebnisse für Kurs '%s' (Buchung)";
-   public static final String COURSE_SUCCESSFULLY_BOOKED = "Kurs '%s' erfolgreich gebucht";
+   public static final String COURSE_SUCCESSFULLY_BOOKED = "Kurs '%s' erfolgreich gebucht!";
    public static final String COURSE_NOT_BOOKABLE = "Kurs '%s' konnte nicht gebucht werden!";
    public static final String COURSE_NOT_BOOKABLE_FULLY_BOOKED = "Kurs '%s' konnte nicht gebucht werden, da er bereits ausgebucht ist";
    public static final String COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT = "Kurs '%s' konnte nicht gebucht werden, da nicht eindeutig gefiltert werden konnte!";
@@ -42,6 +42,10 @@ public class TextResources {
    public static final String COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF = "Testlauf für Kurs '%s' abgebrochen! Der Kurs existiert im offiziellen Migros-Kursprogramm nicht";
    public static final String DRY_RUN_FINISHED_SUCCESSFULLY = "Testlauf für Kurs '%s' erfolgreich!";
    public static final String DRY_RUN_FINISHED_FAILED = "Testlauf für Kurs '%s' fehlgeschlagen!";
+
+   // Annullieren
+   public static final String SMS_TEXT_CANCEL_BOOKED_COURSE = "Um diesen Kurs wieder zu annullieren antworte auf diese Nachricht mit\n%s %s";
+   public static final String CANCEL_BOOKED_COURSE_SMS_CODE = "Migros cancel";
 
    // Login
    public static final String MIGROS_FITNESS_CREDENTIALS_NOT_VALID = "Es gibt kein Migros-Fitness Login mit dem Benutzername '%s' oder das Passwort ist falsch";
