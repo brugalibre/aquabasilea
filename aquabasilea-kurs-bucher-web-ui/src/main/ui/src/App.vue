@@ -109,6 +109,13 @@ export default {
   justify-content: center;
 }
 
+.centered-flex-items-center {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .content-left-side {
   max-width: 410px;
   display: flex;
@@ -213,10 +220,6 @@ button {
   column-gap: 10px;
   row-gap: 10px;
   padding-right: 10px;
-}
-
-.error-details {
-  border-radius: 10px;
 }
 
 .login-icon {

@@ -3,6 +3,7 @@ export const aquabasilea = {
     namespaced: true,
     state: () => ({
         isLoading: false,
+        isBookedCoursesLoading: false,
         statisticsDto: {
             lastCourseDefUpdate: ' - ',
             nextCourseDefUpdate: ' - ',
@@ -23,6 +24,7 @@ export const aquabasilea = {
         },
         courseDefDtos: [],
         courseLocationsDtos: [],
+        bookedCourseDtos: [],
     }),
     getters: {
         courseBookingStateDto(state) {
@@ -42,6 +44,12 @@ export const aquabasilea = {
         },
         statisticsDto(state) {
             return state.statisticsDto;
+        },
+        bookedCourseDtos(state) {
+            return state.bookedCourseDtos;
+        },
+        isBookedCoursesLoading(state) {
+            return state.isBookedCoursesLoading;
         },
         isLoading(state) {
             return state.isLoading;
@@ -66,9 +74,15 @@ export const aquabasilea = {
         setStatisticsDto(state, statisticsDto) {
             state.statisticsDto = statisticsDto;
         },
+        setBookedCourseDtos(state, bookedCourseDtos) {
+            state.bookedCourseDtos = bookedCourseDtos;
+        },
+        setIsBookedCoursesLoading(state, isBookedCoursesLoading) {
+            state.isBookedCoursesLoading = isBookedCoursesLoading;
+        },
         setIsLoading(state, isLoading) {
             state.isLoading = isLoading;
-        },
+        }
     },
     actions: {
         setCourseBookingState(context, courseBookingState) {
@@ -89,8 +103,14 @@ export const aquabasilea = {
         setStatisticsDto(context, statisticsDto) {
             context.commit("setStatisticsDto", statisticsDto);
         },
+        setBookedCourseDtos(context, bookedCourseDtos) {
+            context.commit("setBookedCourseDtos", bookedCourseDtos);
+        },
+        setIsBookedCoursesLoading(context, isBookedCoursesLoading) {
+            context.commit("setIsBookedCoursesLoading", isBookedCoursesLoading);
+        },
         setIsLoading(context, isLoading) {
             context.commit("setIsLoading", isLoading);
-        },
+        }
     },
 };

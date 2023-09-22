@@ -79,7 +79,7 @@ public class AquabasileaCourseBookerRestService {
     /**
      * Cancels the course which is associated with the given booking id and returns a {@link CourseCancelResult}
      *
-     * @param userId    the id of the user for who the given booking is going to be canceled
+     * @param userId    the id of the user for whom the given booking is going to be canceled
      * @param bookingId the id of the booking which should be canceled
      * @return a {@link CourseCancelResult}
      */
