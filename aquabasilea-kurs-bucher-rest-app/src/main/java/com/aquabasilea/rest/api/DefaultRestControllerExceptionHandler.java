@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @ControllerAdvice
-public class AquabasileaCourseBookerControllerExceptionHandler {
+public class DefaultRestControllerExceptionHandler {
 
    @ExceptionHandler(MethodArgumentNotValidException.class)
    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {

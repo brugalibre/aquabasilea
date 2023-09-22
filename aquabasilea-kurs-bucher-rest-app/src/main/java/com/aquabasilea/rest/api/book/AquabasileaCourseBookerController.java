@@ -1,4 +1,4 @@
-package com.aquabasilea.rest.api;
+package com.aquabasilea.rest.api.book;
 
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;

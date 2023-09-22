@@ -1,4 +1,4 @@
-package com.aquabasilea.rest.api;
+package com.aquabasilea.rest.api.course;
 
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
