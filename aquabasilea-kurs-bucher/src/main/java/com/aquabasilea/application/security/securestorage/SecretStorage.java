@@ -15,16 +15,18 @@ public class SecretStorage {
    private static final Logger LOG = LoggerFactory.getLogger(SecretStorage.class);
    private static final String EMPTY_SECRET = "";
    private final String pathToKeyStore;
+   private final String pathToRootKeyStore;
 
-   public SecretStorage(String pathToKeyStore) {
+   public SecretStorage(String pathToKeyStore, String pathToRootKeyStore) {
       this.pathToKeyStore = pathToKeyStore;
+      this.pathToRootKeyStore = pathToRootKeyStore;
    }
 
    public static void main(String[] args) {
       char[] aquabasileaKeyStoragePwd = args[0].toCharArray();
       String pathToKeyStore = args[1];
       String alias = args[2];
-      Supplier<char[]> userPasswordSupplier = new SecretStorage(pathToKeyStore).getSecretSupplier4Alias(alias, aquabasileaKeyStoragePwd);
+      Supplier<char[]> userPasswordSupplier = new SecretStorage(pathToKeyStore, KeyUtils.AQUABASILEA_KEYSTORE_STORAGE).getSecretSupplier4Alias(alias, aquabasileaKeyStoragePwd);
       System.out.println("Userpwd: " + String.valueOf(userPasswordSupplier.get()));
    }
 
@@ -45,8 +47,8 @@ public class SecretStorage {
       }
    }
 
-   private static char[] getKeystorePassword(char[] aquabasileaKeyStoragePwd) throws FileNotFoundException {
-      KeyStore aquabasileaKeyStoreStorage = KeyUtils.loadKeyStoreFromFile(KeyUtils.AQUABASILEA_KEYSTORE_STORAGE, aquabasileaKeyStoragePwd);
+   private char[] getKeystorePassword(char[] aquabasileaKeyStoragePwd) throws FileNotFoundException {
+      KeyStore aquabasileaKeyStoreStorage = KeyUtils.loadKeyStoreFromFile(pathToRootKeyStore, aquabasileaKeyStoragePwd);
       return new SecretFromKeyStoreReader().readSecretFromKeyStore(aquabasileaKeyStoreStorage, aquabasileaKeyStoragePwd, KeyUtils.AQUABASILEA_KEYSTORE_STORAGE_ALIAS);
    }
 }

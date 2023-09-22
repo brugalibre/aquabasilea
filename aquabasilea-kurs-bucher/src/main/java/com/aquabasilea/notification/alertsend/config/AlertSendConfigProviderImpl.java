@@ -10,7 +10,7 @@ import com.brugalibre.util.file.yml.YamlService;
 import java.util.List;
 import java.util.function.Supplier;
 
-public record AlertSendConfigProviderImpl(String alertConfigFile, String pathToKeyStore,
+public record AlertSendConfigProviderImpl(String alertConfigFile, String pathToKeyStore, String pathToRootKeyStore,
                                           Supplier<List<AlertType>> alertTypesSupplier) implements AlertSendConfigProvider {
 
    private static final YamlService YAML_SERVICE = new YamlService();
@@ -25,13 +25,14 @@ public record AlertSendConfigProviderImpl(String alertConfigFile, String pathToK
     * * a config located at {@link AlertSendConfigProviderImpl#ALERT_API_CONST_FILE}
     */
    public static AlertSendConfigProvider of(Supplier<List<AlertType>> userConfigSupplier) {
-      return new AlertSendConfigProviderImpl(ALERT_API_CONST_FILE, KeyUtils.AQUABASILEA_ALERT_KEYSTORE, userConfigSupplier);
+      return new AlertSendConfigProviderImpl(ALERT_API_CONST_FILE, KeyUtils.AQUABASILEA_ALERT_KEYSTORE,
+              KeyUtils.AQUABASILEA_KEYSTORE_STORAGE, userConfigSupplier);
    }
 
    @Override
    public AlertSendConfig getAlertSendConfig() {
       AlertSendConfig alertSendConfig = YAML_SERVICE.readYaml(alertConfigFile, AlertSendConfig.class);
-      Supplier<char[]> apiKeyProvider = new SecretStorage(pathToKeyStore).getSecretSupplier4Alias(alertSendConfig.getAlertServiceName(), "".toCharArray());
+      Supplier<char[]> apiKeyProvider = new SecretStorage(pathToKeyStore, pathToRootKeyStore).getSecretSupplier4Alias(alertSendConfig.getAlertServiceName(), "".toCharArray());
       alertSendConfig.setApiKeyProvider(apiKeyProvider);
       alertSendConfig.setAlertTypes(alertTypesSupplier.get());
       return alertSendConfig;

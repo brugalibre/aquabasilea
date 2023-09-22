@@ -95,7 +95,7 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
    private static String getMessage4ResultBooked(CourseBookingEndResult courseBookingEndResult, String courseName) {
       switch (courseBookingEndResult.getCourseClickedResult()) {
          case COURSE_BOOKED:
-            return String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName);
+            return getSuccessfullyBookedMessageText(courseName);
          case COURSE_NOT_BOOKABLE:
             return String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
          case COURSE_NOT_BOOKABLE_FULLY_BOOKED:
@@ -111,6 +111,12 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
             LOG.error("Warning! getMessage4ResultBooked: Unhandled state [{}]", courseBookingEndResult.getCourseClickedResult());
             return null;
       }
+   }
+
+   private static String getSuccessfullyBookedMessageText(String courseName) {
+      return String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName)
+              + "\n\n"
+              + String.format(TextResources.SMS_TEXT_CANCEL_BOOKED_COURSE, TextResources.CANCEL_BOOKED_COURSE_SMS_CODE, courseName);
    }
 
    private static String getExceptionMsg(CourseBookingEndResult courseBookingEndResult) {

@@ -8,12 +8,15 @@ import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOvervie
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.service.coursebooker.bookedcourses.BookedCourseHelper;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
+import com.brugalibre.domain.user.model.User;
+import com.brugalibre.domain.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.BOOKING_DRY_RUN;
 
@@ -23,11 +26,14 @@ public class AquabasileaCourseBookerService {
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaCourseBookerService.class);
    private final AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder;
    private final BookedCourseHelper bookedCourseHelper;
+   private final UserRepository userRepository;
 
    @Autowired
-   public AquabasileaCourseBookerService(AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder) {
+   public AquabasileaCourseBookerService(AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder,
+                                         UserRepository userRepository) {
       this.aquabasileaCourseBookerHolder = aquabasileaCourseBookerHolder;
       this.bookedCourseHelper = new BookedCourseHelper(aquabasileaCourseBookerHolder);
+      this.userRepository = userRepository;
    }
 
    public boolean isPaused(String userId) {
@@ -67,6 +73,37 @@ public class AquabasileaCourseBookerService {
    public CourseCancelResult cancelBookedCourse(String userId, String bookingId) {
       AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(userId);
       return aquabasileaCourseBooker.cancelBookedCourse(bookingId);
+   }
+
+   /**
+    * Cancels the course for the user associated with the given phone-nr. If this user has only one booked course,
+    * that one is canceled. If there are more than one, than the one that matches the given course-name is canceled
+    *
+    * @param phoneNr    the phone-Nr of the user for whom the given booking is going to be canceled
+    * @param courseName the optional name of the course to cancel. Only required if there are more than one booked courses
+    * @return a {@link CourseCancelResult}
+    */
+   public CourseCancelResult cancelCourse4PhoneNr(String phoneNr, String courseName) {
+      LOG.info("Cancel course '{}' for user with phone-nr '{}'", courseName, phoneNr);
+      Optional<User> optUserByPhoneNr = userRepository.findByPhoneNr(phoneNr);
+      if (optUserByPhoneNr.isPresent()) {
+         User user = optUserByPhoneNr.get();
+         List<Course> bookedCourses = getBookedCourses(user.id());
+         LOG.info("For user [{}] the booked courses {} are found", user.id(), bookedCourses);
+         if (bookedCourses.size() == 1) {
+            Course course = bookedCourses.get(0);
+            return cancelBookedCourse(user.id(), course.getBookingIdTac());
+         } else {
+            return bookedCourses.stream()
+                    .filter(course -> course.getCourseName().equals(courseName))
+                    .findFirst()
+                    .map(course -> cancelBookedCourse(user.id(), course.getBookingIdTac()))
+                    .orElse(CourseCancelResult.COURSE_NOT_CANCELED);
+         }
+      } else {
+         LOG.warn("No user found for phone-nr '{}'", phoneNr);
+         return CourseCancelResult.COURSE_NOT_CANCELED;
+      }
    }
 
    /**
