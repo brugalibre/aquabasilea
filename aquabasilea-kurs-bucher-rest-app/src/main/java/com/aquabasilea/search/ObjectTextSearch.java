@@ -33,26 +33,18 @@ import static java.util.Objects.nonNull;
 public class ObjectTextSearch {
    private static final String WORD_SEPARATOR = " ";
 
-   @Autowired
-   private LocaleProvider localeProvider;
-
-   /**
-    * A match below 66.7% is not really representative sometimes... So that's why we only want to count those above 66.7%
-    */
-   @Value("${application.search.maxThreshold:0.667}")
-   private double matchThreshold;
+   private final LocaleProvider localeProvider;
+   private final double matchThreshold;
 
    /**
     * For testing purpose only!
+    * A match below 66.7% is not really representative sometimes... So that's why we only want to count those above 66.7%
     * @param matchThreshold the value a course must match to be selected
     */
-   ObjectTextSearch (double matchThreshold, LocaleProvider localeProvider) {
+   @Autowired
+   ObjectTextSearch(@Value("${application.search.maxThreshold:0.667}") double matchThreshold, LocaleProvider localeProvider) {
       this.matchThreshold = matchThreshold;
       this.localeProvider = localeProvider;
-   }
-
-   public ObjectTextSearch() {
-      // no-op
    }
 
    /**
