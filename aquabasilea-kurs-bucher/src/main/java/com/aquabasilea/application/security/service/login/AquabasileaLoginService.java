@@ -59,14 +59,33 @@ public class AquabasileaLoginService {
       int counter = RETRIES;
       while (counter > 0) {
          try {
+            sleep();
             return aquabasileaLogin.doLogin();
          } catch (Exception e) {
             LOG.error("Error during login!", e);
-            aquabasileaLogin.logout();
+            tryLogout(aquabasileaLogin);
             counter--;
          }
       }
       LOG.warn("No retries left, giving up..!");
       return false;
+   }
+
+   private static void sleep() {
+      try {
+         LOG.info("Wait until next try..");
+         Thread.sleep(500);
+      } catch (InterruptedException ex) {
+         // ignore
+      }
+   }
+
+   private static void tryLogout(AquabasileaLogin aquabasileaLogin) {
+      try {
+         aquabasileaLogin.logout();
+      } catch (Exception e) {
+         // SoSuchSessionException may occur if the login wasn't successful.
+         LOG.warn("Error during logout {}", e.getMessage());
+      }
    }
 }
