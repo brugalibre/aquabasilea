@@ -6,4 +6,5 @@
         <appender-ref ref="FILE"/>
     </root>
     <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.openqa.selenium.devtools" level="WARN"/>
 </configuration>
