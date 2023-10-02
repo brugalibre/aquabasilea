@@ -61,7 +61,6 @@ public class MigrosApiImpl implements MigrosApi {
    public MigrosApiImpl(BearerTokenProvider bearerTokenProvider) {
       this(MIGROS_BOOKING_URL, MIGROS_GET_COURSES_URL, bearerTokenProvider);
    }
-
    MigrosApiImpl(String migrosCourseBookUrl, String migrosGetCoursesUrl, BearerTokenProvider bearerTokenProvider) {
       this.migrosGetCoursesUrl = migrosGetCoursesUrl;
       this.bearerTokenProvider = bearerTokenProvider;
@@ -73,7 +72,7 @@ public class MigrosApiImpl implements MigrosApi {
 
    @Override
    public MigrosApiGetBookedCoursesResponse getBookedCourses(AuthenticationContainer authenticationContainer) {
-      LOG.info("Fetching booked courses for user {}", authenticationContainer.username());
+      LOG.info("Fetching booked courses for user [{}]", authenticationContainer.username());
       getAndSetBearerAuthentication(authenticationContainer);
       HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest();
       ResponseWrapper<List<MigrosResponseCourse>> responseWrapper = httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest);
@@ -107,7 +106,7 @@ public class MigrosApiImpl implements MigrosApi {
 
    @Override
    public MigrosApiCancelCourseResponse cancelCourse(AuthenticationContainer authenticationContainer, MigrosApiCancelCourseRequest migrosApiCancelCourseRequest) {
-      LOG.info("Cancel booked course {}", migrosApiCancelCourseRequest.courseBookingId());
+      LOG.info("Cancel booked course '{}' for user [{}]", migrosApiCancelCourseRequest.courseBookingId(), authenticationContainer.username());
       getAndSetBearerAuthentication(authenticationContainer);
       HttpRequest cancelCourseRequest = bookCourseHelper.getCancelCourseRequest(migrosApiCancelCourseRequest);
       ResponseWrapper<MigrosCancelCourseResponse> responseWrapper = httpService.callRequestAndParse(new MigrosCancelCourseResponseReader(), cancelCourseRequest);
@@ -118,27 +117,19 @@ public class MigrosApiImpl implements MigrosApi {
    @Override
    public MigrosApiBookCourseResponse bookCourse(AuthenticationContainer authenticationContainer,
                                                  MigrosApiBookCourseRequest migrosApiBookCourseRequest) {
-      try {
-         return bookCourseInternal(authenticationContainer, migrosApiBookCourseRequest);
-      } catch (Exception e) {
-         LOG.error("Error while booking course {}", migrosApiBookCourseRequest.courseName(), e);
-         return new MigrosApiBookCourseResponse(CourseBookResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED, e.getMessage());
-      }
-   }
-
-   private MigrosApiBookCourseResponse bookCourseInternal(AuthenticationContainer authenticationContainer, MigrosApiBookCourseRequest migrosApiBookCourseRequest) {
-      LOG.info("Try to book course '{}'", migrosApiBookCourseRequest);
+      LOG.info("Try to book course '{}' for user [{}]", migrosApiBookCourseRequest, authenticationContainer.username());
       MigrosBookContext migrosBookContext = migrosApiBookCourseRequest.migrosBookContext();
       String bearerToken = getAndSetBearerAuthentication(authenticationContainer);
       String courseIdTac = getCourseIdTac(migrosApiBookCourseRequest);
       if (migrosBookContext.dryRun()) {
          return handleDryRun(migrosApiBookCourseRequest, courseIdTac, bearerToken);
       }
-      LOG.info("Got a non-null bearer token={} and courseIdTac={}", StringUtils.isNotEmpty(bearerToken), courseIdTac);
+      LOG.info("Got a non-null bearer token={} and courseIdTac={} for user [{}]", StringUtils.isNotEmpty(bearerToken), courseIdTac, authenticationContainer.username());
       waitUntilCourseIsBookable(migrosBookContext.duration2WaitUntilCourseBecomesBookable());
-      MigrosBookCourseResponse migrosBookCourseResponse = createAndPostBookCourseRequest(migrosApiBookCourseRequest.centerId(), courseIdTac);
-      LOG.info("Booking result for course '{}' is '{}'", migrosApiBookCourseRequest.courseName(), migrosBookCourseResponse.getCourseBookResult());
-      return new MigrosApiBookCourseResponse(migrosBookCourseResponse.getCourseBookResult(), migrosBookCourseResponse.getMessage());
+      HttpRequest httpBookRequest = bookCourseHelper.getBookCourseHttpRequest(migrosApiBookCourseRequest.centerId(), courseIdTac);
+      ResponseWrapper<MigrosBookCourseResponse> migrosBookCourseResponseWrapper = httpService.callRequestAndParse(new MigrosBookCourseResponseReader(), httpBookRequest);
+      logResponse(migrosBookCourseResponseWrapper, httpBookRequest);
+      return bookCourseHelper.unwrapAndCreateApiBookCourseResponse(migrosBookCourseResponseWrapper);
    }
 
    private void waitUntilCourseIsBookable(Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
@@ -180,7 +171,7 @@ public class MigrosApiImpl implements MigrosApi {
          LOG.warn("Bearer token is null, change to empty String");
          bearerToken = "";// avoid setting a null value as credentials since this leads to an NPE
       }
-      LOG.info("Got bearer token {}", StringUtils.isNotEmpty(bearerToken) ? "yes" : "no");
+      LOG.info("Authentication successful for user [{}]? {}", authenticationContainer.username(), StringUtils.isNotEmpty(bearerToken) ? "Yes" : "No");
       httpService.setCredentials(bearerToken);
       return bearerToken;
    }
@@ -198,12 +189,6 @@ public class MigrosApiImpl implements MigrosApi {
                       .replace(COURSE_TITLES_PLACEHOLDER, new MigrosRequestCourse(centerId, courseName).toJson())
                       .replace(WEEK_DAY_PLACEHOLDER, weekDay)
               , migrosGetCoursesUrl);
-   }
-
-   private MigrosBookCourseResponse createAndPostBookCourseRequest(String centerId, String courseIdTac) {
-      HttpRequest httpBookRequest = bookCourseHelper.getBookCourseHttpRequest(centerId, courseIdTac);
-      LOG.info("Created Http-Request {}", httpBookRequest);
-      return httpService.callRequestParseAndUnwrap(new MigrosBookCourseResponseReader(), httpBookRequest);
    }
 
    private static String joinStrings2String(List<String> elements) {

@@ -11,7 +11,8 @@ public class MigrosGetCoursesResponseReader extends AbstractHttpResponseReader<M
    }
 
    @Override
-   public ResponseWrapper createErrorResponse(Exception e, String url) {
-      return ResponseWrapper.error(e, url);
+   public ResponseWrapper<MigrosGetCoursesResponse> createErrorResponse(Exception e, String url) {
+      // ResponseWrapper with empty MigrosGetCoursesResponse -> Wrapper contains exception and any call for 'httpResponse' returns this empty value
+      return new ResponseWrapper<>(new MigrosGetCoursesResponse(), 500, e, url);
    }
 }
