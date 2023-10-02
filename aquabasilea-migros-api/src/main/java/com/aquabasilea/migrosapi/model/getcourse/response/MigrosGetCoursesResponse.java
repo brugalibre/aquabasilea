@@ -28,7 +28,10 @@ public class MigrosGetCoursesResponse {
    }
 
    /**
-    * @return the single matched course or <code>null</code> if there is more than one
+    * Return the single matched course or <code>null</code> if there is one.
+    * <b>Attention</b> If there are more than one result, the course-id-tac for the earliest one is returned
+    *
+    * @return the single matched course or <code>null</code> if there is one
     */
    public String getSingleCourseIdTac() {
       return courses.stream()
