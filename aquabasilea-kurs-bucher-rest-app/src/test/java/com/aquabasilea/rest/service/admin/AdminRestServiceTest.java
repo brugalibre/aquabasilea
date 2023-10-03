@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.service.admin;
 
-import com.aquabasilea.domain.course.Course;
-import com.aquabasilea.domain.course.CourseLocation;
+import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.domain.statistics.model.Statistics;
