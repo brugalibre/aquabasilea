@@ -1,7 +1,7 @@
 package com.aquabasilea.search;
 
-import com.aquabasilea.domain.course.CourseLocation;
-import com.aquabasilea.domain.course.LocalDateTimeBuilder;
+import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.course.model.LocalDateTimeBuilder;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
