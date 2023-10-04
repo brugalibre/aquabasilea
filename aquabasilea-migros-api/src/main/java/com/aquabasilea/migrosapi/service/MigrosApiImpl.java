@@ -171,7 +171,7 @@ public class MigrosApiImpl implements MigrosApi {
          LOG.warn("Bearer token is null, change to empty String");
          bearerToken = "";// avoid setting a null value as credentials since this leads to an NPE
       }
-      LOG.info("Authentication successful for user [{}] {}?", authenticationContainer.username(), StringUtils.isNotEmpty(bearerToken) ? "Yes" : "No");
+      LOG.info("Authentication successful for user [{}]? {}", authenticationContainer.username(), StringUtils.isNotEmpty(bearerToken) ? "Yes" : "No");
       httpService.setCredentials(bearerToken);
       return bearerToken;
    }
