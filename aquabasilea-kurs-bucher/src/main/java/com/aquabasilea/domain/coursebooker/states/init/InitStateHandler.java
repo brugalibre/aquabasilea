@@ -57,15 +57,15 @@ public class InitStateHandler {
       LocalDateTime refDate = LocalDateTime.now();
       InitializationResult idleBeforeBookingResult = checkAllCoursesAndGetEarliestCourseAndTimeUntilStart(weeklyCourses, refDate);
       if (isNull(idleBeforeBookingResult)) {
-         LOG.warn("No courses defined for user {}!", weeklyCourses.getUserId());
+         LOG.warn("No courses defined!");
          return InitializationResult.pause(weeklyCourses);
       }
       InitializationResult idleBeforeDryRunResult = getDryRunInitializationResult(refDate, idleBeforeBookingResult);
       if (nonNull(idleBeforeDryRunResult)) {
-         LOG.info("Found next course [{}] for dry run. Starting {}s earlier. User: {}", idleBeforeDryRunResult.getCurrentCourse(), idleBeforeDryRunResult.getDurationUtilDryRunOrBookingBegin(), weeklyCourses.getUserId());
+         LOG.info("Found next course [{}] for dry run. Starting {}s earlier.", idleBeforeDryRunResult.getCurrentCourse(), idleBeforeDryRunResult.getDurationUtilDryRunOrBookingBegin());
          return idleBeforeDryRunResult;
       }
-      LOG.info("Found next course [{}] for booking. Starting {}s earlier. User: {}", idleBeforeBookingResult.getCurrentCourse(), idleBeforeBookingResult.getDurationUtilDryRunOrBookingBegin(), weeklyCourses.getUserId());
+      LOG.info("Found next course [{}] for booking. Starting {}s earlier.", idleBeforeBookingResult.getCurrentCourse(), idleBeforeBookingResult.getDurationUtilDryRunOrBookingBegin());
       return idleBeforeBookingResult;
    }
 

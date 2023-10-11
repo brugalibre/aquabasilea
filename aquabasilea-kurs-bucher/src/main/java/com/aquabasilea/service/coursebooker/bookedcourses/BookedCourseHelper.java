@@ -22,11 +22,11 @@ public class BookedCourseHelper {
 
    public List<Course> getBookedCourses(String userId) {
       if (isUserCurrentlyFetching(userId)) {
-         LOG.warn("User [{}] is already fetching the booked courses", userId);
+         LOG.warn("User is already fetching the booked courses, abort!");
          return List.of();
       }
       try {
-         LOG.info("Fetching booked courses for user [{}]", userId);
+         LOG.info("Fetching booked courses");
          userIdToIsFetchingBookedCoursesMap.put(userId, true);
          AquabasileaCourseBooker aquabasileaCourseBooker = aquabasileaCourseBookerHolder.getForUserId(userId);
          return aquabasileaCourseBooker.getBookedCourses();

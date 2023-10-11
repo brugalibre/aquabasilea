@@ -1,5 +1,6 @@
 package com.aquabasilea.service.coursebooker;
 
+import com.aquabasilea.application.config.logging.MdcConst;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
@@ -12,6 +13,7 @@ import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +89,13 @@ public class AquabasileaCourseBookerService {
       LOG.info("Cancel course '{}' for user with phone-nr '{}'", courseName, phoneNr);
       Optional<User> optUserByPhoneNr = userRepository.findByPhoneNr(phoneNr);
       if (optUserByPhoneNr.isPresent()) {
-         return cancelCourse4User(courseName, optUserByPhoneNr.get());
+         User user = optUserByPhoneNr.get();
+         try {
+            MDC.put(MdcConst.USER_ID, user.id());
+            return cancelCourse4User(courseName, user);
+         } finally {
+            MDC.remove(MdcConst.USER_ID);
+         }
       } else {
          LOG.warn("No user found for phone-nr '{}'", phoneNr);
          return CourseCancelResult.COURSE_NOT_CANCELED;
@@ -96,7 +104,7 @@ public class AquabasileaCourseBookerService {
 
    private CourseCancelResult cancelCourse4User(String courseName, User user) {
       List<Course> bookedCourses = getBookedCourses(user.id());
-      LOG.info("For user [{}] the booked courses {} are found", user.id(), bookedCourses);
+      LOG.info("The booked courses {} are found to cancel", bookedCourses);
       if (bookedCourses.size() == 1) {
          Course course = bookedCourses.get(0);
          return cancelBookedCourse(user.id(), course.getBookingIdTac());

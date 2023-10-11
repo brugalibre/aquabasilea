@@ -101,11 +101,11 @@ public class AquabasileaCourseBooker {
 
    public void start() {
       setState(INIT);
-      LOG.info("AquabasileaCourseBooker started for user [{}]", this.userContext);
+      LOG.info("AquabasileaCourseBooker started");
    }
 
    public void stop() {
-      LOG.info("AquabasileaCourseBooker stopped for user [{}]", this.userContext);
+      LOG.info("AquabasileaCourseBooker stopped");
       setState(STOP);
    }
 
@@ -155,7 +155,7 @@ public class AquabasileaCourseBooker {
    }
 
    void handleCurrentState() {
-      LOG.info("Handling state {} for user [{}]", this.state, this.userContext);
+      LOG.info("Handling state '{}'", this.state);
       switch (this.state) {
          case INIT -> handleInitializeState();
          case PAUSED -> pauseApp();
@@ -195,7 +195,7 @@ public class AquabasileaCourseBooker {
 
    Duration getDurationLeftBeforeCourseBecomesBookableSupplier() {
       long timeLeft = DateUtil.calcTimeLeftBeforeDate(getCurrentCourse().getCourseDate());
-      LOG.info("getTimeLeftBeforeCourseBecomesBookableSupplier: {}ms ({}s) left for user [{}]", timeLeft, (timeLeft / 1000L), this.userContext);
+      LOG.info("getTimeLeftBeforeCourseBecomesBookableSupplier: {}ms ({}s) left", timeLeft, (timeLeft / 1000L));
       return Duration.ofMillis(timeLeft);
    }
 
@@ -242,7 +242,7 @@ public class AquabasileaCourseBooker {
 
    private void setState(CourseBookingState newtState) {
       if (newtState != this.state) {
-         LOG.info("Switched from state {} to new state {} for user [{}]", this.state, newtState, this.userContext);
+         LOG.info("Switched from state {} to new state {}", this.state, newtState);
          this.state = newtState;
          this.courseBookingStateChangedHandlers
                  .forEach(courseBookingStateChangedHandler -> courseBookingStateChangedHandler.onCourseBookingStateChanged(this.state));

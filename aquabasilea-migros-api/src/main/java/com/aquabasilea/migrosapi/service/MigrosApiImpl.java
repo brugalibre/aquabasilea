@@ -72,7 +72,7 @@ public class MigrosApiImpl implements MigrosApi {
 
    @Override
    public MigrosApiGetBookedCoursesResponse getBookedCourses(AuthenticationContainer authenticationContainer) {
-      LOG.info("Fetching booked courses for user [{}]", authenticationContainer.username());
+      LOG.info("Fetching booked courses");
       getAndSetBearerAuthentication(authenticationContainer);
       HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest();
       ResponseWrapper<List<MigrosResponseCourse>> responseWrapper = httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest);
@@ -106,7 +106,7 @@ public class MigrosApiImpl implements MigrosApi {
 
    @Override
    public MigrosApiCancelCourseResponse cancelCourse(AuthenticationContainer authenticationContainer, MigrosApiCancelCourseRequest migrosApiCancelCourseRequest) {
-      LOG.info("Cancel booked course '{}' for user [{}]", migrosApiCancelCourseRequest.courseBookingId(), authenticationContainer.username());
+      LOG.info("Cancel booked course '{}'", migrosApiCancelCourseRequest.courseBookingId());
       getAndSetBearerAuthentication(authenticationContainer);
       HttpRequest cancelCourseRequest = bookCourseHelper.getCancelCourseRequest(migrosApiCancelCourseRequest);
       ResponseWrapper<MigrosCancelCourseResponse> responseWrapper = httpService.callRequestAndParse(new MigrosCancelCourseResponseReader(), cancelCourseRequest);
@@ -117,14 +117,14 @@ public class MigrosApiImpl implements MigrosApi {
    @Override
    public MigrosApiBookCourseResponse bookCourse(AuthenticationContainer authenticationContainer,
                                                  MigrosApiBookCourseRequest migrosApiBookCourseRequest) {
-      LOG.info("Try to book course '{}' for user [{}]", migrosApiBookCourseRequest, authenticationContainer.username());
+      LOG.info("Try to book course '{}'", migrosApiBookCourseRequest);
       MigrosBookContext migrosBookContext = migrosApiBookCourseRequest.migrosBookContext();
       String bearerToken = getAndSetBearerAuthentication(authenticationContainer);
       String courseIdTac = getCourseIdTac(migrosApiBookCourseRequest);
       if (migrosBookContext.dryRun()) {
          return handleDryRun(migrosApiBookCourseRequest, courseIdTac, bearerToken);
       }
-      LOG.info("Got a non-null bearer token={} and courseIdTac={} for user [{}]", StringUtils.isNotEmpty(bearerToken), courseIdTac, authenticationContainer.username());
+      LOG.info("Got a non-null bearer token={} and courseIdTac={}", StringUtils.isNotEmpty(bearerToken), courseIdTac);
       waitUntilCourseIsBookable(migrosBookContext.duration2WaitUntilCourseBecomesBookable());
       HttpRequest httpBookRequest = bookCourseHelper.getBookCourseHttpRequest(migrosApiBookCourseRequest.centerId(), courseIdTac);
       ResponseWrapper<MigrosBookCourseResponse> migrosBookCourseResponseWrapper = httpService.callRequestAndParse(new MigrosBookCourseResponseReader(), httpBookRequest);
@@ -171,7 +171,7 @@ public class MigrosApiImpl implements MigrosApi {
          LOG.warn("Bearer token is null, change to empty String");
          bearerToken = "";// avoid setting a null value as credentials since this leads to an NPE
       }
-      LOG.info("Authentication successful for user [{}]? {}", authenticationContainer.username(), StringUtils.isNotEmpty(bearerToken) ? "Yes" : "No");
+      LOG.info("Authentication successful? {}", StringUtils.isNotEmpty(bearerToken) ? "Yes" : "No");
       httpService.setCredentials(bearerToken);
       return bearerToken;
    }

@@ -3,14 +3,15 @@ package com.aquabasilea.web.login;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v117.network.Network;
-import org.openqa.selenium.devtools.v117.network.model.ConnectionType;
 import org.openqa.selenium.devtools.v117.network.model.Request;
 import org.openqa.selenium.devtools.v117.network.model.RequestWillBeSent;
 import org.openqa.selenium.remote.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES;
@@ -21,12 +22,10 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaBearerTokenExtractor.class);
    private static final String OAUTH_2_USERINFO = "oauth2/userinfo";
    private static final String AUTHORIZATION = "Authorization";
-   private final String context;
    private String bearerToken;
 
    public AquabasileaBearerTokenExtractor(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
-      this.context = userName;
    }
 
    /**
@@ -62,6 +61,7 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
     * @return the bearer
     */
    public String extractBearerToken() {
+      LOG.info("Start bearer token extraction");
       setUpDevTools();
       super.doLogin();
       return bearerToken;
@@ -76,7 +76,7 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
 
    @Override
    protected void wait4Navigate2CoursePageCompleted() {
-      LOG.info("Start waiting for bearer token..");
+      LOG.info("Now waiting for dev-tools..");
       long timeOut = Duration.ofSeconds(60).toMillis();
       int increment = 100;
       while (hasNoBearerToken() && timeOut > 0) {
@@ -91,17 +91,19 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    }
 
    private void setUpDevTools() {
+      final Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
       DevTools devTool = this.webNavigatorHelper.getDevTool();
       devTool.createSession();
       devTool.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
-      devTool.addListener(Network.requestWillBeSent(), this::interceptRequest);
+      devTool.addListener(Network.requestWillBeSent(), requestSent -> interceptRequest(requestSent, copyOfContextMap));
    }
 
-   private void interceptRequest(RequestWillBeSent requestSent) {
+   private void interceptRequest(RequestWillBeSent requestSent, Map<String, String> copyOfContextMap) {
+      MDC.setContextMap(copyOfContextMap);
       Request request = requestSent.getRequest();
       if (isOAuthUserInfoRequest(request) && hasNoBearerToken()) {
          setBearerToken(request);
-         LOG.info("Bearer token found for context {}!", context);
+         LOG.info("Bearer token found!");
       }
    }
 

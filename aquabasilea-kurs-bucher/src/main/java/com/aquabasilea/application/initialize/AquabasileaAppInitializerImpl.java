@@ -1,5 +1,6 @@
 package com.aquabasilea.application.initialize;
 
+import com.aquabasilea.application.config.logging.MdcConst;
 import com.aquabasilea.application.initialize.api.AquabasileaAppInitializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.application.initialize.coursebooker.AquabasileaCourseBookerInitializer;
@@ -12,6 +13,7 @@ import com.brugalibre.domain.user.repository.UserRepository;
 import com.brugalibre.domain.user.service.userrole.UserRoleConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,11 +53,12 @@ public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer 
     */
    @Override
    public void initialize(UserAddedEvent userAddedEvent) {
-      LOG.info("Initialize for new user [{}]", userAddedEvent.userId());
+      MDC.put(MdcConst.USER_ID, userAddedEvent.userId());
       userCredentialsHandler.initialize(userAddedEvent);
       persistenceInitializer.initialize(userAddedEvent);
       courseDefUpdater.startScheduler(userAddedEvent.userId());
       aquabasileaCourseBookerInitializer.initialize(userAddedEvent);
+      MDC.remove(MdcConst.USER_ID);
    }
 
    @Override
@@ -63,11 +66,13 @@ public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer 
       List<User> registeredUsers = userRepository.getAll();
       LOG.info("Going to initialize for total {} users..", registeredUsers.size());
       for (User user : registeredUsers) {
+         MDC.put(MdcConst.USER_ID, user.getId());
          UserAddedEvent userAddedEvent = UserAddedEvent.of(user);
          courseDefUpdater.startScheduler(userAddedEvent.userId());
          aquabasileaCourseBookerInitializer.initialize(userAddedEvent);
          userRoleConfigService.addMissingRoles(user.id());
       }
+      MDC.remove(MdcConst.USER_ID);
       LOG.info("Initialization done");
    }
 }
