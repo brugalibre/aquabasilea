@@ -2,9 +2,10 @@ package com.aquabasilea.web.login;
 
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v115.network.Network;
-import org.openqa.selenium.devtools.v115.network.model.Request;
-import org.openqa.selenium.devtools.v115.network.model.RequestWillBeSent;
+import org.openqa.selenium.devtools.v117.network.Network;
+import org.openqa.selenium.devtools.v117.network.model.ConnectionType;
+import org.openqa.selenium.devtools.v117.network.model.Request;
+import org.openqa.selenium.devtools.v117.network.model.RequestWillBeSent;
 import org.openqa.selenium.remote.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +99,7 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
 
    private void interceptRequest(RequestWillBeSent requestSent) {
       Request request = requestSent.getRequest();
-      if (isOAuthUserInfoRequest(request)) {
+      if (isOAuthUserInfoRequest(request) && hasNoBearerToken()) {
          setBearerToken(request);
          LOG.info("Bearer token found for context {}!", context);
       }
