@@ -68,7 +68,7 @@ public class CourseExtractorFacade {
             return map2CourseDefsAndSetUserId(userId, extractedAquabasileaCourses);
          }
       }
-      LOG.error("Unsupported course-def-extractor [{}]", aquabasileaCourseBookerConfig.getCourseDefExtractorType());
+      LOG.error("Unsupported course-def-extractor '{}'", aquabasileaCourseBookerConfig.getCourseDefExtractorType());
       return List.of();
    }
 

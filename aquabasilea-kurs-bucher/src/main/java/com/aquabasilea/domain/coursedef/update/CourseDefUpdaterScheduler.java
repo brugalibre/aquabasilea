@@ -1,17 +1,16 @@
 package com.aquabasilea.domain.coursedef.update;
 
+import com.aquabasilea.application.config.logging.MdcConst;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 import static java.util.Objects.nonNull;
@@ -44,9 +43,16 @@ public class CourseDefUpdaterScheduler {
       Duration delayUntilTheNextUpdate = getCourseDefUpdateCycle();
       LOG.info("Wait {} until first execution", initDelay);
       LOG.info("Wait {} after first execution until next", delayUntilTheNextUpdate);
-      this.scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> courseDefUpdater.accept(userId),
+      this.scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(getCurseDefRunnable(userId),
               initDelay.toMinutes(), delayUntilTheNextUpdate.toMinutes(), TimeUnit.MINUTES);
       return LocalDateTime.now().plusMinutes(initDelay.toMinutes());
+   }
+
+   private Runnable getCurseDefRunnable(String userId) {
+      return () -> {
+         MDC.put(MdcConst.USER_ID, userId);
+         courseDefUpdater.accept(userId);
+      };
    }
 
    /**

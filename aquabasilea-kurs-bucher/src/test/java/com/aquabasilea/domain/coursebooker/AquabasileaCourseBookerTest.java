@@ -485,7 +485,7 @@ class AquabasileaCourseBookerTest {
          this.aquabasileaCourseBooker.addCourseBookingStateChangedHandler(courseBookingStateChangedHandler);
          this.aquabasileaCourseBooker.addCourseBookingEndResultConsumer(courseBookingAlertSender);
          this.aquabasileaCourseBooker.addCourseBookingEndResultConsumer(courseBookingEndResultConsumer);
-         new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker);
+         new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker, "test-user-id");
          return this;
       }
 

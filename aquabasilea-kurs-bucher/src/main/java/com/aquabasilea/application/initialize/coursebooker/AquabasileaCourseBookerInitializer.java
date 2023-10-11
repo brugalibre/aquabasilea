@@ -54,7 +54,7 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
               courseDefRepository, aquabasileaCourseBookerFacadeFactory);
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender(AlertSendConfigProviderImpl.of(() -> List.of(AlertType.SMS))));
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new BookingStatisticsUpdater(statisticsService));
-      new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker);
+      new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker, userAddedEvent.userId());
       return aquabasileaCourseBooker;
    }
 

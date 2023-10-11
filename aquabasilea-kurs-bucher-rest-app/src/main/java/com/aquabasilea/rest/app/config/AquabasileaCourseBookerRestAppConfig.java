@@ -1,4 +1,4 @@
-package com.aquabasilea.rest.app;
+package com.aquabasilea.rest.app.config;
 
 import com.aquabasilea.application.config.AquabasileaCourseBookerAppConfig;
 import com.brugalibre.common.domain.app.config.CommonAppPersistenceConfig;

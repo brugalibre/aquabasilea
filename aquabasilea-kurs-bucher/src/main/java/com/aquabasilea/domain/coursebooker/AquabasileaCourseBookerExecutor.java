@@ -1,9 +1,11 @@
 package com.aquabasilea.domain.coursebooker;
 
+import com.aquabasilea.application.config.logging.MdcConst;
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.callback.CourseBookingStateChangedHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -24,13 +26,20 @@ public class AquabasileaCourseBookerExecutor implements CourseBookingStateChange
     private static final String MSG = "courseBookerFuture must not be null when we are in state " + REFRESH_COURSES;
     private final AquabasileaCourseBooker aquabasileaCourseBooker;
     private final ScheduledExecutorService scheduledExecutorService;
+    private final String userId;
     private Future<?> courseBookerFuture;
     private boolean isPausing;
 
-    public AquabasileaCourseBookerExecutor(AquabasileaCourseBooker aquabasileaCourseBooker) {
+    /**
+     * Creates a new {@link AquabasileaCourseBookerExecutor}
+     * @param aquabasileaCourseBooker the {@link AquabasileaCourseBookerExecutor} which is controlled by this instance
+     * @param userId the id of the user, the given {@link AquabasileaCourseBookerExecutor} belongs to
+     */
+    public AquabasileaCourseBookerExecutor(AquabasileaCourseBooker aquabasileaCourseBooker, String userId) {
         this.aquabasileaCourseBooker = aquabasileaCourseBooker;
         this.aquabasileaCourseBooker.addCourseBookingStateChangedHandler(this);
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        this.userId = userId;
     }
 
     /**
@@ -70,6 +79,11 @@ public class AquabasileaCourseBookerExecutor implements CourseBookingStateChange
     }
 
     private void executeCourseBooker() {
-        this.courseBookerFuture = scheduledExecutorService.submit(aquabasileaCourseBooker::handleCurrentState);
+        // Trying to move that 4 lines into a method will fail the aquabasileaCourseBooker to be executed. Somehow, that runnable is never called
+        Runnable executeCourseBookerRunnable = () -> {
+            MDC.put(MdcConst.USER_ID, userId);
+            aquabasileaCourseBooker.handleCurrentState();
+        };
+        this.courseBookerFuture = scheduledExecutorService.submit(executeCourseBookerRunnable);
     }
 }

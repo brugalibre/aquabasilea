@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import static java.util.Objects.nonNull;
@@ -38,8 +36,9 @@ public class CourseDefUpdater {
    private final Function<String, Boolean> courseDefUpdateNecessary4User;
 
    private final CourseExtractorFacade courseExtractorFacade;
-   private final ExecutorService executorService;
    private final CourseDefUpdaterScheduler courseDefUpdaterScheduler;
+
+   // Notifiers
    private final List<CourseDefUpdatedNotifier> courseDefUpdatedNotifiers;
    private final List<CourseDefUpdaterStartedNotifier> courseDefUpdaterStartedNotifiers;
    private final Map<String, Boolean> userId2IsCourseDefUpdateRunningMap;
@@ -55,7 +54,6 @@ public class CourseDefUpdater {
       this.userConfigRepository = userConfigRepository;
       this.courseDefRepository = courseDefRepository;
       this.courseDefUpdateNecessary4User = courseDefUpdateNecessary4User;
-      this.executorService = Executors.newSingleThreadExecutor();
       this.courseDefUpdaterScheduler = new CourseDefUpdaterScheduler(this::updateCourseDefsAsRunnable, courseDefUpdateDate);
       this.courseDefUpdatedNotifiers = new ArrayList<>();
       this.courseDefUpdaterStartedNotifiers = new ArrayList<>();
@@ -82,6 +80,8 @@ public class CourseDefUpdater {
     * Updates all {@link CourseDef} according user's configuration (which defines the {@link CourseLocation}s to consider)
     * According to those the aquabasliea-courses defined on their course-page are considered
     *
+    *<b>Note:</b> This call is blocking until the {@link CourseDef}s are upated
+    *
     * @param userId the id of the {@link User}
     */
    public void updateAquabasileaCourses(String userId) {
@@ -89,7 +89,7 @@ public class CourseDefUpdater {
          LOG.warn("CourseDefs are already being updated, do nothing!");
          return;
       }
-      this.executorService.submit(() -> updateCourseDefsAsRunnable(userId));
+      updateCourseDefsAsRunnable(userId);
    }
 
    private void updateCourseDefsAsRunnable(String userId) {

@@ -92,10 +92,12 @@ class CourseDefUpdaterTest {
 
       // When
       // Start 2 times, but it should only execute one time
-      courseDefUpdater.updateAquabasileaCourses(USER_ID);
+      // Start scheduler and update courses the first time
+      new Thread(() -> courseDefUpdater.startScheduler(USER_ID)).start();
       Thread.sleep(10);// wait in order to trigger the scheduler-thread
       Thread.sleep(10);// give the ThreadScheduler time to start
-      courseDefUpdater.updateAquabasileaCourses(USER_ID);
+      // update 2nd time, but since we are already updating -> we don't expect anything here
+      new Thread(() -> courseDefUpdater.updateAquabasileaCourses(USER_ID)).start();
       await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> aquabasileaCourseExtractor.amountOfInvocations > 0);
 
       // Then

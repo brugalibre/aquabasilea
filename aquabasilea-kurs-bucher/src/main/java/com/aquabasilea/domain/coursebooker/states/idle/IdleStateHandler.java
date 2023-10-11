@@ -26,11 +26,11 @@ public class IdleStateHandler {
         this.currentIdleContext = idleContext;
         CourseBookingState nextState = idleContext.courseBookingState().next();
         try {
-            LOGGER.info("Going idle for {} for user [{}]", idleContext.idleTime(), idleContext.userContext());
+            LOGGER.info("Going idle for {}ms", idleContext.idleTime());
             Thread.sleep(idleContext.idleTime().toMillis());
-            LOGGER.info("Done idle for user [{}]", idleContext.userContext());
+            LOGGER.info("Done idle");
         } catch (InterruptedException e) {
-            LOGGER.info("Idling was interrupted for user [{}]", idleContext.userContext());
+            LOGGER.info("Idling was interrupted");
             nextState = INIT;
         } finally {
             this.currentIdleContext = null;

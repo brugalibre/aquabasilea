@@ -66,14 +66,14 @@ public class BookingStateHandler {
     */
    public CourseBookingEndResult bookCourse(String userId, Course currentCourse, CourseBookingState state) {
       if (!currentCourse.getHasCourseDef()) {
-         return handleCourseWithoutCourseDef(userId, currentCourse);
+         return handleCourseWithoutCourseDef(currentCourse);
       }
-      LOG.info("About going to {} the course [{}] for user [{}]", state == CourseBookingState.BOOKING ? "book" : "dry-run",
-              currentCourse.getCourseName(), userId);
+      LOG.info("About going to {} the course [{}]", state == CourseBookingState.BOOKING ? "book" : "dry-run",
+              currentCourse.getCourseName());
       CourseBookContainer courseBookContainer = createCourseBookContainer(currentCourse, state);
       PlUtil.INSTANCE.startLogInfo("Course booker");
       CourseBookingEndResult courseBookingEndResult = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
-      LOG.info("Course booking for user [{}] is done. Result is {}", userId, courseBookingEndResult);
+      LOG.info("Course booking  is done. Result is '{}'", courseBookingEndResult);
       PlUtil.INSTANCE.endLogInfo();
       resumeCoursesUntil(userId, currentCourse);
       return courseBookingEndResult;
@@ -87,7 +87,7 @@ public class BookingStateHandler {
     * @param currentCourse the course which marks the next {@link Course} to book
     */
    public void resumeCoursesUntil(String userId, Course currentCourse) {
-      LOG.info("Resumes previously paused curses for user [{}]", userId);
+      LOG.info("Resumes previously paused curses");
       WeeklyCourses weeklyCourses = weeklyCoursesRepository.getByUserId(userId);
       List<Course> courses = new ArrayList<>(weeklyCourses.getCourses());
       courses.sort(new CourseComparator());
@@ -100,9 +100,8 @@ public class BookingStateHandler {
       weeklyCoursesRepository.save(weeklyCourses);
    }
 
-   private static CourseBookingEndResult handleCourseWithoutCourseDef(String userId, Course currentCourse) {
-      LOG.warn("Course {} not booked for user [{}], because there exist no real aquabasilea-course counterpart!", userId,
-              currentCourse.getCourseName());
+   private static CourseBookingEndResult handleCourseWithoutCourseDef(Course currentCourse) {
+      LOG.warn("Course {} not booked, because there exist no real aquabasilea-course counterpart!", currentCourse.getCourseName());
       return CourseBookingEndResultBuilder.builder()
               .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
               .withCourseName(currentCourse.getCourseName())

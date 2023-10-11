@@ -31,7 +31,7 @@ public class AquabasileaWebBearerTokenProviderImpl implements BearerTokenProvide
          try {
             return aquabasileaBearerTokenExtractor.extractBearerToken();
          } catch (TimeoutException e) {
-            LOG.error("Timeout during bearer token extraction!", e);
+            LOG.error("Timeout during bearer token extraction! Retries left={}", counter - 1, e);
             counter--;
          }
       }
