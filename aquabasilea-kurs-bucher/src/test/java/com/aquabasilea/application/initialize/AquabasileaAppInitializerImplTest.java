@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = TestAquabasileaCourseBookerPersistenceConfig.class)
 class AquabasileaAppInitializerImplTest {
 
-   public static final String TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE = "C:\\Users\\domin\\programmierung\\aquabasilea\\aquabasilea-kurs-bucher\\src\\test\\resources\\aquabasilea.keystore";
+   public static final String TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE = "test-aquabasilea.keystore";
    public static final String KEY_STORE_PASSWORD = "test123";
    public static final String USERNAME_1 = "username1";
    public static final String USERNAME_2 = "username2";

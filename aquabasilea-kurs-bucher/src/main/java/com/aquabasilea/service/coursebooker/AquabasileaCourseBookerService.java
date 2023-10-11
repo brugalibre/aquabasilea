@@ -87,22 +87,25 @@ public class AquabasileaCourseBookerService {
       LOG.info("Cancel course '{}' for user with phone-nr '{}'", courseName, phoneNr);
       Optional<User> optUserByPhoneNr = userRepository.findByPhoneNr(phoneNr);
       if (optUserByPhoneNr.isPresent()) {
-         User user = optUserByPhoneNr.get();
-         List<Course> bookedCourses = getBookedCourses(user.id());
-         LOG.info("For user [{}] the booked courses {} are found", user.id(), bookedCourses);
-         if (bookedCourses.size() == 1) {
-            Course course = bookedCourses.get(0);
-            return cancelBookedCourse(user.id(), course.getBookingIdTac());
-         } else {
-            return bookedCourses.stream()
-                    .filter(course -> course.getCourseName().equals(courseName))
-                    .findFirst()
-                    .map(course -> cancelBookedCourse(user.id(), course.getBookingIdTac()))
-                    .orElse(CourseCancelResult.COURSE_NOT_CANCELED);
-         }
+         return cancelCourse4User(courseName, optUserByPhoneNr.get());
       } else {
          LOG.warn("No user found for phone-nr '{}'", phoneNr);
          return CourseCancelResult.COURSE_NOT_CANCELED;
+      }
+   }
+
+   private CourseCancelResult cancelCourse4User(String courseName, User user) {
+      List<Course> bookedCourses = getBookedCourses(user.id());
+      LOG.info("For user [{}] the booked courses {} are found", user.id(), bookedCourses);
+      if (bookedCourses.size() == 1) {
+         Course course = bookedCourses.get(0);
+         return cancelBookedCourse(user.id(), course.getBookingIdTac());
+      } else {
+         return bookedCourses.stream()
+                 .filter(course -> course.getCourseName().equals(courseName))
+                 .findFirst()
+                 .map(course -> cancelBookedCourse(user.id(), course.getBookingIdTac()))
+                 .orElse(CourseCancelResult.COURSE_NOT_CANCELED);
       }
    }
 
