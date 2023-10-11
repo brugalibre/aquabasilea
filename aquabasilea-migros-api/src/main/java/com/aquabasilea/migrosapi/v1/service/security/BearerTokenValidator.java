@@ -33,6 +33,9 @@ public class BearerTokenValidator {
     * @return <code>true</code> if the given token is still valid or <code>false</code> if not
     */
    public boolean isBearerTokenUnauthorized(String bearerToken) {
+      if (bearerToken == null) {
+         return false;
+      }
       httpService.setCredentials(bearerToken);
       HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest();
       return httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest).statusCode() == 401;
