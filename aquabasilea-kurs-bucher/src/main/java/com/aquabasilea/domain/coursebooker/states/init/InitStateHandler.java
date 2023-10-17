@@ -32,11 +32,13 @@ public class InitStateHandler {
 
    private final WeeklyCoursesRepository weeklyCoursesRepository;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
+   private final int maxDelay;
 
    public InitStateHandler(WeeklyCoursesRepository weeklyCoursesRepository,
                            AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
+      this.maxDelay = 30;
    }
 
    /**
@@ -115,10 +117,21 @@ public class InitStateHandler {
    private long getTime2Sleep(CourseBookingState nextCourseBookingState, Course course, LocalDateTime refDate, int daysOffset) {
       Duration durationToStartEarlier = nextCourseBookingState == IDLE_BEFORE_BOOKING ?
               aquabasileaCourseBookerConfig.getDurationToStartBookerEarlier() : aquabasileaCourseBookerConfig.getDurationToStartDryRunEarlier();
+      durationToStartEarlier = durationToStartEarlier.plusSeconds(getRandomDelay());
       LocalDateTime courseDateMinusOffset = course.getCourseDate().minusDays(daysOffset);
       return DateUtil.getMillis(courseDateMinusOffset)
               - DateUtil.getMillis(refDate)
               - durationToStartEarlier.toMillis();
+   }
+
+   /**
+    * Creates a random delay between 0 and +-<code>maxDelay</code>
+    * @return a random delay between 0 and +-<code>maxDelay</code>
+    */
+   private long getRandomDelay() {
+      long randomDelay = (long) (Math.random() * maxDelay);
+      int sign = Math.random() > 0.5 ? 1 : -1;
+      return randomDelay * sign;
    }
 
    private static List<Course> getNonPausedCourses(WeeklyCourses weeklyCourses) {

@@ -1,5 +1,6 @@
 package com.aquabasilea.web.login;
 
+import com.zeiterfassung.web.common.inout.PropertyReader;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 import org.openqa.selenium.devtools.DevTools;
 import org.openqa.selenium.devtools.v117.network.Network;
@@ -22,10 +23,12 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaBearerTokenExtractor.class);
    private static final String OAUTH_2_USERINFO = "oauth2/userinfo";
    private static final String AUTHORIZATION = "Authorization";
+   private final long extractionTimeOutMillis;
    private String bearerToken;
 
    public AquabasileaBearerTokenExtractor(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
+      extractionTimeOutMillis = getExtractionTimeOut(propertiesName);
    }
 
    /**
@@ -58,7 +61,7 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
     * all outgoing requests. One of those requests, which is sent after the login is done, uses the bearer token as the
     * Authorization header
     *
-    * @return the bearer
+    * @return the bearer-token
     */
    public String extractBearerToken() {
       LOG.info("Start bearer token extraction");
@@ -77,13 +80,13 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    @Override
    protected void wait4Navigate2CoursePageCompleted() {
       LOG.info("Now waiting for dev-tools..");
-      long timeOut = Duration.ofSeconds(60).toMillis();
+      long timeOut = this.extractionTimeOutMillis;
       int increment = 100;
       while (hasNoBearerToken() && timeOut > 0) {
          WebNavigateUtil.waitForMilliseconds(increment);
          timeOut = timeOut - increment;
       }
-      LOG.info("Done with waiting. Bearer token found {}, time elapsed {}", bearerToken != null ? "yes" : "no", timeOut);
+      LOG.info("Done with waiting. Bearer token found {}, time elapsed {}", bearerToken != null ? "yes" : "no", (this.extractionTimeOutMillis - timeOut));
    }
 
    private synchronized boolean hasNoBearerToken() {
@@ -115,5 +118,11 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
       return request.getUrl().contains(OAUTH_2_USERINFO)
               && request.getMethod().equals(HttpMethod.GET.name())
               && request.getHeaders().containsKey(AUTHORIZATION);
+   }
+
+   private static long getExtractionTimeOut(String propertiesName) {
+      PropertyReader propertyReader = new PropertyReader(propertiesName);
+      int extractionTimeOutSeconds = Integer.parseInt(propertyReader.readValueOrDefault("extractionTimeOutSeconds", "60"));
+      return Duration.ofSeconds(extractionTimeOutSeconds).toMillis();
    }
 }
