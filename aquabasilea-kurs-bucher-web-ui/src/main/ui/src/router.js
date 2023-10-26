@@ -43,9 +43,12 @@ router.beforeEach((to, from, next) => {
     const loggedIn = localStorage.getItem('user');
     // trying to access a restricted page + not logged in
     // redirect to login page
+    console.log('Coming from ' + from.path  + ' and going to ' + to.path);
     if (authRequired && !loggedIn) {
+        console.log('Redirect to login page');
         next(RouterConstants.LOGIN_PATH);
     } else {
+        console.log('Next');
         next();
     }
 });
