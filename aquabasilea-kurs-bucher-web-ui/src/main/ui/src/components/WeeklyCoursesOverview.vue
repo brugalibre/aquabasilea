@@ -48,7 +48,8 @@
                   v-bind:class="{ 'table-button': courseBookingStateDto.state !== 'BOOKING', 'inactive-table-button': courseBookingStateDto.state === 'BOOKING'}"
                   v-c-tooltip="{content: getPauseButtonToolTipText(), placement: 'top'}"
                   class="pause-button table-button"
-                  v-on:click="pauseCourseAndRefresh(course)">
+                  v-on:click="this.pauseResumeCourseAndRefresh(course, error => this.handleError(error),
+                  () => this.refresh(true))">
               </button>
             </div>
           </td>
@@ -59,25 +60,32 @@
                   v-c-tooltip="{content: getDeleteButtonToolTipText(), placement: 'top'}"
                   class="delete-button table-button"
                   v-bind:class="{ 'table-button': !course.isPaused, 'inactive-table-button': course.isPaused || courseBookingStateDto.state === 'BOOKING'}"
-                  v-on:click="deleteCourseAndRefresh(course)">
+                  v-on:click="this.deleteCourseAndRefresh(course, error => this.handleError(error), () => this.refresh(course.isCurrentCourse))">
               </button>
             </div>
           </td>
         </tr>
       </table>
     </div>
-    <div class="weekly-courses-placeholder"></div>
+    <div v-if="this.weeklyCourses.courseDtos.length > 0" class="weekly-courses-placeholder"/>
     <a class="course-programm-link" href="https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm"
        target="_blank">Offizielles Migrosfitness Kursprogramm</a>
+    <ErrorBox ref="errorBox"/>
+    <div v-if="this.weeklyCourses.courseDtos.length === 0" class="weekly-courses-placeholder"/>
   </div>
 </template>
 <script>
 import WeeklyCoursesApi from '../mixins/WeeklyCoursesApi';
 import CommonAquabasileaRestApi from '../mixins/CommonAquabasileaRestApi';
+import ErrorBox from "@/components/error/ErrorBox.vue";
+import ErrorHandlingService from "@/services/error/error-handling.service";
 
 export default {
   name: 'WeeklyCoursesOverview',
   mixins: [WeeklyCoursesApi, CommonAquabasileaRestApi],
+  components: {
+    ErrorBox
+  },
   computed: {
     courseBookingStateDto: function () {
       return this.$store.state.aquabasilea.courseBookingStateDto
@@ -87,6 +95,18 @@ export default {
     },
   },
   methods: {
+    /*
+    * In case of an error during fetching the courses -> reset the current courses since we don't
+    * actual< know what values would be loaded
+    * and set the error details
+     */
+    fetchWeeklyCoursesErrorCallbackHandler: function (error) {
+      this.resetWeeklyCourseDtosAndStore();
+      this.handleError(error);
+    },
+    handleError: function (error) {
+      ErrorHandlingService.handleError(this.$refs.errorBox, error);
+    },
     getToolTipText: function (course) {
       if (this.courseBookingStateDto.state === 'PAUSED') {
         return '';
@@ -100,25 +120,16 @@ export default {
       return 'Pausiert diesen Kurs. Wenn es noch weitere, aktive Kurse gibt, wird dieser Kurs nur für eine Woche ausgesetzt.\n' +
           'Ist es hingegen der einzige Kurs, wird die gesamte Applikation pausiert';
     },
-    hasToolTipText: function (course) {
-      return this.getToolTipText(course) !== '';
-    },
-    deleteCourseAndRefresh: function (course) {
-      this.$store.dispatch('aquabasilea/setIsLoading', true);
-      this.deleteCourse(course);
-      if (course.isCurrentCourse) {
+    refresh: function (refreshWeeklyCoursesAndCourseState) {
+      if (refreshWeeklyCoursesAndCourseState) {
         this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
       } else {
         this.$emit('refreshWeeklyCourses');
       }
     },
-    pauseCourseAndRefresh: function (course) {
-      this.pauseResumeCourse(course);
-      this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
-    },
   },
   mounted() {
-    this.fetchWeeklyCourses();
+    this.fetchWeeklyCourses(error => this.fetchWeeklyCoursesErrorCallbackHandler(error));
   }
 }</script>
 
@@ -133,7 +144,7 @@ export default {
 }
 
 .table {
-  overflow-x: auto;
+  /*overflow-x: auto;*/
 }
 
 .table-cell {
