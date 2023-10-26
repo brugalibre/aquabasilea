@@ -20,21 +20,27 @@
           Aktualisierung der Kurse läuft...
         </label>
       </div>
-      <CButton color="info" :disabled="isUpdateCourseDefButtonDisabled" v-on:click="updateCourseDefsAndRefresh()">
+      <CButton color="info" :disabled="isUpdateCourseDefButtonDisabled" v-on:click="evalSelectedCourseDefKeysUpdateCourseDefsAndRefresh()">
         Migros Kurse
         aktualisieren
       </CButton>
     </div>
+    <ErrorBox ref="errorBox"/>
   </div>
 </template>
 
 <script>
 
 import CourseDefApi from "../mixins/CourseDefApi";
+import ErrorBox from "@/components/error/ErrorBox.vue";
+import ErrorHandlingService from "@/services/error/error-handling.service";
 
 export default {
   name: 'UpdateCourseDef',
   mixins: [CourseDefApi],
+  components: {
+    ErrorBox
+  },
   data() {
     return {
       selectedCourseDefLocation: [],
@@ -49,19 +55,21 @@ export default {
     }
   },
   methods: {
-    updateCourseDefsAndRefresh: function () {
+    evalSelectedCourseDefKeysUpdateCourseDefsAndRefresh: function () {
       const selectedCourseDefLocationKeys = this.selectedCourseDefLocation.map(courseLocationDto => courseLocationDto.courseLocationKey);
-      this.updateCourseDefs(JSON.stringify(selectedCourseDefLocationKeys));
-      this.$emit('refreshAddCourse');
+      this.isCourseDefUpdateRunning = true;
+      this.updateCourseDefsAndRefresh(JSON.stringify(selectedCourseDefLocationKeys),
+          error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
+          () => this.$emit('refreshAddCourse'));
     },
   },
   mounted() {
-    this.fetchCourseLocations();
-    this.fetchIsCourseDefUpdateRunning();
+    this.fetchCourseLocations(error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
+    this.fetchIsCourseDefUpdateRunning(error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
   },
   computed: {
     isUpdateCourseDefButtonDisabled: function () {
-      return this.isCourseDefUpdateRunning || (!this.selectedCourseDefLocation || this.selectedCourseDefLocation.length == 0);
+      return this.isCourseDefUpdateRunning || (!this.selectedCourseDefLocation || this.selectedCourseDefLocation.length === 0);
     },
     courseLocationsDtos: function () {
       return this.$store.state.aquabasilea.courseLocationsDtos

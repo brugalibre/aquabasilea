@@ -4,7 +4,7 @@
     <DialogsWrapper/>
     <div>
       <div v-for="bookedCourse in bookedCourseDtos" :key="bookedCourse.bookingIdTac"
-             class="tile grid-container-60-40" style="padding-bottom: 10px">
+           class="tile grid-container-60-40" style="padding-bottom: 10px">
         <div v-c-tooltip="{content: bookedCourse.tooltipText, placement: 'top'}">
           {{ bookedCourse.courseName }} um {{ bookedCourse.timeOfTheDay }} Uhr
         </div>
@@ -32,6 +32,7 @@ import '@coreui/coreui/dist/css/coreui.css';
 import {createConfirmDialog} from 'vuejs-confirm-dialog'
 import ModalDialog from '../common/ModalDialog.vue'
 import ErrorBox from "@/components/error/ErrorBox.vue";
+import ErrorHandlingService from "@/services/error/error-handling.service";
 
 export default {
   name: 'BookedCourseOverview',
@@ -49,31 +50,33 @@ export default {
   },
   methods: {
     showDialog(bookedCourse2Delete) {
-      this.dialog = createConfirmDialog(ModalDialog, {title: "Kurs " + bookedCourse2Delete.courseName + " annullieren",
-        question: "Bist du sicher, dass du diesen Kurs annullieren möchtest?", confirmTxt: 'Jä', cancelTxt: 'Nai, doch nid'})
+      this.dialog = createConfirmDialog(ModalDialog, {
+        title: "Kurs " + bookedCourse2Delete.courseName + " annullieren",
+        question: "Bist du sicher, dass du diesen Kurs annullieren möchtest?",
+        confirmTxt: 'Jä',
+        cancelTxt: 'Nai, doch nid'
+      })
       this.dialog.reveal();
       this.dialog.onConfirm(() => {
         this.dialog.close();
-        this.cancelCourseAndRefresh(bookedCourse2Delete.bookingIdTac, error => this.errorOccurred(error));
+        this.cancelCourseAndRefresh(bookedCourse2Delete.bookingIdTac,
+            error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
+            () => this.$emit('refreshBookedCourses'));
       });
       this.dialog.onCancel(() => this.dialog.close());
     },
-    cancelCourseAndRefresh: function (bookingIdTac, errorCallback) {
+    cancelCourseAndRefresh: function (bookingIdTac, onErrorCallback, onSuccessCallback) {
       this.$store.dispatch('aquabasilea/setIsBookedCoursesLoading', true);
-      this.$refs.errorBox.errorDetails = null;
-      this.cancelBookedCourseAndRefresh(bookingIdTac, errorCallback);
-    },
-    errorOccurred: function (error) {
-      this.$refs.errorBox.errorDetails = error;
+      this.cancelBookedCourseAndRefresh(bookingIdTac, onErrorCallback, onSuccessCallback);
     },
     isBookedCoursesTileVisible: function () {
       return this.bookedCourseDtos.length !== 0
           || this.isBookedCoursesLoading
-          || this.$refs.errorBox?.errorDetails;
-    },
+          || this.$refs.errorBox?.hasErrors();
+    }
   },
   mounted() {
-    this.fetchBookedCourses(error => this.errorOccurred(error));
+    this.fetchBookedCourses(error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
   }
 }
 </script>

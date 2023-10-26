@@ -25,7 +25,7 @@
           :placeholder="'Kurs auswählen..'"
           :maxHeight=900
           :object=true
-          @select="addCourseAndRefresh"
+          @select="createCourseBodyAddAndRefresh"
       >
         <template v-slot:option="{ option }">
           <span class="course-def-option">{{ option.courseRepresentation }}</span>
@@ -33,9 +33,10 @@
       </multiselect>
       <update-course-def
           ref="courseDefSelector"
-          @refreshAddCourse="refreshAddCourse">
+          @refreshAddCourse="this.$emit('refreshAddCourse')">
       </update-course-def>
     </div>
+    <ErrorBox ref="errorBox"/>
   </div>
 </template>
 
@@ -43,10 +44,15 @@
 import weeklyCoursesApi from '../mixins/WeeklyCoursesApi';
 import UpdateCourseDef from "@/components/UpdateCourseDef";
 import CourseDefApi from "../mixins/CourseDefApi";
+import ErrorBox from "@/components/error/ErrorBox.vue";
+import ErrorHandlingService from "@/services/error/error-handling.service";
 
 export default {
   name: 'AddCourse',
-  components: {UpdateCourseDef},
+  components: {
+    UpdateCourseDef,
+    ErrorBox
+  },
   mixins: [weeklyCoursesApi, CourseDefApi],
   data() {
     return {
@@ -58,17 +64,14 @@ export default {
     courseDefFilter: {
       handler: function (newCourseDefFilter, oldCourseDefFilter) {
         if (oldCourseDefFilter !== newCourseDefFilter) {
-          this.fetchCourseDefDtos(newCourseDefFilter);
+          this.fetchCourseDefDtos(newCourseDefFilter, error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
           this.$refs.courseDefDtosSelector.open();
         }
       },
     },
   },
   methods: {
-    refreshAddCourse: function () {
-      this.$emit('refreshAddCourse');
-    },
-    addCourseAndRefresh: function () {
+    createCourseBodyAddAndRefresh: function () {
       const courseBody = JSON.stringify({
         courseName: this.selectedCourseDef.courseName,
         courseInstructor: this.selectedCourseDef.courseInstructor,
@@ -80,10 +83,10 @@ export default {
         hasCourseDef: true,
         isCurrentCourse: false
       });
-      this.addCourse(courseBody);
+      this.addCourseAndRefresh(courseBody, error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
+          () =>  this.$emit('refreshCourseStateOverviewAndWeeklyCourses'));
       this.selectedCourseDef = null;
       this.courseDefFilter = '';
-      this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
     }
   },
   computed: {
@@ -92,7 +95,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchCourseDefDtos("");
+    this.fetchCourseDefDtos("", error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
   }
 }
 </script>

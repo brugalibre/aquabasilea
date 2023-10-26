@@ -14,7 +14,7 @@
         color="info"
         class="container-element-left"
         :disabled="courseBookingStateDto.state === 'BOOKING' || courseBookingStateDto.state === 'OFFLINE'"
-        v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefresh()">
+        v-on:click="evalRefreshNecessaryAndPauseOrResumeAquabasileaCourseBookerAndRefresh()">
       {{ courseBookingStateDto.pauseOrResumeButtonText }}
     </CButton>
     <CButton
@@ -22,7 +22,7 @@
         class="container-element-left"
         :disabled="courseBookingStateDto.state === 'BOOKING' || !this.getCurrentCourse?.id"
         v-on:click="bookCurrentCourseDryRun(this.getCurrentCourse.id)">
-     Starte Testlauf
+      Starte Testlauf
     </CButton>
     <CAccordion>
       <CAccordionItem :item-key="1">
@@ -45,17 +45,23 @@
         </CAccordionBody>
       </CAccordionItem>
     </CAccordion>
+    <ErrorBox ref="errorBox"/>
   </div>
 </template>
 
 <script>
 import aquabasileaCourseBookerApi from '../mixins/AquabasileaCourseBookerApi';
 import statisticsApi from '../mixins/StatisticsDefApi';
+import ErrorBox from "@/components/error/ErrorBox.vue";
 import '@coreui/coreui/dist/css/coreui.css';
+import ErrorHandlingService from "@/services/error/error-handling.service";
 
 export default {
   name: 'CourseBookerStateOverview',
   mixins: [aquabasileaCourseBookerApi, statisticsApi],
+  components: {
+    ErrorBox
+  },
   computed: {
     /**
      * If we are reactivating the app, and we have at least one non-paused course and none of those courses
@@ -82,18 +88,22 @@ export default {
     },
   },
   methods: {
-    pauseOrResumeAquabasileaCourseBookerAndRefresh: function () {
-      this.pauseOrResumeAquabasileaCourseBooker();
+    evalRefreshNecessaryAndPauseOrResumeAquabasileaCourseBookerAndRefresh: function () {
+      this.pauseOrResumeAquabasileaCourseBookerAndRefresh(this.needsWeeklyCoursesRefresh,
+          error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
+          () => this.refresh());
+    },
+    refresh: function () {
       if (this.needsWeeklyCoursesRefresh) {
         this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
       } else {
         this.$emit('refreshCourseStateOverview');
       }
-    }
+    },
   },
   mounted() {
-    this.fetchCourseBookingStateDto();
-    this.fetchStatisticsDto();
+    this.fetchCourseBookingStateDto(error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
+    this.fetchStatisticsDto(error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
   }
 }
 </script>

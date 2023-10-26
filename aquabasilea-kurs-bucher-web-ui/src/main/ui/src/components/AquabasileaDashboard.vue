@@ -20,7 +20,6 @@
           <add-course
               class="tile"
               :key="addCourseRefreshKey"
-              @error-occurred="errorOccurred"
               @refreshAddCourse="refreshAddCourse()"
               @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses">
           </add-course>
@@ -28,14 +27,10 @@
         <weekly-courses-overview
             class="tile"
             :key="weeklyCoursesRefreshKey"
-            @error-occurred="errorOccurred"
             @refreshCourseStateOverviewAndWeeklyCourses="refreshCourseStateOverviewAndWeeklyCourses()"
             @refreshWeeklyCourses="refreshWeeklyCourses()">
         </weekly-courses-overview>
       </div>
-      <CAlert v-show="this.errorDetails" color="danger" class="error-details tile" style="justify-self: center">
-        {{ this.errorDetails }}
-      </CAlert>
     </div>
   </div>
 </template>
@@ -49,7 +44,6 @@ import BookedCoursesOverview from "@/components/bookedcourses/BookedCoursesOverv
 import AddCourse from "@/components/AddCourse";
 import CommonAquabasileaRestApi from "@/mixins/CommonAquabasileaRestApi";
 import RouterConstants from "@/router-constants";
-import AuthService from "@/services/auth/auth.service";
 
 export default {
   name: 'App',
@@ -64,7 +58,6 @@ export default {
   data() {
     return {
       loginPath: RouterConstants.LOGIN_PATH,
-      errorDetails: '',
       applicationTitle: 'Migros-Kurs Bucher',
       stagingMsg: 'Migros-Kurs-Bucher Webapplikation',
       courseStateOverviewRefreshKey: 0,
@@ -92,7 +85,6 @@ export default {
       setTimeout(() => {
         this.courseStateOverviewRefreshKey += 1;
         this.$store.dispatch('aquabasilea/setIsLoading', false);
-        this.errorDetails = null;
       }, 1000);
       console.log('courseStateOverview refreshed: ' + this.courseStateOverviewRefreshKey);
     },
@@ -101,18 +93,8 @@ export default {
       setTimeout(() => {
         this.weeklyCoursesRefreshKey += 1;
         this.$store.dispatch('aquabasilea/setIsLoading', false);
-        this.errorDetails = null;
       }, 1000);
       console.log('weeklyCourses refreshed: ' + this.weeklyCoursesRefreshKey);
-    },
-    errorOccurred: function (error) {
-      this.errorDetails = error;
-      if (AuthService.isAuthenticationFailed(error)) {
-        this.$store.dispatch('auth/logout');
-        this.$router.push(this.loginPath);
-        return;
-      }
-      console.log('AquabasileaDashboard.vue: errorOccurred : \'' + this.errorDetails + '\'');
     },
     refreshCourseStateOverviewAndWeeklyCourses: function () {
       this.$store.dispatch('aquabasilea/setIsLoading', true);
@@ -120,7 +102,6 @@ export default {
         this.weeklyCoursesRefreshKey += 1;
         this.courseStateOverviewRefreshKey += 1;
         this.$store.dispatch('aquabasilea/setIsLoading', false);
-        this.errorDetails = null;
       }, 1000);
       console.log('weeklyCourses & courseStateOverview refreshed: ' + this.weeklyCoursesRefreshKey + ', ' + this.courseStateOverviewRefreshKey);
     },
@@ -137,12 +118,10 @@ export default {
         this.addCourseRefreshKey += 1;
         this.weeklyCoursesRefreshKey += 1;// after the course-defs are refreshed -> refresh current courses, may be one of them is without course-def now
         this.$store.dispatch('aquabasilea/setIsLoading', false);
-        this.errorDetails = null;
       }, 2000);
     },
   },
   mounted() {
-    this.errorDetails = null;
     this.$store.dispatch('aquabasilea/setIsLoading', false);
   }
 }
