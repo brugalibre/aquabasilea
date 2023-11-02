@@ -1,6 +1,8 @@
 package com.aquabasilea.application.initialize.persistence;
 
-import com.aquabasilea.application.initialize.Initializer;
+import com.aquabasilea.application.initialize.common.InitType;
+import com.aquabasilea.application.initialize.common.InitializeOrder;
+import com.aquabasilea.application.initialize.api.Initializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
@@ -15,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.aquabasilea.application.initialize.common.InitializationConst.AQUABASILEA_PERSISTENCE;
+
 @Service
+@InitializeOrder(order = AQUABASILEA_PERSISTENCE, type = {InitType.USER_ADDED})
 public class PersistenceInitializer implements Initializer {
    private final WeeklyCoursesRepository weeklyCoursesRepository;
    private final StatisticsRepository statisticsRepository;

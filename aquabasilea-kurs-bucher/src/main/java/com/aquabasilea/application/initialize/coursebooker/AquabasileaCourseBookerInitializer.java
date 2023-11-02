@@ -1,7 +1,9 @@
 package com.aquabasilea.application.initialize.coursebooker;
 
-import com.aquabasilea.application.initialize.Initializer;
+import com.aquabasilea.application.initialize.api.Initializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
+import com.aquabasilea.application.initialize.common.InitType;
+import com.aquabasilea.application.initialize.common.InitializeOrder;
 import com.aquabasilea.application.security.service.securestorage.SecretStoreService;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
@@ -19,7 +21,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.aquabasilea.application.initialize.common.InitializationConst.AQUABASILEA_COURSE_BOOKER;
+
 @Service
+@InitializeOrder(order = AQUABASILEA_COURSE_BOOKER, type = {InitType.USER_ACTIVATED, InitType.USER_ADDED})
 public class AquabasileaCourseBookerInitializer implements Initializer {
    private final AquabasileaCourseBookerHolder aquabasileaCourseBookerHolder;
    private final WeeklyCoursesRepository weeklyCoursesRepository;
