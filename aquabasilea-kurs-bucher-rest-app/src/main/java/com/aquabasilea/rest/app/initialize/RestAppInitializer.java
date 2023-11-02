@@ -36,7 +36,7 @@ public class RestAppInitializer {
    public void onApplicationEvent(final ServletWebServerInitializedEvent event /*unused*/) {
       createAndAddUserRegisteredObserver();
       userUserPasswordChangeService.addUserPasswordChangedObserver(userChangedObserver);
-      aquabasileaAppInitializer.initialize4ExistingUsers();
+      aquabasileaAppInitializer.initializeOnAppStart();
    }
 
    private void createAndAddUserRegisteredObserver() {

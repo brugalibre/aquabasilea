@@ -2,7 +2,9 @@ package com.aquabasilea.application.initialize;
 
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.application.initialize.coursebooker.AquabasileaCourseBookerInitializer;
+import com.aquabasilea.application.initialize.coursedef.CourseDefUpdaterInitializer;
 import com.aquabasilea.application.initialize.persistence.PersistenceInitializer;
+import com.aquabasilea.application.initialize.userconfig.UserConfigInitializer;
 import com.aquabasilea.application.initialize.usercredentials.UserCredentialsHandler;
 import com.aquabasilea.application.security.securestorage.WriteSecretToKeyStore;
 import com.aquabasilea.application.security.service.login.AquabasileaLoginService;
@@ -97,8 +99,8 @@ class AquabasileaAppInitializerImplTest {
       UserAddedEvent userAddedEvent2 = createUserAddedEvent(USERNAME_2, userId2, password2, phoneNr);
       AquabasileaLoginService aquabasileaLoginService = mockAquabasileaLoginService();
       UserCredentialsHandler userCredentialsHandler = new UserCredentialsHandler(aquabasileaLoginService, KEY_STORE_PASSWORD, TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE);
-      AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(persistenceInitializer,
-              userCredentialsHandler, aquabasileaCourseBookerInitializer, courseDefUpdater, null, userRoleConfigService);
+      AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(null, List.of(persistenceInitializer,
+              userCredentialsHandler, aquabasileaCourseBookerInitializer, new CourseDefUpdaterInitializer(courseDefUpdater), new UserConfigInitializer(userRoleConfigService)));
 
       // When
       aquabasileaAppInitializer.initialize(userAddedEvent1);
@@ -124,6 +126,8 @@ class AquabasileaAppInitializerImplTest {
       SecretStoreService secretStoreService = new SecretStoreService(KEY_STORE_PASSWORD, TEST_RESOURCES_AQUABASILEA_KEYSTORE_KEYSTORE);
       assertThat(secretStoreService.getUserPassword(USERNAME_1), is(password1.toCharArray()));
       assertThat(secretStoreService.getUserPassword(USERNAME_2), is(password2.toCharArray()));
+      verify(userRoleConfigService).addMissingRoles(eq(userId1));
+      verify(userRoleConfigService).addMissingRoles(eq(userId2));
    }
 
    @Test
@@ -135,8 +139,9 @@ class AquabasileaAppInitializerImplTest {
       String password2 = "userPassword2";
       String phoneNr = "+41791234567";
 
-      CourseDefUpdater courseDefUpdater = mock(CourseDefUpdater.class);
-      UserCredentialsHandler userCredentialsHandler = mock(UserCredentialsHandler.class);
+      CourseDefUpdater courseDefUpdaterMock = mock(CourseDefUpdater.class);
+      UserCredentialsHandler userCredentialsHandlerMock = mock(UserCredentialsHandler.class);
+      PersistenceInitializer persistenceInitializerMock = mock(PersistenceInitializer.class);
 
       UserAddedEvent userAddedEvent1 = createUserAddedEvent(USERNAME_1, userId1, null, phoneNr);
       UserAddedEvent userAddedEvent2 = createUserAddedEvent(USERNAME_2, userId2, null, phoneNr);
@@ -144,19 +149,21 @@ class AquabasileaAppInitializerImplTest {
       User user1 = User.of(userId1, USERNAME_1, password1, MobilePhone.of(phoneNr));
       User user2 = User.of(userId2, USERNAME_2, password2, MobilePhone.of(phoneNr));
       when(userRepository.getAll()).thenReturn(List.of(user1, user2));
-      AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(persistenceInitializer,
-              userCredentialsHandler, aquabasileaCourseBookerInitializer, courseDefUpdater, userRepository, userRoleConfigService);
+      AquabasileaAppInitializerImpl aquabasileaAppInitializer = new AquabasileaAppInitializerImpl(userRepository, List.of(persistenceInitializerMock,
+              userCredentialsHandlerMock, aquabasileaCourseBookerInitializer, new CourseDefUpdaterInitializer(courseDefUpdaterMock), new UserConfigInitializer(userRoleConfigService)));
 
       // When
-      aquabasileaAppInitializer.initialize4ExistingUsers();
+      aquabasileaAppInitializer.initializeOnAppStart();
 
       // Then
+      verify(userCredentialsHandlerMock, never()).initialize(any());
+      verify(persistenceInitializerMock, never()).initialize(any());
       verify(userRoleConfigService).addMissingRoles(eq(userId1));
       verify(userRoleConfigService).addMissingRoles(eq(userId2));
       verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent1));
       verify(aquabasileaCourseBookerInitializer).initialize(eq(userAddedEvent2));
-      verify(courseDefUpdater).startScheduler(eq(userId1));
-      verify(courseDefUpdater).startScheduler(eq(userId2));
+      verify(courseDefUpdaterMock).startScheduler(eq(userId1));
+      verify(courseDefUpdaterMock).startScheduler(eq(userId2));
    }
 
    private static UserAddedEvent createUserAddedEvent(String username, String userId, String password, String phoneNr) {

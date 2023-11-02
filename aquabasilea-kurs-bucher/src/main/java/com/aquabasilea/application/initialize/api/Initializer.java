@@ -1,7 +1,5 @@
-package com.aquabasilea.application.initialize;
+package com.aquabasilea.application.initialize.api;
 
-
-import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.brugalibre.domain.user.model.User;
 
 /**

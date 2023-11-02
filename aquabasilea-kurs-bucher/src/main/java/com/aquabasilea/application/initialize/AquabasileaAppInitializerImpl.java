@@ -2,15 +2,13 @@ package com.aquabasilea.application.initialize;
 
 import com.aquabasilea.application.config.logging.MdcConst;
 import com.aquabasilea.application.initialize.api.AquabasileaAppInitializer;
+import com.aquabasilea.application.initialize.api.Initializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
-import com.aquabasilea.application.initialize.coursebooker.AquabasileaCourseBookerInitializer;
-import com.aquabasilea.application.initialize.persistence.PersistenceInitializer;
-import com.aquabasilea.application.initialize.usercredentials.UserCredentialsHandler;
+import com.aquabasilea.application.initialize.common.InitType;
+import com.aquabasilea.application.initialize.common.InitializeOrder;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
-import com.brugalibre.domain.user.service.userrole.UserRoleConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -19,67 +17,60 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.aquabasilea.application.initialize.common.InitializationConst.compareOrder;
+import static com.aquabasilea.application.initialize.common.InitializationConst.isInitializerForType;
+
 @Service
 public class AquabasileaAppInitializerImpl implements AquabasileaAppInitializer {
 
    private final static Logger LOG = LoggerFactory.getLogger(AquabasileaAppInitializerImpl.class);
-   private final UserCredentialsHandler userCredentialsHandler;
-   private final PersistenceInitializer persistenceInitializer;
-   private final AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer;
-   private final CourseDefUpdater courseDefUpdater;
    private final UserRepository userRepository;
-   private final UserRoleConfigService userRoleConfigService;
+   private final List<Initializer> initializers;
 
    @Autowired
-   public AquabasileaAppInitializerImpl(PersistenceInitializer persistenceInitializer,
-                                        UserCredentialsHandler userCredentialsHandler,
-                                        AquabasileaCourseBookerInitializer aquabasileaCourseBookerInitializer,
-                                        CourseDefUpdater courseDefUpdater,
-                                        UserRepository userRepository,
-                                        UserRoleConfigService userRoleConfigService) {
-      this.persistenceInitializer = persistenceInitializer;
-      this.userCredentialsHandler = userCredentialsHandler;
-      this.aquabasileaCourseBookerInitializer = aquabasileaCourseBookerInitializer;
-      this.userRoleConfigService = userRoleConfigService;
-      this.courseDefUpdater = courseDefUpdater;
+   public AquabasileaAppInitializerImpl(UserRepository userRepository,
+                                        List<Initializer> initializers) {
+      this.initializers = initializers;
       this.userRepository = userRepository;
    }
 
    /**
     * Initializes the entire Aquabasilea-application including the persistence as well as the {@link AquabasileaCourseBooker}
-    * This initialization e.g. happens when a new {@link User} was registered.
-    * - First initialize the credentials of the user
-    * - then initialize the persistence
-    * - initialize the AquabasileaCourseBooker itself
-    * - and last but not least initialize the course-definitions
+    * This initialization e.g. happens when a new {@link User} was registered. The order in which the {@link Initializer}s
+    * are executed is defined by ther {@link InitializeOrder} annotation
     *
     * @param userAddedEvent the {@link UserAddedEvent} with details about the added user
     */
    @Override
    public void initialize(UserAddedEvent userAddedEvent) {
       MDC.put(MdcConst.USER_ID, userAddedEvent.userId());
-      userCredentialsHandler.initialize(userAddedEvent);
-      persistenceInitializer.initialize(userAddedEvent);
-      aquabasileaCourseBookerInitializer.initialize(userAddedEvent);
-      // The Scheduler has a dependency on the aquabasileaCourseBooker, so we need that first
-      courseDefUpdater.startScheduler(userAddedEvent.userId());
+      executeInitializers(InitType.USER_ADDED, userAddedEvent);
       MDC.remove(MdcConst.USER_ID);
    }
 
+   /**
+    * Initializes the entire Aquabasilea-application. This initialization e.g. happens when the application server is started
+    * and all elements of the aquabasilea-course booker applications has to be created/initialized for all existing users.
+    * <b>Note:</b> We assume here that e.g. the persistence is already initialized
+    * The order in which the {@link Initializer}s are executed is defined by ther {@link InitializeOrder} annotation
+    *
+    */
    @Override
-   public void initialize4ExistingUsers() {
+   public void initializeOnAppStart() {
       List<User> registeredUsers = userRepository.getAll();
       LOG.info("Going to initialize for total {} users..", registeredUsers.size());
       for (User user : registeredUsers) {
          MDC.put(MdcConst.USER_ID, user.getId());
-         UserAddedEvent userAddedEvent = UserAddedEvent.of(user);
-         aquabasileaCourseBookerInitializer.initialize(userAddedEvent);
-         // The Scheduler has a dependency on the aquabasileaCourseBooker, so we need that first
-         // TODO: refactor with some kind of initializer interface which has a order and type (e.g. initialize for register and start-up)
-         courseDefUpdater.startScheduler(userAddedEvent.userId());
-         userRoleConfigService.addMissingRoles(user.id());
+         executeInitializers(InitType.USER_ACTIVATED, UserAddedEvent.of(user));
       }
       MDC.remove(MdcConst.USER_ID);
       LOG.info("Initialization done");
+   }
+
+   private void executeInitializers(InitType initType, UserAddedEvent userAddedEvent) {
+      initializers.stream()
+              .filter(isInitializerForType(initType))
+              .sorted(compareOrder())
+              .forEach(initializer -> initializer.initialize(userAddedEvent));
    }
 }

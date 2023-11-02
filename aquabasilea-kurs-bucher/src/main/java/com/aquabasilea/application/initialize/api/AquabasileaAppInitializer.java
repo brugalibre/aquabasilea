@@ -1,7 +1,6 @@
 package com.aquabasilea.application.initialize.api;
 
 
-import com.aquabasilea.application.initialize.Initializer;
 import com.brugalibre.domain.user.model.User;
 
 /**
@@ -12,5 +11,5 @@ public interface AquabasileaAppInitializer extends Initializer {
     * Is called in order to initialize the application for existing {@link User}s, e.g. after the application server
     * was started
     */
-   void initialize4ExistingUsers();
+   void initializeOnAppStart();
 }

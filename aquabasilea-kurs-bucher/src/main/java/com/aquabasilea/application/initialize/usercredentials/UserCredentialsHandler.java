@@ -1,6 +1,8 @@
 package com.aquabasilea.application.initialize.usercredentials;
 
-import com.aquabasilea.application.initialize.Initializer;
+import com.aquabasilea.application.initialize.common.InitType;
+import com.aquabasilea.application.initialize.common.InitializeOrder;
+import com.aquabasilea.application.initialize.api.Initializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.application.security.securestorage.WriteSecretToKeyStore;
 import com.aquabasilea.application.security.service.login.AquabasileaLoginService;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+import static com.aquabasilea.application.initialize.common.InitializationConst.USER_CREDENTIALS;
+
 /**
  * The {@link UserCredentialsHandler} stores the given credential in a secure storage for a later use
  * by the {@link AquabasileaWebCourseBooker}. Additionally, those credential are verified by the {@link AquabasileaLoginService}
@@ -19,6 +23,7 @@ import java.util.Arrays;
  * login is possible with the new password
  */
 @Service
+@InitializeOrder(order = USER_CREDENTIALS, type = {InitType.USER_ADDED})
 public class UserCredentialsHandler implements Initializer {
 
    private final WriteSecretToKeyStore writeSecretToKeyStore;
