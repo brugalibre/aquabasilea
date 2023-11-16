@@ -18,6 +18,7 @@ public class AquabasileaWebBearerTokenProviderImpl implements BearerTokenProvide
 
    @Override
    public String getBearerToken(String username, Supplier<char[]> userPwd) {
+      LOG.info("Extract token");
       AquabasileaBearerTokenExtractor aquabasileaBearerTokenExtractor = AquabasileaBearerTokenExtractor.createAquabasileaBearerTokenExtractor(username, userPwd.get());
       return tryGetBearerTokenRecursively(aquabasileaBearerTokenExtractor);
    }

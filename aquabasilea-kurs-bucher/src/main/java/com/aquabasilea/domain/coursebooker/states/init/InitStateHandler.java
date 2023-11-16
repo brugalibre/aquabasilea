@@ -82,6 +82,7 @@ public class InitStateHandler {
       for (Course course : getNonPausedCourses(weeklyCourses)) {
          InitializationResult initializationResult = getCourseAndTimeUntilStart(course, refDate, weeklyCourses);
          if (isNull(initializationResult)) {
+            LOG.info("Shift course {} (id={}) 7 days into the future", course.getCourseName(), course.getId());
             course.shiftCourseDateByDays(7);
             initializationResult = getCourseAndTimeUntilStart(course, refDate, weeklyCourses);
          }
