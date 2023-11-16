@@ -65,7 +65,6 @@ public class WeeklyCourses extends AbstractDomainModel {
       if (!existsCourseAlready(course)) {
          courses.add(course);
       } else {
-         // exception-handling in web-ui
          throw new CourseAlreadyExistsException(TextResources.ERROR_COURSE_ALREADY_EXISTS.formatted(course.getCourseName()));
       }
    }
