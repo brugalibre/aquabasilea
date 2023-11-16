@@ -3,16 +3,14 @@ plugins {
 	id 'application'
 	id 'maven-publish'
 	id 'io.spring.dependency-management' version '1.1.0'
-	id 'org.springframework.boot' version '3.0.0'
+	id 'org.springframework.boot' version '3.1.5'
 }
 
+apply from: '../publish-boot.gradle'
 apply from: '../aquabasilea-dependencies.gradle'
 
 group 'com.aquabasilea'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+version '1.1.0-SNAPSHOT'
 
 mainClassName = 'com.aquabasilea.rest.app.AquabasileaCourseBookerRestApplication'
 
@@ -31,20 +29,21 @@ repositories {
 
 dependencies {
 
-	implementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.4-SNAPSHOT'
-	implementation group: 'com.brugalibre', name: 'common-app-security', version: '1.2.3-SNAPSHOT'
-	implementation group: 'com.aquabasilea', name: 'aquabasilea-kurs-bucher', version: '1.0.1-SNAPSHOT'
+	implementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.7-SNAPSHOT'
+	implementation group: 'com.brugalibre', name: 'common-app-security', version: '1.2.5-SNAPSHOT'
+	implementation group: 'com.aquabasilea', name: 'aquabasilea-kurs-bucher', version: '1.1.0-SNAPSHOT'
+	implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0.7-SNAPSHOT'
 
 	implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.0.0'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.1.5'
 
 	// Attention: This must not be updated to v 1.10.0 otherwise the ObjectTextSearch will fail.
 	// The JaroWinklerDistance works differently in 1.10 than in 1.9. The entire implementation should be reconsidered..
 	implementation 'org.apache.commons:commons-text:1.9'
 
-	testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.4-SNAPSHOT'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.0'
+	testImplementation group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.7-SNAPSHOT'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.5'
 }
 
 test {

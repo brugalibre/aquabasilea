@@ -4,6 +4,8 @@ import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
 import com.aquabasilea.migrosapi.service.book.MigrosGetBookedCoursesResponseReader;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.service.HttpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOKING_URL;
 import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOK_COURSE_REQUEST_BODY;
@@ -13,6 +15,7 @@ import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOK_COURS
  */
 public class BearerTokenValidator {
 
+   private static final Logger LOG = LoggerFactory.getLogger(BearerTokenValidator.class);
    private final BookCourseHelper bookCourseHelper;
    private final HttpService httpService;
 
@@ -36,6 +39,7 @@ public class BearerTokenValidator {
       if (bearerToken == null) {
          return false;
       }
+      LOG.info ("Validate token..");
       HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest(bearerToken);
       return httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest).statusCode() == 401;
    }

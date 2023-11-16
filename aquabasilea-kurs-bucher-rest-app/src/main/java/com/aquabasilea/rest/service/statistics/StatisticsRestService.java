@@ -4,7 +4,6 @@ import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.statistic.StatisticsDto;
 import com.aquabasilea.service.statistics.StatisticsService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

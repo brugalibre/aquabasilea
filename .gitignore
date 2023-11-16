@@ -30,3 +30,5 @@ created.sql
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /aquabasilea-secure-web.p12
+/aquabasilea-kurs-bucher-rest-app/logs/
+/aquabasilea-web-navigator/out/

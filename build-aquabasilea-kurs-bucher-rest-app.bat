@@ -17,45 +17,38 @@ echo "<====    build web-navigator     ====>"
 echo "<====================================>"
 call gradlew clean build shadowJar publishToMavenLocal
 
-Rem build web resources
 cd %buildStartedAtPath%
 echo "<==========================================>"
 echo "<====        aquabasilea-web-ui        ====>"
 echo "<==========================================>"
 call build-aquabasilea-kurs-bucher-web-ui.bat
 
-Rem build aquabasilea-web-navigator
-cd %aquabasileaKursBuchenBaseDir%
+cd "%aquabasileaKursBuchenBaseDir%aquabasilea-web-navigator"
 echo "<==========================================>"
 echo "<====    aquabasilea-web-navigator     ====>"
 echo "<==========================================>"
-cd aquabasilea-web-navigator
-call gradlew clean build shadowJar publishToMavenLocal
+call gradlew clean publishToMavenLocal
 cd ..
 
-Rem build aquabasilea-migros-api
-cd %aquabasileaKursBuchenBaseDir%
+cd "%aquabasileaKursBuchenBaseDir%aquabasilea-migros-api"
 echo "<==========================================>"
 echo "<=====     aquabasilea-migros-api     =====>"
 echo "<==========================================>"
-cd aquabasilea-migros-api
-call gradlew clean build shadowJar publishToMavenLocal
+call gradlew clean publishToMavenLocal
 cd ..
 
-Rem build aquabasilea-kurs-bucher
 echo "<========================================>"
 echo "<====    aquabasilea-kurs-bucher     ====>"
 echo "<========================================>"
 cd aquabasilea-kurs-bucher
-call gradlew clean build shadowJar publishToMavenLocal
+call gradlew clean publishToMavenLocal
 cd ..
 
-Rem build aquabasilea-kurs-bucher-rest-app
 echo "<============================================>"
 echo "<====  aquabasilea-kurs-bucher-rest-app  ====>"
 echo "<============================================>"
 cd aquabasilea-kurs-bucher-rest-app
-call gradlew clean build publishToMavenLocal
+call gradlew clean publishToMavenLocal
 cd ..
 
 Rem copy file back

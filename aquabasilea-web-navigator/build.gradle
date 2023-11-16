@@ -1,11 +1,11 @@
 plugins {
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 apply from: '../test.gradle'
-apply from: '../aquabasilea.gradle'
+apply from: '../publish.gradle'
 
 group 'com.aquabasilea'
 version '1.0.7-SNAPSHOT'
@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     implementation group: 'com.brugalibre', name: 'web-navigator', version: '1.0.10-SNAPSHOT'
-    compileOnly 'org.slf4j:slf4j-api:2.0.5'
+    compileOnly 'org.slf4j:slf4j-api:2.0.9'
 }
 
 shadowJar{
