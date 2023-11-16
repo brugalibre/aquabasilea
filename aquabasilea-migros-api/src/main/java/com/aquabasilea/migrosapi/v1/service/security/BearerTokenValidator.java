@@ -36,8 +36,7 @@ public class BearerTokenValidator {
       if (bearerToken == null) {
          return false;
       }
-      httpService.setCredentials(bearerToken);
-      HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest();
+      HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest(bearerToken);
       return httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest).statusCode() == 401;
    }
 }

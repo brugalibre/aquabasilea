@@ -33,19 +33,25 @@ public class BookCourseHelper {
      * Returns a {@link HttpRequest} for cancel a booked course for the given cancel-request
      *
      * @param migrosApiCancelCourseRequest the {@link MigrosApiCancelCourseRequest} which contains the relevant information
+     * @param authorization the value for the authorization header
      * @return a {@link HttpRequest} for cancel a booked course for the given cancel-request
      */
-    public HttpRequest getCancelCourseRequest(MigrosApiCancelCourseRequest migrosApiCancelCourseRequest) {
+    public HttpRequest getCancelCourseRequest(MigrosApiCancelCourseRequest migrosApiCancelCourseRequest, String authorization) {
         CancelCourse cancelCourse = CancelCourse.of(migrosApiCancelCourseRequest.courseBookingId());
         String cancelCourseJson = JsonUtil.createJsonFromObject(cancelCourse);
-        return HttpRequest.getHttpRequest(HttpMethod.DELETE, cancelCourseJson, migrosCourseBookUrl);
+        return HttpRequest.getHttpRequest(HttpMethod.DELETE, migrosCourseBookUrl)
+                .withJsonBody(cancelCourseJson)
+                .withAuthorization(authorization);
     }
 
     /**
+     * @param authorization the value for the authorization header
      * @return the {@link HttpRequest} for retrieving all booked courses
+     *
      */
-    public HttpRequest getBookedCoursesRequest() {
-        return HttpRequest.getHttpGetRequest(migrosCourseBookUrl);
+    public HttpRequest getBookedCoursesRequest(String authorization) {
+        return HttpRequest.getHttpRequest(HttpMethod.GET, migrosCourseBookUrl)
+                .withAuthorization(authorization);
     }
 
     /**
@@ -53,12 +59,15 @@ public class BookCourseHelper {
      *
      * @param centerId the id of the center in which the course takes place
      * @param courseId the id of the course to book
+     * @param authorization the value for the authorization header
      * @return the {@link HttpRequest} for booking a specific course for the given center-id and course-id
      */
-    public HttpRequest getBookCourseHttpRequest(String centerId, String courseId) {
-        return HttpRequest.getHttpPostRequest(migrosBookCourseRequestBody
-                .replace(CENTER_ID_PLACEHOLDER, centerId)
-                .replace(COURSE_ID_TAC_PLACEHOLDER, courseId), migrosCourseBookUrl);
+    public HttpRequest getBookCourseHttpRequest(String centerId, String courseId, String authorization) {
+        return HttpRequest.getHttpRequest(HttpMethod.POST, migrosCourseBookUrl)
+                .withJsonBody(migrosBookCourseRequestBody
+                        .replace(CENTER_ID_PLACEHOLDER, centerId)
+                        .replace(COURSE_ID_TAC_PLACEHOLDER, courseId))
+                .withAuthorization(authorization);
     }
 
     public MigrosApiBookCourseResponse unwrapAndCreateApiBookCourseResponse(ResponseWrapper<MigrosBookCourseResponse> migrosBookCourseResponseWrapper) {
