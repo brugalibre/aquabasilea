@@ -81,12 +81,13 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    protected void wait4Navigate2CoursePageCompleted() {
       LOG.info("Now waiting for dev-tools..");
       long timeOut = this.extractionTimeOutMillis;
+      long start = System.currentTimeMillis();
       int increment = 100;
       while (hasNoBearerToken() && timeOut > 0) {
          WebNavigateUtil.waitForMilliseconds(increment);
          timeOut = timeOut - increment;
       }
-      LOG.info("Done with waiting. Bearer token found {}, time elapsed {}", bearerToken != null ? "yes" : "no", (this.extractionTimeOutMillis - timeOut));
+      LOG.info("Done with waiting. Bearer token found? {}, time elapsed={}ms", bearerToken != null ? "yes" : "no", (System.currentTimeMillis() - start));
    }
 
    private synchronized boolean hasNoBearerToken() {
