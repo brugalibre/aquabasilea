@@ -1,10 +1,8 @@
 package com.aquabasilea.web.login;
 
 import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
-import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
 
 public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
 
@@ -13,18 +11,7 @@ public class AquabasileaLogin extends AquabasileaWebCourseBookerImpl {
    }
 
    public static void main(String[] args) {
-      AquabasileaLogin.createAquabasileaLogin("asdf", new char[]{}).doLogin();
-   }
-
-   /**
-    * Creates and prepares a new {@link AquabasileaLogin}
-    *
-    * @param userName     the username
-    * @param userPassword the user-password
-    * @return a new {@link AquabasileaLogin}
-    */
-   public static AquabasileaLogin createAquabasileaLogin(String userName, char[] userPassword) {
-      return createAquabasileaLogin(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
+      AquabasileaLogin.createAquabasileaLogin("asdf", new char[]{}, "config/aquabasilea-kurs-bucher-config.yml").doLogin();
    }
 
    /**

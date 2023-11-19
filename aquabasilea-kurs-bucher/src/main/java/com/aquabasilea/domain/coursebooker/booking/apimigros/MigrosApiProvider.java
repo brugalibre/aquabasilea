@@ -19,8 +19,10 @@ public class MigrosApiProvider {
    private final Supplier<MigrosApi> migrosApiSup;
 
    @Autowired
-   public MigrosApiProvider(@Value("${application.security.bearerTokenTtl:0}") int ttl) {
-      BearerTokenProvider bearerTokenProvider = new AutoRenewBearerTokenProvider(new AquabasileaWebBearerTokenProviderImpl(), ttl, new BearerTokenValidator());
+   public MigrosApiProvider(@Value("${application.security.bearerTokenTtl:0}") int ttl,
+                            @Value("${application.configuration.course-booker-config}") String propertiesFile) {
+      BearerTokenProvider bearerTokenProvider = new AutoRenewBearerTokenProvider(
+              new AquabasileaWebBearerTokenProviderImpl(propertiesFile), ttl, new BearerTokenValidator());
       this.migrosApiSup = () -> new MigrosApiImpl(bearerTokenProvider);
    }
 

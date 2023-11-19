@@ -50,7 +50,7 @@ class AquabasileaCourseBookerInitializerTest {
    @Autowired
    private UserConfigRepository userConfigRepository;
 
-   private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig = new AquabasileaCourseBookerConfig();
+   private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig = new AquabasileaCourseBookerConfig("config/test-aquabasilea-kurs-bucher-config.yml");
 
    @BeforeAll
    public void setup() {

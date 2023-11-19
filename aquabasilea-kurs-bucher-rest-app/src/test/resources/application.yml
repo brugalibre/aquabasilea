@@ -1,4 +1,7 @@
 application:
+  configuration:
+    alertNotification: 'config/alert/test-aquabasilea-alert-notification.yaml'
+    courseBookerConfig: 'config/test-aquabasilea-kurs-bucher-config.yaml'
   search:
     maxThreshold: 0.677
   security:

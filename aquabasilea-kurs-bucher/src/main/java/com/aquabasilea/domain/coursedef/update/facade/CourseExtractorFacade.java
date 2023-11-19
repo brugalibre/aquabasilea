@@ -5,13 +5,10 @@ import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.mapping.CoursesDefEntityMapper;
 import com.aquabasilea.domain.coursedef.model.repository.mapping.CoursesDefEntityMapperImpl;
-import com.aquabasilea.migrosapi.service.MigrosApiImpl;
 import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
-import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
-import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
 import com.aquabasilea.web.extractcourses.model.ExtractedAquabasileaCourses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,20 +28,13 @@ public class CourseExtractorFacade {
    private final Supplier<MigrosApi> migrosApiSupplier;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
-   public CourseExtractorFacade(Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractor, Supplier<MigrosApi> migrosApiSupplier, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
+   public CourseExtractorFacade(Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractor,
+                                Supplier<MigrosApi> migrosApiSupplier,
+                                AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
       this.coursesDefEntityMapper = new CoursesDefEntityMapperImpl();
       this.aquabasileaCourseExtractorSupplier = aquabasileaCourseExtractor;
       this.migrosApiSupplier = migrosApiSupplier;
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig.refresh();
-   }
-
-   public CourseExtractorFacade(Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractor, Supplier<MigrosApi> migrosApiSupplier) {
-      this(aquabasileaCourseExtractor, migrosApiSupplier, new AquabasileaCourseBookerConfig());
-   }
-
-   public static CourseExtractorFacade getCourseExtractorFacade() {
-      MigrosApi migrosApi = new MigrosApiImpl(getBearerTokenProvider());
-      return new CourseExtractorFacade(AquabasileaCourseExtractorImpl::createAndInitAquabasileaWebNavigator, () -> migrosApi);
    }
 
    /**
@@ -107,11 +97,4 @@ public class CourseExtractorFacade {
    private List<CourseDef> map2CourseDefs(MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {
       return coursesDefEntityMapper.mapMigrosCourses2CourseDefs(migrosApiGetCoursesResponse.courses());
    }
-
-   private static BearerTokenProvider getBearerTokenProvider() {
-      return (username, userPwd) -> {
-         throw new IllegalStateException("Read only MigrosApi!");
-      };
-   }
-
 }

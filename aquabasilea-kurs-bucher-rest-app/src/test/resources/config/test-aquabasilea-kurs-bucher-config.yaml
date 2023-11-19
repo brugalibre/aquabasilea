@@ -1,0 +1,3 @@
+courseDefExtractorType: MIGROS_API
+minutesToStartDryRunEarlier: 120
+daysToBookCourseEarlier: 1

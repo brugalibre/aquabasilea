@@ -57,8 +57,7 @@ public enum CourseBookingState {
             return BOOKING;
          case IDLE_BEFORE_DRY_RUN:
             return BOOKING_DRY_RUN;
-         case BOOKING:
-         case BOOKING_DRY_RUN, REFRESH_COURSES, PAUSED:
+         case BOOKING, BOOKING_DRY_RUN, REFRESH_COURSES, PAUSED:
             return INIT;
       }
       throw new IllegalStateException("Unknown state '" + courseBookingState + "'!");

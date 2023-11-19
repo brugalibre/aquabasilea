@@ -15,11 +15,17 @@ import java.util.function.Supplier;
 public class AquabasileaWebBearerTokenProviderImpl implements BearerTokenProvider {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaWebBearerTokenProviderImpl.class);
+   private final String propertiesFile;
+
+   public AquabasileaWebBearerTokenProviderImpl(String propertiesFile) {
+      this.propertiesFile = propertiesFile;
+   }
 
    @Override
    public String getBearerToken(String username, Supplier<char[]> userPwd) {
       LOG.info("Extract token");
-      AquabasileaBearerTokenExtractor aquabasileaBearerTokenExtractor = AquabasileaBearerTokenExtractor.createAquabasileaBearerTokenExtractor(username, userPwd.get());
+      AquabasileaBearerTokenExtractor aquabasileaBearerTokenExtractor = AquabasileaBearerTokenExtractor
+              .createAquabasileaBearerTokenExtractor(username, userPwd.get(), propertiesFile);
       return tryGetBearerTokenRecursively(aquabasileaBearerTokenExtractor);
    }
 

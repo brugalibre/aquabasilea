@@ -112,6 +112,7 @@ public class InitStateHandler {
       if (time2Sleep > 0) {
          return InitializationResult.bookingInitializationResult(course, time2Sleep, daysOffset, weeklyCourses);
       }
+      LOG.info("getCourseAndTimeUntilStart: negative time to sleep {}, refDate={}, courseDate={}", time2Sleep, refDate, course.getCourseDate());
       return null;
    }
 

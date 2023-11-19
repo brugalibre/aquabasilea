@@ -1,5 +1,7 @@
-test: 1235
 application:
+  configuration:
+    alertNotification: 'config/alert/test-aquabasilea-alert-notification.yaml'
+    courseBookerConfig: 'config/test-aquabasilea-kurs-bucher-config.yml'
   security:
     keyStorePassword: "test123"
     aquabasileaKeyStoreName: "aquabasilea.keystore"
@@ -7,7 +9,6 @@ application:
     jwtExpirationMs: 1
 logging:
   file.name: logs/aquabasilea.log
-  application:
   title: Aquabasilea Kurs-Bucher
   version: 1.0.0
 spring:

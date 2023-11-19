@@ -18,7 +18,6 @@ public class AquabasileaWebConst {
    public static final String LOADING_ANIMATION_CLASS_NAME = "sc-dkmKIT iBFRfU";
 
    public static final String COURSE_PAGE = "coursePage";
-   public static final String AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES = "config/aquabasilea-kurs-bucher-config.yml";
    public static final String HTML_VALUE_ATTR = "value";
 
    // Filter fields

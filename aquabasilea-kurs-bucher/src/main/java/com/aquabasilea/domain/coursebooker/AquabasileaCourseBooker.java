@@ -1,7 +1,6 @@
 package com.aquabasilea.domain.coursebooker;
 
 import com.aquabasilea.domain.course.model.Course;
-import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.course.service.WeeklyCoursesUpdater;
 import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;

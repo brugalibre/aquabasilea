@@ -1,0 +1,4 @@
+originator: "0041791234567"
+alertServiceName: "clicksend"
+receivers:
+  - "0041791234567"

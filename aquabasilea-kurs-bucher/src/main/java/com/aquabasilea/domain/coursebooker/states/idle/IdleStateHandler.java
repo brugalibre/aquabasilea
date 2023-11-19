@@ -1,6 +1,7 @@
 package com.aquabasilea.domain.coursebooker.states.idle;
 
 import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.util.ConsumerThrowsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,14 @@ import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.INIT
 public class IdleStateHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdleStateHandler.class);
     private IdleContext currentIdleContext;
+    private final ConsumerThrowsException<Long, InterruptedException> threadSleepConsumer;
+
+    public IdleStateHandler(ConsumerThrowsException<Long, InterruptedException> threadSleepConsumer) {
+        this.threadSleepConsumer = threadSleepConsumer;
+    }
+    public IdleStateHandler() {
+        this(Thread::sleep);
+    }
 
     /**
      * Handles the states {@link CourseBookingState#IDLE_BEFORE_BOOKING}
@@ -27,7 +36,7 @@ public class IdleStateHandler {
         CourseBookingState nextState = idleContext.courseBookingState().next();
         try {
             LOGGER.info("Going idle for {}ms", idleContext.idleTime());
-            Thread.sleep(idleContext.idleTime().toMillis());
+            threadSleepConsumer.accept(idleContext.idleTime().toMillis());
             LOGGER.info("Done idle");
         } catch (InterruptedException e) {
             LOGGER.info("Idling was interrupted");

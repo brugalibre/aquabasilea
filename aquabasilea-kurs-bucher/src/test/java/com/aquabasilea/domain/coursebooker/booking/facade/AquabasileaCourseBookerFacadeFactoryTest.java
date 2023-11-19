@@ -112,6 +112,7 @@ class AquabasileaCourseBookerFacadeFactoryTest {
    private AquabasileaCourseBookerConfig getAquabasileaCourseBookerConfig(AquabasileaCourseBookerType aquabasileaCourseBookerType) {
       AquabasileaCourseBookerConfig config = mock(AquabasileaCourseBookerConfig.class);
       when(config.refresh()).thenReturn(config);
+      when(config.getCourseConfigFile()).thenReturn("config/test-aquabasilea-kurs-bucher-config.yml");
       when(config.getAquabasileaCourseBookerType()).thenReturn(aquabasileaCourseBookerType);
       return config;
    }

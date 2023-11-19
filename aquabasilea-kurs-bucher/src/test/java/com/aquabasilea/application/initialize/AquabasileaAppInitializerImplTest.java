@@ -11,6 +11,7 @@ import com.aquabasilea.application.security.service.login.AquabasileaLoginServic
 import com.aquabasilea.application.security.service.securestorage.SecretStoreService;
 import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
 import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
@@ -92,7 +93,8 @@ class AquabasileaAppInitializerImplTest {
       String phoneNr = "+41791234567";
 
       Supplier<AquabasileaCourseExtractor> aquabasileaCourseExtractorSupplier = () -> list -> List::of;
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(new CourseExtractorFacade(aquabasileaCourseExtractorSupplier, () -> null),
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(new CourseExtractorFacade(aquabasileaCourseExtractorSupplier,
+              () -> null, new AquabasileaCourseBookerConfig("config/test-aquabasilea-kurs-bucher-config.yml")),
               statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
 
       UserAddedEvent userAddedEvent1 = createUserAddedEvent(USERNAME_1, userId1, password1, phoneNr);

@@ -29,7 +29,7 @@ class CourseBookingAlertSenderTest {
 
    public static final String ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML = "alert/test-aquabasilea-alert-notification.yml";
    public static final AlertSendConfigProviderImpl CONFIG_PROVIDER = new AlertSendConfigProviderImpl(ALERT_TEST_AQUABASILEA_ALERT_NOTIFICATION_YML,
-           "test-aquabasilea-alert.keystore", "test-aquabasilea-keystore.keystore", () -> List.of(AlertType.SMS));
+           "test-aquabasilea-alert.keystore", "test-aquabasilea-keystore.keystore");
    private static final ConsumerUser CONSUMER_USER = new ConsumerUser("1234", "1234");
 
    @Test
