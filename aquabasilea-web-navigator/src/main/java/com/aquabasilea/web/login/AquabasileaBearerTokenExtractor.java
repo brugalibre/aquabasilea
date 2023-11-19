@@ -14,8 +14,6 @@ import org.slf4j.MDC;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
-
-import static com.aquabasilea.web.constant.AquabasileaWebConst.AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES;
 import static java.util.Objects.isNull;
 
 public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
@@ -29,17 +27,6 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    public AquabasileaBearerTokenExtractor(String userName, char[] userPassword, String propertiesName) {
       super(userName, userPassword, propertiesName);
       extractionTimeOutMillis = getExtractionTimeOut(propertiesName);
-   }
-
-   /**
-    * Creates and prepares a new {@link AquabasileaBearerTokenExtractor}
-    *
-    * @param userName     the username
-    * @param userPassword the user-password
-    * @return a new {@link AquabasileaBearerTokenExtractor}
-    */
-   public static AquabasileaBearerTokenExtractor createAquabasileaBearerTokenExtractor(String userName, char[] userPassword) {
-      return createAquabasileaBearerTokenExtractor(userName, userPassword, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
    }
 
    /**

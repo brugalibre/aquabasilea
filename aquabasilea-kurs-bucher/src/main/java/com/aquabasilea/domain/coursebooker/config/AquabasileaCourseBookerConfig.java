@@ -28,7 +28,6 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
     */
    private static final int DAYS_TO_BOOK_COURSE_EARLIER = 1;
 
-   private static final String AQUABASILEA_COURSE_BOOKER_CONFIG_FILE = "config/aquabasilea-kurs-bucher-config.yml";
    private static final YamlService YAML_SERVICE = new YamlService();
    private Integer secondsToStartBookerEarlier;
    private Integer minutesToStartDryRunEarlier;
@@ -41,10 +40,9 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    private CourseDefExtractorType courseDefExtractorType;
    private AquabasileaCourseBookerType aquabasileaCourseBookerType;
 
-   public AquabasileaCourseBookerConfig() {
-      init(AQUABASILEA_COURSE_BOOKER_CONFIG_FILE);
+   protected AquabasileaCourseBookerConfig() {
+      // Only for yaml-services
    }
-
    public AquabasileaCourseBookerConfig(String configFile) {
       init(configFile);
    }
@@ -52,6 +50,10 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    @Override
    public void setConfigFile(String configFile) {
       this.courseConfigFile = configFile;
+   }
+
+   public String getCourseConfigFile() {
+      return courseConfigFile;
    }
 
    public void setDaysToBookCourseEarlier(int daysToBookCourseEarlier) {
@@ -85,7 +87,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    }
 
    /**
-    * Refreshes the configurable values from the {@link #AQUABASILEA_COURSE_BOOKER_CONFIG_FILE}
+    * Refreshes the configurable values from the <code>courseConfigFile</code>
     */
    @Override
    public AquabasileaCourseBookerConfig refresh() {

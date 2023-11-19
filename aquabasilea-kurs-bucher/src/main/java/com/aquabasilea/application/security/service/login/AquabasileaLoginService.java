@@ -1,11 +1,13 @@
 package com.aquabasilea.application.security.service.login;
 
-import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.application.i18n.TextResources;
+import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.web.login.AquabasileaLogin;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.function.BiFunction;
@@ -26,8 +28,9 @@ public class AquabasileaLoginService {
    private final BiFunction<String, char[], AquabasileaLogin> aquabasileaLoginSupplier;
    private static final int RETRIES = 3;
 
-   public AquabasileaLoginService() {
-      this(AquabasileaLogin::createAquabasileaLogin);
+   @Autowired
+   public AquabasileaLoginService(@Value("${application.configuration.course-booker-config}") String propertiesFile) {
+      this((username, pwd) -> AquabasileaLogin.createAquabasileaLogin(username, pwd, propertiesFile));
    }
 
    public AquabasileaLoginService(BiFunction<String, char[], AquabasileaLogin> aquabasileaLoginSupplier) {

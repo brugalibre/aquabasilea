@@ -5,6 +5,7 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.config.TestAquabasileaCourseBookerConfig;
@@ -273,6 +274,7 @@ class AquabasileaCourseBookerTest {
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       LocalDateTime actualCourseDate = currentCourse.getCourseDate();
       assertThat(actualCourseDate, is(notNullValue()));
+      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_DRY_RUN, BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP)));
       assertThat(testCourseBookingStateChangedHandler.bookingStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - (duration2StartBookerEarlier.toMinutes() - (24 * 60)))));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - (duration2StartDryRunEarlier.toMinutes() - (24 * 60)))));
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
@@ -321,12 +323,12 @@ class AquabasileaCourseBookerTest {
 
       // When
       tcb.aquabasileaCourseBooker.start();
-      await().atMost(new Duration(290, TimeUnit.SECONDS)).until(() -> testCourseBookingStateChangedHandler.stateHistory.containsAll(
-              List.of(INIT, IDLE_BEFORE_BOOKING, BOOKING, STOP, INIT)));
+      await().atMost(new Duration(290, TimeUnit.SECONDS)).until(() -> testCourseBookingStateChangedHandler.stateHistory.contains (STOP));
 
       // Then
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       LocalDateTime actualCourseDate = currentCourse.getCourseDate();
+      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP)));
       assertThat(actualCourseDate, is(notNullValue()));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt, is(nullValue()));
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
@@ -367,14 +369,14 @@ class AquabasileaCourseBookerTest {
 
       // When
       tcb.aquabasileaCourseBooker.start();
-      await().atMost(new Duration(290, TimeUnit.SECONDS)).until(() -> testCourseBookingStateChangedHandler.stateHistory.containsAll(
-              List.of(INIT, IDLE_BEFORE_BOOKING, BOOKING, STOP)));
+      await().atMost(new Duration(290, TimeUnit.SECONDS)).until(() -> testCourseBookingStateChangedHandler.stateHistory.contains(STOP));
 
       // Then
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       LocalDateTime actualCourseDate = currentCourse.getCourseDate();
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
               actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
+      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP)));
       CourseBookContainer courseBookContainer = new CourseBookContainer(courseBookDetails, new BookingContext(false));
       verify(aquabasileaWebNavigator, never()).selectAndBookCourse(eq(courseBookContainer));
       verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()

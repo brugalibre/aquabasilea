@@ -79,7 +79,7 @@ public class CourseDefUpdater {
    /**
     * Updates all {@link CourseDef} according user's configuration (which defines the {@link CourseLocation}s to consider)
     * According to those the aquabasliea-courses defined on their course-page are considered
-    *
+    * <p>
     *<b>Note:</b> This call is blocking until the {@link CourseDef}s are upated
     *
     * @param userId the id of the {@link User}
@@ -112,7 +112,7 @@ public class CourseDefUpdater {
       List<CourseDef> courseDefs = courseExtractorFacade.extractAquabasileaCourses(userId, courseLocations);
       courseDefRepository.deleteAllByUserId(userId);
       courseDefRepository.saveAll(courseDefs);
-      OnCourseDefsUpdatedContext onCourseDefsUpdatedContext = new OnCourseDefsUpdatedContext(userId, courseDefs, dateWhenUpdateStarted , courseDefUpdaterScheduler.calcDelayUntilNextUpdate());
+      OnCourseDefsUpdatedContext onCourseDefsUpdatedContext = new OnCourseDefsUpdatedContext(userId, courseDefs, dateWhenUpdateStarted, courseDefUpdaterScheduler.calcDelayUntilNextUpdate());
       courseDefUpdatedNotifiers.forEach(courseDefUpdatedNotifier -> courseDefUpdatedNotifier.courseDefsUpdated(onCourseDefsUpdatedContext));
    }
 

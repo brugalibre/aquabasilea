@@ -2,10 +2,12 @@ package com.aquabasilea.application.config;
 
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.course.repository.impl.WeeklyCoursesRepositoryImpl;
+import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.coursedef.model.repository.impl.CourseDefRepositoryImpl;
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
 import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
+import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacadeFactory;
 import com.aquabasilea.domain.coursedef.update.service.CourseDefUpdaterService;
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.domain.statistics.model.repository.impl.StatisticsRepositoryImpl;
@@ -20,13 +22,14 @@ import com.aquabasilea.service.courses.WeeklyCoursesService;
 import com.aquabasilea.service.statistics.StatisticsService;
 import com.aquabasilea.service.userconfig.UserConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
 import static com.aquabasilea.service.courses.WeeklyCoursesService.WEEKLY_COURSES_SERVICE;
 
 @Configuration
 @ComponentScan(basePackages = {"com.aquabasilea.application.security.service", "com.aquabasilea.application.initialize",
-        "com.aquabasilea.persistence", "com.aquabasilea.service"})
+        "com.aquabasilea.notification", "com.aquabasilea.persistence", "com.aquabasilea.service"})
 @Import({AquabasileaCourseBookerPersistenceConfig.class})
 public class AquabasileaCourseBookerAppConfig {
 
@@ -40,8 +43,16 @@ public class AquabasileaCourseBookerAppConfig {
    public static final String COURSE_DEF_UPDATER_SERVICE_BEAN = "courseDefUpdaterService";
    public static final String COURSE_DEF_UPDATER_BEAN = "courseDefUpdater";
    public static final String STATISTICS_SERVICE_BEAN = "statisticsService";
+   public static final String CONFIG_YAML_FILE_PATHS_BEAN = "configYamlFilePaths";
+
+   @Bean(name = CONFIG_YAML_FILE_PATHS_BEAN)
+   public ConfigYamlFilePaths getConfigYamlFilePaths(@Value("${application.configuration.course-booker-config}")
+                                                        String courseBookerConfigFilePath) {
+      return new ConfigYamlFilePaths(courseBookerConfigFilePath);
+   }
 
    @Bean(name = WEEKLY_COURSES_REPOSITORY_BEAN)
+   @DependsOn(CONFIG_YAML_FILE_PATHS_BEAN)
    public WeeklyCoursesRepository getWeeklyCoursesRepository(@Autowired WeeklyCoursesDao weeklyCoursesDao) {
       return new WeeklyCoursesRepositoryImpl(weeklyCoursesDao);
    }
@@ -66,9 +77,11 @@ public class AquabasileaCourseBookerAppConfig {
    public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository,
                                                @Autowired StatisticsService statisticsService,
                                                @Autowired UserConfigRepository userConfigRepository,
-                                               @Autowired WeeklyCoursesService weeklyCoursesService) {
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(CourseExtractorFacade.getCourseExtractorFacade(),
-              statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
+                                               @Autowired WeeklyCoursesService weeklyCoursesService,
+                                               @Autowired ConfigYamlFilePaths configYamlFilePaths) {
+      CourseExtractorFacade courseExtractorFacade = getCourseExtractorFacade(configYamlFilePaths.getCourseBookerConfigFilePath());
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(courseExtractorFacade, statisticsService::needsCourseDefUpdate,
+              courseDefRepository, userConfigRepository);
       courseDefUpdater.addCourseDefUpdatedNotifier(onCourseDefsUpdatedContext -> weeklyCoursesService.updateCoursesAfterCourseDefUpdate(onCourseDefsUpdatedContext.userId(), onCourseDefsUpdatedContext.updatedCourseDefs()));
       CourseDefStatisticsUpdater courseDefStatisticsUpdater = new CourseDefStatisticsUpdater(statisticsService);
       courseDefUpdater.addCourseDefUpdatedNotifier(courseDefStatisticsUpdater);
@@ -81,6 +94,11 @@ public class AquabasileaCourseBookerAppConfig {
    public CourseDefUpdaterService getCourseDefUpdaterService(@Autowired CourseDefUpdater courseDefUpdater,
                                                              @Autowired UserConfigRepository userConfigRepository) {
       return new CourseDefUpdaterService(courseDefUpdater, new UserConfigService(userConfigRepository));
+   }
+
+   private static CourseExtractorFacade getCourseExtractorFacade(String configFile) {
+      AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig = new AquabasileaCourseBookerConfig(configFile);
+      return CourseExtractorFacadeFactory.getCourseExtractorFacade(aquabasileaCourseBookerConfig);
    }
 }
 

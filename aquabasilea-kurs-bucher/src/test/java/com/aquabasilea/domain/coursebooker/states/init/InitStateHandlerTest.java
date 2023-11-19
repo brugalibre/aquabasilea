@@ -84,7 +84,7 @@ class InitStateHandlerTest {
       private TestCaseBuilder() {
          this.weeklyCoursesRepository = mock(WeeklyCoursesRepository.class);
          this.courseDefRepository = mock(CourseDefRepository.class);
-         this.aquabasileaCourseBookerConfig = spy(new AquabasileaCourseBookerConfig());
+         this.aquabasileaCourseBookerConfig = spy(new AquabasileaCourseBookerConfig("config/test-aquabasilea-kurs-bucher-config.yml"));
          this.courseDefs = new ArrayList<>();
       }
 

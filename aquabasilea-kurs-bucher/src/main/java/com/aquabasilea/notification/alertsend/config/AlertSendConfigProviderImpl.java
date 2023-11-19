@@ -2,39 +2,43 @@ package com.aquabasilea.notification.alertsend.config;
 
 import com.aquabasilea.application.security.securestorage.SecretStorage;
 import com.aquabasilea.application.security.securestorage.util.KeyUtils;
-import com.brugalibre.notification.api.v1.alerttype.AlertType;
 import com.brugalibre.notification.config.AlertSendConfig;
 import com.brugalibre.notification.config.AlertSendConfigProvider;
 import com.brugalibre.util.file.yml.YamlService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.function.Supplier;
 
-public record AlertSendConfigProviderImpl(String alertConfigFile, String pathToKeyStore, String pathToRootKeyStore,
-                                          Supplier<List<AlertType>> alertTypesSupplier) implements AlertSendConfigProvider {
+@Service
+public class AlertSendConfigProviderImpl implements AlertSendConfigProvider {
+   private static final Logger LOG = LoggerFactory.getLogger(AlertSendConfigProviderImpl.class);
+   private final YamlService yamlService;
+   private String alertConfigFile;
+   private String pathToKeyStore;
+   private String pathToRootKeyStore;
 
-   private static final YamlService YAML_SERVICE = new YamlService();
-   private static final String ALERT_API_CONST_FILE = "config/alert/aquabasilea-alert-notification.yml";
+   @Autowired
+   public AlertSendConfigProviderImpl(@Value("${application.configuration.alert-notification}") String alertConfigFile) {
+      this(alertConfigFile, KeyUtils.AQUABASILEA_ALERT_KEYSTORE, KeyUtils.AQUABASILEA_KEYSTORE_STORAGE);
+   }
 
-   /**
-    * Creates a default {@link AlertSendConfigProviderImpl} which uses the default {@link SecretStorage} location as well as
-    * a config located at {@link AlertSendConfigProviderImpl#ALERT_API_CONST_FILE}
-    *
-    * @param userConfigSupplier a {@link Supplier} which provides the {@link AlertType} for this {@link AlertSendConfigProvider}
-    * @return a default {@link AlertSendConfigProviderImpl} which uses the default {@link SecretStorage} location as well as
-    * * a config located at {@link AlertSendConfigProviderImpl#ALERT_API_CONST_FILE}
-    */
-   public static AlertSendConfigProvider of(Supplier<List<AlertType>> userConfigSupplier) {
-      return new AlertSendConfigProviderImpl(ALERT_API_CONST_FILE, KeyUtils.AQUABASILEA_ALERT_KEYSTORE,
-              KeyUtils.AQUABASILEA_KEYSTORE_STORAGE, userConfigSupplier);
+   public AlertSendConfigProviderImpl(String alertConfigFile, String pathToKeyStore, String pathToRootKeyStore) {
+      this.yamlService = new YamlService();
+      this.pathToKeyStore = pathToKeyStore;
+      this.pathToRootKeyStore = pathToRootKeyStore;
+      this.alertConfigFile = alertConfigFile;
+      LOG.info("Using value {} for 'alertConfigFile'", alertConfigFile);
    }
 
    @Override
    public AlertSendConfig getAlertSendConfig() {
-      AlertSendConfig alertSendConfig = YAML_SERVICE.readYaml(alertConfigFile, AlertSendConfig.class);
+      AlertSendConfig alertSendConfig = yamlService.readYaml(alertConfigFile, AlertSendConfig.class);
       Supplier<char[]> apiKeyProvider = new SecretStorage(pathToKeyStore, pathToRootKeyStore).getSecretSupplier4Alias(alertSendConfig.getAlertServiceName(), "".toCharArray());
       alertSendConfig.setApiKeyProvider(apiKeyProvider);
-      alertSendConfig.setAlertTypes(alertTypesSupplier.get());
       return alertSendConfig;
    }
 }

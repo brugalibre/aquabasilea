@@ -1,5 +1,6 @@
 package com.aquabasilea.application.initialize.coursebooker;
 
+import com.aquabasilea.application.config.ConfigYamlFilePaths;
 import com.aquabasilea.application.initialize.api.Initializer;
 import com.aquabasilea.application.initialize.api.UserAddedEvent;
 import com.aquabasilea.application.initialize.common.InitType;
@@ -10,16 +11,14 @@ import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerExecutor;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
+import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.statistics.service.BookingStatisticsUpdater;
 import com.aquabasilea.notification.alertsend.CourseBookingAlertSender;
-import com.aquabasilea.notification.alertsend.config.AlertSendConfigProviderImpl;
 import com.aquabasilea.service.statistics.StatisticsService;
-import com.brugalibre.notification.api.v1.alerttype.AlertType;
+import com.brugalibre.notification.config.AlertSendConfigProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static com.aquabasilea.application.initialize.common.InitializationConst.AQUABASILEA_COURSE_BOOKER;
 
@@ -32,19 +31,25 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
    private final StatisticsService statisticsService;
    private final CourseDefRepository courseDefRepository;
    private final SecretStoreService secretStoreService;
+   private final AlertSendConfigProvider alertSendConfigProvider;
+   private final String courseBookerConfigFilePath;
 
    @Autowired
    public AquabasileaCourseBookerInitializer(AquabasileaCourseBookerHolder AquabasileaCourseBookerHolder,
                                              WeeklyCoursesRepository weeklyCoursesRepository,
                                              CourseDefRepository courseDefRepository, StatisticsService statisticsService,
                                              AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory,
-                                             SecretStoreService secretStoreService) {
+                                             SecretStoreService secretStoreService,
+                                             AlertSendConfigProvider alertSendConfigProvider,
+                                             ConfigYamlFilePaths configYamlFilePaths) {
       this.aquabasileaCourseBookerHolder = AquabasileaCourseBookerHolder;
       this.secretStoreService = secretStoreService;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
       this.statisticsService = statisticsService;
       this.aquabasileaCourseBookerFacadeFactory = aquabasileaCourseBookerFacadeFactory;
       this.courseDefRepository = courseDefRepository;
+      this.courseBookerConfigFilePath = configYamlFilePaths.getCourseBookerConfigFilePath();
+      this.alertSendConfigProvider = alertSendConfigProvider;
    }
 
    @Override
@@ -56,8 +61,8 @@ public class AquabasileaCourseBookerInitializer implements Initializer {
 
    private AquabasileaCourseBooker createAquabasileaCourseBooker(UserAddedEvent userAddedEvent) {
       AquabasileaCourseBooker aquabasileaCourseBooker = new AquabasileaCourseBooker(createUserContext(userAddedEvent), weeklyCoursesRepository,
-              courseDefRepository, aquabasileaCourseBookerFacadeFactory);
-      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender(AlertSendConfigProviderImpl.of(() -> List.of(AlertType.SMS))));
+              courseDefRepository, new AquabasileaCourseBookerConfig(courseBookerConfigFilePath), aquabasileaCourseBookerFacadeFactory);
+      aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new CourseBookingAlertSender(alertSendConfigProvider));
       aquabasileaCourseBooker.addCourseBookingEndResultConsumer(new BookingStatisticsUpdater(statisticsService));
       new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker, userAddedEvent.userId());
       return aquabasileaCourseBooker;

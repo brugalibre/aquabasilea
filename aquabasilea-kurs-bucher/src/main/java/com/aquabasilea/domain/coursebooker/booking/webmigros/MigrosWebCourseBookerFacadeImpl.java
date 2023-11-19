@@ -17,11 +17,12 @@ import java.util.function.Supplier;
  * clicks through the websites from migros
  */
 public record MigrosWebCourseBookerFacadeImpl(String username, Supplier<char[]> userPassword,
-                                              Supplier<Duration> duration2WaitUntilCourseBecomesBookable) implements AquabasileaCourseBookerFacade {
+                                              Supplier<Duration> duration2WaitUntilCourseBecomesBookable,
+                                              String propertiesFile) implements AquabasileaCourseBookerFacade {
    @Override
    public CourseBookingEndResult selectAndBookCourse(CourseBookContainer courseBookContainer) {
       AquabasileaWebCourseBooker aquabasileaWebNavigator = AquabasileaWebCourseBookerImpl.createAndInitAquabasileaWebNavigator(username, userPassword.get(),
-              courseBookContainer.bookingContext().dryRun(), duration2WaitUntilCourseBecomesBookable);
+              courseBookContainer.bookingContext().dryRun(), duration2WaitUntilCourseBecomesBookable, propertiesFile);
       return aquabasileaWebNavigator.selectAndBookCourse(courseBookContainer.courseBookDetails());
    }
 

@@ -51,13 +51,12 @@ public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNaviga
     * @param dryRun                                  <code>true</code> if its a dry run or <code>false</code> if it's a real booking
     * @param duration2WaitUntilCourseBecomesBookable the {@link Duration} the {@link AquabasileaWebCourseBookerImpl} waits if a course
     *                                                is not yet bookable. After that {@link Duration} a booking or dry-run will fail
+    * @param propertiesFile                          the properties-file which contains the configuration values
     * @return a  {@link AquabasileaWebCourseBookerImpl}
     */
-   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, char[] userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
-      return createAndInitAquabasileaWebNavigator(userName, userPassword, dryRun, duration2WaitUntilCourseBecomesBookable, AQUABASILEA_WEB_KURS_BUCHER_PROPERTIES);
-   }
-
-   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, char[] userPassword, boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable, String propertiesFile) {
+   public static AquabasileaWebCourseBooker createAndInitAquabasileaWebNavigator(String userName, char[] userPassword,
+                                                                                 boolean dryRun, Supplier<Duration> duration2WaitUntilCourseBecomesBookable,
+                                                                                 String propertiesFile) {
       AquabasileaWebCourseBookerImpl aquabasileaWebNavigator = new AquabasileaWebCourseBookerImpl(userName, userPassword, propertiesFile);
       aquabasileaWebNavigator.initWebDriver();
       aquabasileaWebNavigator.init(dryRun, duration2WaitUntilCourseBecomesBookable);
