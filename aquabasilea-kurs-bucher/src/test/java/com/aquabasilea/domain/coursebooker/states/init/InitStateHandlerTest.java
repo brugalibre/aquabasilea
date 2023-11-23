@@ -9,6 +9,7 @@ import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +96,7 @@ class InitStateHandlerTest {
       private TestCaseBuilder build() {
          when(weeklyCoursesRepository.getByUserId(USER_ID)).thenReturn(weeklyCourses);
          when(courseDefRepository.getAllByUserId(USER_ID)).thenReturn(courseDefs);
-         this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerConfig);
+         this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerConfig, Duration.ofMillis(0));
          return this;
       }
    }

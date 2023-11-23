@@ -53,6 +53,7 @@ class AquabasileaCourseBookerTest {
    private static final String PHONE_NR = "";
    private static final ConsumerUser CONSUMER_USER = new ConsumerUser(TEST_USER_ID, PHONE_NR);
    public static final String COURSE_INSTRUCTOR = "peter";
+   public static final String USERNAME = "test";
 
    @Autowired
    private WeeklyCoursesRepository weeklyCoursesRepository;
@@ -71,7 +72,7 @@ class AquabasileaCourseBookerTest {
               .plusMinutes(courseDelayedInFuture);
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withUserId(TEST_USER_ID)
-                      .addWeeklyCourse(CourseBuilder.builder()
+              .addWeeklyCourse(CourseBuilder.builder()
                       .withCourseName("TestCourse")
                       .withCourseDate(courseDate)
                       .withCourseInstructor(COURSE_INSTRUCTOR)
@@ -265,10 +266,10 @@ class AquabasileaCourseBookerTest {
 
       // When
       tcb.aquabasileaCourseBooker.start();
-      await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() ->
-              List.of(INIT, IDLE_BEFORE_DRY_RUN, BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP).equals(testCourseBookingStateChangedHandler.stateHistory));
+      await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() -> testCourseBookingStateChangedHandler.stateHistory.contains(STOP));
 
       // Then
+      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_DRY_RUN, BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP)));
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       LocalDateTime actualCourseDate = currentCourse.getCourseDate();
       assertThat(actualCourseDate, is(notNullValue()));
@@ -383,7 +384,7 @@ class AquabasileaCourseBookerTest {
    }
 
    @Test
-   void tesGoingIdleWithCourse1RefreshCoursesAndBookNewCourse() {
+   void testGoingIdleWithCourse1RefreshCoursesAndBookNewCourse() {
       // Given
       // CourseDate 50' from now
       // This course can never be booked, since the test fails after 2' of waiting
@@ -426,18 +427,25 @@ class AquabasileaCourseBookerTest {
                       && COURSE_NAME.equals(aquabasileaCourseBooker.getCurrentCourse().getCourseName())
                       && aquabasileaCourseBooker.isIdle());
 
-      // Save new Course, CourseDate 5' from now. This results in a waiting from 1' min, since the booker starts a few mins earlier
+      // Pause the current course and add a new one with a CourseDate 5' from now. This results in a waiting from 1' min, since the booker starts a few mins earlier
       WeeklyCourses weeklyCourses = this.weeklyCoursesRepository.getByUserId(TEST_USER_ID);
       Course course = weeklyCourses.getCourses()
               .get(0);
-      course.setCourseName(newCourseName);
-      course.setCourseDate(newCourseDate);
+      course.setIsPaused(true);
+      weeklyCourses.addCourse(CourseBuilder.builder()
+              .withCourseName(newCourseName)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseDate(newCourseDate)
+              .withHasCourseDef(true)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
+              .build());
       this.weeklyCoursesRepository.save(weeklyCourses);
       // and refresh the bookers courses
       aquabasileaCourseBooker.refreshCourses();
-      await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() -> expectedStateHistory.equals(testCourseBookingStateChangedHandler.stateHistory));
+      await().atMost(new Duration(220, TimeUnit.SECONDS)).until(() -> testCourseBookingStateChangedHandler.stateHistory.contains(STOP));
 
       // Then
+      assertThat(testCourseBookingStateChangedHandler.stateHistory, is(expectedStateHistory));
       assertThat(aquabasileaWebNavigator.effectivelyBookedCourse, is(newCourseName));
    }
 
@@ -480,13 +488,20 @@ class AquabasileaCourseBookerTest {
          mockCourseDefs();
 
          AquabasileaCourseBookerConfig config = new TestAquabasileaCourseBookerConfig("config/test-aquabasilea-kurs-bucher-config.yml", duration2StartDryRunEarlier, duration2StartBookerEarlier);
-         AquabasileaCourseBooker.UserContext userContext = new AquabasileaCourseBooker.UserContext(userId, "test", PHONE_NR, () -> new char[]{});
-         this.aquabasileaCourseBooker = new AquabasileaCourseBooker(userContext, weeklyCoursesRepository, courseDefRepository, config, aquabasileaCourseBookerFacade);
+         AquabasileaCourseBooker.UserContext userContext = new AquabasileaCourseBooker.UserContext(userId, USERNAME, PHONE_NR, () -> new char[]{});
+         this.aquabasileaCourseBooker = new AquabasileaCourseBooker(userContext, weeklyCoursesRepository, courseDefRepository, config,
+                 getAquabasileaCourseBookerFacadeFactory());
          this.aquabasileaCourseBooker.addCourseBookingStateChangedHandler(courseBookingStateChangedHandler);
          this.aquabasileaCourseBooker.addCourseBookingEndResultConsumer(courseBookingAlertSender);
          this.aquabasileaCourseBooker.addCourseBookingEndResultConsumer(courseBookingEndResultConsumer);
          new AquabasileaCourseBookerExecutor(aquabasileaCourseBooker, "test-user-id");
          return this;
+      }
+
+      private AquabasileaCourseBookerFacadeFactory getAquabasileaCourseBookerFacadeFactory() {
+         AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory = mock(AquabasileaCourseBookerFacadeFactory.class);
+         when(aquabasileaCourseBookerFacadeFactory.createNewAquabasileaCourseBookerFacade(any(), any(), any())).thenReturn(aquabasileaCourseBookerFacade);
+         return aquabasileaCourseBookerFacadeFactory;
       }
 
       private void mockCourseDefs() {
