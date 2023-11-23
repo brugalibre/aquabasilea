@@ -55,43 +55,28 @@ public class AquabasileaCourseBooker {
    private List<CourseBookingEndResultConsumer> courseBookingEndResultConsumers;
 
    /**
-    * Constructor only for testing purpose!
+    * Default constructor
     *
-    * @param userContext                   the {@link UserContext}
-    * @param weeklyCoursesRepository       the {@link WeeklyCoursesRepository}
-    * @param courseDefRepository           the {@link CourseDefRepository}
-    * @param aquabasileaCourseBookerConfig the {@link AquabasileaCourseBookerConfig}
-    * @param aquabasileaCourseBookerFacade the {@link AquabasileaCourseBookerFacade} which implements the actual booking
-    */
-   AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
-                           AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
-                           AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade) {
-      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerFacade);
-      this.aquabasileaCourseBookerFacade = aquabasileaCourseBookerFacade;
-      this.userContext = userContext;
-      init(aquabasileaCourseBookerConfig, weeklyCoursesRepository, courseDefRepository);
-   }
-
-   /**
-    * Creates a new {@link AquabasileaCourseBooker}
-    *
-    * @param userContext                          the {@link UserContext} for the specific user
-    * @param weeklyCoursesRepository              the {@link WeeklyCoursesRepository} to get and store a {@link WeeklyCourses}
-    * @param courseDefRepository                  the {@link CourseDefRepository} for get and store the {@link CourseDef}s
-    * @param aquabasileaCourseBookerFacadeFactory the {@link AquabasileaCourseBookerFacadeFactory} in order to create an {@link AquabasileaCourseBookerFacade}
+    * @param userContext                          the {@link UserContext}
+    * @param weeklyCoursesRepository              the {@link WeeklyCoursesRepository}
+    * @param courseDefRepository                  the {@link CourseDefRepository}
+    * @param aquabasileaCourseBookerConfig        the {@link AquabasileaCourseBookerConfig}
+    * @param aquabasileaCourseBookerFacadeFactory the {@link AquabasileaCourseBookerFacadeFactory} in order to create a
+    *                                             {@link AquabasileaCourseBookerFacade} which then implements the actual booking
     */
    public AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
+                                  AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
                                   AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory) {
-      this. aquabasileaCourseBookerFacade = getAquabasileaCourseBookerFacade(aquabasileaCourseBookerFacadeFactory, userContext);
+      this.aquabasileaCourseBookerFacade = getAquabasileaCourseBookerFacade(aquabasileaCourseBookerFacadeFactory, userContext);
       this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerFacade);
       this.userContext = userContext;
-      init(new AquabasileaCourseBookerConfig(), weeklyCoursesRepository, courseDefRepository);
+      init(aquabasileaCourseBookerConfig, weeklyCoursesRepository, courseDefRepository, aquabasileaCourseBookerConfig.getMaxBookerStartDelay());
    }
 
    private void init(AquabasileaCourseBookerConfig bookerConfig, WeeklyCoursesRepository weeklyCoursesRepository,
-                     CourseDefRepository courseDefRepository) {
+                     CourseDefRepository courseDefRepository, Duration maxDelay) {
       this.idleStateHandler = new IdleStateHandler();
-      this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, bookerConfig);
+      this.initStateHandler = new InitStateHandler(weeklyCoursesRepository, bookerConfig, maxDelay);
       this.weeklyCoursesUpdater = new WeeklyCoursesUpdater(weeklyCoursesRepository, courseDefRepository);
       this.infoString4StateEvaluator = new InfoString4StateEvaluator(bookerConfig);
       this.courseBookingStateChangedHandlers = new ArrayList<>();

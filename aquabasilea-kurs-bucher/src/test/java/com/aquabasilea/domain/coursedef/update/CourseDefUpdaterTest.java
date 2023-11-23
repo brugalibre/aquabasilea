@@ -117,7 +117,7 @@ class CourseDefUpdaterTest {
 
       // If right now is after 23:00 o'clock -> the next execution will be tomorrow @23:00
       LocalDateTime expectedNextCourseDefUpdate = updateTime;
-      if (updateTime.toLocalTime().compareTo(LocalTime.of(23, 0, 0)) < 0) {
+      if (updateTime.toLocalTime().isBefore(LocalTime.of(23, 0, 0))) {
          expectedNextCourseDefUpdate = LocalDateTime.of(updateTime.toLocalDate().plusDays(1), updateTime.toLocalTime());
       }
       String updateTimeAsString = DateUtil.getTimeAsString(updateTime);
@@ -151,14 +151,7 @@ class CourseDefUpdaterTest {
 
       // Given
       LocalDateTime now = LocalDateTime.now();
-      LocalDateTime expectedNextCourseDefUpdate;
-      // If right now is before 23:00 o'clock -> the next execution will be today @23:00
-      if (now.toLocalTime().compareTo(LocalTime.of(23, 0, 0)) < 0) {
-         expectedNextCourseDefUpdate = LocalDateTime.of(now.toLocalDate(), LocalTime.of(23, 0, 0));
-      } else {
-         // If right now already after 23:00 o'clock -> the next execution will be tomorrow @23:00
-         expectedNextCourseDefUpdate = LocalDateTime.of(now.toLocalDate().plusDays(1), LocalTime.of(23, 0, 0));
-      }
+      LocalDateTime expectedNextCourseDefUpdate = getExpectedNextCourseDefUpdate(now);
       CourseLocation courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
@@ -180,6 +173,18 @@ class CourseDefUpdaterTest {
       assertThat(allCourseDefs.get(0).courseName(), is(courseName));
       assertThat(allCourseDefs.get(0).courseLocation(), is(CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA));
       assertThat(allCourseDefs.get(0).courseDate(), is(courseDate));
+   }
+
+   private static LocalDateTime getExpectedNextCourseDefUpdate(LocalDateTime now) {
+      LocalDateTime expectedNextCourseDefUpdate;
+      // If right now is before 23:00 o'clock -> the next execution will be today @23:00
+      if (now.toLocalTime().isBefore(LocalTime.of(23, 0, 0))) {
+         expectedNextCourseDefUpdate = LocalDateTime.of(now.toLocalDate(), LocalTime.of(23, 0, 0));
+      } else {
+         // If right now already after 23:00 o'clock -> the next execution will be tomorrow @23:00
+         expectedNextCourseDefUpdate = LocalDateTime.of(now.toLocalDate().plusDays(1), LocalTime.of(23, 0, 0));
+      }
+      return expectedNextCourseDefUpdate;
    }
 
    @Test

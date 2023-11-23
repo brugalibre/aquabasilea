@@ -35,6 +35,8 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    private Duration durationToStartDryRunEarlier;
    private Duration durationToStartBookerEarlier;
    private String courseConfigFile;
+
+   private Duration maxBookerStartDelay;
    private int daysToBookCourseEarlier;
    private CourseDefExtractorType courseDefExtractorType;
    private AquabasileaCourseBookerType aquabasileaCourseBookerType;
@@ -73,6 +75,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
    }
 
    private void init(String configFile) {
+      setMaxBookerStartDelay(Duration.ofSeconds(30));
       this.courseConfigFile = configFile;
       this.durationToStartBookerEarlier = DURATION_TO_START_BOOKER_EARLIER;
       this.durationToStartDryRunEarlier = DURATION_TO_START_DRY_RUN_EARLIER;
@@ -147,12 +150,21 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       this.aquabasileaCourseBookerType = aquabasileaCourseBookerType;
    }
 
+   public void setMaxBookerStartDelay(Duration maxBookerStartDelay) {
+      this.maxBookerStartDelay = maxBookerStartDelay;
+   }
+
+   public Duration getMaxBookerStartDelay() {
+      return maxBookerStartDelay;
+   }
+
    @Override
    public String toString() {
       return "AquabasileaCourseBookerConfig{" +
               "secondsToStartBookerEarlier=" + secondsToStartBookerEarlier +
               ", minutesToStartDryRunEarlier=" + minutesToStartDryRunEarlier +
               ", durationToStartDryRunEarlier=" + durationToStartDryRunEarlier +
+              ", maxBookerStartDelay=" + maxBookerStartDelay +
               ", durationToStartBookerEarlier=" + durationToStartBookerEarlier +
               ", courseConfigFile='" + courseConfigFile + '\'' +
               ", daysToBookCourseEarlier=" + daysToBookCourseEarlier +
