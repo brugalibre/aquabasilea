@@ -5,11 +5,11 @@ import RouterConstants from "@/router-constants";
 
 class ErrorHandlingService {
     handleError(errorBoxRef, error) {
+        store.dispatch('aquabasilea/setIsLoading', false);
         if (AuthService.isAuthenticationFailed(error)) {
             store.dispatch('auth/logout')
                 .then(() => router.push(RouterConstants.LOGIN_PATH));
         } else {
-            console.log('show error text');
             errorBoxRef.errorDetails = error;
         }
     }

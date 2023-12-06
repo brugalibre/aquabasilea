@@ -31,7 +31,9 @@ class AuthService {
     }
 
     isAuthenticationFailed(error) {
-        return error === 'Unauthorized';// not very elegant, but it does the trick..
+        // not very elegant, but it does the trick..
+        return error === 'Unauthorized'
+            || error === 'AxiosError: Request failed with status code 401';
     }
 }
 

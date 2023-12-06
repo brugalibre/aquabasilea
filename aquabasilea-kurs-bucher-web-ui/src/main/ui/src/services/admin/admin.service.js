@@ -5,7 +5,6 @@ const API_URL = '/api/v1/admin/';
 
 class AdminService {
     getAdminOverview(store) {
-        console.log('get admin')
         return axios.get(API_URL + 'overview', {headers: authHeader()})
             .then(response => response.data)
             .then(data => store.dispatch('aquabasilea/setAdminOverview', data))
