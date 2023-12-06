@@ -94,13 +94,18 @@ public class AquabasileaCourseBooker {
    }
 
    /**
-    * Pauses or resumes this {@link AquabasileaCourseBooker}
-    * <b>Note:</b> if it is resumed, the current state is set to IDLE_BEFORE_DRY_RUN
-    * regardless if the state was IDLE_BEFORE_BOOKING in the first place
+    * Pauses or resumes the {@link AquabasileaCourseBooker} which belongs to the given user-id.
+    * If currently all courses are paused, then all courses are resumed as well.
+    * <b>Note:</b> this only takes effect if <b>all</b> courses are paused. So if there exists one un-paused course,
+    * only the {@link AquabasileaCourseBooker} is resumed
+    *
     */
    public void pauseOrResume() {
-      if (this.isIdle() || this.isPaused()) {
-         setState(this.isIdle() ? PAUSED : INIT);
+      if (isPaused()) {
+         this.weeklyCoursesUpdater.resumeAllCoursesIfAllPaused(this.userContext.id);
+      }
+      if (isIdle() || isPaused()) {
+         setState(isIdle() ? PAUSED : INIT);
       }
    }
 

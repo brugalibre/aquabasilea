@@ -7,6 +7,7 @@ import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 
 /**
  * The {@link WeeklyCoursesUpdater} is responsible for updating the {@link Course#getHasCourseDef()} flag
+ * and for pausing or resuming the {@link Course}s
  */
 public class WeeklyCoursesUpdater {
 
@@ -27,5 +28,22 @@ private final CourseDefRepository courseDefRepository;
     public void updateCoursesHasCourseDef(WeeklyCourses weeklyCourses) {
         weeklyCourses.updateCoursesHasCourseDef(courseDefRepository.getAllByUserId(weeklyCourses.getUserId()));
         weeklyCoursesRepository.save(weeklyCourses);
+    }
+
+    /**
+     * Resumes all {@link Course}s of the {@link WeeklyCourses} if <b>all</b> those courses are currently paused.
+     * If there exists only one {@link Course} which is un-paused, then nothing happens!
+     *
+     */
+    public void resumeAllCoursesIfAllPaused(String userId) {
+       WeeklyCourses weeklyCourses = this.weeklyCoursesRepository.getByUserId(userId);
+       boolean hasOnlyPaused = weeklyCourses.getCourses()
+               .stream()
+               .allMatch(Course::getIsPaused);
+       if (hasOnlyPaused) {
+          weeklyCourses.getCourses()
+                  .forEach(course -> course.setIsPaused(false));
+          weeklyCoursesRepository.save(weeklyCourses);
+       }
     }
 }

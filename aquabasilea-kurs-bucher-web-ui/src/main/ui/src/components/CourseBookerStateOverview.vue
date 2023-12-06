@@ -14,7 +14,7 @@
         color="info"
         class="container-element-left"
         :disabled="courseBookingStateDto.state === 'BOOKING' || courseBookingStateDto.state === 'OFFLINE'"
-        v-on:click="evalRefreshNecessaryAndPauseOrResumeAquabasileaCourseBookerAndRefresh()">
+        v-on:click="pauseOrResumeAquabasileaCourseBookerAndRefreshInternal()">
       {{ courseBookingStateDto.pauseOrResumeButtonText }}
     </CButton>
     <CButton
@@ -63,16 +63,6 @@ export default {
     ErrorBox
   },
   computed: {
-    /**
-     * If we are reactivating the app, and we have at least one non-paused course and none of those courses
-     * is the current course, then we have to refresh the WeeklyCourses in order to display the current course
-     */
-    needsWeeklyCoursesRefresh: function () {
-      return this.getCurrentCourse === null || this.getCurrentCourse === undefined
-          && this.courseBookingStateDto.state === 'PAUSED'
-          && this.weeklyCourses.courseDtos
-              .filter(courseDto => courseDto.isPaused !== undefined && courseDto.isPaused !== true).length > 0;
-    },
     getCurrentCourse: function () {
       return this.weeklyCourses.courseDtos
           .find(courseDto => courseDto.isCurrentCourse && (courseDto.isPaused !== undefined && courseDto.isPaused === false));
@@ -88,17 +78,9 @@ export default {
     },
   },
   methods: {
-    evalRefreshNecessaryAndPauseOrResumeAquabasileaCourseBookerAndRefresh: function () {
-      this.pauseOrResumeAquabasileaCourseBookerAndRefresh(this.needsWeeklyCoursesRefresh,
-          error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
-          () => this.refresh());
-    },
-    refresh: function () {
-      if (this.needsWeeklyCoursesRefresh) {
-        this.$emit('refreshCourseStateOverviewAndWeeklyCourses');
-      } else {
-        this.$emit('refreshCourseStateOverview');
-      }
+    pauseOrResumeAquabasileaCourseBookerAndRefreshInternal: function () {
+      this.pauseOrResumeAquabasileaCourseBookerAndRefresh(error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
+          () => this.$emit('refreshCourseStateOverviewAndWeeklyCourses'));
     },
   },
   mounted() {

@@ -49,6 +49,15 @@ public class AquabasileaCourseBookerService {
       return new CourseBookingStateOverview(courseBookingState, aquabasileaCourseBooker.getInfoString4State());
    }
 
+   /**
+    * Pauses or resumes the {@link AquabasileaCourseBooker} which belongs to the given user-id.
+    * If currently all courses are paused, then all courses are resumed as well.
+    * <b>Note:</b> this only takes effect if <b>all</b> courses are paused. So if there exists one un-paused course,
+    * only the {@link AquabasileaCourseBooker} is resumed
+    *
+    * @see Course#getIsPaused()
+    * @param userId the id of the user
+    */
    public void pauseOrResume(String userId) {
       AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(userId);
       aquabasileaCourseBooker.pauseOrResume();

@@ -7,7 +7,7 @@ import LoggingService from "@/services/log/logging.service";
 export default {
     name: 'AquabasileaCourseBookerApi',
     methods: {
-        pauseOrResumeAquabasileaCourseBookerAndRefresh: function (needsWeeklyCoursesRefresh, onErrorCallback, onSuccessCallback) {
+        pauseOrResumeAquabasileaCourseBookerAndRefresh: function (onErrorCallback, onSuccessCallback) {
             axios.put(AQUABASILEA_COURSE_BOOKER_API_URL + '/pauseOrResume', null, {headers: authHeader()})
                 .then(() => onSuccessCallback())
                 .catch(error => {

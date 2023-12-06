@@ -51,16 +51,93 @@ import static org.mockito.Mockito.*;
 class AquabasileaCourseBookerTest {
    private static final String COURSE_NAME = "Test";
    private static final String TEST_USER_ID = "123";
+   private static final String TEST_USER_ID2 = "321";
    private static final String PHONE_NR = "";
    private static final ConsumerUser CONSUMER_USER = new ConsumerUser(TEST_USER_ID, PHONE_NR);
    public static final String COURSE_INSTRUCTOR = "peter";
    public static final String USERNAME = "test";
+   public static final String TEST_COURSE = "TestCourse";
+   public static final String TEST_COURSE_2 = "TestCourse2";
 
    @Autowired
    private WeeklyCoursesRepository weeklyCoursesRepository;
 
    @AfterEach
    public void cleanUp() {
+      weeklyCoursesRepository.deleteAll();
+   }
+
+   @Test
+   void resumePausedAppAndResumeAllPausedCourses_AllCoursesPaused() {
+      // Given
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withUserId(TEST_USER_ID2)
+              .addWeeklyCourse(CourseBuilder.builder()
+                      .withCourseName(TEST_COURSE)
+                      .withCourseDate(LocalDateTime.now().plusDays(2))
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .addWeeklyCourse(CourseBuilder.builder()
+                      .withCourseName(TEST_COURSE_2)
+                      .withCourseDate(LocalDateTime.now().plusDays(2))
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .withAquabasileaWebCourseBooker(mock(AquabasileaCourseBookerFacade.class))
+              .build();
+      tcb.aquabasileaCourseBooker.start();
+
+      // When -> start booker, wait until it's paused (since there are no courses to wait for) and then resume
+      tcb.aquabasileaCourseBooker.start();
+      await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> tcb.aquabasileaCourseBooker.isPaused());
+      tcb.aquabasileaCourseBooker.pauseOrResume();// resume
+
+      // Then
+      List<Course> weeklyCourses = weeklyCoursesRepository.getByUserId(TEST_USER_ID2).getCourses();
+      assertThat(weeklyCourses.get(0).getIsPaused(), is(false));
+      assertThat(weeklyCourses.get(1).getIsPaused(), is(false));
+      weeklyCoursesRepository.deleteAll();
+   }
+
+   @Test
+   void resumePausedAppAndResumeAllPausedCourses_NotAllCoursesPaused() {
+      // Given
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withUserId(TEST_USER_ID2)
+              .addWeeklyCourse(CourseBuilder.builder()
+                      .withCourseName(TEST_COURSE)
+                      .withCourseDate(LocalDateTime.now().plusDays(2))
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .addWeeklyCourse(CourseBuilder.builder()
+                      .withCourseName(TEST_COURSE_2)
+                      .withCourseDate(LocalDateTime.now().plusDays(2))
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withHasCourseDef(true)
+                      .withIsPaused(false)
+                      .build())
+              .withAquabasileaWebCourseBooker(mock(AquabasileaCourseBookerFacade.class))
+              .build();
+      tcb.aquabasileaCourseBooker.start();
+
+      // When -> start booker, wait until it's idle, pause the course and then resume
+      tcb.aquabasileaCourseBooker.start();
+      await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> tcb.aquabasileaCourseBooker.isIdle());
+      tcb.aquabasileaCourseBooker.pauseOrResume();// pause
+      await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> tcb.aquabasileaCourseBooker.isPaused());
+      tcb.aquabasileaCourseBooker.pauseOrResume();// resume
+
+      // Then
+      List<Course> weeklyCourses = weeklyCoursesRepository.getByUserId(TEST_USER_ID2).getCourses();
+      Course course1 = getCourseByName(weeklyCourses, TEST_COURSE);
+      Course course2 = getCourseByName(weeklyCourses, TEST_COURSE_2);
+      assertThat(course1.getIsPaused(), is(true));
+      assertThat(course2.getIsPaused(), is(false));
       weeklyCoursesRepository.deleteAll();
    }
 
@@ -74,7 +151,7 @@ class AquabasileaCourseBookerTest {
       TestCaseBuilder tcb = new TestCaseBuilder()
               .withUserId(TEST_USER_ID)
               .addWeeklyCourse(CourseBuilder.builder()
-                      .withCourseName("TestCourse")
+                      .withCourseName(TEST_COURSE)
                       .withCourseDate(courseDate)
                       .withCourseInstructor(COURSE_INSTRUCTOR)
                       .withHasCourseDef(true)
@@ -119,7 +196,7 @@ class AquabasileaCourseBookerTest {
                       .withHasCourseDef(true)
                       .build())
               .addWeeklyCourse(CourseBuilder.builder()
-                      .withCourseName("TestCourse")
+                      .withCourseName(TEST_COURSE)
                       .withCourseDate(courseDate)
                       .withCourseInstructor(COURSE_INSTRUCTOR)
                       .withHasCourseDef(true)
@@ -449,6 +526,13 @@ class AquabasileaCourseBookerTest {
       // Then
       assertThat(testCourseBookingStateChangedHandler.stateHistory, is(expectedStateHistory));
       assertThat(aquabasileaWebNavigator.effectivelyBookedCourse, is(newCourseName));
+   }
+
+   private static Course getCourseByName(List<Course> weeklyCourses, String courseName) {
+      return weeklyCourses.stream()
+              .filter(course -> course.getCourseName().equals(courseName))
+              .findFirst()
+              .orElseThrow(IllegalStateException::new);
    }
 
    private class TestCaseBuilder {
