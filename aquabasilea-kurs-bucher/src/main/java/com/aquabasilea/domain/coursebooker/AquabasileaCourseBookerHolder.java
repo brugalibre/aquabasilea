@@ -1,7 +1,6 @@
 package com.aquabasilea.domain.coursebooker;
 
 import com.brugalibre.domain.user.model.User;
-import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 /**
  * The {@link AquabasileaCourseBookerHolder} contains a {@link AquabasileaCourseBooker} for each registered {@link User}
  */
-@Service
 public class AquabasileaCourseBookerHolder {
    private final Map<String, AquabasileaCourseBooker> userId2AquabasileaCourseBookerMap;
 

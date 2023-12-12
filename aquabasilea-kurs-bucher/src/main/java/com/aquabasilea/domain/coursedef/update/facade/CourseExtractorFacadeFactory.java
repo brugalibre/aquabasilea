@@ -1,9 +1,7 @@
 package com.aquabasilea.domain.coursedef.update.facade;
 
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
-import com.aquabasilea.migrosapi.service.MigrosApiImpl;
 import com.aquabasilea.migrosapi.v1.service.MigrosApi;
-import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
 import com.aquabasilea.web.extractcourses.AquabasileaCourseExtractor;
 import com.aquabasilea.web.extractcourses.impl.AquabasileaCourseExtractorImpl;
 
@@ -19,18 +17,13 @@ public class CourseExtractorFacadeFactory {
     * {@link MigrosApi}. The recommendation is that there should only be one {@link CourseExtractorFacade} per application
     *
     * @param aquabasileaCourseBookerConfig the configuration which is applied to the underlying {@link CourseExtractorFacade}
+    * @param migrosApi                     the {@link MigrosApi}
     * @return a new created {@link CourseExtractorFacade}
     */
-   public static CourseExtractorFacade getCourseExtractorFacade(AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
-      MigrosApi migrosApi = new MigrosApiImpl(getReadOnlyBearerTokenProvider());
+   public static CourseExtractorFacade getCourseExtractorFacade(AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
+                                                                MigrosApi migrosApi) {
       Supplier<AquabasileaCourseExtractor> courseExtractorSupplier = () -> AquabasileaCourseExtractorImpl
               .createAndInitAquabasileaWebNavigator(aquabasileaCourseBookerConfig.getCourseConfigFile());
       return new CourseExtractorFacade(courseExtractorSupplier, () -> migrosApi, aquabasileaCourseBookerConfig);
-   }
-
-   private static BearerTokenProvider getReadOnlyBearerTokenProvider() {
-      return (username, userPwd) -> {
-         throw new IllegalStateException("Read only MigrosApi!");
-      };
    }
 }

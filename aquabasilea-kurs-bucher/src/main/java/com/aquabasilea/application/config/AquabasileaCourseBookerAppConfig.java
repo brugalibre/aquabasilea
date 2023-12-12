@@ -2,6 +2,9 @@ package com.aquabasilea.application.config;
 
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.course.repository.impl.WeeklyCoursesRepositoryImpl;
+import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
+import com.aquabasilea.service.coursebooker.migros.MigrosApiProvider;
+import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.domain.coursedef.model.repository.impl.CourseDefRepositoryImpl;
@@ -45,6 +48,17 @@ public class AquabasileaCourseBookerAppConfig {
    public static final String STATISTICS_SERVICE_BEAN = "statisticsService";
    public static final String CONFIG_YAML_FILE_PATHS_BEAN = "configYamlFilePaths";
 
+   @Bean
+   public AquabasileaCourseBookerHolder getAquabasileaCourseBookerHolder() {
+      return new AquabasileaCourseBookerHolder();
+   }
+
+   @Bean
+   public AquabasileaCourseBookerFacadeFactory getAquabasileaCourseBookerFacadeFactory(@Autowired MigrosApiProvider migrosApiProvider,
+           @Value("${application.configuration.course-booker-config}") String propertiesFile) {
+      return new AquabasileaCourseBookerFacadeFactory(migrosApiProvider, propertiesFile);
+   }
+
    @Bean(name = CONFIG_YAML_FILE_PATHS_BEAN)
    public ConfigYamlFilePaths getConfigYamlFilePaths(@Value("${application.configuration.course-booker-config}")
                                                         String courseBookerConfigFilePath) {
@@ -78,8 +92,9 @@ public class AquabasileaCourseBookerAppConfig {
                                                @Autowired StatisticsService statisticsService,
                                                @Autowired UserConfigRepository userConfigRepository,
                                                @Autowired WeeklyCoursesService weeklyCoursesService,
-                                               @Autowired ConfigYamlFilePaths configYamlFilePaths) {
-      CourseExtractorFacade courseExtractorFacade = getCourseExtractorFacade(configYamlFilePaths.getCourseBookerConfigFilePath());
+                                               @Autowired ConfigYamlFilePaths configYamlFilePaths,
+                                               @Autowired MigrosApiProvider migrosApiProvider) {
+      CourseExtractorFacade courseExtractorFacade = getCourseExtractorFacade(configYamlFilePaths.getCourseBookerConfigFilePath(), migrosApiProvider);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(courseExtractorFacade, statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository);
       courseDefUpdater.addCourseDefUpdatedNotifier(onCourseDefsUpdatedContext -> weeklyCoursesService.updateCoursesAfterCourseDefUpdate(onCourseDefsUpdatedContext.userId(), onCourseDefsUpdatedContext.updatedCourseDefs()));
@@ -96,9 +111,8 @@ public class AquabasileaCourseBookerAppConfig {
       return new CourseDefUpdaterService(courseDefUpdater, new UserConfigService(userConfigRepository));
    }
 
-   private static CourseExtractorFacade getCourseExtractorFacade(String configFile) {
-      AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig = new AquabasileaCourseBookerConfig(configFile);
-      return CourseExtractorFacadeFactory.getCourseExtractorFacade(aquabasileaCourseBookerConfig);
+   private static CourseExtractorFacade getCourseExtractorFacade(String configFile, MigrosApiProvider migrosApiProvider) {
+      return CourseExtractorFacadeFactory.getCourseExtractorFacade(new AquabasileaCourseBookerConfig(configFile), migrosApiProvider.getMigrosApi());
    }
 }
 

@@ -1,31 +1,25 @@
 package com.aquabasilea.domain.coursebooker.booking.facade;
 
-import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiCourseBookerFactory;
-import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiProvider;
+import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiCourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.booking.webmigros.MigrosWebCourseBookerFacadeImpl;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import com.aquabasilea.service.coursebooker.migros.MigrosApiProvider;
 
 import java.time.Duration;
 import java.util.function.Supplier;
 
-@Service
 public class AquabasileaCourseBookerFacadeFactory {
 
-   private final MigrosApiCourseBookerFactory migrosApiCourseBookerFactory;
+   private final MigrosApiCourseBookerFacadeFactory migrosApiCourseBookerFacadeFactory;
    private final AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig;
 
-   @Autowired
-   public AquabasileaCourseBookerFacadeFactory(MigrosApiProvider migrosApiProvider,
-                                               @Value("${application.configuration.course-booker-config}") String propertiesFile) {
+   public AquabasileaCourseBookerFacadeFactory(MigrosApiProvider migrosApiProvider, String propertiesFile) {
       this(migrosApiProvider, new AquabasileaCourseBookerConfig(propertiesFile));
    }
 
    public AquabasileaCourseBookerFacadeFactory(MigrosApiProvider migrosApiProvider, AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig) {
-      this.migrosApiCourseBookerFactory = new MigrosApiCourseBookerFactory(migrosApiProvider);
+      this.migrosApiCourseBookerFacadeFactory = new MigrosApiCourseBookerFacadeFactory(migrosApiProvider);
       this.aquabasileaCourseBookerConfig = aquabasileaCourseBookerConfig;
    }
 
@@ -35,7 +29,7 @@ public class AquabasileaCourseBookerFacadeFactory {
       if (aquabasileaCourseBookerConfig.getAquabasileaCourseBookerType() == AquabasileaCourseBookerType.AQUABASILEA_WEB) {
          return getAquabasileaWebNavigator(username, userPassword, duration2WaitUntilCourseBecomesBookable);
       }
-      return migrosApiCourseBookerFactory.createMigrosApiCourseBookerImpl(username, userPassword, duration2WaitUntilCourseBecomesBookable);
+      return migrosApiCourseBookerFacadeFactory.createMigrosApiCourseBookerImpl(username, userPassword, duration2WaitUntilCourseBecomesBookable);
    }
 
    private AquabasileaCourseBookerFacade getAquabasileaWebNavigator(String username, Supplier<char[]> userPassword,

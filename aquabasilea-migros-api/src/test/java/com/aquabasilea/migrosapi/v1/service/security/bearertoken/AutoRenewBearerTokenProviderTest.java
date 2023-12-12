@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.v1.service.security.bearertoken;
 
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
-import com.aquabasilea.migrosapi.v1.service.security.BearerTokenValidator;
+import com.aquabasilea.migrosapi.service.security.bearertoken.BearerTokenValidatorImpl;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.common.http.service.HttpService;
 import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
@@ -30,7 +30,7 @@ class AutoRenewBearerTokenProviderTest {
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
       BookCourseHelper bookCourseHelper = new BookCourseHelper(HOST + ":" + PORT + BOOKING_PATH, "");
-      BearerTokenValidator bearerTokenValidator = new BearerTokenValidator(bookCourseHelper, new HttpService(30));
+      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
 
       BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
       AutoRenewBearerTokenProvider autoRenewBearerTokenProvider = new AutoRenewBearerTokenProvider(bearerTokenProvider, ttl, bearerTokenValidator);
@@ -61,7 +61,7 @@ class AutoRenewBearerTokenProviderTest {
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
       BookCourseHelper bookCourseHelper = new BookCourseHelper(HOST + ":" + PORT + BOOKING_PATH, "");
-      BearerTokenValidator bearerTokenValidator = new BearerTokenValidator(bookCourseHelper, new HttpService(30));
+      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
       BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
       AutoRenewBearerTokenProvider autoRenewBearerTokenProvider = new AutoRenewBearerTokenProvider(bearerTokenProvider, ttl, bearerTokenValidator);
 
@@ -91,7 +91,7 @@ class AutoRenewBearerTokenProviderTest {
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
       BookCourseHelper bookCourseHelper = new BookCourseHelper(HOST + ":" + PORT + BOOKING_PATH, "");
-      BearerTokenValidator bearerTokenValidator = new BearerTokenValidator(bookCourseHelper, new HttpService(30));
+      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
       BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
       AutoRenewBearerTokenProvider autoRenewBearerTokenProvider = new AutoRenewBearerTokenProvider(bearerTokenProvider, ttl, bearerTokenValidator);
 
