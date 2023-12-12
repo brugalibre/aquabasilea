@@ -10,7 +10,7 @@ apply from: '../publish-boot.gradle'
 apply from: '../aquabasilea-dependencies.gradle'
 
 group 'com.aquabasilea'
-version '1.1.1-SNAPSHOT'
+version '1.1.2-SNAPSHOT'
 
 mainClassName = 'com.aquabasilea.run.RunAquabasileaCourseBookerRunner'
 
@@ -23,7 +23,7 @@ dependencies {
     compileOnly group: 'com.brugalibre', name: 'common-app-domain', version: '1.1.7-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-util', version: '1.0.3-SNAPSHOT'
     implementation group: 'com.brugalibre', name: 'common-app-notification', version: '1.0.3-SNAPSHOT'
-    implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0.7-SNAPSHOT'
+    implementation group: 'com.aquabasilea', name: 'aquabasilea-web-navigator', version: '1.0.8-SNAPSHOT'
     implementation group: 'com.aquabasilea', name: 'aquabasilea-migros-api', version: '1.0.1-SNAPSHOT'
 
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.7.1'

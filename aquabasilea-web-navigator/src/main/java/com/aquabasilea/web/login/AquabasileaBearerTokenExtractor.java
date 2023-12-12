@@ -66,7 +66,7 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
 
    @Override
    protected void wait4Navigate2CoursePageCompleted() {
-      LOG.info("Now waiting for dev-tools..");
+      LOG.info("Now waiting max {}ms for dev-tools", this.extractionTimeOutMillis);
       long timeOut = this.extractionTimeOutMillis;
       long start = System.currentTimeMillis();
       int increment = 100;
@@ -112,5 +112,9 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
       PropertyReader propertyReader = new PropertyReader(propertiesName);
       int extractionTimeOutSeconds = Integer.parseInt(propertyReader.readValueOrDefault("extractionTimeOutSeconds", "60"));
       return Duration.ofSeconds(extractionTimeOutSeconds).toMillis();
+   }
+
+   public Duration getExtractionTimeOut() {
+      return Duration.ofMillis(extractionTimeOutMillis);
    }
 }
