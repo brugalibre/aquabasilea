@@ -12,8 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories(basePackageClasses = {WeeklyCoursesDao.class, CoursesDefDao.class, StatisticsDao.class, UserConfigDao.class})
 @EntityScan(basePackages = {"com.aquabasilea.persistence"})
-@ComponentScan(basePackages = {"com.aquabasilea.domain",
-        "com.aquabasilea.application.security.service", "com.aquabasilea.application.initialize"})
+@ComponentScan(basePackages = {"com.aquabasilea.application.security.service", "com.aquabasilea.application.initialize"})
 public class AquabasileaCourseBookerPersistenceConfig {
    // no-op
 }

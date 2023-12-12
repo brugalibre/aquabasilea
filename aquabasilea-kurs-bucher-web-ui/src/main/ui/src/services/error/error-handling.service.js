@@ -10,8 +10,12 @@ class ErrorHandlingService {
             store.dispatch('auth/logout')
                 .then(() => router.push(RouterConstants.LOGIN_PATH));
         } else {
-            errorBoxRef.errorDetails = error;
+            errorBoxRef.errorDetails = this.getUserfriendlyErrorMessage(error);
         }
+    }
+
+    getUserfriendlyErrorMessage(error) {
+        return error === 'Internal Server Error' ? 'Unbekannter Server-Fehler! Bitte kontaktieren Sie Ihren Systemadministrator' : error;
     }
 }
 

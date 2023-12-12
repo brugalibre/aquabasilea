@@ -58,14 +58,19 @@ public class MigrosApiImpl implements MigrosApi {
    /**
     * Creates a default {@link MigrosApiImpl} with the given {@link BearerTokenProvider}
     * as well as default config values
+    *
+    * @param bearerTokenProvider the {@link BearerTokenProvider} responsible for authentication
+    * @param httpService         the {@link HttpService} which does the actual http-communication
     */
-   public MigrosApiImpl(BearerTokenProvider bearerTokenProvider) {
-      this(MIGROS_BOOKING_URL, MIGROS_GET_COURSES_URL, bearerTokenProvider);
+   public MigrosApiImpl(BearerTokenProvider bearerTokenProvider, HttpService httpService) {
+      this(MIGROS_BOOKING_URL, MIGROS_GET_COURSES_URL, bearerTokenProvider, httpService);
    }
-   MigrosApiImpl(String migrosCourseBookUrl, String migrosGetCoursesUrl, BearerTokenProvider bearerTokenProvider) {
+
+   MigrosApiImpl(String migrosCourseBookUrl, String migrosGetCoursesUrl, BearerTokenProvider bearerTokenProvider,
+                 HttpService httpService) {
       this.migrosGetCoursesUrl = migrosGetCoursesUrl;
       this.bearerTokenProvider = bearerTokenProvider;
-      this.httpService = new HttpService(30);
+      this.httpService = httpService;
       this.migrosCourseMapper = new MigrosCourseMapperImpl();
       this.migrosGetCoursesRequestBody = MIGROS_GET_COURSES_REQUEST_BODY;
       this.bookCourseHelper = new BookCourseHelper(migrosCourseBookUrl, MIGROS_BOOK_COURSE_REQUEST_BODY);

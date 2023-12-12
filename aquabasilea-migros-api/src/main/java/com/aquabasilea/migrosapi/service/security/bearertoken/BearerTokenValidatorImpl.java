@@ -1,7 +1,8 @@
-package com.aquabasilea.migrosapi.v1.service.security;
+package com.aquabasilea.migrosapi.service.security.bearertoken;
 
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
 import com.aquabasilea.migrosapi.service.book.MigrosGetBookedCoursesResponseReader;
+import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenValidator;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.service.HttpService;
 import org.slf4j.Logger;
@@ -11,35 +12,30 @@ import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOKING_UR
 import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOK_COURSE_REQUEST_BODY;
 
 /**
- * The {@link BearerTokenValidator} validates a bearer token
+ * This {@link BearerTokenValidatorImpl} uses the http-request and retrieves the booked courses as a validation
+ * It's more like a hack actually, but works pretty well
  */
-public class BearerTokenValidator {
+public class BearerTokenValidatorImpl implements BearerTokenValidator {
 
-   private static final Logger LOG = LoggerFactory.getLogger(BearerTokenValidator.class);
+   private static final Logger LOG = LoggerFactory.getLogger(BearerTokenValidatorImpl.class);
    private final BookCourseHelper bookCourseHelper;
    private final HttpService httpService;
 
-   public BearerTokenValidator() {
-      this(new BookCourseHelper(MIGROS_BOOKING_URL, MIGROS_BOOK_COURSE_REQUEST_BODY), new HttpService(30));
+   public BearerTokenValidatorImpl(HttpService httpService) {
+      this(new BookCourseHelper(MIGROS_BOOKING_URL, MIGROS_BOOK_COURSE_REQUEST_BODY), httpService);
    }
 
-   public BearerTokenValidator(BookCourseHelper bookCourseHelper, HttpService httpService) {
+   public BearerTokenValidatorImpl(BookCourseHelper bookCourseHelper, HttpService httpService) {
       this.bookCourseHelper = bookCourseHelper;
       this.httpService = httpService;
    }
 
-   /**
-    * Validates the given bearer token.
-    * It is valid if and only if the given token is still authorized and the call to the migros api returns 401!
-    *
-    * @param bearerToken the bearer token the
-    * @return <code>true</code> if the given token is still valid or <code>false</code> if not
-    */
+   @Override
    public boolean isBearerTokenUnauthorized(String bearerToken) {
+      LOG.info("Validate token {}", bearerToken);
       if (bearerToken == null) {
-         return false;
+         return true;
       }
-      LOG.info ("Validate token..");
       HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest(bearerToken);
       return httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest).statusCode() == 401;
    }

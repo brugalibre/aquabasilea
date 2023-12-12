@@ -1,6 +1,5 @@
 package com.aquabasilea.migrosapi.v1.service.security.bearertoken;
 
-import com.aquabasilea.migrosapi.v1.service.security.BearerTokenValidator;
 import com.brugalibre.util.lazy.TtlLazyValueBiFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

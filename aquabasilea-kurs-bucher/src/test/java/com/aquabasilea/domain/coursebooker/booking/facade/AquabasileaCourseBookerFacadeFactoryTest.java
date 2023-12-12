@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.coursebooker.booking.facade;
 
 import com.aquabasilea.domain.course.model.CourseLocation;
-import com.aquabasilea.domain.coursebooker.booking.apimigros.MigrosApiProvider;
+import com.aquabasilea.service.coursebooker.migros.MigrosApiProvider;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.BookingContext;
