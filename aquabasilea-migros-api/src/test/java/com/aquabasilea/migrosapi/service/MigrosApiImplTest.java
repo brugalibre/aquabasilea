@@ -237,7 +237,7 @@ class MigrosApiImplTest {
 
       // Then
       serverTestCaseBuilder.stop();
-      assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_NOT_BOOKED));
+      assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_NOT_BOOKED_UNEXPECTED_ERROR));
    }
 
    @Test

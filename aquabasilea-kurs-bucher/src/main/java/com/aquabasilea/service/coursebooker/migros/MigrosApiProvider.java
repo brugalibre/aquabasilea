@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import static com.aquabasilea.migrosapi.v1.service.MigrosServiceFactory.MigrosApiBookStrategy.RETRY;
 import static java.util.Objects.requireNonNull;
 
 @Service
@@ -20,7 +21,7 @@ public class MigrosApiProvider {
    public MigrosApiProvider(@Value("${application.security.bearerTokenTtl:0}") int ttl,
                             @Value("${application.configuration.course-booker-config}") String propertiesFile) {
       BearerTokenProvider bearerTokenProvider = getBearerTokenProvider(ttl, propertiesFile);
-      this.migrosApi = MigrosServiceFactory.INSTANCE.createNewMigrosApi(bearerTokenProvider);
+      this.migrosApi = MigrosServiceFactory.INSTANCE.createNewMigrosApi(bearerTokenProvider, RETRY);
    }
 
    private static BearerTokenProvider getBearerTokenProvider(int ttl, String propertiesFile) {

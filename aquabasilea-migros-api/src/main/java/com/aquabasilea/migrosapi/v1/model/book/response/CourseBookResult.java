@@ -13,9 +13,19 @@ public enum CourseBookResult {
    COURSE_NOT_BOOKABLE_FULLY_BOOKED(1),
 
    /**
-    * Course is not bookable
+    * Course is not bookable, because it was already booked for the same user earlier
     */
-   COURSE_NOT_BOOKED(99),
+   COURSE_NOT_BOOKABLE_ALREADY_BOOKED(2),
+
+   /**
+    * Course is not bookable, an unknown, migros-api internal, error occurred
+    */
+   COURSE_NOT_BOOKABLE_TECHNICAL_ERROR(3),
+
+   /**
+    * Course is not bookable, there was an unexpected error on the rest-api
+    */
+   COURSE_NOT_BOOKED_UNEXPECTED_ERROR(99),
 
    /**
     * No course selected, since an exception has occurred

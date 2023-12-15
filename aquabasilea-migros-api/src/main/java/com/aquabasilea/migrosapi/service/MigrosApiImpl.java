@@ -5,7 +5,7 @@ import com.aquabasilea.migrosapi.mapper.MigrosCourseMapperImpl;
 import com.aquabasilea.migrosapi.model.book.response.MigrosCancelCourseResponse;
 import com.aquabasilea.migrosapi.model.getcourse.request.MigrosGetCoursesRequest;
 import com.aquabasilea.migrosapi.model.getcourse.request.MigrosRequestCourse;
-import com.aquabasilea.migrosapi.model.getcourse.response.MigrosBookCourseResponse;
+import com.aquabasilea.migrosapi.model.book.response.MigrosBookCourseResponse;
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosGetCoursesResponse;
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosResponseCourse;
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
@@ -205,7 +205,7 @@ public class MigrosApiImpl implements MigrosApi {
    private static void logResponse(ResponseWrapper<?> responseWrapper, HttpRequest httpRequest) {
       if (nonNull(responseWrapper.exception())) {
          LOG.error("Request {} failed!", httpRequest, responseWrapper.exception());
-      }else if (!responseWrapper.successful()) {
+      } else if (!responseWrapper.successful()) {
          LOG.warn("Request {} failed!", httpRequest);
       }
    }

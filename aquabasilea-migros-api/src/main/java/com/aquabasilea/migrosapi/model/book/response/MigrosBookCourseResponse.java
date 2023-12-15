@@ -1,7 +1,8 @@
-package com.aquabasilea.migrosapi.model.getcourse.response;
+package com.aquabasilea.migrosapi.model.book.response;
 
 import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
 
+import static com.aquabasilea.migrosapi.model.book.response.MigrosErrorCode.RESPONSE_CODE_ERROR;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -17,10 +18,16 @@ public class MigrosBookCourseResponse {
    }
 
    private CourseBookResult getCourseNotBookedCode() {
-      if (this.code == CourseBookResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED.getErrorCode()) {
-         return CourseBookResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED;
+      if (this.code == RESPONSE_CODE_ERROR && message != null) {
+         if (message.contains(MigrosErrorCode.COURSE_IS_ALREADY_BOOKED.getTechnicalMigrosErrorMsg())) {
+            return CourseBookResult.COURSE_NOT_BOOKABLE_ALREADY_BOOKED;
+         } else if (message.contains(MigrosErrorCode.COURSE_IS_FULLY_BOOKED.getTechnicalMigrosErrorMsg())) {
+            return CourseBookResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED;
+         } else if (message.contains(MigrosErrorCode.UNKNOWN_TECHNICAL_ERROR.getTechnicalMigrosErrorMsg())) {
+            return CourseBookResult.COURSE_NOT_BOOKABLE_TECHNICAL_ERROR;
+         }
       }
-      return CourseBookResult.COURSE_NOT_BOOKED;
+      return CourseBookResult.COURSE_NOT_BOOKED_UNEXPECTED_ERROR;
    }
 
    public void setBookingIdTac(int bookingIdTac) {
@@ -45,6 +52,4 @@ public class MigrosBookCourseResponse {
       return bookingIdTac > 0 && isNull(message)
               && code == 0;
    }
-//   Kurs ausgebucht:			{"bookingIdTac":0,"code":1,"message":"Technisches Problem 1507 (1507)"}
-//   Kurs erfolgreich gebucht:	{"bookingIdTac":14891205,"code":0,"message":null}
 }

@@ -85,7 +85,10 @@ public class MigrosApiCourseBookerFacadeImpl implements AquabasileaCourseBookerF
 
    private static CourseClickedResult mapMigrosCourseBookResult(MigrosApiBookCourseResponse migrosApiBookCourseResponse) {
       return switch (migrosApiBookCourseResponse.courseBookResult()) {
-         case COURSE_NOT_BOOKED, COURSE_BOOKING_DRY_RUN_FAILED -> CourseClickedResult.COURSE_NOT_BOOKABLE;
+         case COURSE_NOT_BOOKED_UNEXPECTED_ERROR,
+                 COURSE_NOT_BOOKABLE_ALREADY_BOOKED,
+                 COURSE_NOT_BOOKABLE_TECHNICAL_ERROR,
+                 COURSE_BOOKING_DRY_RUN_FAILED -> CourseClickedResult.COURSE_NOT_BOOKABLE;
          case COURSE_NOT_BOOKABLE_FULLY_BOOKED -> CourseClickedResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED;
          case COURSE_BOOKED -> CourseClickedResult.COURSE_BOOKED;
          case COURSE_BOOKING_DRY_RUN_SUCCESSFUL -> CourseClickedResult.COURSE_BOOKING_ABORTED;
