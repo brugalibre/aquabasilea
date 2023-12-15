@@ -38,7 +38,7 @@ public class AquabasileaCourseBookerFacadeFactory {
    }
 
    private AquabasileaCourseBookerFacade createMigrosWebCourseBookerFacade(String username, Supplier<char[]> userPassword,
-                                                                           Supplier<Duration> duration2WaitUntilCourseBecomesBookable) {
+                                                                                   Supplier<Duration>duration2WaitUntilCourseBecomesBookable) {
       return new MigrosWebCourseBookerFacadeImpl(username, userPassword, duration2WaitUntilCourseBecomesBookable,
               aquabasileaCourseBookerConfig.getCourseConfigFile());
    }
