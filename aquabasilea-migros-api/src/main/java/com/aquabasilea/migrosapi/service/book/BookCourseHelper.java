@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.service.book;
 
 import com.aquabasilea.migrosapi.model.book.CancelCourse;
-import com.aquabasilea.migrosapi.model.getcourse.response.MigrosBookCourseResponse;
+import com.aquabasilea.migrosapi.model.book.response.MigrosBookCourseResponse;
 import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
 import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
@@ -92,6 +92,6 @@ public class BookCourseHelper {
     }
 
     private static CourseBookResult getCourseBookResult(MigrosBookCourseResponse migrosBookCourseResponse) {
-        return migrosBookCourseResponse != null ? migrosBookCourseResponse.getCourseBookResult() : CourseBookResult.COURSE_NOT_BOOKED;
+        return migrosBookCourseResponse != null ? migrosBookCourseResponse.getCourseBookResult() : CourseBookResult.COURSE_NOT_BOOKABLE_TECHNICAL_ERROR;
     }
 }

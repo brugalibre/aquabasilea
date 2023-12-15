@@ -1,6 +1,6 @@
 package com.aquabasilea.migrosapi.service.book;
 
-import com.aquabasilea.migrosapi.model.getcourse.response.MigrosBookCourseResponse;
+import com.aquabasilea.migrosapi.model.book.response.MigrosBookCourseResponse;
 import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.response.AbstractHttpResponseReader;
 
