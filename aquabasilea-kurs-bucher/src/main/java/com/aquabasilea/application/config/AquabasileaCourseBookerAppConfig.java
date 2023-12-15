@@ -44,6 +44,7 @@ public class AquabasileaCourseBookerAppConfig {
    public static final String COURSE_DEF_REPOSITORY_BEAN = "courseDefRepository";
    public static final String STATISTICS_REPOSITORY_BEAN = "statisticsRepository";
    public static final String COURSE_DEF_UPDATER_SERVICE_BEAN = "courseDefUpdaterService";
+   public static final String COURSE_DEF_EXTRACTOR_FACADE = "courseDefExtractorFacade";
    public static final String COURSE_DEF_UPDATER_BEAN = "courseDefUpdater";
    public static final String STATISTICS_SERVICE_BEAN = "statisticsService";
    public static final String CONFIG_YAML_FILE_PATHS_BEAN = "configYamlFilePaths";
@@ -86,21 +87,23 @@ public class AquabasileaCourseBookerAppConfig {
       return new UserConfigRepositoryImpl(userConfigDao);
    }
 
-   @DependsOn({STATISTICS_SERVICE_BEAN, USER_CONFIG_REPOSITORY_BEAN, COURSE_DEF_REPOSITORY_BEAN, WEEKLY_COURSES_SERVICE})
+   @Bean(name = COURSE_DEF_EXTRACTOR_FACADE)
+   public CourseExtractorFacade getCourseExtractorFacade(@Autowired ConfigYamlFilePaths configYamlFilePaths,
+                                               @Autowired MigrosApiProvider migrosApiProvider) {
+      return getCourseExtractorFacade(configYamlFilePaths.getCourseBookerConfigFilePath(), migrosApiProvider);
+   }
+
+   @DependsOn({STATISTICS_SERVICE_BEAN, USER_CONFIG_REPOSITORY_BEAN, COURSE_DEF_REPOSITORY_BEAN, WEEKLY_COURSES_SERVICE, COURSE_DEF_EXTRACTOR_FACADE})
    @Bean(name = COURSE_DEF_UPDATER_BEAN)
    public CourseDefUpdater getCourseDefUpdater(@Autowired CourseDefRepository courseDefRepository,
+                                               @Autowired CourseExtractorFacade courseExtractorFacade,
                                                @Autowired StatisticsService statisticsService,
                                                @Autowired UserConfigRepository userConfigRepository,
-                                               @Autowired WeeklyCoursesService weeklyCoursesService,
-                                               @Autowired ConfigYamlFilePaths configYamlFilePaths,
-                                               @Autowired MigrosApiProvider migrosApiProvider) {
-      CourseExtractorFacade courseExtractorFacade = getCourseExtractorFacade(configYamlFilePaths.getCourseBookerConfigFilePath(), migrosApiProvider);
+                                               @Autowired WeeklyCoursesService weeklyCoursesService) {
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(courseExtractorFacade, statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository);
       courseDefUpdater.addCourseDefUpdatedNotifier(onCourseDefsUpdatedContext -> weeklyCoursesService.updateCoursesAfterCourseDefUpdate(onCourseDefsUpdatedContext.userId(), onCourseDefsUpdatedContext.updatedCourseDefs()));
-      CourseDefStatisticsUpdater courseDefStatisticsUpdater = new CourseDefStatisticsUpdater(statisticsService);
-      courseDefUpdater.addCourseDefUpdatedNotifier(courseDefStatisticsUpdater);
-      courseDefUpdater.addCourseDefStartedNotifier(courseDefStatisticsUpdater);
+      courseDefUpdater.addCourseDefUpdatedNotifier(new CourseDefStatisticsUpdater(statisticsService));
       return courseDefUpdater;
    }
 
