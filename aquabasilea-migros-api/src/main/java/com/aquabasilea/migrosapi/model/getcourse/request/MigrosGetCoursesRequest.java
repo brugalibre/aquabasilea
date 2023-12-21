@@ -1,6 +1,6 @@
 package com.aquabasilea.migrosapi.model.getcourse.request;
 
-import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 
 import java.util.List;
 

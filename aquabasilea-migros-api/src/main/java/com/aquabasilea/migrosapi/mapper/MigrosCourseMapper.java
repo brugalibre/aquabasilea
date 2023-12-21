@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.mapper;
 
 import com.aquabasilea.migrosapi.model.getcourse.response.MigrosResponseCourse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosCourse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

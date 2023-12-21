@@ -1,16 +1,16 @@
 package com.aquabasilea.migrosapi.service;
 
 import com.aquabasilea.migrosapi.service.util.WaitUtil;
-import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
-import com.aquabasilea.migrosapi.v1.model.book.response.MigrosApiCancelCourseResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
-import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
-import com.aquabasilea.migrosapi.v1.service.MigrosApi;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiCancelCourseRequest;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.MigrosApiCancelCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiBookCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
+import com.aquabasilea.migrosapi.api.v1.model.security.AuthenticationContainer;
+import com.aquabasilea.migrosapi.api.v1.service.MigrosApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

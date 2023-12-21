@@ -1,10 +1,10 @@
 package com.aquabasilea.migrosapi.service;
 
-import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
-import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
-import com.aquabasilea.migrosapi.v1.service.MigrosApi;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiBookCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.security.AuthenticationContainer;
+import com.aquabasilea.migrosapi.api.v1.service.MigrosApi;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 

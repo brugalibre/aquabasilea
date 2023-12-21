@@ -1,7 +1,7 @@
 package com.aquabasilea.migrosapi.service.security.bearertoken;
 
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
-import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenValidator;
+import com.aquabasilea.migrosapi.api.v1.service.security.bearertoken.BearerTokenValidator;
 import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.HttpService;
 import org.junit.jupiter.api.Test;

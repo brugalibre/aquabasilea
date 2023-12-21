@@ -1,6 +1,6 @@
 package com.aquabasilea.migrosapi.model.book.response;
 
-import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.CourseBookResult;
 
 import static com.aquabasilea.migrosapi.model.book.response.MigrosErrorCode.RESPONSE_CODE_ERROR;
 import static java.util.Objects.isNull;

@@ -1,19 +1,19 @@
 package com.aquabasilea.migrosapi.service;
 
-import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.request.MigrosApiBookCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.request.MigrosBookContext;
-import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
-import com.aquabasilea.migrosapi.v1.model.book.response.CourseCancelResult;
-import com.aquabasilea.migrosapi.v1.model.book.response.MigrosApiCancelCourseResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosCourse;
-import com.aquabasilea.migrosapi.v1.model.security.AuthenticationContainer;
-import com.aquabasilea.migrosapi.v1.service.MigrosApi;
-import com.aquabasilea.migrosapi.v1.service.security.bearertoken.BearerTokenProvider;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiCancelCourseRequest;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiBookCourseRequest;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosBookContext;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.CourseCancelResult;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.MigrosApiCancelCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiBookCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiGetCoursesResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosCourse;
+import com.aquabasilea.migrosapi.api.v1.model.security.AuthenticationContainer;
+import com.aquabasilea.migrosapi.api.v1.service.MigrosApi;
+import com.aquabasilea.migrosapi.api.v1.service.security.bearertoken.BearerTokenProvider;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.common.http.model.method.HttpMethod;
 import com.brugalibre.common.http.service.HttpService;
@@ -237,7 +237,7 @@ class MigrosApiImplTest {
 
       // Then
       serverTestCaseBuilder.stop();
-      assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_NOT_BOOKED_UNEXPECTED_ERROR));
+      assertThat(migrosApiBookCourseResponse.courseBookResult(), is(CourseBookResult.COURSE_NOT_BOOKABLE_TECHNICAL_ERROR));
    }
 
    @Test

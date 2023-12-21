@@ -4,7 +4,7 @@ import com.aquabasilea.migrosapi.model.book.response.MigrosBookCourseResponse;
 import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.response.AbstractHttpResponseReader;
 
-import static com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
+import static com.aquabasilea.migrosapi.api.v1.model.book.response.CourseBookResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
 import static java.util.Objects.requireNonNull;
 
 public class MigrosBookCourseResponseReader extends AbstractHttpResponseReader<MigrosBookCourseResponse> {

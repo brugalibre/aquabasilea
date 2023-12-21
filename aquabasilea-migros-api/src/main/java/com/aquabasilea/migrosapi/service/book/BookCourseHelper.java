@@ -2,9 +2,9 @@ package com.aquabasilea.migrosapi.service.book;
 
 import com.aquabasilea.migrosapi.model.book.CancelCourse;
 import com.aquabasilea.migrosapi.model.book.response.MigrosBookCourseResponse;
-import com.aquabasilea.migrosapi.v1.model.book.MigrosApiCancelCourseRequest;
-import com.aquabasilea.migrosapi.v1.model.book.response.CourseBookResult;
-import com.aquabasilea.migrosapi.v1.model.getcourse.response.MigrosApiBookCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiCancelCourseRequest;
+import com.aquabasilea.migrosapi.api.v1.model.book.response.CourseBookResult;
+import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiBookCourseResponse;
 import com.brugalibre.common.http.model.method.HttpMethod;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.model.response.ResponseWrapper;

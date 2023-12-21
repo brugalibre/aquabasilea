@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.aquabasilea'
-version '1.0.4-SNAPSHOT'
+version '1.0.5-SNAPSHOT'
 
 apply from: '../aquabasilea-dependencies.gradle'
 apply from: '../publish.gradle'
