@@ -1,12 +1,12 @@
 package com.aquabasilea.domain.statistics.service;
 
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.service.statistics.StatisticsService;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 class BookingStatisticsUpdaterTest {
    private static final ConsumerUser CONSUMER_USER = ConsumerUser.of("123", "0791234567");
+   public static final String COURSE_NAME = "courseName";
 
    @Test
    void testBookingSuccessful() {
@@ -26,9 +27,8 @@ class BookingStatisticsUpdaterTest {
       BookingStatisticsUpdater bookingStatisticsUpdater = new BookingStatisticsUpdater(statisticsService);
 
       // When
-      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingEndResultBuilder.builder()
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
-              .build(), CourseBookingState.BOOKING);
+      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKED, COURSE_NAME),
+              CourseBookingState.BOOKING);
 
       // Then
       Statistics statisticsDto = statisticsService.getStatisticsByUserId(CONSUMER_USER.userId());
@@ -44,9 +44,8 @@ class BookingStatisticsUpdaterTest {
       BookingStatisticsUpdater bookingStatisticsUpdater = new BookingStatisticsUpdater(statisticsService);
 
       // When
-      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingEndResultBuilder.builder()
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE)
-              .build(), CourseBookingState.BOOKING);
+      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_TECHNICAL_ERROR, COURSE_NAME)
+              , CourseBookingState.BOOKING);
 
       // Then
       Statistics statisticsDto = statisticsService.getStatisticsByUserId(CONSUMER_USER.userId());
@@ -63,9 +62,8 @@ class BookingStatisticsUpdaterTest {
       BookingStatisticsUpdater bookingStatisticsUpdater = new BookingStatisticsUpdater(statisticsService);
 
       // When
-      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingEndResultBuilder.builder()
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
-              .build(), CourseBookingState.BOOKING);
+      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKING_SKIPPED, COURSE_NAME),
+              CourseBookingState.BOOKING);
 
       // Then
       Statistics statisticsDto = statisticsService.getStatisticsByUserId(CONSUMER_USER.userId());
@@ -82,9 +80,8 @@ class BookingStatisticsUpdaterTest {
       BookingStatisticsUpdater bookingStatisticsUpdater = new BookingStatisticsUpdater(statisticsService);
 
       // When
-      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingEndResultBuilder.builder()
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE)
-              .build(), CourseBookingState.BOOKING_DRY_RUN);
+      bookingStatisticsUpdater.consumeResult(CONSUMER_USER, CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_TECHNICAL_ERROR, COURSE_NAME),
+              CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       Statistics statisticsDto = statisticsService.getStatisticsByUserId(CONSUMER_USER.userId());

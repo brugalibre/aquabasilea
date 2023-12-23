@@ -6,24 +6,24 @@ import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
-import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.config.TestAquabasileaCourseBookerConfig;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.BookingContext;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
+import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
 import com.aquabasilea.domain.coursebooker.states.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.notification.alertsend.CourseBookingAlertSender;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
-import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import org.awaitility.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.aquabasilea.domain.course.model.CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA;
-import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.*;
+import static com.aquabasilea.domain.coursebooker.model.state.CourseBookingState.*;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.awaitility.Awaitility.await;
@@ -320,7 +320,7 @@ class AquabasileaCourseBookerTest {
       LocalDateTime courseDate = LocalDateTime.now()
               .plusDays(1)
               .plusMinutes(5);//300s
-      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseClickedResult.COURSE_BOOKED));
+      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseBookResult.BOOKED));
       TestCourseBookingStateChangedHandler testCourseBookingStateChangedHandler = new TestCourseBookingStateChangedHandler();
       java.time.Duration duration2StartBookerEarlier = java.time.Duration.ofMinutes((24 * 60) + 3);
       java.time.Duration duration2StartDryRunEarlier = java.time.Duration.ofMinutes((24 * 60) + 4);
@@ -355,19 +355,13 @@ class AquabasileaCourseBookerTest {
       assertThat(testCourseBookingStateChangedHandler.bookingStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - (duration2StartBookerEarlier.toMinutes() - (24 * 60)))));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt.getMinute(), is((int) (actualCourseDate.getMinute() - (duration2StartDryRunEarlier.toMinutes() - (24 * 60)))));
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
+              actualCourseDate, currentCourse.getCourseLocation());
       CourseBookContainer courseBookContainerDryRun = new CourseBookContainer(courseBookDetails, new BookingContext(true));
       CourseBookContainer courseBookContainer = new CourseBookContainer(courseBookDetails, new BookingContext(false));
       verify(aquabasileaWebNavigator).selectAndBookCourse(eq(courseBookContainerDryRun));
       verify(aquabasileaWebNavigator).selectAndBookCourse(eq(courseBookContainer));
-      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
-              .withCourseName(COURSE_NAME)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
-              .build()), eq(BOOKING_DRY_RUN));
-      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
-              .withCourseName(COURSE_NAME)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
-              .build()), eq(CourseBookingState.BOOKING));
+      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKED, COURSE_NAME)), eq(BOOKING_DRY_RUN));
+      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKED, COURSE_NAME)), eq(CourseBookingState.BOOKING));
    }
 
    @Test
@@ -377,7 +371,7 @@ class AquabasileaCourseBookerTest {
       LocalDateTime courseDate = LocalDateTime.now()
               .plusDays(1)
               .plusMinutes(minutesOffset);// No time left for a dry run, 24h before!
-      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseClickedResult.COURSE_BOOKED));
+      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseBookResult.BOOKED));
       TestCourseBookingStateChangedHandler testCourseBookingStateChangedHandler = new TestCourseBookingStateChangedHandler();
       String zumba = "Zumba";
       TestCaseBuilder tcb = new TestCaseBuilder()
@@ -409,13 +403,10 @@ class AquabasileaCourseBookerTest {
       assertThat(actualCourseDate, is(notNullValue()));
       assertThat(testCourseBookingStateChangedHandler.dryRunStartedAt, is(nullValue()));
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
+              actualCourseDate, currentCourse.getCourseLocation());
       CourseBookContainer courseBookContainer = new CourseBookContainer(courseBookDetails, new BookingContext(false));
       verify(aquabasileaWebNavigator).selectAndBookCourse(eq(courseBookContainer));
-      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
-              .withCourseName(zumba)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
-              .build()), eq(CourseBookingState.BOOKING));
+      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKED, zumba)), eq(CourseBookingState.BOOKING));
    }
 
    @Test
@@ -425,7 +416,7 @@ class AquabasileaCourseBookerTest {
       LocalDateTime courseDate = LocalDateTime.now()
               .plusDays(1)
               .plusMinutes(minutesOffset);// No time left for a dry run, 24h before!
-      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseClickedResult.COURSE_BOOKED));
+      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseBookResult.BOOKED));
       TestCourseBookingStateChangedHandler testCourseBookingStateChangedHandler = new TestCourseBookingStateChangedHandler();
       String zumba = "Zumba";
       TestCaseBuilder tcb = new TestCaseBuilder()
@@ -452,14 +443,11 @@ class AquabasileaCourseBookerTest {
       Course currentCourse = aquabasileaCourseBooker.getCurrentCourse();
       LocalDateTime actualCourseDate = currentCourse.getCourseDate();
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              actualCourseDate, currentCourse.getCourseLocation().getCourseLocationName());
+              actualCourseDate, currentCourse.getCourseLocation());
       assertThat(testCourseBookingStateChangedHandler.stateHistory, is(List.of(INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP)));
       CourseBookContainer courseBookContainer = new CourseBookContainer(courseBookDetails, new BookingContext(false));
       verify(aquabasileaWebNavigator, never()).selectAndBookCourse(eq(courseBookContainer));
-      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingEndResultBuilder.builder()
-              .withCourseName(zumba)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
-              .build()), eq(CourseBookingState.BOOKING));
+      verify(tcb.courseBookingAlertSender).consumeResult(eq(CONSUMER_USER), eq(CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKING_SKIPPED, zumba)), eq(CourseBookingState.BOOKING));
    }
 
    @Test
@@ -475,7 +463,7 @@ class AquabasileaCourseBookerTest {
 
       List<CourseBookingState> expectedStateHistory = new LinkedList<>(List.of(INIT, IDLE_BEFORE_DRY_RUN, REFRESH_COURSES, INIT, IDLE_BEFORE_DRY_RUN,
               BOOKING_DRY_RUN, INIT, IDLE_BEFORE_BOOKING, BOOKING, INIT, STOP));
-      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseClickedResult.COURSE_BOOKED));
+      TestAquabasileaWebCourseBooker aquabasileaWebNavigator = spy(new TestAquabasileaWebCourseBooker(CourseBookResult.BOOKED));
       TestCourseBookingStateChangedHandler testCourseBookingStateChangedHandler = new TestCourseBookingStateChangedHandler();
       java.time.Duration duration2StartBookerEarlier = java.time.Duration.ofMinutes((24 * 60) + 3);
       java.time.Duration duration2StartDryRunEarlier = java.time.Duration.ofMinutes((24 * 60) + 4);
@@ -632,21 +620,18 @@ class AquabasileaCourseBookerTest {
    }
 
    private static class TestAquabasileaWebCourseBooker implements AquabasileaCourseBookerFacade {
-      private final CourseClickedResult courseClickedResult;
+      private final CourseBookResult courseBookResult;
       private String effectivelyBookedCourse;
 
-      private TestAquabasileaWebCourseBooker(CourseClickedResult courseClickedResult) {
-         this.courseClickedResult = courseClickedResult;
+      private TestAquabasileaWebCourseBooker(CourseBookResult courseBookResult) {
+         this.courseBookResult = courseBookResult;
       }
 
       @Override
-      public CourseBookingEndResult selectAndBookCourse(CourseBookContainer courseBookContainer) {
+      public CourseBookingResultDetails selectAndBookCourse(CourseBookContainer courseBookContainer) {
          CourseBookDetails courseBookDetails = courseBookContainer.courseBookDetails();
          this.effectivelyBookedCourse = courseBookDetails.courseName();
-         return CourseBookingEndResultBuilder.builder()
-                 .withCourseName(courseBookDetails.courseName())
-                 .withCourseClickedResult(courseClickedResult)
-                 .build();
+         return CourseBookingResultDetailsImpl.of(courseBookResult, courseBookDetails.courseName(), null);
       }
 
       @Override

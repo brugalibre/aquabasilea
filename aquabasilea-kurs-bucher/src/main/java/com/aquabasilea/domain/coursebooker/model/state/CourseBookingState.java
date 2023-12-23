@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.coursebooker.states;
+package com.aquabasilea.domain.coursebooker.model.state;
 
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;

@@ -1,6 +1,6 @@
-package com.aquabasilea.domain.coursebooker.states.idle;
+package com.aquabasilea.domain.coursebooker.model.state.idle;
 
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 
 public record IdleStateResult(CourseBookingState nextState) {
     public static IdleStateResult of(CourseBookingState courseBookingState) {

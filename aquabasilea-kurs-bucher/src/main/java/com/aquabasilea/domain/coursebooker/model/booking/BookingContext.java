@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.coursebooker.states.booking.facade;
+package com.aquabasilea.domain.coursebooker.model.booking;
 
 /**
  * Defines the context in which a booking is executed

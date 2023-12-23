@@ -1,6 +1,4 @@
-package com.aquabasilea.domain.coursebooker.states.booking.facade;
-
-import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
+package com.aquabasilea.domain.coursebooker.model.booking;
 
 /**
  * A {@link BookingContext} combines the {@link CourseBookDetails} as well as the {@link BookingContext }

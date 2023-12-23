@@ -4,23 +4,23 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.course.service.WeeklyCoursesUpdater;
 import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
-import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.BookingStateHandler;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.callback.CourseBookingStateChangedHandler;
-import com.aquabasilea.domain.coursebooker.states.idle.IdleContext;
+import com.aquabasilea.domain.coursebooker.model.state.idle.IdleContext;
 import com.aquabasilea.domain.coursebooker.states.idle.IdleStateHandler;
-import com.aquabasilea.domain.coursebooker.states.idle.IdleStateResult;
+import com.aquabasilea.domain.coursebooker.model.state.idle.IdleStateResult;
 import com.aquabasilea.domain.coursebooker.states.init.InitStateHandler;
-import com.aquabasilea.domain.coursebooker.states.init.InitializationResult;
+import com.aquabasilea.domain.coursebooker.model.state.init.InitializationResult;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.util.DateUtil;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.*;
+import static com.aquabasilea.domain.coursebooker.model.state.CourseBookingState.*;
 import static java.util.Objects.isNull;
 
 /**
@@ -133,14 +133,14 @@ public class AquabasileaCourseBooker {
     * @param courseId           the id of the {@link Course} to book
     * @param courseBookingState the current {@link CourseBookingState}
     * @param withNotification   if <code>true</code> then the consumes are notified about the result of the booking.
-    * @return a {@link CourseBookingEndResult} with details about the booking
+    * @return a {@link CourseBookingResultDetails} with details about the booking
     */
-   public CourseBookingEndResult bookCourse(CourseBookingState courseBookingState, String courseId, boolean withNotification) {
-      CourseBookingEndResult courseBookingEndResult = bookingStateHandler.bookCourse(userContext.id, courseId, courseBookingState);
+   public CourseBookingResultDetails bookCourse(CourseBookingState courseBookingState, String courseId, boolean withNotification) {
+      CourseBookingResultDetails courseBookingResultDetails = bookingStateHandler.bookCourse(userContext.id, courseId, courseBookingState);
       if (withNotification) {
-         notifyResult2Consumers(courseBookingEndResult, courseBookingState);
+         notifyResult2Consumers(courseBookingResultDetails, courseBookingState);
       }
-      return courseBookingEndResult;
+      return courseBookingResultDetails;
    }
 
    void handleCurrentState() {
@@ -150,16 +150,17 @@ public class AquabasileaCourseBooker {
          case PAUSED -> pauseApp();
          case IDLE_BEFORE_BOOKING, IDLE_BEFORE_DRY_RUN -> handleIdleState();
          case BOOKING, BOOKING_DRY_RUN -> {
-            CourseBookingEndResult courseBookingResult = bookingStateHandler.bookCourse(userContext.id, getCurrentCourse(), state);
-            notifyResult2Consumers(courseBookingResult, this.state);
+            CourseBookingResultDetails courseBookingResultDetails = bookingStateHandler.bookCourse(userContext.id, getCurrentCourse(), state);
+            notifyResult2Consumers(courseBookingResultDetails, this.state);
             getNextState();
          }
          default -> throw new IllegalStateException("Unhandled state '" + this.state + "'");
       }
    }
 
-   private void notifyResult2Consumers(CourseBookingEndResult courseBookingResult, CourseBookingState courseBookingState) {
-      courseBookingEndResultConsumers.forEach(courseBookingEndResultConsumer -> courseBookingEndResultConsumer.consumeResult(ConsumerUser.of(userContext), courseBookingResult, courseBookingState));
+   private void notifyResult2Consumers(CourseBookingResultDetails courseBookingResultDetails, CourseBookingState courseBookingState) {
+      courseBookingEndResultConsumers.forEach(courseBookingEndResultConsumer ->
+              courseBookingEndResultConsumer.consumeResult(ConsumerUser.of(userContext), courseBookingResultDetails, courseBookingState));
    }
 
    private void pauseApp() {

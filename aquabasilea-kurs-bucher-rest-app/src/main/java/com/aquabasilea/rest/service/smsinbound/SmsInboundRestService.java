@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.service.smsinbound;
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

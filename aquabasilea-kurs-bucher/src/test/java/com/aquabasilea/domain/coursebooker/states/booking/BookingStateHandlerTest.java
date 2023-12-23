@@ -5,23 +5,23 @@ import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.BookingContext;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.List;
 import java.util.Optional;
 
-import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKED;
-import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_BOOKING_SKIPPED;
+import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.BOOKED;
+import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.BOOKING_SKIPPED;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,10 +43,10 @@ class BookingStateHandlerTest {
       String courseId2 = "2";
       String courseId3 = "3";
       AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade = mock(AquabasileaCourseBookerFacade.class);
-      CourseBookingEndResult courseBookingEndResult = new CourseBookingEndResult(courseName1, COURSE_BOOKED, List.of(), null);
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(BOOKED, courseName1, null);
       CourseBookContainer expectedCourseBookContainer =  new CourseBookContainer(new CourseBookDetails(courseName1, null,
-              courseDate, CourseLocation.FITNESSPARK_GLATTPARK.getCourseLocationName()), new BookingContext(false));
-      when(aquabasileaCourseBookerFacade.selectAndBookCourse(eq(expectedCourseBookContainer))).thenReturn(courseBookingEndResult);
+              courseDate, CourseLocation.FITNESSPARK_GLATTPARK), new BookingContext(false));
+      when(aquabasileaCourseBookerFacade.selectAndBookCourse(eq(expectedCourseBookContainer))).thenReturn(courseBookingResultDetails);
       TestCaseBuilder tcb = new TestCaseBuilder()
                 .withCourse(CourseBuilder.builder()
                         .withCourseDate(courseDate)
@@ -74,10 +74,10 @@ class BookingStateHandlerTest {
                 .build();
 
         // When
-        CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0).getId(), tcb.currentBookingState);
+        CourseBookingResultDetails actualCourseBookingResultDetails = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0).getId(), tcb.currentBookingState);
 
         // When
-        assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKED));
+        assertThat(actualCourseBookingResultDetails.getCourseBookResult(), is(BOOKED));
         WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.getByUserId(USER_ID);
         // Earliest course must be resumed
         assertThat(weeklyCourses.getCourseById(courseId2).getIsPaused(), is(false));
@@ -100,10 +100,10 @@ class BookingStateHandlerTest {
               .build();
 
       // When
-      CourseBookingEndResult actualCourseBookingEndResult = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0), tcb.currentBookingState);
+      CourseBookingResultDetails actualCourseBookingResultDetails = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0), tcb.currentBookingState);
 
       // When
-      assertThat(actualCourseBookingEndResult.getCourseClickedResult(), is(COURSE_BOOKING_SKIPPED));
+      assertThat(actualCourseBookingResultDetails.getCourseBookResult(), is(BOOKING_SKIPPED));
    }
 
    @Test

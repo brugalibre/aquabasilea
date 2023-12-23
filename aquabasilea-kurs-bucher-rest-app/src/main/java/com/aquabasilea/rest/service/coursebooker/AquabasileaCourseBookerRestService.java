@@ -2,15 +2,15 @@ package com.aquabasilea.rest.service.coursebooker;
 
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.CourseComparator;
-import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOverview;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookerEndResultDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +58,7 @@ public class AquabasileaCourseBookerRestService {
      * @return a {@link CourseBookerEndResultDto} with details about the booking
      */
     public CourseBookerEndResultDto bookCourseDryRun(String userId, String courseId) {
-        CourseBookingEndResult courseBookingEndResult = aquabasileaCourseBookerService.bookCourseDryRun(userId, courseId);
+        CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerService.bookCourseDryRun(userId, courseId);
         return CourseBookerEndResultDto.of(courseBookingEndResult);
     }
 

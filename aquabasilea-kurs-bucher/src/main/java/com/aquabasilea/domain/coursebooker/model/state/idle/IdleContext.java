@@ -1,7 +1,7 @@
-package com.aquabasilea.domain.coursebooker.states.idle;
+package com.aquabasilea.domain.coursebooker.model.state.idle;
 
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 
 import java.time.Duration;
 

@@ -4,16 +4,16 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.CourseComparator;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.BookingContext;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
+import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.util.PlUtil;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
-import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +43,9 @@ public class BookingStateHandler {
     * @param userId             the id uf the {@link User} whose {@link Course}s are resumed
     * @param courseId           the id of the {@link Course} to book
     * @param courseBookingState the current {@link CourseBookingState}
-    * @return a {@link CourseBookingEndResult} with details about the booking
+    * @return a {@link CourseBookingResultDetails} with details about the booking
     */
-   public CourseBookingEndResult bookCourse(String userId, String courseId, CourseBookingState courseBookingState) {
+   public CourseBookingResultDetails bookCourse(String userId, String courseId, CourseBookingState courseBookingState) {
       Course courseById = getCourseById(userId, courseId);
       return bookCourse(userId, courseById, courseBookingState);
    }
@@ -62,9 +62,9 @@ public class BookingStateHandler {
     * @param userId        the id uf the {@link User} whose {@link Course}s are resumed
     * @param currentCourse the {@link Course} to book
     * @param state         the current {@link CourseBookingState}
-    * @return a {@link CourseBookingEndResult} with details about the booking
+    * @return a {@link CourseBookingResultDetails} with details about the booking
     */
-   public CourseBookingEndResult bookCourse(String userId, Course currentCourse, CourseBookingState state) {
+   public CourseBookingResultDetails bookCourse(String userId, Course currentCourse, CourseBookingState state) {
       if (!currentCourse.getHasCourseDef()) {
          return handleCourseWithoutCourseDef(currentCourse);
       }
@@ -72,7 +72,7 @@ public class BookingStateHandler {
               currentCourse.getCourseName());
       CourseBookContainer courseBookContainer = createCourseBookContainer(currentCourse, state);
       PlUtil.INSTANCE.startLogInfo("Course booker");
-      CourseBookingEndResult courseBookingEndResult = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
+      CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
       LOG.info("Course booking  is done. Result is '{}'", courseBookingEndResult);
       PlUtil.INSTANCE.endLogInfo();
       resumeCoursesUntil(userId, currentCourse);
@@ -100,17 +100,14 @@ public class BookingStateHandler {
       weeklyCoursesRepository.save(weeklyCourses);
    }
 
-   private static CourseBookingEndResult handleCourseWithoutCourseDef(Course currentCourse) {
+   private static CourseBookingResultDetails handleCourseWithoutCourseDef(Course currentCourse) {
       LOG.warn("Course {} not booked, because there exist no real aquabasilea-course counterpart!", currentCourse.getCourseName());
-      return CourseBookingEndResultBuilder.builder()
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
-              .withCourseName(currentCourse.getCourseName())
-              .build();
+      return CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKING_SKIPPED, currentCourse.getCourseName(), null);
    }
 
    private CourseBookContainer createCourseBookContainer(Course currentCourse, CourseBookingState state) {
       CourseBookDetails courseBookDetails = new CourseBookDetails(currentCourse.getCourseName(), currentCourse.getCourseInstructor(),
-              currentCourse.getCourseDate(), currentCourse.getCourseLocation().getCourseLocationName());
+              currentCourse.getCourseDate(), currentCourse.getCourseLocation());
       return new CourseBookContainer(courseBookDetails, new BookingContext(state == CourseBookingState.BOOKING_DRY_RUN));
    }
 }

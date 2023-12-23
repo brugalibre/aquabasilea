@@ -1,4 +1,4 @@
-package com.aquabasilea.domain.coursebooker.booking.facade.model;
+package com.aquabasilea.domain.coursebooker.model.booking.cancel;
 
 public enum CourseCancelResult {
 

@@ -1,19 +1,14 @@
 package com.aquabasilea.rest.model.coursebooker;
 
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record CourseBookerEndResultDto(String courseName, CourseClickedResult courseClickedResult, boolean success,
+public record CourseBookerEndResultDto(String courseName, CourseBookResult courseBookResult, boolean success,
                                        String errorMsg) {
-    public static CourseBookerEndResultDto of(CourseBookingEndResult courseBookingEndResult) {
-        return new CourseBookerEndResultDto(courseBookingEndResult.courseName(), courseBookingEndResult.courseClickedResult(), courseBookingEndResult.exception() != null, getMessage(courseBookingEndResult));
-    }
-
-    private static String getMessage(CourseBookingEndResult courseBookingEndResult) {
-        Exception exception = courseBookingEndResult.exception();
-        return exception == null ? null : exception.getMessage();
-    }
+   public static CourseBookerEndResultDto of(CourseBookingResultDetails courseBookingResultDetails) {
+      return new CourseBookerEndResultDto(courseBookingResultDetails.getCourseName(), courseBookingResultDetails.getCourseBookResult(),
+              courseBookingResultDetails.getErrorMessage() != null, courseBookingResultDetails.getErrorMessage());
+   }
 }

@@ -1,13 +1,14 @@
 package com.aquabasilea.application;
 
-import com.aquabasilea.service.coursebooker.migros.MigrosApiProvider;
+import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
+import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
+import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.BookingContext;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookContainer;
+import com.aquabasilea.service.coursebooker.migros.MigrosApiProvider;
 import com.aquabasilea.util.DateUtil;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -39,13 +40,13 @@ public class RunAquabasileaCourseBookerFacade {
       AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade = aquabasileaCourseBookerFacadeFactory.createNewAquabasileaCourseBookerFacade(username, () -> password, durationUntilIsBookableSupplier);
       long start = System.currentTimeMillis();
       CourseBookContainer courseBookContainer = getCourseBookContainer(courseName, courseLocationName, courseDateAndTime, dryRun);
-      CourseBookingEndResult courseBookingEndResult = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
+      CourseBookingResultDetails courseBookingResultDetails = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
       System.out.println("Booker done, duration: " + Duration.ofMillis(start - System.currentTimeMillis()));
-      printErrors(dryRun, courseBookingEndResult);
+      printErrors(dryRun, courseBookingResultDetails);
    }
 
    private static CourseBookContainer getCourseBookContainer(String courseName, String courseLocationName, LocalDateTime courseDateAndTime, boolean dryRun) {
-      CourseBookDetails courseBookDetails = new CourseBookDetails(courseName, "", courseDateAndTime, courseLocationName);
+      CourseBookDetails courseBookDetails = new CourseBookDetails(courseName, "", courseDateAndTime, CourseLocation.fromDisplayName(courseLocationName));
       return new CourseBookContainer(courseBookDetails, new BookingContext(dryRun));
    }
 
@@ -56,23 +57,19 @@ public class RunAquabasileaCourseBookerFacade {
       };
    }
 
-   private static void printErrors(boolean dryRun, CourseBookingEndResult courseBookingEndResult) {
+   private static void printErrors(boolean dryRun, CourseBookingResultDetails courseBookingResultDetails) {
       System.out.println("\n\n===================");
-      System.out.println("Course selected result: " + courseBookingEndResult.getCourseClickedResult());
-      if (!courseBookingEndResult.getErrors().isEmpty()) {
+      System.out.println("Course selected result: " + courseBookingResultDetails.getCourseBookResult());
+      if (courseBookingResultDetails.getErrorMessage() != null) {
          System.err.println("\nThere where " + (dryRun ? "warnings:" : "errors:"));
-         for (String error : courseBookingEndResult.getErrors()) {
-            System.err.println(error);
-         }
-      } else {
-         System.out.println("App completed normally");
-      }
-      if (!courseBookingEndResult.getErrors().isEmpty()) {
+         System.err.println(courseBookingResultDetails.getErrorMessage());
          try {
             Thread.sleep(999999);
          } catch (InterruptedException e) {
             e.printStackTrace();
          }
+      } else {
+         System.out.println("App completed normally");
       }
    }
 }

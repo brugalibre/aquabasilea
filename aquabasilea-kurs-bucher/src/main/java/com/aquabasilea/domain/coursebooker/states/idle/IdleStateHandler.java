@@ -1,11 +1,13 @@
 package com.aquabasilea.domain.coursebooker.states.idle;
 
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.idle.IdleContext;
+import com.aquabasilea.domain.coursebooker.model.state.idle.IdleStateResult;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.util.ConsumerThrowsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.INIT;
+import static com.aquabasilea.domain.coursebooker.model.state.CourseBookingState.INIT;
 
 /**
  * The {@link IdleStateHandler} simply handles the states {@link CourseBookingState#IDLE_BEFORE_BOOKING}

@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.coursebooker;
 
 import com.aquabasilea.domain.course.model.Course;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.util.DateUtil;

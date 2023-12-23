@@ -4,11 +4,11 @@ import com.aquabasilea.application.config.logging.MdcConst;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
-import com.aquabasilea.domain.coursebooker.booking.facade.model.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOverview;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.service.coursebooker.bookedcourses.BookedCourseHelper;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.BOOKING_DRY_RUN;
+import static com.aquabasilea.domain.coursebooker.model.state.CourseBookingState.BOOKING_DRY_RUN;
 
 @Service
 public class AquabasileaCourseBookerService {
@@ -130,9 +130,9 @@ public class AquabasileaCourseBookerService {
     * Does a dry-run booking of the current Course. Additionally, all consumers are notified about the result
     *
     * @param courseId the id of the {@link Course} to book
-    * @return a {@link CourseBookingEndResult} which contains details about the result
+    * @return a {@link CourseBookingResultDetails} which contains details about the result
     */
-   public CourseBookingEndResult bookCourseDryRun(String userId, String courseId) {
+   public CourseBookingResultDetails bookCourseDryRun(String userId, String courseId) {
       LOG.info("Start dry run for course {}", courseId);
       AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(userId);
       return aquabasileaCourseBooker.bookCourse(BOOKING_DRY_RUN, courseId, true);

@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursebooker.states.callback;
 
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 
 @FunctionalInterface

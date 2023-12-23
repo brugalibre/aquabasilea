@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.coursebooker;
 
 import com.aquabasilea.application.config.logging.MdcConst;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.callback.CourseBookingStateChangedHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static com.aquabasilea.domain.coursebooker.states.CourseBookingState.REFRESH_COURSES;
+import static com.aquabasilea.domain.coursebooker.model.state.CourseBookingState.REFRESH_COURSES;
 import static java.util.Objects.requireNonNull;
 
 /**

@@ -1,14 +1,13 @@
 package com.aquabasilea.notification.alertsend;
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
 import com.aquabasilea.notification.alertsend.config.AlertSendConfigProviderImpl;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult.CourseBookingEndResultBuilder;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult;
-import com.brugalibre.notification.api.v1.alerttype.AlertType;
 import com.brugalibre.notification.api.v1.model.AlertSendResponse;
 import com.brugalibre.notification.api.v1.service.AlertSendException;
 import com.brugalibre.notification.api.v1.service.AlertSendService;
@@ -44,38 +43,14 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       TestAlertSendService alertSendService = spy(new TestAlertSendService());
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
       assertThat(alertSendService.apiKey, is(apiKey));
-   }
-
-   @Test
-   void consumeAndSendSmsBookingFailed_NoSingleResultSelection() throws AlertSendException {
-      // Given
-      String courseName = "courseName";
-      String expectedTitle = TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
-      String expectedMsg = String.format(TextResources.COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT, courseName);
-      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
-      AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_NO_SINGLE_RESULT)
-              .build();
-
-      // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
-
-      // Then
-      verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
    }
 
    @Test
@@ -87,13 +62,10 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_TECHNICAL_ERROR, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
@@ -108,13 +80,10 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE_FULLY_BOOKED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_COURSE_FULLY_BOOKED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
@@ -129,13 +98,10 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKING_SKIPPED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
@@ -150,13 +116,10 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_SKIPPED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKING_SKIPPED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
@@ -168,13 +131,10 @@ class CourseBookingAlertSenderTest {
       String courseName = "courseName";
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKED_RETRY)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.DRY_RUN_FAILED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService, never()).sendAlert(any(), any());
@@ -192,14 +152,10 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withException(exception)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_EXCEPTION_OCCURRED, courseName, exceptionMsg);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
@@ -211,14 +167,10 @@ class CourseBookingAlertSenderTest {
       String courseName = "courseName";
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withException(null)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_EXCEPTION_OCCURRED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING);
 
       // Then
       verify(alertSendService).sendAlert(any(), any());
@@ -233,59 +185,28 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.DRY_RUN_SUCCESSFUL, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
    }
 
    @Test
-   void consumeAndSendSmsDryRunFailed_NoSingleSearchResult() throws AlertSendException {
-      // Given
+   void consumeAndSendSmsDryRunFailed_CourseFullyBooked() throws AlertSendException {
+      // Given, dry-run with invalid book-result
       String courseName = "courseName";
-      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
-      String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
-      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_NO_SINGLE_RESULT)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_COURSE_FULLY_BOOKED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
-      verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
-   }
-
-   @Test
-   void consumeAndSendSmsDryRunFailed_NotBookable() throws AlertSendException {
-      // Note: This test is an equivalent to the migros-api with a failed dry run -> not bookable is returned
-      // Given
-      String courseName = "courseName";
-      String expectedTitle = TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
-      String expectedMsg = String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
-      AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
-      AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_BOOKABLE)
-              .build();
-
-      // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
-
-      // Then
-      verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
+      verify(alertSendService, never()).sendAlert(any(), any());
    }
 
    @Test
@@ -297,33 +218,13 @@ class CourseBookingAlertSenderTest {
       AlertSendInfos expectedAlertSendInfos = new AlertSendInfos(expectedTitle, expectedMsg, List.of(CONSUMER_USER.phoneNr()));
       AlertSendService alertSendService = mock(AlertSendService.class);
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName(courseName)
-              .withCourseClickedResult(CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.NOT_BOOKED_EXCEPTION_OCCURRED, courseName);
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       verify(alertSendService).sendAlert(any(), eq(expectedAlertSendInfos));
-   }
-
-   @Test
-   void consumeAndFailIllegalState() throws AlertSendException {
-      // Given
-      AlertSendService alertSendService = mock(AlertSendService.class);
-      CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName("asdf")
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
-              .build();
-
-      // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.STOP);
-
-      // Then
-      verify(alertSendService, never()).sendAlert(any(), any());
    }
 
    @Test
@@ -335,13 +236,10 @@ class CourseBookingAlertSenderTest {
          throw new AlertSendException(new NullPointerException("Hoppla"));
       };
       CourseBookingEndResultConsumer courseBookingEndResultConsumer = new CourseBookingAlertSender(CONFIG_PROVIDER, conf -> alertSendService);
-      CourseBookingEndResult courseBookingEndResult = CourseBookingEndResultBuilder.builder()
-              .withCourseName("asdf")
-              .withCourseClickedResult(CourseClickedResult.COURSE_BOOKING_ABORTED)
-              .build();
+      CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(CourseBookResult.BOOKING_SKIPPED, "asdf");
 
       // When
-      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingEndResult, CourseBookingState.BOOKING_DRY_RUN);
+      courseBookingEndResultConsumer.consumeResult(CONSUMER_USER, courseBookingResultDetails, CourseBookingState.BOOKING_DRY_RUN);
 
       // Then
       assertThat(wasThrown.get(), is(true));

@@ -1,10 +1,10 @@
 package com.aquabasilea.notification.alertsend;
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.domain.coursebooker.states.CourseBookingState;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
+import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
-import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.brugalibre.notification.api.v1.service.AlertSendService;
 import com.brugalibre.notification.config.AlertSendConfig;
 import com.brugalibre.notification.config.AlertSendConfigProvider;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -41,30 +40,30 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
    }
 
    @Override
-   public void consumeResult(ConsumerUser consumerUser, CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
-      String msg = getMessage4Result(courseBookingEndResult, courseBookingState);
+   public void consumeResult(ConsumerUser consumerUser, CourseBookingResultDetails courseBookingResultDetails, CourseBookingState courseBookingState) {
+      String msg = getMessage4Result(courseBookingResultDetails, courseBookingState);
       if (nonNull(msg)) {
-         String title = getTitle4Result(courseBookingEndResult, courseBookingState);
+         String title = getTitle4Result(courseBookingResultDetails, courseBookingState);
          AlertSendInfos alertSendInfos = new AlertSendInfos(title, msg, List.of(consumerUser.phoneNr()));
          sendMessage(alertSendInfos);
       }
    }
 
-   private String getMessage4Result(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
-      String courseName = courseBookingEndResult.getCourseName();
+   private String getMessage4Result(CourseBookingResultDetails courseBookingResultDetails, CourseBookingState courseBookingState) {
+      String courseName = courseBookingResultDetails.getCourseName();
       switch (courseBookingState) {
          case BOOKING:
-            return getMessage4ResultBooked(courseBookingEndResult, courseName);
+            return getMessage4ResultBooked(courseBookingResultDetails, courseName);
          case BOOKING_DRY_RUN:
-            return getMessage4ResultDryRun(courseBookingEndResult, courseName);
+            return getMessage4ResultDryRun(courseBookingResultDetails, courseName);
          default:
             LOG.error("Warning! getMessage4Result: Unhandled state '{}'", courseBookingState);
             return null;
       }
    }
 
-   private String getTitle4Result(CourseBookingEndResult courseBookingEndResult, CourseBookingState courseBookingState) {
-      String courseName = courseBookingEndResult.getCourseName();
+   private String getTitle4Result(CourseBookingResultDetails courseBookingResultDetails, CourseBookingState courseBookingState) {
+      String courseName = courseBookingResultDetails.getCourseName();
       switch (courseBookingState) {
          case BOOKING:
             return TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
@@ -76,39 +75,35 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
       }
    }
 
-   private static String getMessage4ResultDryRun(CourseBookingEndResult courseBookingEndResult, String courseName) {
-      switch (courseBookingEndResult.getCourseClickedResult()) {
-         case COURSE_NOT_SELECTED_NO_SINGLE_RESULT: // fall through
-         case COURSE_NOT_SELECTED_EXCEPTION_OCCURRED: // fall through
-         case COURSE_NOT_BOOKABLE: // fall through
+   private static String getMessage4ResultDryRun(CourseBookingResultDetails courseBookingResultDetails, String courseName) {
+      switch (courseBookingResultDetails.getCourseBookResult()) {
+         case NOT_BOOKED_EXCEPTION_OCCURRED: // fall through
+         case DRY_RUN_FAILED: // fall through
             return String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
-         case COURSE_BOOKING_ABORTED:
+         case DRY_RUN_SUCCESSFUL:
             return String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
-         case COURSE_BOOKING_SKIPPED:
+         case BOOKING_SKIPPED:
             return String.format(TextResources.COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
-            LOG.error("Warning! getMessage4ResultDryRun: Unhandled state '{}'", courseBookingEndResult.getCourseClickedResult());
+            LOG.error("Warning! getMessage4ResultDryRun: Unhandled state '{}'", courseBookingResultDetails.getCourseBookResult());
             return null;
       }
    }
 
-   private static String getMessage4ResultBooked(CourseBookingEndResult courseBookingEndResult, String courseName) {
-      switch (courseBookingEndResult.getCourseClickedResult()) {
-         case COURSE_BOOKED:
+   private static String getMessage4ResultBooked(CourseBookingResultDetails courseBookingResultDetails, String courseName) {
+      switch (courseBookingResultDetails.getCourseBookResult()) {
+         case BOOKED:
             return getSuccessfullyBookedMessageText(courseName);
-         case COURSE_NOT_BOOKABLE:
+         case NOT_BOOKED_COURSE_ALREADY_BOOKED, NOT_BOOKED_TECHNICAL_ERROR:
             return String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
-         case COURSE_NOT_BOOKABLE_FULLY_BOOKED:
+         case NOT_BOOKED_COURSE_FULLY_BOOKED:
             return String.format(TextResources.COURSE_NOT_BOOKABLE_FULLY_BOOKED, courseName);
-         case COURSE_NOT_SELECTED_NO_SINGLE_RESULT:
-            return String.format(TextResources.COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT, courseName);
-         case COURSE_NOT_SELECTED_EXCEPTION_OCCURRED:
-            String exceptionMsg = getExceptionMsg(courseBookingEndResult);
-            return String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, exceptionMsg);
-         case COURSE_BOOKING_SKIPPED:
+         case NOT_BOOKED_EXCEPTION_OCCURRED, NOT_BOOKED_UNEXPECTED_ERROR:
+            return String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, courseBookingResultDetails.getErrorMessage());
+         case BOOKING_SKIPPED:
             return String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
          default:
-            LOG.error("Warning! getMessage4ResultBooked: Unhandled state '{}'", courseBookingEndResult.getCourseClickedResult());
+            LOG.error("Warning! getMessage4ResultBooked: Unhandled state '{}'", courseBookingResultDetails.getCourseBookResult());
             return null;
       }
    }
@@ -117,13 +112,5 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
       return String.format(TextResources.COURSE_SUCCESSFULLY_BOOKED, courseName)
               + "\n\n"
               + String.format(TextResources.SMS_TEXT_CANCEL_BOOKED_COURSE, TextResources.CANCEL_BOOKED_COURSE_SMS_CODE, courseName);
-   }
-
-   private static String getExceptionMsg(CourseBookingEndResult courseBookingEndResult) {
-      Exception exception = courseBookingEndResult.getException();
-      if (isNull(exception)) {
-         return "Fehler im Mapping, keine Exception! (Domi flick dis zügs..)";
-      }
-      return exception.getClass().getSimpleName() + ":\n" + exception.getMessage();
    }
 }
