@@ -51,61 +51,56 @@ public class CourseBookingAlertSender extends BasicAlertSender implements Course
 
    private String getMessage4Result(CourseBookingResultDetails courseBookingResultDetails, CourseBookingState courseBookingState) {
       String courseName = courseBookingResultDetails.getCourseName();
-      switch (courseBookingState) {
-         case BOOKING:
-            return getMessage4ResultBooked(courseBookingResultDetails, courseName);
-         case BOOKING_DRY_RUN:
-            return getMessage4ResultDryRun(courseBookingResultDetails, courseName);
-         default:
+      return switch (courseBookingState) {
+         case BOOKING -> getMessage4ResultBooked(courseBookingResultDetails, courseName);
+         case BOOKING_DRY_RUN -> getMessage4ResultDryRun(courseBookingResultDetails, courseName);
+         default -> {
             LOG.error("Warning! getMessage4Result: Unhandled state '{}'", courseBookingState);
-            return null;
-      }
+            yield null;
+         }
+      };
    }
 
    private String getTitle4Result(CourseBookingResultDetails courseBookingResultDetails, CourseBookingState courseBookingState) {
       String courseName = courseBookingResultDetails.getCourseName();
-      switch (courseBookingState) {
-         case BOOKING:
-            return TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
-         case BOOKING_DRY_RUN:
-            return TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
-         default:
+      return switch (courseBookingState) {
+         case BOOKING -> TextResources.COURSE_BOOKING_RESULTS.formatted(courseName);
+         case BOOKING_DRY_RUN -> TextResources.COURSE_DRY_RUN_RESULTS.formatted(courseName);
+         default -> {
             LOG.error("Warning! getMessage4Result: Unhandled state '{}'", courseBookingState);
-            return null;
-      }
+            yield null;
+         }
+      };
    }
 
    private static String getMessage4ResultDryRun(CourseBookingResultDetails courseBookingResultDetails, String courseName) {
-      switch (courseBookingResultDetails.getCourseBookResult()) {
-         case NOT_BOOKED_EXCEPTION_OCCURRED: // fall through
-         case DRY_RUN_FAILED: // fall through
-            return String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
-         case DRY_RUN_SUCCESSFUL:
-            return String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
-         case BOOKING_SKIPPED:
-            return String.format(TextResources.COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
-         default:
+      return switch (courseBookingResultDetails.getCourseBookResult()) { // fall through
+         case NOT_BOOKED_EXCEPTION_OCCURRED, DRY_RUN_FAILED -> // fall through
+                 String.format(TextResources.DRY_RUN_FINISHED_FAILED, courseName);
+         case DRY_RUN_SUCCESSFUL -> String.format(TextResources.DRY_RUN_FINISHED_SUCCESSFULLY, courseName);
+         case BOOKING_SKIPPED -> String.format(TextResources.COURSE_DRY_RUN_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
+         default -> {
             LOG.error("Warning! getMessage4ResultDryRun: Unhandled state '{}'", courseBookingResultDetails.getCourseBookResult());
-            return null;
-      }
+            yield null;
+         }
+      };
    }
 
    private static String getMessage4ResultBooked(CourseBookingResultDetails courseBookingResultDetails, String courseName) {
-      switch (courseBookingResultDetails.getCourseBookResult()) {
-         case BOOKED:
-            return getSuccessfullyBookedMessageText(courseName);
-         case NOT_BOOKED_COURSE_ALREADY_BOOKED, NOT_BOOKED_TECHNICAL_ERROR:
-            return String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
-         case NOT_BOOKED_COURSE_FULLY_BOOKED:
-            return String.format(TextResources.COURSE_NOT_BOOKABLE_FULLY_BOOKED, courseName);
-         case NOT_BOOKED_EXCEPTION_OCCURRED, NOT_BOOKED_UNEXPECTED_ERROR:
-            return String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, courseBookingResultDetails.getErrorMessage());
-         case BOOKING_SKIPPED:
-            return String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
-         default:
+      return switch (courseBookingResultDetails.getCourseBookResult()) {
+         case BOOKED -> getSuccessfullyBookedMessageText(courseName);
+         case NOT_BOOKED_COURSE_ALREADY_BOOKED, NOT_BOOKED_TECHNICAL_ERROR ->
+                 String.format(TextResources.COURSE_NOT_BOOKABLE, courseName);
+         case NOT_BOOKED_COURSE_FULLY_BOOKED ->
+                 String.format(TextResources.COURSE_NOT_BOOKABLE_FULLY_BOOKED, courseName);
+         case NOT_BOOKED_EXCEPTION_OCCURRED, NOT_BOOKED_UNEXPECTED_ERROR ->
+                 String.format(TextResources.COURSE_NOT_BOOKABLE_EXCEPTION, courseName, courseBookingResultDetails.getErrorMessage());
+         case BOOKING_SKIPPED -> String.format(TextResources.COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF, courseName);
+         default -> {
             LOG.error("Warning! getMessage4ResultBooked: Unhandled state '{}'", courseBookingResultDetails.getCourseBookResult());
-            return null;
-      }
+            yield null;
+         }
+      };
    }
 
    private static String getSuccessfullyBookedMessageText(String courseName) {
