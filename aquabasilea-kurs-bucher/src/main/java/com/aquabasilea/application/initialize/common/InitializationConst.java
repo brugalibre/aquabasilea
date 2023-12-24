@@ -1,6 +1,6 @@
 package com.aquabasilea.application.initialize.common;
 
-import com.aquabasilea.application.initialize.api.Initializer;
+import com.aquabasilea.application.initialize.api.user.InitializerForUser;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,6 +11,7 @@ public final class InitializationConst {
       //private
    }
 
+   public static final int COURSE_LOCATIONS = 1;
    public static final int USER_CREDENTIALS = 100;
    public static final int AQUABASILEA_PERSISTENCE = 200;
    public static final int USER_CONFIG = 300;
@@ -19,10 +20,10 @@ public final class InitializationConst {
 
    /**
     * @param initType the {@link InitType} to filter with
-    * @return a {@link Predicate} which only returns true if an {@link Initializer}
+    * @return a {@link Predicate} which only returns true if an {@link InitializerForUser}
     * is annotated with a {@link InitializeOrder} from the given {@link InitType}
     */
-   public static Predicate<Initializer> isInitializerForType(InitType initType) {
+   public static Predicate<InitializerForUser> isInitializerForType(InitType initType) {
       return initializer -> {
          InitializeOrder initializeOrder1 = initializer.getClass().getAnnotation(InitializeOrder.class);
          return initializeOrder1 != null && Arrays.asList(initializeOrder1.type()).contains(initType);
@@ -30,10 +31,10 @@ public final class InitializationConst {
    }
 
    /**
-    * @return a {@link Comparator} which compares two {@link Initializer}s annotated with a
+    * @return a {@link Comparator} which compares two {@link InitializerForUser}s annotated with a
     * {@link InitializeOrder} according their order
     */
-   public static Comparator<Initializer> compareOrder() {
+   public static Comparator<InitializerForUser> compareOrder() {
       return (initializer1, initializer2) -> {
          InitializeOrder initializeOrder1 = initializer1.getClass().getAnnotation(InitializeOrder.class);
          InitializeOrder initializeOrder2 = initializer2.getClass().getAnnotation(InitializeOrder.class);

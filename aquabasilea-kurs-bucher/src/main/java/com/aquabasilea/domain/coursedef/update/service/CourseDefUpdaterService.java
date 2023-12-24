@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursedef.update.service;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.userconfig.model.UserConfig;
 import com.aquabasilea.service.userconfig.UserConfigService;
@@ -34,7 +34,7 @@ public class CourseDefUpdaterService {
     */
    public void updateAquabasileaCourses(String userId, List<CourseLocation> courseLocations) {
       userConfigService.updateCourseLocations(userId, courseLocations);
-      courseDefUpdater.updateAquabasileaCourses(userId);
+      courseDefUpdater.updateCourseDefs(userId);
    }
 
    /**

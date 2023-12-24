@@ -3,6 +3,8 @@ package com.aquabasilea.migrosapi.api.v1.service;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiBookCourseRequest;
 import com.aquabasilea.migrosapi.api.v1.model.book.response.MigrosApiCancelCourseResponse;
+import com.aquabasilea.migrosapi.api.v1.model.getcenters.request.MigrosApiGetCentersRequest;
+import com.aquabasilea.migrosapi.api.v1.model.getcenters.response.MigrosApiGetCentersResponse;
 import com.aquabasilea.migrosapi.api.v1.model.getcourse.request.MigrosApiGetCoursesRequest;
 import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiBookCourseResponse;
 import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosApiGetBookedCoursesResponse;
@@ -44,8 +46,17 @@ public interface MigrosApi {
    /**
     * Searches all courses which matches the criteria defined in the {@link MigrosApiGetCoursesRequest}
     *
+    * @param authenticationContainer    the {@link AuthenticationContainer} which defines credentials for a given user
     * @param migrosApiGetCoursesRequest the {@link MigrosApiGetCoursesRequest} which defines the search criteria for courses
     * @return a {@link MigrosApiGetCoursesResponse} with the result of the found courses
     */
-   MigrosApiGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest);
+   MigrosApiGetCoursesResponse getCourses(AuthenticationContainer authenticationContainer, MigrosApiGetCoursesRequest migrosApiGetCoursesRequest);
+
+   /**
+    * Searches all courses which matches the criteria defined in the {@link MigrosApiGetCoursesRequest}
+    *
+    * @param migrosApiGetCentersRequest the {@link MigrosApiGetCentersRequest} which defines the search criteria for centers
+    * @return a {@link MigrosApiGetCentersResponse} with the result of the found centers
+    */
+   MigrosApiGetCentersResponse getCenters(MigrosApiGetCentersRequest migrosApiGetCentersRequest);
 }

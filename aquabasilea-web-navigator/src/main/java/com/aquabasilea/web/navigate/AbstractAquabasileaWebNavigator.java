@@ -58,7 +58,7 @@ public abstract class AbstractAquabasileaWebNavigator extends BaseWebNavigator<A
       String coursePage = propertyReader.readValue(COURSE_PAGE);
       navigateToPage(coursePage);
       if (clickLoginButton) {
-         aquabasileaLoginHelper.clickLoginButton();
+         aquabasileaLoginHelper.navigateMemberareaAndClickLoginButton();
       }
       wait4Navigate2CoursePageCompleted();
    }

@@ -1,6 +1,6 @@
 package com.aquabasilea.persistence.courses;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.persistence.courselocation.CourseLocationEntity;
 import com.brugalibre.common.domain.persistence.DomainEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,9 +27,10 @@ public class CourseEntity extends DomainEntity {
 
    private boolean hasCourseDef;
 
-   @Enumerated(EnumType.STRING)
    @NotNull
-   private CourseLocation courseLocation;
+   @OneToOne(fetch = FetchType.EAGER)
+   @JoinColumn(name = "courselocation_id")
+   private CourseLocationEntity courseLocation;
 
    private boolean isPaused;
 
@@ -54,15 +55,6 @@ public class CourseEntity extends DomainEntity {
 
    public void setCourseDate(@NotNull LocalDateTime courseDate) {
       this.courseDate = courseDate;
-   }
-
-   @NotNull
-   public CourseLocation getCourseLocation() {
-      return courseLocation;
-   }
-
-   public void setCourseLocation(@NotNull CourseLocation courseLocation) {
-      this.courseLocation = courseLocation;
    }
 
    @NotNull
@@ -98,15 +90,35 @@ public class CourseEntity extends DomainEntity {
       this.courseInstructor = courseInstructor;
    }
 
+   public boolean isHasCourseDef() {
+      return hasCourseDef;
+   }
+
+   public CourseLocationEntity getCourseLocation() {
+      return courseLocation;
+   }
+
+   public void setCourseLocation(CourseLocationEntity courseLocation) {
+      this.courseLocation = courseLocation;
+   }
+
+   public boolean isPaused() {
+      return isPaused;
+   }
+
+   public void setPaused(boolean paused) {
+      isPaused = paused;
+   }
+
    @Override
    public String toString() {
       return "CourseEntity{" +
-              "weeklyCoursesEntity=" + weeklyCoursesEntity +
+              "weeklyCoursesEntity=" + weeklyCoursesEntity.getId() +
               ", courseName='" + courseName + '\'' +
               ", courseInstructor='" + courseInstructor + '\'' +
               ", courseDate='" + courseDate + '\'' +
               ", hasCourseDef=" + hasCourseDef +
-              ", courseLocation=" + courseLocation +
+              ", courseLocationEntity=" + courseLocation +
               ", isPaused=" + isPaused +
               '}';
    }
@@ -117,7 +129,10 @@ public class CourseEntity extends DomainEntity {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
       CourseEntity that = (CourseEntity) o;
-      return hasCourseDef == that.hasCourseDef && isPaused == that.isPaused && Objects.equals(weeklyCoursesEntity, that.weeklyCoursesEntity) && Objects.equals(courseName, that.courseName) && courseInstructor.equals(that.courseInstructor) && Objects.equals(courseDate, that.courseDate) && courseLocation == that.courseLocation;
+      return hasCourseDef == that.hasCourseDef && isPaused == that.isPaused &&
+              Objects.equals(weeklyCoursesEntity, that.weeklyCoursesEntity) && Objects.equals(courseName, that.courseName)
+              && courseInstructor.equals(that.courseInstructor)
+              && Objects.equals(courseDate, that.courseDate) && courseLocation == that.courseLocation;
    }
 
    @Override

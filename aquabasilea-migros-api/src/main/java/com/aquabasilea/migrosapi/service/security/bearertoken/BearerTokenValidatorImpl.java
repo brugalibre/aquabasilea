@@ -3,13 +3,13 @@ package com.aquabasilea.migrosapi.service.security.bearertoken;
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
 import com.aquabasilea.migrosapi.service.book.MigrosGetBookedCoursesResponseReader;
 import com.aquabasilea.migrosapi.api.v1.service.security.bearertoken.BearerTokenValidator;
+import com.aquabasilea.migrosapi.service.config.UrlConfig;
 import com.brugalibre.common.http.model.request.HttpRequest;
 import com.brugalibre.common.http.service.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOKING_URL;
-import static com.aquabasilea.migrosapi.service.MigrosApiConst.MIGROS_BOOK_COURSE_REQUEST_BODY;
+import static com.aquabasilea.migrosapi.service.config.MigrosApiConst.*;
 
 /**
  * This {@link BearerTokenValidatorImpl} uses the http-request and retrieves the booked courses as a validation
@@ -22,7 +22,7 @@ public class BearerTokenValidatorImpl implements BearerTokenValidator {
    private final HttpService httpService;
 
    public BearerTokenValidatorImpl(HttpService httpService) {
-      this(new BookCourseHelper(MIGROS_BOOKING_URL, MIGROS_BOOK_COURSE_REQUEST_BODY), httpService);
+      this(new BookCourseHelper(new UrlConfig("", GET_BOOKED_COURSES_URL, "", MIGROS_BOOK_COURSE_REQUEST_BODY, ""), ""), httpService);
    }
 
    public BearerTokenValidatorImpl(BookCourseHelper bookCourseHelper, HttpService httpService) {

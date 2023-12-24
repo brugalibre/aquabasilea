@@ -1,11 +1,13 @@
 package com.aquabasilea.web.login;
 
+import com.aquabasilea.web.bookcourse.impl.AquabasileaWebCourseBookerImpl;
 import com.zeiterfassung.web.common.inout.PropertyReader;
 import com.zeiterfassung.web.common.navigate.util.WebNavigateUtil;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.v117.network.Network;
-import org.openqa.selenium.devtools.v117.network.model.Request;
-import org.openqa.selenium.devtools.v117.network.model.RequestWillBeSent;
+import org.openqa.selenium.devtools.v120.network.Network;
+import org.openqa.selenium.devtools.v120.network.model.Request;
+import org.openqa.selenium.devtools.v120.network.model.RequestWillBeSent;
 import org.openqa.selenium.remote.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +16,11 @@ import org.slf4j.MDC;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.aquabasilea.web.constant.AquabasileaWebConst.LOGIN_FAILED_ERROR_MSG_ID;
 import static java.util.Objects.isNull;
 
-public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
+public class AquabasileaBearerTokenExtractor extends AquabasileaWebCourseBookerImpl {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaBearerTokenExtractor.class);
    private static final String OAUTH_2_USERINFO = "oauth2/userinfo";
@@ -35,7 +39,7 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
     * @param userName             the username
     * @param userPassword         the user-password
     * @param configPropertiesFile the properties file for the configuration
-    * @return a new {@link AquabasileaLogin}
+    * @return a new {@link AquabasileaBearerTokenExtractor}
     */
    public static AquabasileaBearerTokenExtractor createAquabasileaBearerTokenExtractor(String userName, char[] userPassword, String configPropertiesFile) {
       AquabasileaBearerTokenExtractor aquabasileaBearerTokenExtractor = new AquabasileaBearerTokenExtractor(userName, userPassword, configPropertiesFile);
@@ -53,8 +57,29 @@ public class AquabasileaBearerTokenExtractor extends AquabasileaLogin {
    public String extractBearerToken() {
       LOG.info("Start bearer token extraction");
       setUpDevTools();
-      super.doLogin();
+      doLogin();
       return bearerToken;
+   }
+
+   /**
+    * Tries a login.
+    *
+    * @return <code>true</code> if the login was successful or <code>false</code> if not
+    */
+   protected boolean doLogin() {
+      super.navigateToPageAndLogin();
+      if (isLoginFailed()) {
+         logout();
+         return false;
+      }
+      navigate2CoursePageInternal(true);
+      logout();
+      return true;
+   }
+
+   private boolean isLoginFailed() {
+      Optional<WebElement> errorMsg = this.webNavigatorHelper.findWebElementById(LOGIN_FAILED_ERROR_MSG_ID);
+      return errorMsg.isPresent();
    }
 
    @Override

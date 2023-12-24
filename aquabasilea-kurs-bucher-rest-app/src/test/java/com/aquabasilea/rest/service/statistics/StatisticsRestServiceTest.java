@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.management.RuntimeMXBean;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,7 +50,7 @@ class StatisticsRestServiceTest {
    @Test
    void createAndSaveStatistics() {
       // Given
-      Statistics statistics = new Statistics(userId);
+      Statistics statistics = new Statistics(userId, Clock.systemDefaultZone());
       statistics.setBookingSuccessfulCounter(1);
       statisticsRepository.save(statistics);
 

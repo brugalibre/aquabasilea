@@ -5,6 +5,8 @@ import com.aquabasilea.domain.statistics.model.StatisticsOverview;
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -12,13 +14,12 @@ import static org.mockito.Mockito.when;
 
 class StatisticsServiceTest {
 
-
     @Test
     void testGetStatisticsOverviewByUserId() {
 
         // Given
         String userId = "user";
-        Statistics statistics = new Statistics(userId);
+        Statistics statistics = new Statistics(userId, Clock.systemDefaultZone());
         StatisticsRepository statisticsRepository = getStatisticsRepository(userId, statistics);
         StatisticsService statisticsService = new StatisticsService(statisticsRepository);
 
@@ -54,7 +55,7 @@ class StatisticsServiceTest {
     }
 
     private static Statistics getStatistics(String userId) {
-        Statistics statistics = new Statistics(userId);
+        Statistics statistics = new Statistics(userId, Clock.systemDefaultZone());
         statistics.setBookingFailedCounter(4);
         statistics.setBookingSuccessfulCounter(8);
         return statistics;

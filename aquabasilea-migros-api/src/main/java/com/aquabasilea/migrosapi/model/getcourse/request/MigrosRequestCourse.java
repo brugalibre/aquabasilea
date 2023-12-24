@@ -3,7 +3,7 @@ package com.aquabasilea.migrosapi.model.getcourse.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * A {@link MigrosRequestCourse} represents a migros-course sending via the migros-api
+ * A {@link MigrosRequestCourse} is a internal representation of a migros-course sending via the migros-api
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MigrosRequestCourse {

@@ -6,10 +6,10 @@ import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResu
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOverview;
-import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookerEndResultDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
+import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,12 +21,13 @@ import java.util.stream.Collectors;
 public class AquabasileaCourseBookerRestService {
 
     private final AquabasileaCourseBookerService aquabasileaCourseBookerService;
-    private final LocaleProvider localeProvider;
+    private final CourseDtoMapper courseDtoMapper;
 
     @Autowired
-    public AquabasileaCourseBookerRestService(AquabasileaCourseBookerService aquabasileaCourseBookerService, LocaleProvider localeProvider) {
+    public AquabasileaCourseBookerRestService(AquabasileaCourseBookerService aquabasileaCourseBookerService,
+                                              CourseDtoMapper courseDtoMapper) {
         this.aquabasileaCourseBookerService = aquabasileaCourseBookerService;
-        this.localeProvider = localeProvider;
+        this.courseDtoMapper = courseDtoMapper;
     }
 
     public boolean isPaused(String userId) {
@@ -72,7 +73,7 @@ public class AquabasileaCourseBookerRestService {
         return aquabasileaCourseBookerService.getBookedCourses(userId)
                 .stream()
                 .sorted(new CourseComparator())
-                .map(course -> CourseDto.of(course, false, localeProvider.getCurrentLocale()))
+                .map(course -> courseDtoMapper.mapToCourseDto(course, false))
                 .collect(Collectors.toList());
     }
 

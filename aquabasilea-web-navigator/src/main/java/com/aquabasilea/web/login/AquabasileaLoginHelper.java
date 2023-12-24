@@ -14,8 +14,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 import static com.aquabasilea.web.constant.AquabasileaWebConst.*;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_BUTTON_TYPE;
-import static com.zeiterfassung.web.common.constant.BaseWebConst.HTML_DIV_TYPE;
+import static com.zeiterfassung.web.common.constant.BaseWebConst.*;
 
 public class AquabasileaLoginHelper {
 
@@ -53,14 +52,31 @@ public class AquabasileaLoginHelper {
     * If a {@link TimeoutException} occurs and we first log out and try to log in again. Sometimes a logout is not possible (since something is blocking the button)
     * In that case, a login is not necessary and also this click on the login-button
     */
-   public void clickLoginButton() {
-      LOG.info("Try to click Login button before navigating to course page");
-      By courseTableBy = WebNavigateUtil.createXPathBy(HTML_DIV_TYPE, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_NAME, WEB_ELEMENT_COURSE_RESULTS_CONTENT_ATTR_VALUE);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear);
-      Optional<WebElement> nowLogInButtonOpt = this.aquabasileaNavigatorHelper.findWebElementByNameTagNameAndValue(null, HTML_BUTTON_TYPE, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT);
+   public void navigateMemberareaAndClickLoginButton() {
+      LOG.info("Try Login before navigating to course page");
       ErrorHandlerImpl errorHandler = new ErrorHandlerImpl();
-      buttonClickHelper.clickButtonOrHandleErrorRecursively(() -> nowLogInButtonOpt, errorHandler::handleElementNotFound, WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID, 1);
-      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(courseTableBy, waitForCourseTableToAppear);
+      navigateToMemberarea(errorHandler);
+      clickLoginButton(errorHandler);
+   }
+
+   private void clickLoginButton(ErrorHandlerImpl errorHandler) {
+      By anmeldenBy = By.xpath("//button[contains(text(), 'Anmelden')]");
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(anmeldenBy, waitForCourseTableToAppear);
+      Optional<WebElement> anmeldenButtonOpt = this.aquabasileaNavigatorHelper.findWebElementBy(null, anmeldenBy);
+      buttonClickHelper.clickButtonOrHandleErrorRecursively(() -> anmeldenButtonOpt, errorHandler::handleElementNotFound, "Anmelden-Button", 1);
+
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(By.linkText("Memberbereich"), waitForCourseTableToAppear);
+   }
+
+   /*
+    * Click on 'Memberbereich' so we navigate to the login area
+    */
+   private void navigateToMemberarea(ErrorHandlerImpl errorHandler) {
+      By memberareaBy = By.linkText("Memberbereich");
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(memberareaBy, waitForCourseTableToAppear);
+      Optional<WebElement> nowLogInButtonOpt = this.aquabasileaNavigatorHelper.findWebElementBy(null, memberareaBy);
+      buttonClickHelper.clickButtonOrHandleErrorRecursively(() -> nowLogInButtonOpt, errorHandler::handleElementNotFound, "Memberbereich-Button", 1);
+      this.aquabasileaNavigatorHelper.waitForVisibilityOfElement(memberareaBy, waitForCourseTableToAppear);
    }
 
    /**

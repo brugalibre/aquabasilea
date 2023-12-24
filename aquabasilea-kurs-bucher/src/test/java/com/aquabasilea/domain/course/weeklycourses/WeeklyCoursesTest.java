@@ -1,9 +1,10 @@
 package com.aquabasilea.domain.course.weeklycourses;
 
+import com.aquabasilea.domain.course.exception.CourseAlreadyExistsException;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
-import com.aquabasilea.domain.course.exception.CourseAlreadyExistsException;
+import com.aquabasilea.test.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -58,6 +59,7 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .build()));
 
       // When
@@ -65,6 +67,7 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .build());
 
       // Then
@@ -83,6 +86,7 @@ class WeeklyCoursesTest {
       weeklyCourses.setCourses(List.of(CourseBuilder.builder()
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
+              .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .withId(courseId)
               .build()));
 
@@ -90,6 +94,7 @@ class WeeklyCoursesTest {
       Executable ex = () -> weeklyCourses.addCourse(CourseBuilder.builder()
               .withCourseName(COURSE_1)
               .withCourseDate(courseDateAWeekAhead)
+              .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .withId(UUID.randomUUID().toString())
               .build());
 

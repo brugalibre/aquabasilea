@@ -1,4 +1,4 @@
-const COURSE_OVERVIEW_PATH = "/migros-kurs-bucher";
+const COURSE_OVERVIEW_PATH = "/activfitness-kurs-bucher";
 const LOGIN_PATH = COURSE_OVERVIEW_PATH + "/login";
 const REGISTER_PATH = COURSE_OVERVIEW_PATH + "/register";
 const ADMIN_PATH = COURSE_OVERVIEW_PATH + "/admin";

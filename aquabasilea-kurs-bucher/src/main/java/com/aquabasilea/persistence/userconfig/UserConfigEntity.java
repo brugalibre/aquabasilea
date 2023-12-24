@@ -1,11 +1,9 @@
 package com.aquabasilea.persistence.userconfig;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.persistence.courselocation.CourseLocationEntity;
 import com.brugalibre.common.domain.persistence.DomainEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import java.util.List;
 
@@ -17,10 +15,9 @@ public class UserConfigEntity extends DomainEntity {
    @Column(name = "user_id")
    private String userId;
 
-   @ElementCollection
-   @Enumerated(value = EnumType.STRING)
-   @LazyCollection(LazyCollectionOption.FALSE)
-   private List<CourseLocation> courseLocations;
+   @NotNull
+   @OneToMany(fetch = FetchType.EAGER)
+   private List<CourseLocationEntity> courseLocations;
 
    public UserConfigEntity() {
       super(null);
@@ -34,11 +31,11 @@ public class UserConfigEntity extends DomainEntity {
       this.userId = userId;
    }
 
-   public List<CourseLocation> getCourseLocations() {
+   public List<CourseLocationEntity> getCourseLocations() {
       return courseLocations;
    }
 
-   public void setCourseLocations(List<CourseLocation> courseLocations) {
+   public void setCourseLocations(List<CourseLocationEntity> courseLocations) {
       this.courseLocations = courseLocations;
    }
 }

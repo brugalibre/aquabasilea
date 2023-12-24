@@ -1,7 +1,6 @@
 package com.aquabasilea.domain.coursebooker.config;
 
-import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerType;
-import com.aquabasilea.domain.coursedef.update.facade.CourseDefExtractorType;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerType;
 import com.brugalibre.util.config.yml.YmlConfig;
 import com.brugalibre.util.file.yml.YamlService;
 
@@ -37,8 +36,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
 
    private Duration maxBookerStartDelay;
    private int daysToBookCourseEarlier;
-   private CourseDefExtractorType courseDefExtractorType;
-   private AquabasileaCourseBookerType aquabasileaCourseBookerType;
+   private CourseBookerType courseBookerType;
 
    protected AquabasileaCourseBookerConfig() {
       // Only for yaml-services
@@ -82,8 +80,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       this.durationToStartBookerEarlier = DURATION_TO_START_BOOKER_EARLIER;
       this.durationToStartDryRunEarlier = DURATION_TO_START_DRY_RUN_EARLIER;
       this.daysToBookCourseEarlier = DAYS_TO_BOOK_COURSE_EARLIER;
-      this.courseDefExtractorType = CourseDefExtractorType.AQUABASILEA_WEB;
-      this.aquabasileaCourseBookerType = AquabasileaCourseBookerType.AQUABASILEA_WEB;
+      this.courseBookerType = CourseBookerType.MIGROS_API;
    }
 
    /**
@@ -97,11 +94,8 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
 
    private void readConfigFromFile() {
       AquabasileaCourseBookerConfig externalReadConfig = YAML_SERVICE.readYamlIgnoreMissingFile(courseConfigFile, getClass());
-      if (nonNull(externalReadConfig.getCourseDefExtractorType())) {
-         this.courseDefExtractorType = externalReadConfig.courseDefExtractorType;
-      }
       if (nonNull(externalReadConfig.getAquabasileaCourseBookerType())) {
-         this.aquabasileaCourseBookerType = externalReadConfig.aquabasileaCourseBookerType;
+         this.courseBookerType = externalReadConfig.courseBookerType;
       }
       if (nonNull(externalReadConfig.secondsToStartBookerEarlier)) {
          this.durationToStartBookerEarlier = Duration.ofSeconds(externalReadConfig.secondsToStartBookerEarlier);
@@ -109,14 +103,6 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       if (nonNull(externalReadConfig.minutesToStartDryRunEarlier)) {
          this.durationToStartDryRunEarlier = Duration.ofMinutes(externalReadConfig.minutesToStartDryRunEarlier);
       }
-   }
-
-   public CourseDefExtractorType getCourseDefExtractorType() {
-      return courseDefExtractorType;
-   }
-
-   public void setCourseDefExtractorType(CourseDefExtractorType courseDefExtractorType) {
-      this.courseDefExtractorType = courseDefExtractorType;
    }
 
    /**
@@ -144,12 +130,12 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
       this.secondsToStartBookerEarlier = secondsToStartBookerEarlier;
    }
 
-   public AquabasileaCourseBookerType getAquabasileaCourseBookerType() {
-      return aquabasileaCourseBookerType;
+   public CourseBookerType getAquabasileaCourseBookerType() {
+      return courseBookerType;
    }
 
-   public void setAquabasileaCourseBookerType(AquabasileaCourseBookerType aquabasileaCourseBookerType) {
-      this.aquabasileaCourseBookerType = aquabasileaCourseBookerType;
+   public void setAquabasileaCourseBookerType(CourseBookerType courseBookerType) {
+      this.courseBookerType = courseBookerType;
    }
 
    public void setMaxBookerStartDelay(Duration maxBookerStartDelay) {
@@ -170,8 +156,7 @@ public class AquabasileaCourseBookerConfig implements YmlConfig {
               ", durationToStartBookerEarlier=" + durationToStartBookerEarlier +
               ", courseConfigFile='" + courseConfigFile + '\'' +
               ", daysToBookCourseEarlier=" + daysToBookCourseEarlier +
-              ", courseDefExtractorType=" + courseDefExtractorType +
-              ", aquabasileaCourseBookerType=" + aquabasileaCourseBookerType +
+              ", aquabasileaCourseBookerType=" + courseBookerType +
               '}';
    }
 }

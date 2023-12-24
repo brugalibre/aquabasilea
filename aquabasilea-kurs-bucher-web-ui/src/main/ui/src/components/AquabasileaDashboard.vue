@@ -58,8 +58,8 @@ export default {
   data() {
     return {
       loginPath: RouterConstants.LOGIN_PATH,
-      applicationTitle: 'Migros-Kurs Bucher',
-      stagingMsg: 'Migros-Kurs-Bucher Webapplikation',
+      applicationTitle: 'ACTIV Fitness Bucher',
+      stagingMsg: 'ACTIV Fitness Kurs-Bucher Webapplikation',
       courseStateOverviewRefreshKey: 0,
       weeklyCoursesRefreshKey: 0,
       bookedCoursesRefreshKey: 0,

@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.userconfig.model;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.brugalibre.common.domain.model.AbstractDomainModel;
 
 import java.util.List;
@@ -10,7 +10,6 @@ import java.util.Objects;
  * The {@link UserConfig} contains the users personal configuration
  */
 public class UserConfig extends AbstractDomainModel {
-   private String id;
    private String userId;
    private List<CourseLocation> courseLocations;
 

@@ -47,7 +47,7 @@
             </td>
             <td class="table-cell">
               <label>
-                {{ course.courseLocationDto.courseLocationName }}
+                {{ course.courseLocationDto.name }}
               </label>
             </td>
             <td class="table-cell">

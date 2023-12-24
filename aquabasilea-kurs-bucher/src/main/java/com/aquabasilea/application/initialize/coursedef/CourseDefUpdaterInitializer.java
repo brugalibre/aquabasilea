@@ -2,8 +2,8 @@ package com.aquabasilea.application.initialize.coursedef;
 
 import com.aquabasilea.application.initialize.common.InitType;
 import com.aquabasilea.application.initialize.common.InitializeOrder;
-import com.aquabasilea.application.initialize.api.Initializer;
-import com.aquabasilea.application.initialize.api.UserAddedEvent;
+import com.aquabasilea.application.initialize.api.user.InitializerForUser;
+import com.aquabasilea.application.initialize.api.user.UserAddedEvent;
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import static com.aquabasilea.application.initialize.common.InitializationConst.
 
 @Service
 @InitializeOrder(order = COURSE_DEF_UPDATER, type = {InitType.USER_ADDED, InitType.USER_ACTIVATED})
-public class CourseDefUpdaterInitializer implements Initializer {
+public class CourseDefUpdaterInitializer implements InitializerForUser {
    private final CourseDefUpdater courseDefUpdater;
 
    @Autowired

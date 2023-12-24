@@ -2,7 +2,7 @@ package com.aquabasilea.application.security.service.login;
 
 import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.course.model.Course;
-import com.aquabasilea.web.login.AquabasileaLogin;
+import com.aquabasilea.web.login.AquabasileaBearerTokenExtractor;
 import com.brugalibre.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +25,15 @@ import java.util.function.BiFunction;
 public class AquabasileaLoginService {
 
    private static final Logger LOG = LoggerFactory.getLogger(AquabasileaLoginService.class);
-   private final BiFunction<String, char[], AquabasileaLogin> aquabasileaLoginSupplier;
+   private final BiFunction<String, char[], AquabasileaBearerTokenExtractor> aquabasileaLoginSupplier;
    private static final int RETRIES = 3;
 
    @Autowired
    public AquabasileaLoginService(@Value("${application.configuration.course-booker-config}") String propertiesFile) {
-      this((username, pwd) -> AquabasileaLogin.createAquabasileaLogin(username, pwd, propertiesFile));
+      this((username, pwd) -> AquabasileaBearerTokenExtractor.createAquabasileaBearerTokenExtractor(username, pwd, propertiesFile));
    }
 
-   public AquabasileaLoginService(BiFunction<String, char[], AquabasileaLogin> aquabasileaLoginSupplier) {
+   public AquabasileaLoginService(BiFunction<String, char[], AquabasileaBearerTokenExtractor> aquabasileaLoginSupplier) {
       this.aquabasileaLoginSupplier = aquabasileaLoginSupplier;
    }
 
@@ -46,8 +46,8 @@ public class AquabasileaLoginService {
     * @throws CredentialsNotValidException if the provided credentials are not valid
     */
    public boolean validateCredentials(String username, char[] password) {
-      AquabasileaLogin aquabasileaLogin = aquabasileaLoginSupplier.apply(username, password);
-      boolean isLoggedIn = tryLoginRecursively(aquabasileaLogin);
+      AquabasileaBearerTokenExtractor bearerTokenExtractor = aquabasileaLoginSupplier.apply(username, password);
+      boolean isLoggedIn = tryLoginRecursively(bearerTokenExtractor);
       if (!isLoggedIn) {
          LOG.error("Could not verify login infos!");
          throw new CredentialsNotValidException(TextResources.MIGROS_FITNESS_CREDENTIALS_NOT_VALID.formatted(username));
@@ -58,15 +58,15 @@ public class AquabasileaLoginService {
    /*
     * Yes this has to be done recursively, since the browser-start may fail under ubuntu..
     */
-   private static boolean tryLoginRecursively(AquabasileaLogin aquabasileaLogin) {
+   private static boolean tryLoginRecursively(AquabasileaBearerTokenExtractor bearerTokenExtractor) {
       int counter = RETRIES;
       while (counter > 0) {
          try {
             sleep();
-            return aquabasileaLogin.doLogin();
+            return bearerTokenExtractor.extractBearerToken() != null;
          } catch (Exception e) {
             LOG.error("Error during login!", e);
-            tryLogout(aquabasileaLogin);
+            tryLogout(bearerTokenExtractor);
             counter--;
          }
       }
@@ -83,7 +83,7 @@ public class AquabasileaLoginService {
       }
    }
 
-   private static void tryLogout(AquabasileaLogin aquabasileaLogin) {
+   private static void tryLogout(AquabasileaBearerTokenExtractor aquabasileaLogin) {
       try {
          aquabasileaLogin.logout();
       } catch (Exception e) {

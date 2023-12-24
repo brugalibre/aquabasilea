@@ -1,7 +1,6 @@
 package com.aquabasilea.domain.userconfig.model;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
-import com.brugalibre.domain.user.model.User;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 
 import java.util.List;
 
@@ -14,9 +13,7 @@ public class DefaultUserConfig {
    }
 
    /**
-    * The default {@link CourseLocation}s for each {@link User}
+    * The center-ids of the defalut {@link CourseLocation}s
     */
-   public static final List<CourseLocation> COURSE_LOCATIONS = List.of(CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA,
-           CourseLocation.FITNESSPARK_HEUWAAGE,
-           CourseLocation.MIGROS_FITNESSCENTER_FRENKENDORF);
+   public static final List<String> DEFAULT_COURSE_LOCATION_CENTER_IDS = List.of("139", "16");
 }

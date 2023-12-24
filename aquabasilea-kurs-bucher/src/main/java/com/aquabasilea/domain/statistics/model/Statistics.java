@@ -2,23 +2,34 @@ package com.aquabasilea.domain.statistics.model;
 
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdaterScheduler;
 import com.brugalibre.common.domain.model.AbstractDomainModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
 
 public class Statistics extends AbstractDomainModel {
+   private static final Logger LOG = LoggerFactory.getLogger(Statistics.class);
+
+   private final Clock clock;
    private String userId;
    private LocalDateTime lastCourseDefUpdate;
    private LocalDateTime nextCourseDefUpdate;
    private int bookingFailedCounter;
    private int bookingSuccessfulCounter;
 
-   public Statistics(String userId) {
+   public Statistics() {
+      this(null, Clock.systemDefaultZone());
+   }
+
+   public Statistics(String userId, Clock clock) {
       this.userId = userId;
+      this.clock = clock;
    }
 
    /**
@@ -42,9 +53,15 @@ public class Statistics extends AbstractDomainModel {
       return bookingSuccessfulCounterBD.divide(totalBookingCounterBD, 3, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).doubleValue();
    }
 
+   /**
+    * The last update is too old when the difference in days is either greater than the update-cycle in days or when this
+    * difference is negative
+    */
    private boolean lastUpdateIsTooOld() {
       Duration courseDefUpdateCycle = CourseDefUpdaterScheduler.getCourseDefUpdateCycle();
-      return (LocalDateTime.now().getDayOfYear() - this.lastCourseDefUpdate.getDayOfYear()) >= courseDefUpdateCycle.toDays();
+      int daysBetweenLastUpdate = LocalDateTime.now(clock).getDayOfYear() - this.lastCourseDefUpdate.getDayOfYear();
+      LOG.info("Days between last update={}", daysBetweenLastUpdate);
+      return daysBetweenLastUpdate < 0 || daysBetweenLastUpdate >= courseDefUpdateCycle.toDays();
    }
 
    public LocalDateTime getLastCourseDefUpdate() {
@@ -76,7 +93,6 @@ public class Statistics extends AbstractDomainModel {
    }
 
    /**
-    *
     * @return the total amount of bookings
     */
    public int getTotalBookingsCounter() {

@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.coursedef.model;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.brugalibre.common.domain.model.DomainModel;
 
 import java.time.LocalDateTime;

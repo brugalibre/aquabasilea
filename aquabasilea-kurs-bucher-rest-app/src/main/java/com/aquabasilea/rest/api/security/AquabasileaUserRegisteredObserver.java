@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.api.security;
 
 import com.aquabasilea.application.initialize.api.AquabasileaAppInitializer;
-import com.aquabasilea.application.initialize.api.UserAddedEvent;
+import com.aquabasilea.application.initialize.api.user.UserAddedEvent;
 import com.brugalibre.common.security.auth.register.UserRegisteredEvent;
 import com.brugalibre.common.security.auth.register.UserRegisteredObserver;
 import com.brugalibre.common.security.user.model.User;

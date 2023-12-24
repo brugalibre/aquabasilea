@@ -12,9 +12,8 @@ export default {
         }
     },
     methods: {
-        fetchCourseDefDtos: function (filter, onErrorCallback) {
-            console.log('Get courses for filter \'' + filter + '\'');
-            axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/courseDefDtos4Filter/' + filter, {headers: authHeader()})
+        fetchCourseDefDtos: function (onErrorCallback) {
+            axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/coursedef/courseDefDtos4Filter', {headers: authHeader()})
                 .then(response => response.data)
                 .then(data => store.dispatch('aquabasilea/setCourseDefDtos', data))
                 .catch(error => {
