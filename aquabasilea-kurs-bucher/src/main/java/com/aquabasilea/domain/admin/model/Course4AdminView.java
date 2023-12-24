@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.admin.model;
 
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.course.model.Course;
 import com.brugalibre.domain.user.model.User;
 

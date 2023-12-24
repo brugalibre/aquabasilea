@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.coursedef.update.service;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.userconfig.model.UserConfig;
 import com.aquabasilea.service.userconfig.UserConfigService;

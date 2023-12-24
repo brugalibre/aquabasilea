@@ -9,6 +9,8 @@ import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.service.statistics.StatisticsService;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -91,7 +93,7 @@ class BookingStatisticsUpdaterTest {
 
    private static StatisticsRepository getStatisticsRepository() {
       StatisticsRepository statisticsRepository = mock(StatisticsRepository.class);
-      when(statisticsRepository.getByUserId(CONSUMER_USER.userId())).thenReturn(new Statistics(CONSUMER_USER.userId()));
+      when(statisticsRepository.getByUserId(CONSUMER_USER.userId())).thenReturn(new Statistics(CONSUMER_USER.userId(), Clock.systemDefaultZone()));
       return statisticsRepository;
    }
 

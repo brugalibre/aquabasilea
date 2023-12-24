@@ -3,7 +3,8 @@ package com.aquabasilea.domain.coursebooker;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.course.service.WeeklyCoursesUpdater;
-import com.aquabasilea.domain.coursebooker.booking.facade.AquabasileaCourseBookerFacadeFactory;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacade;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
@@ -11,7 +12,7 @@ import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.states.booking.BookingStateHandler;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.ConsumerUser;
 import com.aquabasilea.domain.coursebooker.states.booking.consumer.CourseBookingEndResultConsumer;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseDefExtractorFacade;
 import com.aquabasilea.domain.coursebooker.states.callback.CourseBookingStateChangedHandler;
 import com.aquabasilea.domain.coursebooker.model.state.idle.IdleContext;
 import com.aquabasilea.domain.coursebooker.states.idle.IdleStateHandler;
@@ -20,6 +21,7 @@ import com.aquabasilea.domain.coursebooker.states.init.InitStateHandler;
 import com.aquabasilea.domain.coursebooker.model.state.init.InitializationResult;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.application.security.model.UserContext;
 import com.aquabasilea.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static com.aquabasilea.domain.coursebooker.model.state.CourseBookingState.*;
 import static java.util.Objects.isNull;
@@ -43,7 +44,7 @@ public class AquabasileaCourseBooker {
    private CourseBookingState state;
    private InitializationResult initializationResult;
 
-   private final AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade;
+   private final CourseBookerFacade courseBookerFacade;
    private final BookingStateHandler bookingStateHandler;
    private InitStateHandler initStateHandler;
    private IdleStateHandler idleStateHandler;
@@ -60,14 +61,14 @@ public class AquabasileaCourseBooker {
     * @param weeklyCoursesRepository              the {@link WeeklyCoursesRepository}
     * @param courseDefRepository                  the {@link CourseDefRepository}
     * @param aquabasileaCourseBookerConfig        the {@link AquabasileaCourseBookerConfig}
-    * @param aquabasileaCourseBookerFacadeFactory the {@link AquabasileaCourseBookerFacadeFactory} in order to create a
-    *                                             {@link AquabasileaCourseBookerFacade} which then implements the actual booking
+    * @param courseBookerFacadeFactory the {@link CourseBookerFacadeFactory} in order to create a
+    *                                             {@link CourseDefExtractorFacade} which then implements the actual booking
     */
    public AquabasileaCourseBooker(UserContext userContext, WeeklyCoursesRepository weeklyCoursesRepository, CourseDefRepository courseDefRepository,
                                   AquabasileaCourseBookerConfig aquabasileaCourseBookerConfig,
-                                  AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory) {
-      this.aquabasileaCourseBookerFacade = getAquabasileaCourseBookerFacade(aquabasileaCourseBookerFacadeFactory, userContext);
-      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, aquabasileaCourseBookerFacade);
+                                  CourseBookerFacadeFactory courseBookerFacadeFactory) {
+      this.courseBookerFacade = getCourseBookerFacade(courseBookerFacadeFactory, userContext.id());
+      this.bookingStateHandler = new BookingStateHandler(weeklyCoursesRepository, courseBookerFacade);
       this.userContext = userContext;
       init(aquabasileaCourseBookerConfig, weeklyCoursesRepository, courseDefRepository, aquabasileaCourseBookerConfig.getMaxBookerStartDelay());
    }
@@ -102,7 +103,7 @@ public class AquabasileaCourseBooker {
     */
    public void pauseOrResume() {
       if (isPaused()) {
-         this.weeklyCoursesUpdater.resumeAllCoursesIfAllPaused(this.userContext.id);
+         this.weeklyCoursesUpdater.resumeAllCoursesIfAllPaused(this.userContext.id());
       }
       if (isIdle() || isPaused()) {
          setState(isIdle() ? PAUSED : INIT);
@@ -136,7 +137,7 @@ public class AquabasileaCourseBooker {
     * @return a {@link CourseBookingResultDetails} with details about the booking
     */
    public CourseBookingResultDetails bookCourse(CourseBookingState courseBookingState, String courseId, boolean withNotification) {
-      CourseBookingResultDetails courseBookingResultDetails = bookingStateHandler.bookCourse(userContext.id, courseId, courseBookingState);
+      CourseBookingResultDetails courseBookingResultDetails = bookingStateHandler.bookCourse(userContext.id(), courseId, courseBookingState);
       if (withNotification) {
          notifyResult2Consumers(courseBookingResultDetails, courseBookingState);
       }
@@ -150,7 +151,7 @@ public class AquabasileaCourseBooker {
          case PAUSED -> pauseApp();
          case IDLE_BEFORE_BOOKING, IDLE_BEFORE_DRY_RUN -> handleIdleState();
          case BOOKING, BOOKING_DRY_RUN -> {
-            CourseBookingResultDetails courseBookingResultDetails = bookingStateHandler.bookCourse(userContext.id, getCurrentCourse(), state);
+            CourseBookingResultDetails courseBookingResultDetails = bookingStateHandler.bookCourse(userContext.id(), getCurrentCourse(), state);
             notifyResult2Consumers(courseBookingResultDetails, this.state);
             getNextState();
          }
@@ -164,18 +165,18 @@ public class AquabasileaCourseBooker {
    }
 
    private void pauseApp() {
-      IdleContext idleContext = IdleContext.isPaused(userContext);
+      IdleContext idleContext = IdleContext.getAsPaused();
       IdleStateResult idleStateResult = idleStateHandler.handleIdleState(idleContext);
       setState(idleStateResult.nextState());
    }
 
    private void handleInitializeState() {
-      this.initializationResult = initStateHandler.evaluateNextCourseAndState(userContext.id);
+      this.initializationResult = initStateHandler.evaluateNextCourseAndState(userContext.id());
       weeklyCoursesUpdater.updateCoursesHasCourseDef(initializationResult.getUpdatedWeeklyCourses());
       setState(initializationResult.getNextCourseBookingState());
    }
    private void handleIdleState() {
-      IdleContext idleContext = IdleContext.of(initializationResult.getDurationUtilDryRunOrBookingBegin(), state, userContext);
+      IdleContext idleContext = IdleContext.of(initializationResult.getDurationUtilDryRunOrBookingBegin(), state);
       IdleStateResult idleStateResult = idleStateHandler.handleIdleState(idleContext);
       // is we are paused, don't change it
       if (state != PAUSED) {
@@ -223,11 +224,11 @@ public class AquabasileaCourseBooker {
    }
 
    public List<Course> getBookedCourses() {
-      return aquabasileaCourseBookerFacade.getBookedCourses();
+      return courseBookerFacade.getBookedCourses();
    }
 
    public CourseCancelResult cancelBookedCourse(String bookingId) {
-      return aquabasileaCourseBookerFacade.cancelCourses(bookingId);
+      return courseBookerFacade.cancelCourses(bookingId);
    }
 
    private void setState(CourseBookingState newtState) {
@@ -239,23 +240,7 @@ public class AquabasileaCourseBooker {
       }
    }
 
-   private AquabasileaCourseBookerFacade getAquabasileaCourseBookerFacade(AquabasileaCourseBookerFacadeFactory aquabasileaCourseBookerFacadeFactory, UserContext userContext) {
-      return aquabasileaCourseBookerFacadeFactory.createNewAquabasileaCourseBookerFacade(userContext.username(), userContext.userPwdSupplier,
-              this::getDurationLeftBeforeCourseBecomesBookableSupplier);
-   }
-
-   /**
-    * {@link UserContext} is used to provide the {@link AquabasileaCourseBooker} an username and password for browser authentication
-    *
-    * @param id              the id
-    * @param username        the username
-    * @param phoneNr         the phoneNr
-    * @param userPwdSupplier a {@link Supplier} which always provides a fresh instance of the password, even if it has been changed
-    */
-   public record UserContext(String id, String username, String phoneNr, Supplier<char[]> userPwdSupplier) {
-      @Override
-      public String toString() {
-         return "user-id=" + id;
-      }
+   private CourseBookerFacade getCourseBookerFacade(CourseBookerFacadeFactory courseBookerFacadeFactory, String userId) {
+      return courseBookerFacadeFactory.createCourseBookerFacade(userId, this::getDurationLeftBeforeCourseBecomesBookableSupplier);
    }
 }

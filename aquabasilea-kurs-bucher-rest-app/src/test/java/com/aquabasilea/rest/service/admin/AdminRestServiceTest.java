@@ -1,7 +1,6 @@
 package com.aquabasilea.rest.service.admin;
 
 import com.aquabasilea.domain.course.model.Course;
-import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.domain.statistics.model.Statistics;
@@ -22,9 +21,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.aquabasilea.test.TestConst.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -124,7 +125,7 @@ class AdminRestServiceTest {
 
    private static Course buildCourse(String courseName) {
       return Course.CourseBuilder.builder()
-              .withCourseLocation(CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
               .withCourseInstructor("Petra")
               .withCourseName(courseName)
               .withCourseDate(LocalDateTime.now())
@@ -132,7 +133,7 @@ class AdminRestServiceTest {
    }
 
    private void createStatistics(String userId, int bookingSuccessfulCounter, int bookingFailedCounter) {
-      Statistics statistics = new Statistics(userId);
+      Statistics statistics = new Statistics(userId, Clock.systemDefaultZone());
       statistics.setBookingSuccessfulCounter(bookingSuccessfulCounter);
       statistics.setBookingFailedCounter(bookingFailedCounter);
       statisticsRepository.save(statistics);

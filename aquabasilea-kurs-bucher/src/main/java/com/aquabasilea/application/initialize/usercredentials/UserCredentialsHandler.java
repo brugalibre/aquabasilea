@@ -2,8 +2,8 @@ package com.aquabasilea.application.initialize.usercredentials;
 
 import com.aquabasilea.application.initialize.common.InitType;
 import com.aquabasilea.application.initialize.common.InitializeOrder;
-import com.aquabasilea.application.initialize.api.Initializer;
-import com.aquabasilea.application.initialize.api.UserAddedEvent;
+import com.aquabasilea.application.initialize.api.user.InitializerForUser;
+import com.aquabasilea.application.initialize.api.user.UserAddedEvent;
 import com.aquabasilea.application.security.securestorage.WriteSecretToKeyStore;
 import com.aquabasilea.application.security.service.login.AquabasileaLoginService;
 import com.aquabasilea.web.bookcourse.AquabasileaWebCourseBooker;
@@ -24,7 +24,7 @@ import static com.aquabasilea.application.initialize.common.InitializationConst.
  */
 @Service
 @InitializeOrder(order = USER_CREDENTIALS, type = {InitType.USER_ADDED})
-public class UserCredentialsHandler implements Initializer {
+public class UserCredentialsHandler implements InitializerForUser {
 
    private final WriteSecretToKeyStore writeSecretToKeyStore;
    private final AquabasileaLoginService aquabasileaLoginService;

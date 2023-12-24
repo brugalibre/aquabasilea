@@ -10,7 +10,7 @@ import java.util.Objects;
 import static java.util.Objects.nonNull;
 
 /**
- * A {@link MigrosResponseCourse} represents a migros-course when receiving a course via the migros-api
+ * A {@link MigrosResponseCourse} represents a migros-course which is received by the migros-api
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)

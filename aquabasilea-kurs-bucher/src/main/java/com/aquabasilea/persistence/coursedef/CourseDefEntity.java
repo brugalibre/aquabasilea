@@ -1,6 +1,6 @@
 package com.aquabasilea.persistence.coursedef;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.persistence.courselocation.CourseLocationEntity;
 import com.brugalibre.common.domain.persistence.DomainEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -25,9 +25,10 @@ public class CourseDefEntity extends DomainEntity {
    @NotNull
    private LocalDateTime courseDate;
 
-   @Enumerated(EnumType.STRING)
    @NotNull
-   private CourseLocation courseLocation;
+   @OneToOne(fetch = FetchType.EAGER)
+   @JoinColumn(name = "courselocation_id")
+   private CourseLocationEntity courseLocation;
 
    @NotNull
    public String getUserId() {
@@ -86,12 +87,12 @@ public class CourseDefEntity extends DomainEntity {
    }
 
    @NotNull
-   public CourseLocation getCourseLocation() {
+   public CourseLocationEntity getCourseLocation() {
       return courseLocation;
    }
 
-   public void setCourseLocation(@NotNull CourseLocation courseLocation) {
-      this.courseLocation = courseLocation;
+   public void setCourseLocation(CourseLocationEntity courseLocationEntity) {
+      this.courseLocation = courseLocationEntity;
    }
 
    public String getCourseInstructor() {

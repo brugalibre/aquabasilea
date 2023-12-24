@@ -1,4 +1,4 @@
-# Migros-Kurs-Bucher:
+# ACTIV Fitness-Kurs-Bucher:
 
 Dies ist eine App, welche zeitgesteuert und voll automatisch das Buchen von Sportkursen von Aquabasilea / Migros übernimmt. 
 Dabei handelt es sich um eine Standalone Java-Spring-Boot Applikation mit einer Rest-API. Der Kursbucher ist unter

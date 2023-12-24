@@ -11,27 +11,21 @@ import java.security.KeyStore;
 @Service
 public class SecretStoreService {
 
-   @Value("${application.security.keyStorePassword}")
-   private String keyStorePassword;
-
-   @Value("${application.security.aquabasileaKeyStoreName}")
-   private String aquabasileaKeyStoreName;
+   private final String keyStorePassword;
+   private final String aquabasileaKeyStoreName;
 
    private final SecretFromKeyStoreReader secretFromKeyStoreReader;
 
    /**
-    * Constructor for testing purpose only!
+    * Default constructor of the {@link SecretStoreService}
     *
     * @param keyStorePassword        the password of the key-storage
     * @param aquabasileaKeyStoreName the name/path of the key-storage
     */
-   public SecretStoreService(String keyStorePassword, String aquabasileaKeyStoreName) {
+   public SecretStoreService(@Value("${application.security.keyStorePassword}") String keyStorePassword,
+                             @Value("${application.security.aquabasileaKeyStoreName}") String aquabasileaKeyStoreName) {
       this.keyStorePassword = keyStorePassword;
       this.aquabasileaKeyStoreName = aquabasileaKeyStoreName;
-      this.secretFromKeyStoreReader = new SecretFromKeyStoreReader();
-   }
-
-   public SecretStoreService() {
       this.secretFromKeyStoreReader = new SecretFromKeyStoreReader();
    }
 

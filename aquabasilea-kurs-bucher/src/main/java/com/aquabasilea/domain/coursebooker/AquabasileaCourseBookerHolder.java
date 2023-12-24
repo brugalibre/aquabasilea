@@ -26,6 +26,10 @@ public class AquabasileaCourseBookerHolder {
       return requireNonNull(userId2AquabasileaCourseBookerMap.get(userId), "No AquabasileaCourseBooker registered for user id '" + userId + "'!");
    }
 
+   public void removeForUserId(String userId) {
+      userId2AquabasileaCourseBookerMap.remove(userId);
+   }
+
    /**
     * @return an unmodifiable map of all user-ids and their {@link AquabasileaCourseBooker}
     */

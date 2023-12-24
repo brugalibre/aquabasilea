@@ -30,8 +30,8 @@ public class TextResources {
    public static final String INFO_TEXT_BOOKING_COURSE_DRY_RUN = "Buchung von Kurs '%s' läuft (Testlauf)";
 
    // Booking
-   public static final String COURSE_DRY_RUN_RESULTS = "Migros-Kurs-Bucher: Ergebnisse für Kurs '%s' (Testlauf)";
-   public static final String COURSE_BOOKING_RESULTS = "Migros-Kurs-Bucher: Ergebnisse für Kurs '%s' (Buchung)";
+   public static final String COURSE_DRY_RUN_RESULTS = "ACTIV Fitness Kurs Bucher: Ergebnisse für Kurs '%s' (Testlauf)";
+   public static final String COURSE_BOOKING_RESULTS = "ACTIV Fitness Kurs Bucher: Ergebnisse für Kurs '%s' (Buchung)";
    public static final String COURSE_SUCCESSFULLY_BOOKED = "Kurs '%s' erfolgreich gebucht!";
    public static final String COURSE_NOT_BOOKABLE = "Kurs '%s' konnte nicht gebucht werden!";
    public static final String COURSE_NOT_BOOKABLE_FULLY_BOOKED = "Kurs '%s' konnte nicht gebucht werden, da er bereits ausgebucht ist";

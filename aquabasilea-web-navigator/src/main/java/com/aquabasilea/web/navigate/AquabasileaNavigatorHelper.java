@@ -47,9 +47,10 @@ public class AquabasileaNavigatorHelper extends BaseWebNavigatorHelper {
     * @param errorHandler        the {@link ErrorHandler}, if anything goes wrong
     * @param elementIdentifier   the identifier of the button - for logging, if anything goes wrong
     */
-   public void clickButtonOrHandleError(Supplier<WebElement> searchContextSuppIn, String buttonInnerHtmlText, String buttonInnerHtmlTag, ErrorHandler errorHandler, String elementIdentifier) {
-      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContextSuppIn.get(), buttonInnerHtmlTag, buttonInnerHtmlText, HTML_BUTTON_TYPE);
-      waitForWaitingAnimationToDisappear();
+   public void clickButtonOrHandleError(Supplier<WebElement> searchContextSuppIn, String buttonInnerHtmlText, String buttonInnerHtmlTag,
+                                        ErrorHandler errorHandler, String elementIdentifier) {
+      Supplier<Optional<WebElement>> buttonWebElementSupplier = () -> findParentWebElement4ChildTagNameAndInnerHtmlValue(searchContextSuppIn.get(),
+              buttonInnerHtmlTag, buttonInnerHtmlText, HTML_BUTTON_TYPE);
       this.buttonClickHelper.clickButtonOrHandleErrorRecursively(buttonWebElementSupplier, errorHandler::handleElementNotFound, elementIdentifier, CLICK_BUTTON_RETRIES_IF_ERROR);
    }
 

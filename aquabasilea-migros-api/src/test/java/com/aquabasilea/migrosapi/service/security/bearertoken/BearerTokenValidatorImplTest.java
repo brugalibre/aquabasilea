@@ -2,6 +2,7 @@ package com.aquabasilea.migrosapi.service.security.bearertoken;
 
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
 import com.aquabasilea.migrosapi.api.v1.service.security.bearertoken.BearerTokenValidator;
+import com.aquabasilea.migrosapi.service.config.UrlConfig;
 import com.brugalibre.common.http.model.response.ResponseWrapper;
 import com.brugalibre.common.http.service.HttpService;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class BearerTokenValidatorImplTest {
    void isBearerTokenUnauthorizedHappyCase() {
       // Given
       HttpService httpService = mock(HttpService.class);
-      BookCourseHelper bookCourseHelper = new BookCourseHelper("", "");
+      BookCourseHelper bookCourseHelper = new BookCourseHelper(new UrlConfig("", "", "", "", ""), "");
       BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, httpService);
       Mockito.when(httpService.callRequestAndParse(any(), any())).thenReturn(ResponseWrapper.of(new Object(), 200));
 
@@ -33,7 +34,7 @@ class BearerTokenValidatorImplTest {
    void isBearerTokenUnauthorizedUnauthorized() {
       // Given
       HttpService httpService = mock(HttpService.class);
-      BookCourseHelper bookCourseHelper = new BookCourseHelper("", "");
+      BookCourseHelper bookCourseHelper = new BookCourseHelper(new UrlConfig("", "", "", "", ""), "");
       BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, httpService);
       Mockito.when(httpService.callRequestAndParse(any(), any())).thenReturn(ResponseWrapper.of(new Object(), 401));
 

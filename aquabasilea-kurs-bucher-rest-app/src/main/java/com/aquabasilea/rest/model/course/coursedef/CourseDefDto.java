@@ -4,7 +4,6 @@ import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
-import com.aquabasilea.search.SearchableAttribute;
 import com.aquabasilea.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
@@ -12,12 +11,12 @@ import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record CourseDefDto(@SearchableAttribute String courseName,
-                           @SearchableAttribute String courseInstructor,
-                           @SearchableAttribute String dayOfWeek,
-                           @SearchableAttribute String timeOfTheDay,
-                           @SearchableAttribute CourseLocationDto courseLocationDto,
-                           @SearchableAttribute LocalDateTime courseDefDate) {
+public record CourseDefDto(String courseName,
+                           String courseInstructor,
+                           String dayOfWeek,
+                           String timeOfTheDay,
+                           CourseLocationDto courseLocationDto,
+                           LocalDateTime courseDefDate) {
 
    /**
     * Creates a new {@link CourseDefDto}
@@ -40,7 +39,7 @@ public record CourseDefDto(@SearchableAttribute String courseName,
    public String getCourseRepresentation() {
       String dateRep = DateUtil.toString(courseDefDate.toLocalDate(), LocaleProvider.getDefaultLocale());
       return String.format(TextResources.COURSE_REPRESENTATION, courseName, courseInstructor, dayOfWeek, dateRep,
-              timeOfTheDay, courseLocationDto.courseLocationName());
+              timeOfTheDay, courseLocationDto.name());
    }
 }
 

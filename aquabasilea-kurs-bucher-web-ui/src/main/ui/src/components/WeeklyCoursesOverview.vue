@@ -38,7 +38,7 @@
           </td>
           <td class="table-cell">
             <label>
-              {{ course.courseLocationDto.courseLocationName }}
+              {{ course.courseLocationDto.name }}
             </label>
           </td>
           <td>
@@ -68,8 +68,8 @@
       </table>
     </div>
     <div v-if="this.weeklyCourses.courseDtos.length > 0" class="weekly-courses-placeholder"/>
-    <a class="course-programm-link" href="https://aquabasilea.migrosfitnesscenter.ch/angebote/bewegung/kursprogramm"
-       target="_blank">Offizielles Migrosfitness Kursprogramm</a>
+    <a class="course-programm-link" href="https://www.activfitness.ch/kursreservation/"
+       target="_blank">Offizielles ACTIV Fitness Kursprogramm</a>
     <ErrorBox ref="errorBox"/>
     <div v-if="this.weeklyCourses.courseDtos.length === 0" class="weekly-courses-placeholder"/>
   </div>

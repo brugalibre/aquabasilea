@@ -4,12 +4,12 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.CourseComparator;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
-import com.aquabasilea.domain.coursebooker.states.booking.facade.AquabasileaCourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
@@ -27,12 +27,12 @@ import java.util.List;
  */
 public class BookingStateHandler {
    private static final Logger LOG = LoggerFactory.getLogger(BookingStateHandler.class);
-   private final AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade;
+   private final CourseBookerFacade courseBookerFacade;
    private final WeeklyCoursesRepository weeklyCoursesRepository;
 
    public BookingStateHandler(WeeklyCoursesRepository weeklyCoursesRepository,
-                              AquabasileaCourseBookerFacade aquabasileaCourseBookerFacade) {
-      this.aquabasileaCourseBookerFacade = aquabasileaCourseBookerFacade;
+                              CourseBookerFacade courseBookerFacade) {
+      this.courseBookerFacade = courseBookerFacade;
       this.weeklyCoursesRepository = weeklyCoursesRepository;
    }
 
@@ -72,7 +72,7 @@ public class BookingStateHandler {
               currentCourse.getCourseName());
       CourseBookContainer courseBookContainer = createCourseBookContainer(currentCourse, state);
       PlUtil.INSTANCE.startLogInfo("Course booker");
-      CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerFacade.selectAndBookCourse(courseBookContainer);
+      CourseBookingResultDetails courseBookingEndResult = courseBookerFacade.bookCourse(courseBookContainer);
       LOG.info("Course booking  is done. Result is '{}'", courseBookingEndResult);
       PlUtil.INSTANCE.endLogInfo();
       resumeCoursesUntil(userId, currentCourse);

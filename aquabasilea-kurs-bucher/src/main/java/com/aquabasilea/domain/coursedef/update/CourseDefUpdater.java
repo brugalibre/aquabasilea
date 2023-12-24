@@ -1,9 +1,9 @@
 package com.aquabasilea.domain.coursedef.update;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
+import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseDefExtractorFacade;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
-import com.aquabasilea.domain.coursedef.update.facade.CourseExtractorFacade;
 import com.aquabasilea.domain.coursedef.update.notify.CourseDefUpdatedNotifier;
 import com.aquabasilea.domain.coursedef.update.notify.CourseDefUpdaterStartedNotifier;
 import com.aquabasilea.domain.coursedef.update.notify.OnCourseDefsUpdatedContext;
@@ -35,7 +35,7 @@ public class CourseDefUpdater {
    private final UserConfigRepository userConfigRepository;
    private final Function<String, Boolean> courseDefUpdateNecessary4User;
 
-   private final CourseExtractorFacade courseExtractorFacade;
+   private final CourseDefExtractorFacade courseBookerFacade;
    private final CourseDefUpdaterScheduler courseDefUpdaterScheduler;
 
    // Notifiers
@@ -43,14 +43,14 @@ public class CourseDefUpdater {
    private final List<CourseDefUpdaterStartedNotifier> courseDefUpdaterStartedNotifiers;
    private final Map<String, Boolean> userId2IsCourseDefUpdateRunningMap;
 
-   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, Function<String, Boolean> courseDefUpdateNecessary4User,
+   public CourseDefUpdater(CourseDefExtractorFacade courseBookerFacade, Function<String, Boolean> courseDefUpdateNecessary4User,
                            CourseDefRepository courseDefRepository, UserConfigRepository userConfigRepository) {
-      this(courseExtractorFacade, courseDefUpdateNecessary4User, courseDefRepository, userConfigRepository, new CourseDefUpdateDate());
+      this(courseBookerFacade, courseDefUpdateNecessary4User, courseDefRepository, userConfigRepository, new CourseDefUpdateDate());
    }
 
-   public CourseDefUpdater(CourseExtractorFacade courseExtractorFacade, Function<String, Boolean> courseDefUpdateNecessary4User,
+   public CourseDefUpdater(CourseDefExtractorFacade courseBookerFacade, Function<String, Boolean> courseDefUpdateNecessary4User,
                            CourseDefRepository courseDefRepository, UserConfigRepository userConfigRepository, CourseDefUpdateDate courseDefUpdateDate) {
-      this.courseExtractorFacade = courseExtractorFacade;
+      this.courseBookerFacade = courseBookerFacade;
       this.userConfigRepository = userConfigRepository;
       this.courseDefRepository = courseDefRepository;
       this.courseDefUpdateNecessary4User = courseDefUpdateNecessary4User;
@@ -98,7 +98,7 @@ public class CourseDefUpdater {
          userId2IsCourseDefUpdateRunningMap.put(userId, true);
          LOG.info("Updating course-defs..");
          LocalDateTime start = LocalDateTime.now();
-         updateAquabasileaCoursesInternal(userId, userConfig.getCourseLocations(), start);
+         updateCourseDefsInternal(userId, userConfig.getCourseLocations(), start);
          Duration duration = Duration.ofMillis(start.until(LocalDateTime.now(), ChronoUnit.MILLIS));
          LOG.info("Updating course-defs done, duration: {}", duration);
       } catch (Exception e) {
@@ -108,8 +108,8 @@ public class CourseDefUpdater {
       }
    }
 
-   private void updateAquabasileaCoursesInternal(String userId, List<CourseLocation> courseLocations, LocalDateTime dateWhenUpdateStarted) {
-      List<CourseDef> courseDefs = courseExtractorFacade.extractAquabasileaCourses(userId, courseLocations);
+   private void updateCourseDefsInternal(String userId, List<CourseLocation> courseLocations, LocalDateTime dateWhenUpdateStarted) {
+      List<CourseDef> courseDefs = courseBookerFacade.getCourseDefs(userId, courseLocations);
       courseDefRepository.deleteAllByUserId(userId);
       courseDefRepository.saveAll(courseDefs);
       OnCourseDefsUpdatedContext onCourseDefsUpdatedContext = new OnCourseDefsUpdatedContext(userId, courseDefs, dateWhenUpdateStarted, courseDefUpdaterScheduler.calcDelayUntilNextUpdate());
@@ -125,9 +125,17 @@ public class CourseDefUpdater {
       return nonNull(isCourseDefUpdateRunning) && isCourseDefUpdateRunning;
    }
 
+   /**
+    * @return the duration from now until the next scheduled update or <code>null</code> if none is scheduled
+    */
+   public Duration calcDelayUntilNextUpdate() {
+      return courseDefUpdaterScheduler.calcDelayUntilNextUpdate();
+   }
+
    public void addCourseDefUpdatedNotifier(CourseDefUpdatedNotifier courseDefUpdatedNotifier) {
       courseDefUpdatedNotifiers.add(requireNonNull(courseDefUpdatedNotifier));
    }
+
    public void addCourseDefStartedNotifier(CourseDefUpdaterStartedNotifier courseDefUpdaterStartedNotifier) {
       courseDefUpdaterStartedNotifiers.add(requireNonNull(courseDefUpdaterStartedNotifier));
    }

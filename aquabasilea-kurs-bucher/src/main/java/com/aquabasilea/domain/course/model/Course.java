@@ -1,5 +1,6 @@
 package com.aquabasilea.domain.course.model;
 
+import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.brugalibre.common.domain.model.AbstractDomainModel;
 
 import java.time.LocalDateTime;
@@ -108,7 +109,6 @@ public class Course extends AbstractDomainModel {
       private String id;
 
       private CourseBuilder() {
-         this.courseLocation = CourseLocation.MIGROS_FITNESSCENTER_AQUABASILEA; // default
       }
 
       public CourseBuilder withCourseLocation(CourseLocation courseLocation) {

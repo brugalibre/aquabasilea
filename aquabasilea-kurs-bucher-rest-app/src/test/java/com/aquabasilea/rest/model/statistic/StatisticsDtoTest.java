@@ -4,6 +4,7 @@ import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.statistics.model.StatisticsOverview;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Locale;
@@ -17,7 +18,7 @@ class StatisticsDtoTest {
    void testGetStatisticsDto() {
 
       // Given
-      Statistics statistics = new Statistics("123");
+      Statistics statistics = new Statistics("123", Clock.systemDefaultZone());
       statistics.setBookingFailedCounter(61);
       statistics.setBookingSuccessfulCounter(79);
       StatisticsOverview statisticsOverview = new StatisticsOverview(statistics, statistics.getTotalBookingsCounter(), statistics.getBookingSuccessRate());
@@ -38,7 +39,7 @@ class StatisticsDtoTest {
    void testGetStatisticsDtoZeroBookings() {
 
       // Given
-      Statistics statistics = new Statistics("1234");
+      Statistics statistics = new Statistics("1234", Clock.systemDefaultZone());
       StatisticsOverview statisticsOverview = new StatisticsOverview(statistics, 0, 0);
 
       // When

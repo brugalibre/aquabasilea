@@ -1,29 +1,26 @@
 <template>
   <div id=addCourseForm>
     <h2>Neuen Kurs hinzufügen</h2>
+    <update-course-def
+        ref="courseDefSelector"
+        @refreshAddCourse="this.$emit('refreshAddCourse')">
+    </update-course-def>
     <h5>Kurs auswählen</h5>
     <div class="grid-container">
-      <CFormInput
-          id="courseDefFilter"
-          v-model="courseDefFilter"
-          type="text"
-          name="courseDefFilter"
-          placeholder="Kurs-filter"
-          style="max-width: 50%"
-      />
-
       <multiselect
           class="course-def-selector"
           ref="courseDefDtosSelector"
           id="courseDefDtosSelector"
-          mode="single"
+          :mode="'single'"
           v-model="selectedCourseDef"
           :options="courseDefDtos"
           :label="'courseRepresentation'"
           :valueProp="'courseRepresentation'"
           noOptionsText="Keine Kurse verfügbar"
-          :placeholder="'Kurs auswählen..'"
+          :placeholder="'Kurs auswählen (tippen zum Suchen)'"
           :maxHeight=900
+          :searchable="true"
+          :noResultsText="'Keine Ergebnisse'"
           :object=true
           @select="createCourseBodyAddAndRefresh"
       >
@@ -31,10 +28,6 @@
           <span class="course-def-option">{{ option.courseRepresentation }}</span>
         </template>
       </multiselect>
-      <update-course-def
-          ref="courseDefSelector"
-          @refreshAddCourse="this.$emit('refreshAddCourse')">
-      </update-course-def>
     </div>
     <ErrorBox ref="errorBox"/>
   </div>
@@ -57,18 +50,7 @@ export default {
   data() {
     return {
       selectedCourseDef: '',
-      courseDefFilter: '',
     }
-  },
-  watch: {
-    courseDefFilter: {
-      handler: function (newCourseDefFilter, oldCourseDefFilter) {
-        if (oldCourseDefFilter !== newCourseDefFilter) {
-          this.fetchCourseDefDtos(newCourseDefFilter, error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
-          this.$refs.courseDefDtosSelector.open();
-        }
-      },
-    },
   },
   methods: {
     createCourseBodyAddAndRefresh: function () {
@@ -84,7 +66,7 @@ export default {
         isCurrentCourse: false
       });
       this.addCourseAndRefresh(courseBody, error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
-          () =>  this.$emit('refreshCourseStateOverviewAndWeeklyCourses'));
+          () => this.$emit('refreshCourseStateOverviewAndWeeklyCourses'));
       this.selectedCourseDef = null;
       this.courseDefFilter = '';
     }

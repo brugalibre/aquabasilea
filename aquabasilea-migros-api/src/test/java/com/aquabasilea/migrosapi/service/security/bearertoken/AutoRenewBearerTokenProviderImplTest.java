@@ -3,6 +3,7 @@ package com.aquabasilea.migrosapi.service.security.bearertoken;
 import com.aquabasilea.migrosapi.api.v1.service.security.bearertoken.BearerTokenProvider;
 import com.aquabasilea.migrosapi.api.v1.service.security.bearertoken.BearerTokenValidator;
 import com.aquabasilea.migrosapi.service.book.BookCourseHelper;
+import com.aquabasilea.migrosapi.service.config.UrlConfig;
 import com.brugalibre.common.http.auth.AuthConst;
 import com.brugalibre.common.http.service.HttpService;
 import com.brugalibre.test.http.DummyHttpServerTestCaseBuilder;
@@ -21,8 +22,12 @@ class AutoRenewBearerTokenProviderImplTest {
    private static final String HOST = "http://127.0.0.1";
    private static final String BEARER_TOKEN = "bearer-token";
    private static final String NEW_BEARER_TOKEN = "new-bearer-token";
-   private static final String BOOKING_PATH = "/kp/api/Booking?";
    private static final int PORT = 8282;
+   private static final String BOOK_COURSE_PATH = "/kp/api/Booking_post?";
+   private static final String BOOK_COURSE_URL = HOST + ":" + PORT + BOOK_COURSE_PATH;
+   private static final String DELETE_COURSE_URL = HOST + ":" + PORT + "/kp/api/Booking_delete?";
+   public static final String GET_BOOKED_COURSES_PATH = "/kp/api/Booking_get?";
+   private static final String GET_BOOKED_COURSES_URL = HOST + ":" + PORT + GET_BOOKED_COURSES_PATH;
 
    @Test
    void getBearerToken_StillValid() {
@@ -30,16 +35,13 @@ class AutoRenewBearerTokenProviderImplTest {
       int ttl = 60_000;
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
-      BookCourseHelper bookCourseHelper = new BookCourseHelper(HOST + ":" + PORT + BOOKING_PATH, "");
-      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
-
-      BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
-      AutoRenewBearerTokenProviderImpl autoRenewBearerTokenProvider = new AutoRenewBearerTokenProviderImpl(bearerTokenProvider, ttl, bearerTokenValidator);
+      AutoRenewBearerTokenProviderImpl autoRenewBearerTokenProvider = getAutoRenewBearerTokenProvider(ttl);
 
       String path = "/kp/api/Booking?";
       DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(path)
+              .withRequestResponse()
+              .withPath(path)
               .withMethod("GET")
               .withResponseBody(GET_BOOKED_COURSES_RESPONSE)
               .withHttpStatusCode(HttpStatusCode.OK_200)
@@ -55,21 +57,27 @@ class AutoRenewBearerTokenProviderImplTest {
       serverTestCaseBuilder.stop();
    }
 
+   private static AutoRenewBearerTokenProviderImpl getAutoRenewBearerTokenProvider(int ttl) {
+      BookCourseHelper bookCourseHelper = new BookCourseHelper(new UrlConfig(BOOK_COURSE_URL, DELETE_COURSE_URL, GET_BOOKED_COURSES_URL, "", ""), "");
+      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
+
+      BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
+      return new AutoRenewBearerTokenProviderImpl(bearerTokenProvider, ttl, bearerTokenValidator);
+   }
+
    @Test
    void getBearerToken_InvalidDueToError() {
       // Given
       int ttl = 60_000;
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
-      BookCourseHelper bookCourseHelper = new BookCourseHelper(HOST + ":" + PORT + BOOKING_PATH, "");
-      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
-      BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
-      AutoRenewBearerTokenProviderImpl autoRenewBearerTokenProvider = new AutoRenewBearerTokenProviderImpl(bearerTokenProvider, ttl, bearerTokenValidator);
+      AutoRenewBearerTokenProviderImpl autoRenewBearerTokenProvider = getAutoRenewBearerTokenProvider(ttl);
 
       String path = "/kp/api/Booking?";
       DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(path)
+              .withRequestResponse()
+              .withPath(path)
               .withMethod("GET")
               .withResponseBody("{}")
               .withHttpStatusCode(HttpStatusCode.OK_200)
@@ -91,15 +99,12 @@ class AutoRenewBearerTokenProviderImplTest {
       int ttl = 60_000;
       Supplier<char[]> userPwdSupplier = ""::toCharArray;
       String username = "peter";
-      BookCourseHelper bookCourseHelper = new BookCourseHelper(HOST + ":" + PORT + BOOKING_PATH, "");
-      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
-      BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
-      AutoRenewBearerTokenProviderImpl autoRenewBearerTokenProvider = new AutoRenewBearerTokenProviderImpl(bearerTokenProvider, ttl, bearerTokenValidator);
+      AutoRenewBearerTokenProviderImpl autoRenewBearerTokenProvider = getRenewBearerTokenProvider(ttl);
 
-      String path = "/kp/api/Booking?";
       DummyHttpServerTestCaseBuilder serverTestCaseBuilder = new DummyHttpServerTestCaseBuilder(PORT)
               .withHost(HOST)
-              .withRequestResponse(path)
+              .withRequestResponse()
+              .withPath(GET_BOOKED_COURSES_PATH)
               .withMethod("GET")
               .withResponseBody("")
               .withHttpStatusCode(HttpStatusCode.UNAUTHORIZED_401)
@@ -113,6 +118,14 @@ class AutoRenewBearerTokenProviderImplTest {
       // Then, expect the same since it was not unauthorized!
       assertThat(bearerToken, is(NEW_BEARER_TOKEN));
       serverTestCaseBuilder.stop();
+   }
+
+   private static AutoRenewBearerTokenProviderImpl getRenewBearerTokenProvider(int ttl) {
+      UrlConfig urlConfig = new UrlConfig(BOOK_COURSE_URL, GET_BOOKED_COURSES_URL, "", "", "");
+      BookCourseHelper bookCourseHelper = new BookCourseHelper(urlConfig, "");
+      BearerTokenValidator bearerTokenValidator = new BearerTokenValidatorImpl(bookCourseHelper, new HttpService(30));
+      BearerTokenProvider bearerTokenProvider = new TestBearerTokenProvider(BEARER_TOKEN, NEW_BEARER_TOKEN);
+      return new AutoRenewBearerTokenProviderImpl(bearerTokenProvider, ttl, bearerTokenValidator);
    }
 
    private static class TestBearerTokenProvider implements BearerTokenProvider {

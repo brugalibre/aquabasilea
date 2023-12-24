@@ -106,7 +106,7 @@ export default {
           .catch(error => {
             this.message = LoggingService.extractErrorText(error)
             if (NetworkService.isNetworkError(error)) {
-                this.message = 'Migros-Kurs Bucher offline!'
+                this.message = 'ACTIVE Fitness-Kurs Bucher offline!'
             }
           })
           .finally(() => this.loading = false);

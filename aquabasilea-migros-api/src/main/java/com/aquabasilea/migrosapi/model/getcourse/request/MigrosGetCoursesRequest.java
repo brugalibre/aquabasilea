@@ -25,4 +25,13 @@ public record MigrosGetCoursesRequest(List<String> courseCenterIds, List<String>
    public static MigrosGetCoursesRequest booked() {
       return new MigrosGetCoursesRequest(List.of(), List.of(), List.of(), "0", true);
    }
+
+   /**
+    * @return <code>true</code> if this request neither contains any center-ids, course-titles nor day-ids
+    */
+   public boolean isEmptyRequest() {
+      return courseCenterIds().isEmpty()
+              && courseTitles().isEmpty()
+              && dayIds().isEmpty();
+   }
 }

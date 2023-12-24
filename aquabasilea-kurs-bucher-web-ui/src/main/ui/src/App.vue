@@ -4,7 +4,7 @@
 
       <div v-if="this.hasCurrentUserRole('USER')" class="aquabasilea-course-overview-router-link">
         <router-link :to=courseOverview class="nav-link">
-          <h3 class="aquabasilea-course-overview-router-link-title">Deine Migros-Kurse</h3>
+          <h3 class="aquabasilea-course-overview-router-link-title">Deine ACTIV Fitness Kurse</h3>
         </router-link>
       </div>
       <div v-else></div>

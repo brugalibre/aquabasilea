@@ -61,6 +61,112 @@ public class TestRequestResponse {
            "\t}\n" +
            "]";
 
+   static final String FITNESSPARK = "fitnesspark";
+   static final String FITNESSCENTER = "Fitnesscenter";
+   static final String ACTIV_FITNESS = "Activ Fitness";
+   static final String BERNAQUA = "Bernaqua";
+
+   static final String GET_CENTERS_RESPONSE = "[\n" +
+           "    {\n" +
+           "        \"formatId\": 3,\n" +
+           "        \"formatKey\": \"" + FITNESSPARK + "\",\n" +
+           "        \"title\": \"Fitnesspark\",\n" +
+           "        \"centers\": [\n" +
+           "            {\n" +
+           "                \"centerId\": 148,\n" +
+           "                \"centerIdMapi\": \"0651910_fitnesspark\",\n" +
+           "                \"centerIdTac\": 96,\n" +
+           "                \"title\": \"Fitnesspark Bern City \",\n" +
+           "                \"linkBalance\": null,\n" +
+           "                \"linkRenewal\": null,\n" +
+           "                \"linkShop\": \"https://shop.tac.eu.com/migros/96/shop/\",\n" +
+           "                \"linkAthome\": null\n" +
+           "            },\n" +
+           "            {\n" +
+           "                \"centerId\": 10,\n" +
+           "                \"centerIdMapi\": \"0651902_fitnesspark\",\n" +
+           "                \"centerIdTac\": 2,\n" +
+           "                \"title\": \"Fitnesspark Winterthur\",\n" +
+           "                \"linkBalance\": \"https://shop-fp-winterthur.fitnesspark.ch/account/dashboard/balance/\",\n" +
+           "                \"linkRenewal\": \"https://shop-fp-winterthur.fitnesspark.ch/?contractId=[[contractId]]&prolong=1\",\n" +
+           "                \"linkShop\": \"https://shop-fp-winterthur.fitnesspark.ch\",\n" +
+           "                \"linkAthome\": \"https://www.fitnessparkathome.ch/\"\n" +
+           "            }\n" +
+           "        ]\n" +
+           "    },\n" +
+           "    {\n" +
+           "        \"formatId\": 8,\n" +
+           "        \"formatKey\": \"" + ACTIV_FITNESS + "\",\n" +
+           "        \"title\": \"Activ Fitness\",\n" +
+           "        \"centers\": [\n" +
+           "            {\n" +
+           "                \"centerId\": 183,\n" +
+           "                \"centerIdMapi\": null,\n" +
+           "                \"centerIdTac\": 186,\n" +
+           "                \"title\": \"ACTIV FITNESS Herisau\",\n" +
+           "                \"linkBalance\": null,\n" +
+           "                \"linkRenewal\": null,\n" +
+           "                \"linkShop\": null,\n" +
+           "                \"linkAthome\": null\n" +
+           "            },\n" +
+           "            {\n" +
+           "                \"centerId\": 118,\n" +
+           "                \"centerIdMapi\": \"0651813_activ_fitness\",\n" +
+           "                \"centerIdTac\": 69,\n" +
+           "                \"title\": \"ACTIV FITNESS Hochdorf\",\n" +
+           "                \"linkBalance\": \"https://shop-hochdorf.one-training.ch/account/dashboard/balance/\",\n" +
+           "                \"linkRenewal\": \"https://shop-hochdorf.one-training.ch/?contractId=[[contractId]]&prolong=1\",\n" +
+           "                \"linkShop\": \"https://shop-hochdorf.one-training.ch\",\n" +
+           "                \"linkAthome\": \"https://www.onetrainingathome.ch/de/\"\n" +
+           "            },\n" +
+           "            {\n" +
+           "                \"centerId\": 119,\n" +
+           "                \"centerIdMapi\": \"0651819_activ_fitness\",\n" +
+           "                \"centerIdTac\": 70,\n" +
+           "                \"title\": \"ACTIV FITNESS Hochdorf2\",\n" +
+           "                \"linkBalance\": \"https://shop-hochdorf.one-training.ch/account/dashboard/balance/\",\n" +
+           "                \"linkRenewal\": \"https://shop-hochdorf.one-training.ch/?contractId=[[contractId]]&prolong=1\",\n" +
+           "                \"linkShop\": \"https://shop-hochdorf.one-training.ch\",\n" +
+           "                \"linkAthome\": \"https://www.onetrainingathome.ch/de/\"\n" +
+           "            }\n" +
+           "        ]\n" +
+           "    },\n" +
+           "    {\n" +
+           "        \"formatId\": 10,\n" +
+           "        \"formatKey\": \"" + FITNESSCENTER + "\",\n" +
+           "        \"title\": \"Fitnesscenter\",\n" +
+           "        \"centers\": [\n" +
+           "            {\n" +
+           "                \"centerId\": 139,\n" +
+           "                \"centerIdMapi\": \"0028650_migros_fitnesscenter\",\n" +
+           "                \"centerIdTac\": 80,\n" +
+           "                \"title\": \"Migros Fitnesscenter Aquabasilea\",\n" +
+           "                \"linkBalance\": \"https://shop-aquabasilea.migrosfitnesscenter.ch/account/dashboard/balance/\",\n" +
+           "                \"linkRenewal\": \"https://shop-aquabasilea.migrosfitnesscenter.ch/?contractId=[[contractId]]&prolong=1\",\n" +
+           "                \"linkShop\": \"https://shop-aquabasilea.migrosfitnesscenter.ch\",\n" +
+           "                \"linkAthome\": null\n" +
+           "            }\n" +
+           "        ]\n" +
+           "    },\n" +
+           "    {\n" +
+           "        \"formatId\": 11,\n" +
+           "        \"formatKey\": \"" + BERNAQUA + "\",\n" +
+           "        \"title\": \"Bernaqua\",\n" +
+           "        \"centers\": [\n" +
+           "            {\n" +
+           "                \"centerId\": 63,\n" +
+           "                \"centerIdMapi\": \"0039332_aquaparks\",\n" +
+           "                \"centerIdTac\": 53,\n" +
+           "                \"title\": \"Bernaqua-Erlebnisbad, Fitness und Wellness\",\n" +
+           "                \"linkBalance\": \"https://shop.bernaqua.ch/account/dashboard/balance/\",\n" +
+           "                \"linkRenewal\": \"https://shop.bernaqua.ch/?contractId=[[contractId]]&prolong=1\",\n" +
+           "                \"linkShop\": \"https://shop.bernaqua.ch\",\n" +
+           "                \"linkAthome\": \"https://www.bernaquaathome.ch/\"\n" +
+           "            }\n" +
+           "        ]\n" +
+           "    }\n" +
+           "]";
+
    static final String GET_COURSES_RESPONSE = "{" +
            "    \"memberIdTac\": 0," +
            "    \"filter\": {" +

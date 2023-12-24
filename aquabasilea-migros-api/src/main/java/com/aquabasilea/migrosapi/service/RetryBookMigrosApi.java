@@ -1,5 +1,7 @@
 package com.aquabasilea.migrosapi.service;
 
+import com.aquabasilea.migrosapi.api.v1.model.getcenters.request.MigrosApiGetCentersRequest;
+import com.aquabasilea.migrosapi.api.v1.model.getcenters.response.MigrosApiGetCentersResponse;
 import com.aquabasilea.migrosapi.service.util.WaitUtil;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiBookCourseRequest;
@@ -60,8 +62,14 @@ public class RetryBookMigrosApi implements MigrosApi {
    }
 
    @Override
-   public MigrosApiGetCoursesResponse getCourses(MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
-      return migrosApi.getCourses(migrosApiGetCoursesRequest);
+   public MigrosApiGetCoursesResponse getCourses(AuthenticationContainer authenticationContainer,
+                                                 MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
+      return migrosApi.getCourses(authenticationContainer,migrosApiGetCoursesRequest);
+   }
+
+   @Override
+   public MigrosApiGetCentersResponse getCenters(MigrosApiGetCentersRequest migrosApiGetCentersRequest) {
+      return migrosApi.getCenters(migrosApiGetCentersRequest);
    }
 
    private MigrosApiBookCourseRequest creatyCopyMigrosApiBookCourseRequestWithZeroDelay(MigrosApiBookCourseRequest migrosApiBookCourseRequest) {

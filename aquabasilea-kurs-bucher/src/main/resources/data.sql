@@ -5,28 +5,43 @@ CREATE TABLE IF NOT EXISTS weeklycourses
     PRIMARY KEY (id)
 );
 
+--DROP TABLE coursedef;
+--DROP TABLE course;
+--DROP TABLE user_config;
+--DROP TABLE user_config_course_locations;
+
+CREATE TABLE IF NOT EXISTS courselocation
+(
+    center_id VARCHAR(255) NOT NULL,
+    id        VARCHAR(255) NOT NULL,
+    name      VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS coursedef
 (
     id                VARCHAR(255) NOT NULL,
     course_date       timestamp(6) NOT NULL,
     course_instructor VARCHAR(255) NOT NULL,
-    course_location   VARCHAR(255) NOT NULL,
+    courselocation_id VARCHAR(255) NOT NULL,
     course_name       VARCHAR(255) NOT NULL,
     user_id           VARCHAR(255) NOT NULL,
+    CONSTRAINT FK_COURSE_DEF_COURSELOCATION FOREIGN KEY (courselocation_id) REFERENCES courselocation (id),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS course
 (
-    id                VARCHAR(255) NOT NULL,
-    course_date       timestamp(6) NOT NULL,
-    course_instructor VARCHAR(255) NOT NULL,
-    course_location   VARCHAR(255) NOT NULL,
-    course_name       VARCHAR(255) NOT NULL,
-    has_course_def    boolean      NOT NULL,
-    is_paused         boolean      NOT NULL,
-    weeklycourses_id  VARCHAR(255),
+    id                  VARCHAR(255) NOT NULL,
+    course_date         timestamp(6) NOT NULL,
+    course_instructor   VARCHAR(255) NOT NULL,
+    courselocation_id   VARCHAR(255) NOT NULL,
+    course_name         VARCHAR(255) NOT NULL,
+    has_course_def      boolean      NOT NULL,
+    is_paused           boolean      NOT NULL,
+    weeklycourses_id    VARCHAR(255),
     CONSTRAINT FK_COURSE_WEEKLYCOURSES FOREIGN KEY (weeklycourses_id) REFERENCES weeklycourses (id),
+    CONSTRAINT FK_COURSE_COURSELOCATION FOREIGN KEY (courselocation_id) REFERENCES courselocation (id),
     PRIMARY KEY (id)
 );
 
@@ -48,11 +63,12 @@ CREATE TABLE IF NOT EXISTS user_config
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS user_config_entity_course_locations
+CREATE TABLE IF NOT EXISTS user_config_course_locations
 (
     user_config_entity_id VARCHAR(255) NOT NULL,
-    course_locations      VARCHAR(255),
-    CONSTRAINT FK_USERS_CONFIG_ENTITY_COURSE_LOCATIONS_USER_CONFIG FOREIGN KEY (user_config_entity_id) REFERENCES user_config (id)
+    course_locations_id   VARCHAR(255) NOT NULL,
+    CONSTRAINT FK_USER_CONFIG_CL_COURSE_COURSELOCATION FOREIGN KEY (course_locations_id) REFERENCES courselocation (id),
+    CONSTRAINT FK_USER_CONFIG_CL_USER_CONFIG FOREIGN KEY (user_config_entity_id) REFERENCES user_config (id)
 );
 
 CREATE TABLE IF NOT EXISTS users

@@ -4,7 +4,7 @@ application:
     courseBookerConfig: 'config/test-aquabasilea-kurs-bucher-config.yml'
   security:
     keyStorePassword: "test123"
-    aquabasileaKeyStoreName: "aquabasilea.keystore"
+    aquabasileaKeyStoreName: "..\test-aquabasilea.keystore"
     jwtSecret: '3'
     jwtExpirationMs: 1
 logging:
@@ -17,8 +17,17 @@ spring:
     username: sa
     password: password
     url: jdbc:h2:mem:localhost;DB_CLOSE_DELAY=-1
+#    url: jdbc:h2:file:./test-data/application;DB_CLOSE_ON_EXIT=FALSE
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+#    properties:
+#      javax:
+#        persistence:
+#          schema-generation:
+#            scripts:
+#              action: create
+#              create-target: created.sql
+#              create-source: metadata
   h2:
     console:
       enabled: true

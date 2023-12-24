@@ -1,28 +1,34 @@
 <template>
   <div id=selectCourseDef class="select-course-def-container">
-    <h5>Auswählbare Migros-Kurse aktualisieren</h5>
-    <div class="grid-container-40-60">
-      <label>Gewünschte Kursorte wählen</label>
-      <select
+    <h5>ACTIVE Fitness Center auswählen</h5>
+    <div>
+      <multiselect
           id="courseDefLocationSelector"
           name="courseDefLocation"
           class="select-course-location"
-          multiple
-          v-model="selectedCourseDefLocation">
-        <option
-            type="checkbox"
-            v-for="courseLocationDto in courseLocationsDtos" :key="courseLocationDto"
-            v-bind:value="courseLocationDto"> {{ courseLocationDto.courseLocationName }}
-        </option>
-      </select>
+          :placeholder="'Kursort auswählen (tippen zum Suchen)'"
+          :noResultsText="'Keine Ergebnisse'"
+          :options="courseLocationsDtos"
+          :label="'name'"
+          :valueProp="'name'"
+          :mode="'multiple'"
+          v-model="selectedCourseDefLocation"
+          :maxHeight=900
+          :object=true
+          :hideSelected="false"
+          :searchable="true"
+      >
+        <template v-slot:option="{ option }">
+          <span class="course-def-option">{{ option.name }}</span>
+        </template>
+      </multiselect>
       <div>
         <label v-show="isCourseDefUpdateRunning">
-          Aktualisierung der Kurse läuft...
+          Aktualisierung der Center läuft...
         </label>
       </div>
-      <CButton color="info" :disabled="isUpdateCourseDefButtonDisabled" v-on:click="evalSelectedCourseDefKeysUpdateCourseDefsAndRefresh()">
-        Migros Kurse
-        aktualisieren
+      <CButton color="info" :disabled="isUpdateCourseDefButtonDisabled" v-on:click="evalSelectedCourseDefKeysUpdateCourseDefsAndRefresh()" style="margin-top: 10px">
+        Center aktualisieren
       </CButton>
     </div>
     <ErrorBox ref="errorBox"/>
@@ -56,9 +62,9 @@ export default {
   },
   methods: {
     evalSelectedCourseDefKeysUpdateCourseDefsAndRefresh: function () {
-      const selectedCourseDefLocationKeys = this.selectedCourseDefLocation.map(courseLocationDto => courseLocationDto.courseLocationKey);
+      const selectedCourseDefLocationCenterIds = this.selectedCourseDefLocation.map(courseLocationDto => courseLocationDto.centerId);
       this.isCourseDefUpdateRunning = true;
-      this.updateCourseDefsAndRefresh(JSON.stringify(selectedCourseDefLocationKeys),
+      this.updateCourseDefsAndRefresh(JSON.stringify(selectedCourseDefLocationCenterIds),
           error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
           () => this.$emit('refreshAddCourse'));
     },

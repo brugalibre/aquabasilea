@@ -7,16 +7,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
+import static com.aquabasilea.migrosapi.service.util.read.ListTypeReader.readListValue;
+
 public class MigrosGetBookedCoursesResponseReader extends AbstractHttpResponseReader<List<MigrosResponseCourse>> {
 
    @Override
    protected List<MigrosResponseCourse> readValue(String bodyAsString, ObjectMapper objectMapper) throws JsonProcessingException {
-      if (bodyAsString.trim().isEmpty()) {
-         return List.of();
-      }
-      return objectMapper.readValue(bodyAsString, objectMapper
-              .getTypeFactory()
-              .constructCollectionType(List.class, MigrosResponseCourse.class));
+      return readListValue(bodyAsString, objectMapper, MigrosResponseCourse.class);
    }
 
    @Override

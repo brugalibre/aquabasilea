@@ -1,6 +1,5 @@
 package com.aquabasilea.rest.api.coursedef;
 
-import com.aquabasilea.domain.course.model.CourseLocation;
 import com.aquabasilea.rest.model.course.coursedef.CourseDefDto;
 import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
 import com.aquabasilea.rest.service.coursedef.CourseDefRestService;
@@ -8,7 +7,6 @@ import com.brugalibre.common.security.user.service.IUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +24,9 @@ public class CourseDefController {
       this.userProvider = userProvider;
    }
 
-   @RequestMapping(method = RequestMethod.GET, value = {"/courseDefDtos4Filter/{filter}", "/courseDefDtos4Filter/", "/courseDefDtos4Filter"})
-   public List<CourseDefDto> getDaysOfTheWeek4Course(@NonNull @PathVariable(required = false) String filter) {
-      return courseDefRestService.getCourseDefDtos4Filter(userProvider.getCurrentUserId(), filter);
+   @GetMapping(path = "/courseDefDtos4Filter")
+   public List<CourseDefDto> getCourseDefDtos() {
+      return courseDefRestService.getCourseDefDtos(userProvider.getCurrentUserId());
    }
 
    @GetMapping(path = "/allCourseLocationsDtos")
@@ -42,8 +40,8 @@ public class CourseDefController {
    }
 
    @RequestMapping(value = "/updateAll", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-   public int updateCourseDefs(@RequestBody List<CourseLocation> courseLocations) {
-      courseDefRestService.updateCourseDefs(userProvider.getCurrentUserId(), courseLocations);
+   public int updateCourseDefs(@RequestBody List<String> courseLocationIds) {
+      courseDefRestService.updateCourseDefs(userProvider.getCurrentUserId(), courseLocationIds);
       return HttpStatus.OK.value();
    }
 }
