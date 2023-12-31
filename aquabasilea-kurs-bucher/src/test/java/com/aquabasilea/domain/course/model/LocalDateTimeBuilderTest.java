@@ -1,6 +1,5 @@
 package com.aquabasilea.domain.course.model;
 
-import com.aquabasilea.domain.course.model.LocalDateTimeBuilder;
 import com.aquabasilea.util.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -43,10 +42,16 @@ public class LocalDateTimeBuilderTest {
       int expectedMonth = refDate.getMonthValue();
       int expectedDayOfTheMont = dayOfMonth + 1;
       int diff = DateUtil.getLastDayOfMonth(refDate) - dayOfMonth;
+      int expectedYear = refDate.getYear();
       if (diff == 0) {
          // hurray a test depending on the current day...
          // if the current day is at the end of the month (e.g. the 31th) we can't just add 1 days ->
-         expectedMonth++;
+         if (expectedMonth == 12) {
+            expectedMonth = 1;
+            expectedYear++;
+         } else {
+            expectedMonth++;
+         }
          expectedDayOfTheMont = 1;
       }
 
@@ -54,7 +59,7 @@ public class LocalDateTimeBuilderTest {
       LocalDateTime actualCreateLDTime = LocalDateTimeBuilder.createLocalDateTimeWithReferenceDate(refDate, refDate.getDayOfWeek(), timeOfTheDay);
 
       // Then
-      assertThat(actualCreateLDTime.getYear(), is(refDate.getYear()));
+      assertThat(actualCreateLDTime.getYear(), is(expectedYear));
       assertThat(actualCreateLDTime.getMonthValue(), is(expectedMonth));
       assertThat(actualCreateLDTime.getDayOfWeek(), is(refDate.plusDays(1).getDayOfWeek()));
       assertThat(actualCreateLDTime.getDayOfMonth(), is(expectedDayOfTheMont));
