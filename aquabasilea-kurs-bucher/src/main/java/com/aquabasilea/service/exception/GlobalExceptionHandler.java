@@ -1,4 +1,4 @@
-package com.aquabasilea.application.exception;
+package com.aquabasilea.service.exception;
 
 import com.brugalibre.notification.config.AlertSendConfigProvider;
 import com.brugalibre.notification.send.common.service.ApplicationErrorAlertSender;
