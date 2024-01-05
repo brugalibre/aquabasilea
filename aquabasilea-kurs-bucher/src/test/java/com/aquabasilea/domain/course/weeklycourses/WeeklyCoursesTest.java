@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.aquabasilea.test.TestConstants.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +21,7 @@ class WeeklyCoursesTest {
 
    public static final String COURSE_1 = "course1";
    public static final String COURSE_2 = "course2";
+   public static final String COURSE_INSTRUCTOR = "courseInstructor";
 
    @Test
    void addCourse() {
@@ -33,6 +35,8 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId1)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .build()));
 
       // When
@@ -40,6 +44,8 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_2)
               .withCourseDate(courseDate)
               .withId(courseId2)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .build());
 
       // Then
@@ -59,6 +65,7 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
               .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .build()));
 
@@ -67,6 +74,7 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
               .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .build());
 
@@ -88,6 +96,7 @@ class WeeklyCoursesTest {
               .withCourseDate(courseDate)
               .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
               .build()));
 
       // When
@@ -95,6 +104,7 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDateAWeekAhead)
               .withCourseLocation(TestConstants.FITNESSPARK_GLATTPARK)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
               .withId(UUID.randomUUID().toString())
               .build());
 
@@ -112,6 +122,8 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
               .build()));
 
       // When
@@ -132,6 +144,8 @@ class WeeklyCoursesTest {
               .withCourseName(COURSE_1)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
               .build()));
 
       // When
@@ -139,6 +153,8 @@ class WeeklyCoursesTest {
               .withCourseName(newCourseName)
               .withCourseDate(courseDate)
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
               .build());
 
       // Then
@@ -155,6 +171,8 @@ class WeeklyCoursesTest {
               .withCourseDate(LocalDateTime.now())
               .withCourseName("Kurs-abc")
               .withId(courseId)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
               .build();
       weeklyCourses.setCourses(List.of(course));
       assertThat(course.getIsPaused(), is(false));

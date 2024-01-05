@@ -52,12 +52,14 @@ public class WriteSecretToKeyStore {
 
       try {
          writeSecretToKeyStoreInternal(pathToKeyStore, keyStorePassword, alias, aliasSecret);
-      } catch (NoSuchAlgorithmException | InvalidKeySpecException | KeyStoreException | IOException | CertificateException e) {
+      } catch (NoSuchAlgorithmException | InvalidKeySpecException | KeyStoreException | IOException |
+               CertificateException e) {
          throw new SecureStorageException(e);
       }
    }
 
-   private static void writeSecretToKeyStoreInternal(String pathToKeyStore, char[] keyStorePassword, String alias, char[] aliasSecret) throws NoSuchAlgorithmException, InvalidKeySpecException, KeyStoreException, IOException, CertificateException {
+   private static void writeSecretToKeyStoreInternal(String pathToKeyStore, char[] keyStorePassword, String alias, char[] aliasSecret)
+           throws NoSuchAlgorithmException, InvalidKeySpecException, KeyStoreException, IOException, CertificateException {
       KeyStore keyStore = KeyUtils.loadKeyStoreFromFile(pathToKeyStore, keyStorePassword);
       PasswordProtection keyStorePP = new PasswordProtection(keyStorePassword);
 
@@ -73,5 +75,29 @@ public class WriteSecretToKeyStore {
       FileOutputStream outputStream = new FileOutputStream(pathToKeyStore);
       keyStore.store(outputStream, keyStorePassword);
       KeyUtils.clear(keyStorePassword, aliasSecret);
+   }
+
+   /**
+    * Deletes the entry for the given alias in the given key-store
+    *
+    * @param pathToKeyStore   the path to the {@link KeyStore}
+    * @param keyStorePassword the password for the key-store
+    * @param alias            the alias
+    */
+   public void deleteSecretForAlias(String pathToKeyStore, char[] keyStorePassword, String alias) {
+      try {
+         extracted(pathToKeyStore, keyStorePassword, alias);
+      } catch (NoSuchAlgorithmException | KeyStoreException | IOException | CertificateException e) {
+         throw new SecureStorageException(e);
+      }
+   }
+
+   private static void extracted(String pathToKeyStore, char[] keyStorePassword, String alias)
+           throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+      KeyStore keyStore = KeyUtils.loadKeyStoreFromFile(pathToKeyStore, keyStorePassword);
+
+      keyStore.deleteEntry(alias);
+      FileOutputStream outputStream = new FileOutputStream(pathToKeyStore);
+      keyStore.store(outputStream, keyStorePassword);
    }
 }

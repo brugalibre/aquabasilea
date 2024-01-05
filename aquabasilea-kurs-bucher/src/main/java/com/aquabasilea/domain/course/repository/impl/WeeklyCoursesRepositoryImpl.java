@@ -17,4 +17,9 @@ public class WeeklyCoursesRepositoryImpl extends CommonDomainRepositoryImpl<Week
    public WeeklyCourses getByUserId(String userId) {
       return domainModelMapper.map2DomainModel(domainDao.getByUserId(userId));
    }
+
+   @Override
+   public void deleteByUserId(String userId) {
+      domainDao.delete(domainDao.getByUserId(userId));
+   }
 }

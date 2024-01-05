@@ -24,4 +24,9 @@ public class CourseDefUpdaterInitializer implements InitializerForUser {
    public void initialize(UserAddedEvent userAddedEvent) {
       courseDefUpdater.startScheduler(userAddedEvent.userId());
    }
+
+   @Override
+   public void revert(UserAddedEvent userAddedEvent) {
+      courseDefUpdater.stopScheduler(userAddedEvent.userId());
+   }
 }

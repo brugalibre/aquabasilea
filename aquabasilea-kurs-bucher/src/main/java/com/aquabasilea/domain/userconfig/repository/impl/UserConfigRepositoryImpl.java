@@ -27,6 +27,11 @@ public class UserConfigRepositoryImpl extends CommonDomainRepositoryImpl<UserCon
    }
 
    @Override
+   public void deleteByUserId(String userId) {
+      domainDao.delete(domainDao.getByUserId(userId));
+   }
+
+   @Override
    public List<CourseLocation> getDefaultCourseLocations() {
       return courseLocationCache.getAll()
               .stream().filter(courseLocation -> DefaultUserConfig.DEFAULT_COURSE_LOCATION_CENTER_IDS.contains(courseLocation.centerId()))

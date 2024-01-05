@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.aquabasilea.test.TestConstants.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
@@ -34,6 +35,8 @@ class InitStateHandlerTest {
                       .withCourseDate(now)
                       .withCourseName("Kurs-55")
                       .withId(courseId)
+                      .withCourseInstructor("Heinz")
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())))
               .build();
 
@@ -61,6 +64,8 @@ class InitStateHandlerTest {
                       .withCourseDate(now)
                       .withCourseName("Kurs-11")
                       .withId(courseId)
+                      .withCourseInstructor("Heinz")
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())))
               .build();
 

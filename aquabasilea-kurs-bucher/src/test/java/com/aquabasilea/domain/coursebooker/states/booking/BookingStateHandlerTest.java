@@ -22,6 +22,7 @@ import java.util.Optional;
 import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.BOOKED;
 import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.BOOKING_SKIPPED;
 import static com.aquabasilea.test.TestConstants.FITNESSPARK_GLATTPARK;
+import static com.aquabasilea.test.TestConstants.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 class BookingStateHandlerTest {
    private static final String USER_ID = "123";
+   public static final String COURSE_INSTRUCTOR = "Kas";
 
    @Test
    void testBookCourseWithIdAndCheckResumedCourses() {
@@ -44,7 +46,7 @@ class BookingStateHandlerTest {
       String courseId3 = "3";
       CourseBookerFacade courseBookerFacade = mock(CourseBookerFacade.class);
       CourseBookingResultDetails courseBookingResultDetails = CourseBookingResultDetailsImpl.of(BOOKED, courseName1, null);
-      CourseBookContainer expectedCourseBookContainer = new CourseBookContainer(new CourseBookDetails(courseName1, null,
+      CourseBookContainer expectedCourseBookContainer = new CourseBookContainer(new CourseBookDetails(courseName1, COURSE_INSTRUCTOR,
               courseDate, FITNESSPARK_GLATTPARK), new BookingContext(false));
       when(courseBookerFacade.bookCourse(eq(expectedCourseBookContainer))).thenReturn(courseBookingResultDetails);
       TestCaseBuilder tcb = new TestCaseBuilder()
@@ -53,6 +55,7 @@ class BookingStateHandlerTest {
                       .withCourseName(courseName1)
                       .withId(courseId1)
                       .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
                       .withHasCourseDef(true)
                       .withIsPaused(false)
                       .build())
@@ -60,6 +63,8 @@ class BookingStateHandlerTest {
                       .withCourseDate(courseDate.minusHours(5))
                       .withCourseName(courseName2)
                       .withId(courseId2)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
                       .withHasCourseDef(true)
                       .withIsPaused(true)
                       .build())
@@ -67,6 +72,8 @@ class BookingStateHandlerTest {
                       .withCourseDate(courseDate.plusHours(5))
                       .withCourseName(courseName3)
                       .withId(courseId3)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
                       .withHasCourseDef(true)
                       .withIsPaused(true)
                       .build())
@@ -95,6 +102,8 @@ class BookingStateHandlerTest {
                       .withIsPaused(true)
                       .withHasCourseDef(false)
                       .withCourseName("Kurs-99")
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .withId("1")
                       .build())
               .build();
@@ -118,6 +127,8 @@ class BookingStateHandlerTest {
               .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 15, 15, 15))// FRIDAY
               .withCourseName("Kurs-abcd")
               .withId(currentCourse1Id)
+              .withCourseInstructor(COURSE_INSTRUCTOR)
+              .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
               .build();
 
       TestCaseBuilder tcb = new TestCaseBuilder()
@@ -127,12 +138,16 @@ class BookingStateHandlerTest {
                       .withHasCourseDef(true)
                       .withCourseName("Kurs-11")
                       .withId(course2Id)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
               .withCourse(CourseBuilder.builder()
                       .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 17, 15, 15))// SUNDAY
                       .withCourseName("Kurs-1")
                       .withHasCourseDef(true)
                       .withId(course3Id)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
               .withCourse(CourseBuilder.builder()
                       .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 16, 15, 15))// SATURDAY
@@ -140,6 +155,8 @@ class BookingStateHandlerTest {
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withId(course6Id)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
               .withCourse(CourseBuilder.builder()
                       .withCourseDate(LocalDateTime.of(2022, Month.APRIL, 14, 15, 15))// THURSDAY
@@ -147,6 +164,8 @@ class BookingStateHandlerTest {
                       .withHasCourseDef(true)
                       .withCourseName("Kurs-99")
                       .withId(course4Id)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
                       .build())
               .withCourse(currentCourse)
               .build();
