@@ -6,6 +6,7 @@ import com.brugalibre.common.domain.model.AbstractDomainModel;
 import java.time.LocalDateTime;
 
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 
 public class Course extends AbstractDomainModel {
    private String courseName;
@@ -155,6 +156,10 @@ public class Course extends AbstractDomainModel {
          course.setIsPaused(isPaused);
          course.courseLocation = courseLocation;
          course.hasCourseDef = hasCourseDef;
+         requireNonNull(courseInstructor, "courseInstructor must not be null");
+         requireNonNull(courseDate, "courseDate must not be null");
+         requireNonNull(courseLocation, "courseLocation must not be null");
+         requireNonNull(courseName, "courseName must not be null");
          return course;
       }
 

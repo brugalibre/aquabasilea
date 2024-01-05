@@ -1,4 +1,5 @@
 application:
+  prevVersion: 1
   configuration:
     alertNotification: 'config/alert/test-aquabasilea-alert-notification.yaml'
     courseBookerConfig: 'config/test-aquabasilea-kurs-bucher-config.yaml'

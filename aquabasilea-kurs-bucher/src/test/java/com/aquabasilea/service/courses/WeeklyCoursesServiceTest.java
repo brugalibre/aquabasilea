@@ -23,6 +23,7 @@ class WeeklyCoursesServiceTest {
 
    public static final String COURSE_NAME_WITH_COURSE_DEF = "Kurs-1";
    private static final String USER_ID = "1234";
+   public static final String COURSE_INSTRUCTOR = "Dom";
 
    @Test
    void updateCoursesAfterCourseDefUpdate() {
@@ -36,15 +37,18 @@ class WeeklyCoursesServiceTest {
                       .withHasCourseDef(true)
                       .withCourseName("Kurs-99")
                       .withId("1")
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
                       .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
+                      .withCourseInstructor("Heinrich")
                       .build())
               .withCourse(Course.CourseBuilder.builder()
                       .withCourseDate(dayAfterTomorrow)
                       .withIsPaused(true)
                       .withHasCourseDef(true)
                       .withCourseName(COURSE_NAME_WITH_COURSE_DEF)
-                      .withId("1")
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
                       .withCourseLocation(MIGROS_FITNESSCENTER_AQUABASILEA)
+                      .withId("1")
                       .build())
               .withUpdatedCourseDef(new CourseDef("1", USER_ID, now, MIGROS_FITNESSCENTER_AQUABASILEA, "", ""))
               .withUpdatedCourseDef(new CourseDef("2", USER_ID, dayAfterTomorrow, MIGROS_FITNESSCENTER_AQUABASILEA, COURSE_NAME_WITH_COURSE_DEF, ""))

@@ -5,9 +5,9 @@ import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.courselocation.model.repository.CourseLocationRepository;
 import com.aquabasilea.rest.i18n.LocaleProvider;
+import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
 import com.aquabasilea.rest.model.course.mapper.WeeklyCoursesDtoMapper;
 import com.aquabasilea.rest.model.course.weeklycourses.WeeklyCoursesDto;
-import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -48,22 +48,26 @@ class WeeklyCoursesDtoMapperTest {
               .withCourseName("Kurs-abc1")
               .withId(lastCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
+              .withCourseInstructor("peter")
               .build();
       List<Course> courses = new ArrayList<>(List.of(CourseBuilder.builder()
               .withCourseDate(secondCourseDate)
               .withCourseName("Kurs-abc2")
               .withId(secondCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
+              .withCourseInstructor("Heinz")
               .build(), currentCourse, CourseBuilder.builder()
               .withCourseDate(firstCourseDate)
               .withCourseName("Kurs-abc3")
               .withId(firstCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
+              .withCourseInstructor("Heinz")
               .build(), CourseBuilder.builder()
               .withCourseDate(fourthCourseDate)
               .withCourseName("Kurs-abc3")
               .withId(thirdCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
+              .withCourseInstructor("Heinz")
               .build()));
       Collections.shuffle(courses);
       weeklyCourses.setCourses(courses);
@@ -112,30 +116,36 @@ class WeeklyCoursesDtoMapperTest {
               .withCourseName("Kurs-abc1")
               .withId(thirdCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
+              .withCourseInstructor("peter")
               .build();
       List<Course> courses = new ArrayList<>(List.of(CourseBuilder.builder()
               .withCourseDate(secondCourseDate)
               .withCourseName("Kurs-abc2")
               .withId(secondCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
+              .withCourseInstructor("Heinz")
               .build(), currentCourse, CourseBuilder.builder()
               .withCourseDate(firstCourseDate)
               .withCourseName("Kurs-abc3")
               .withId(firstCourseId)
+              .withCourseInstructor("Heinz")
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
               .build(), CourseBuilder.builder()
               .withCourseDate(fourthCourseDate)
               .withCourseName("Kurs-abc4")
               .withId(fourthCourseId)
+              .withCourseInstructor("Heinz")
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
               .build(), CourseBuilder.builder()
               .withCourseDate(fifthCourseDate)
               .withCourseName("Kurs-5")
               .withId(fifthCourseId)
+              .withCourseInstructor("Heinz")
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
               .build(), CourseBuilder.builder()
               .withCourseDate(sixthCourseDate)
               .withCourseName("Kurs-6")
+              .withCourseInstructor("Heinz")
               .withId(sixthCourseId)
               .withCourseLocation(FITNESSPARK_HEUWAAGE)
               .build()));
