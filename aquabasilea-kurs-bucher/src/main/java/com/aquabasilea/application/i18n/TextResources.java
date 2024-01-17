@@ -46,6 +46,7 @@ public class TextResources {
    // Annullieren
    public static final String SMS_TEXT_CANCEL_BOOKED_COURSE = "Um diesen Kurs wieder zu annullieren antworte auf diese Nachricht mit\n%s %s";
    public static final String CANCEL_BOOKED_COURSE_SMS_CODE = "Migros cancel";
+   public static final String COURSE_CANCEL_FAILED = "Annullierung fehlgeschlagen!";
 
    // Login
    public static final String MIGROS_FITNESS_CREDENTIALS_NOT_VALID = "Es gibt kein Migros-Fitness Login mit dem Benutzername '%s' oder das Passwort ist falsch";

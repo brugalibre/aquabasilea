@@ -4,6 +4,7 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -28,11 +29,11 @@ class AquabasileaCourseBookerServiceTest {
       AquabasileaCourseBookerService aquabasileaCourseBookerService = new AquabasileaCourseBookerService(aquabasileaCourseBookerHolder, userRepository);
 
       // When
-      CourseCancelResult actualCourseCancelResult = aquabasileaCourseBookerService.cancelCourse4PhoneNr("234", null);
+      CourseCancelResultDetails courseCancelResultDetails = aquabasileaCourseBookerService.cancelCourse4PhoneNr("234", null);
 
       // Then
       verify(aquabasileaCourseBooker, never()).cancelBookedCourse(any());
-      assertThat(actualCourseCancelResult).isEqualTo(CourseCancelResult.COURSE_NOT_CANCELED);
+      assertThat(courseCancelResultDetails.courseCancelResult()).isEqualTo(CourseCancelResult.COURSE_NOT_CANCELED);
    }
 
    @Test
@@ -47,11 +48,11 @@ class AquabasileaCourseBookerServiceTest {
       AquabasileaCourseBookerService aquabasileaCourseBookerService = new AquabasileaCourseBookerService(aquabasileaCourseBookerHolder, userRepository);
 
       // When
-      CourseCancelResult actualCourseCancelResult = aquabasileaCourseBookerService.cancelCourse4PhoneNr(userId, null);
+      CourseCancelResultDetails courseCancelResultDetails = aquabasileaCourseBookerService.cancelCourse4PhoneNr(userId, null);
 
       // Then
       verify(aquabasileaCourseBooker).cancelBookedCourse(eq(bookingIdTac));
-      assertThat(actualCourseCancelResult).isEqualTo(CourseCancelResult.COURSE_CANCELED);
+      assertThat(courseCancelResultDetails.courseCancelResult()).isEqualTo(CourseCancelResult.COURSE_CANCELED);
    }
 
    @Test
@@ -68,11 +69,11 @@ class AquabasileaCourseBookerServiceTest {
       AquabasileaCourseBookerService aquabasileaCourseBookerService = new AquabasileaCourseBookerService(aquabasileaCourseBookerHolder, userRepository);
 
       // When
-      CourseCancelResult actualCourseCancelResult = aquabasileaCourseBookerService.cancelCourse4PhoneNr(userId, course2Cancel.getCourseName());
+      CourseCancelResultDetails courseCancelResultDetails = aquabasileaCourseBookerService.cancelCourse4PhoneNr(userId, course2Cancel.getCourseName());
 
       // Then
       verify(aquabasileaCourseBooker).cancelBookedCourse(eq(course2Cancel.getBookingIdTac()));
-      assertThat(actualCourseCancelResult).isEqualTo(CourseCancelResult.COURSE_CANCELED);
+      assertThat(courseCancelResultDetails.courseCancelResult()).isEqualTo(CourseCancelResult.COURSE_CANCELED);
    }
 
    @Test
@@ -88,11 +89,11 @@ class AquabasileaCourseBookerServiceTest {
       AquabasileaCourseBookerService aquabasileaCourseBookerService = new AquabasileaCourseBookerService(aquabasileaCourseBookerHolder, userRepository);
 
       // When
-      CourseCancelResult actualCourseCancelResult = aquabasileaCourseBookerService.cancelCourse4PhoneNr(userId, null);
+      CourseCancelResultDetails courseCancelResultDetails = aquabasileaCourseBookerService.cancelCourse4PhoneNr(userId, null);
 
       // Then
       verify(aquabasileaCourseBooker, never()).cancelBookedCourse(any());
-      assertThat(actualCourseCancelResult).isEqualTo(CourseCancelResult.COURSE_NOT_CANCELED);
+      assertThat(courseCancelResultDetails.courseCancelResult()).isEqualTo(CourseCancelResult.COURSE_NOT_CANCELED);
    }
 
    private static List<Course> getBookedCourses(String... bookingIdTacs) {
@@ -109,7 +110,7 @@ class AquabasileaCourseBookerServiceTest {
    private static AquabasileaCourseBooker getAquabasileaCourseBooker(List<Course> bookedCourses) {
       AquabasileaCourseBooker aquabasileaCourseBooker = mock(AquabasileaCourseBooker.class);
       when(aquabasileaCourseBooker.getBookedCourses()).thenReturn(bookedCourses);
-      when(aquabasileaCourseBooker.cancelBookedCourse(any())).thenReturn(CourseCancelResult.COURSE_CANCELED);
+      when(aquabasileaCourseBooker.cancelBookedCourse(any())).thenReturn(new CourseCancelResultDetails(CourseCancelResult.COURSE_CANCELED, null));
       return aquabasileaCourseBooker;
    }
 

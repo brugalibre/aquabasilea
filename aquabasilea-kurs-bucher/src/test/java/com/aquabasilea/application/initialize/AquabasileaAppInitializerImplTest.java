@@ -17,7 +17,7 @@ import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
-import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacadeFactory;
@@ -274,8 +274,8 @@ class AquabasileaAppInitializerImplTest {
       }
 
       @Override
-      public CourseCancelResult cancelCourses(String bookingId) {
-         return CourseCancelResult.COURSE_NOT_CANCELED;
+      public CourseCancelResultDetails cancelCourses(String bookingId) {
+         return CourseCancelResultDetails.notCanceled();
       }
 
       @Override

@@ -20,7 +20,7 @@
       </div>
       <div v-show="isBookedCoursesLoading" class="centered-flex-items-center">
         <div class="centered-flex spinner-border spinner-border-sm"></div>
-        <div style="padding-left: 5px">Daten werden geladen..</div>
+        <span style="padding-left: 5px">{{ loadingMessage}}</span>
       </div>
     </div>
     <ErrorBox ref="errorBox"/>
@@ -33,10 +33,17 @@ import {createConfirmDialog} from 'vuejs-confirm-dialog'
 import ModalDialog from '../common/ModalDialog.vue'
 import ErrorBox from "@/components/error/ErrorBox.vue";
 import ErrorHandlingService from "@/services/error/error-handling.service";
+import store from "@/store";
 
 export default {
   name: 'BookedCourseOverview',
   mixins: [aquabasileaCourseBookerApi],
+  data() {
+    return {
+      initLoadingMessage: 'Daten werden geladen..',
+      loadingMessage: 'Daten werden geladen..',
+    }
+  },
   components: {
     ErrorBox,
   },
@@ -61,7 +68,15 @@ export default {
         this.dialog.close();
         this.cancelCourseAndRefresh(bookedCourse2Delete.bookingIdTac,
             error => ErrorHandlingService.handleError(this.$refs.errorBox, error),
-            () => this.$emit('refreshBookedCourses'));
+            result => {
+          console.log(JSON.stringify(result));
+              if (result.courseCancelResult === 'COURSE_CANCELED') {
+                this.$emit('refreshBookedCourses');
+              } else {
+                store.dispatch('aquabasilea/setIsBookedCoursesLoading', false);
+                ErrorHandlingService.handleError(this.$refs.errorBox, result.errorMsg);
+              }
+            });
       });
       this.dialog.onCancel(() => this.dialog.close());
     },
@@ -73,10 +88,34 @@ export default {
       return this.bookedCourseDtos.length !== 0
           || this.isBookedCoursesLoading
           || this.$refs.errorBox?.hasErrors();
+    },
+    resetLoadingMessage: function () {
+      this.loadingMessage = this.initLoadingMessage;
+    },
+    getLoadingText4Counter(counter) {
+      if (counter === 0) {
+        return this.initLoadingMessage;
+      } else if (counter === 1) {
+        return '\nMhh.. das dauert wohl etwas länger als geplant.';
+      } else if (counter === 2) {
+        return '\nOkey, wird sind gleich fertig, etwas Geduld noch..';
+      } else if (counter >= 3) {
+        return 'Waaaas, es lädt immer noch?! Jetzt aber nicht aufgeben, es ist bald geschafft!';
+      } else {
+        return '';
+      }
+    },
+    setLoadingMessageWithTimeout: function (counter) {
+      this.loadingMessage = this.getLoadingText4Counter(counter);
+      setTimeout(() => {
+        let newCounter = counter + 1;
+        this.setLoadingMessageWithTimeout(newCounter);
+      }, 10000);
     }
   },
   mounted() {
-    this.fetchBookedCourses(error => ErrorHandlingService.handleError(this.$refs.errorBox, error));
+    this.fetchBookedCourses(error => ErrorHandlingService.handleError(this.$refs.errorBox, error), () => this.resetLoadingMessage());
+    this.setLoadingMessageWithTimeout(0);
   }
 }
 </script>

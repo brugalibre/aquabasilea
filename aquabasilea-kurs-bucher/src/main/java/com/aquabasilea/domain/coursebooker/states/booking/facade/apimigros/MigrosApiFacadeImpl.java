@@ -1,6 +1,8 @@
 package com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros;
 
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros.mapping.MigrosCourseMapper;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
@@ -56,7 +58,7 @@ public class MigrosApiFacadeImpl implements CourseBookerFacade {
    }
 
    @Override
-   public CourseCancelResult cancelCourses(String bookingId) {
+   public CourseCancelResultDetails cancelCourses(String bookingId) {
       MigrosApiCancelCourseRequest migrosApiCancelCourseRequest = new MigrosApiCancelCourseRequest(bookingId);
       MigrosApiCancelCourseResponse migrosApiCancelCourseResponse = migrosApi.cancelCourse(authenticationContainerSupplier.get(), migrosApiCancelCourseRequest);
       return map2CourseCancelResult(migrosApiCancelCourseResponse.courseCancelResult());
@@ -67,10 +69,10 @@ public class MigrosApiFacadeImpl implements CourseBookerFacade {
       return migrosApiCourseDefExtractor.getCourseDefs(userId, courseLocations);
    }
 
-   private static CourseCancelResult map2CourseCancelResult(com.aquabasilea.migrosapi.api.v1.model.book.response.CourseCancelResult courseCancelResult) {
+   private static CourseCancelResultDetails map2CourseCancelResult(com.aquabasilea.migrosapi.api.v1.model.book.response.CourseCancelResult courseCancelResult) {
       return switch (courseCancelResult) {
-         case COURSE_CANCELED -> CourseCancelResult.COURSE_CANCELED;
-         case COURSE_CANCEL_FAILED -> CourseCancelResult.COURSE_CANCEL_FAILED;
+         case COURSE_CANCELED -> new CourseCancelResultDetails(CourseCancelResult.COURSE_CANCELED, null);
+         case COURSE_CANCEL_FAILED -> new CourseCancelResultDetails(CourseCancelResult.COURSE_CANCEL_FAILED, TextResources.COURSE_CANCEL_FAILED);
       };
    }
 

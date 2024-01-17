@@ -21,7 +21,7 @@ export default {
         },
         cancelBookedCourseAndRefresh: function (bookingId, onErrorCallback, onSuccessCallback) {
             axios.delete(AQUABASILEA_COURSE_BOOKER_API_URL + '/cancel/' + bookingId, {headers: authHeader()})
-                .then(() => onSuccessCallback())
+                .then(result => onSuccessCallback(result.data))
                 .catch(error => {
                     LoggingService.logError('Error occurred while canceling course ' + bookingId, error)
                     store.dispatch('aquabasilea/setIsBookedCoursesLoading', false)
@@ -40,17 +40,18 @@ export default {
                     onErrorCallback(LoggingService.extractErrorText(error));
                 });
         },
-        fetchBookedCourses: function (onErrorCallback) {
+        fetchBookedCourses: function (onErrorCallback, onSuccessCallback) {
             store.dispatch('aquabasilea/setIsBookedCoursesLoading', true)
-                .then(() => this.fetchBookedCoursesInternal(onErrorCallback));
+                .then(() => this.fetchBookedCoursesInternal(onErrorCallback, onSuccessCallback));
         },
-        fetchBookedCoursesInternal: function (onErrorCallback) {
+        fetchBookedCoursesInternal: function (onErrorCallback, onSuccessCallback) {
             return axios.get(AQUABASILEA_COURSE_BOOKER_API_URL + '/booked-courses', {headers: authHeader()})
                 .then(response => response.data)
                 .then(data => {
                     store.dispatch('aquabasilea/setBookedCourseDtos', data)
                         .then(() => store.dispatch('aquabasilea/setIsBookedCoursesLoading', false));
                 })
+                .then(() => onSuccessCallback())
                 .catch(error => {
                     LoggingService.logError('Error occurred while fetching the booked courses', error)
                     store.dispatch('aquabasilea/setIsBookedCoursesLoading', false)

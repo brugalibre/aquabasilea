@@ -1,7 +1,7 @@
 package com.aquabasilea.rest.service.smsinbound;
 
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,9 @@ public class SmsInboundRestService {
     * @param phoneNr    the phone-Nr of the user for whom the given booking is going to be canceled
     * @param smsCommand the sms text which was sending by the user. It contains an optional name of the course to cancel.
     *                   Only required if there are more than one booked courses
-    * @return a {@link CourseCancelResult}
+    * @return a {@link CourseCancelResultDetails}
     */
-   public CourseCancelResult cancelCourse4PhoneNr(String phoneNr, String smsCommand) {
+   public CourseCancelResultDetails cancelCourse4PhoneNr(String phoneNr, String smsCommand) {
       String courseName = smsCommand.replace(TextResources.CANCEL_BOOKED_COURSE_SMS_CODE, "").trim();
       return aquabasileaCourseBookerService.cancelCourse4PhoneNr(phoneNr, courseName);
    }

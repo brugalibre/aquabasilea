@@ -3,9 +3,9 @@ package com.aquabasilea.domain.coursebooker;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.course.service.WeeklyCoursesUpdater;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacadeFactory;
-import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
@@ -227,7 +227,7 @@ public class AquabasileaCourseBooker {
       return courseBookerFacade.getBookedCourses();
    }
 
-   public CourseCancelResult cancelBookedCourse(String bookingId) {
+   public CourseCancelResultDetails cancelBookedCourse(String bookingId) {
       return courseBookerFacade.cancelCourses(bookingId);
    }
 

@@ -3,6 +3,7 @@ package com.aquabasilea.rest.api.book;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
+import com.aquabasilea.rest.model.coursebooker.cancel.CourseCancelResultDto;
 import com.aquabasilea.rest.service.coursebooker.AquabasileaCourseBookerRestService;
 import com.brugalibre.common.security.user.service.IUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,8 @@ public class AquabasileaCourseBookerController {
    }
 
    @DeleteMapping(path = "/cancel/{bookingId}")
-   public int cancelCourse(@PathVariable String bookingId) {
-      aquabasileaCourseBookerRestService.cancelCourse(userProvider.getCurrentUserId(), bookingId);
-      return HttpStatus.OK.value();
+   public CourseCancelResultDto cancelCourse(@PathVariable String bookingId) {
+      return aquabasileaCourseBookerRestService.cancelCourse(userProvider.getCurrentUserId(), bookingId);
    }
 
    /**

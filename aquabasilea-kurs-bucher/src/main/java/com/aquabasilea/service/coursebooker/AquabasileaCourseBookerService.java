@@ -5,6 +5,7 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBooker;
 import com.aquabasilea.domain.coursebooker.AquabasileaCourseBookerHolder;
 import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOverview;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
@@ -79,9 +80,9 @@ public class AquabasileaCourseBookerService {
     *
     * @param userId    the id of the user for who the given booking is going to be canceled
     * @param bookingId the id of the booking which should be canceled
-    * @return a {@link CourseCancelResult}
+    * @return a {@link CourseCancelResultDetails}
     */
-   public CourseCancelResult cancelBookedCourse(String userId, String bookingId) {
+   public CourseCancelResultDetails cancelBookedCourse(String userId, String bookingId) {
       AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(userId);
       return aquabasileaCourseBooker.cancelBookedCourse(bookingId);
    }
@@ -94,7 +95,7 @@ public class AquabasileaCourseBookerService {
     * @param courseName the optional name of the course to cancel. Only required if there are more than one booked courses
     * @return a {@link CourseCancelResult}
     */
-   public CourseCancelResult cancelCourse4PhoneNr(String phoneNr, String courseName) {
+   public CourseCancelResultDetails cancelCourse4PhoneNr(String phoneNr, String courseName) {
       LOG.info("Cancel course '{}' for user with phone-nr '{}'", courseName, phoneNr);
       Optional<User> optUserByPhoneNr = userRepository.findByPhoneNr(phoneNr);
       if (optUserByPhoneNr.isPresent()) {
@@ -107,11 +108,11 @@ public class AquabasileaCourseBookerService {
          }
       } else {
          LOG.warn("No user found for phone-nr '{}'", phoneNr);
-         return CourseCancelResult.COURSE_NOT_CANCELED;
+         return CourseCancelResultDetails.notCanceled();
       }
    }
 
-   private CourseCancelResult cancelCourse4User(String courseName, User user) {
+   private CourseCancelResultDetails cancelCourse4User(String courseName, User user) {
       List<Course> bookedCourses = getBookedCourses(user.id());
       LOG.info("The booked courses {} are found to cancel", bookedCourses);
       if (bookedCourses.size() == 1) {
@@ -122,7 +123,7 @@ public class AquabasileaCourseBookerService {
                  .filter(course -> course.getCourseName().equals(courseName))
                  .findFirst()
                  .map(course -> cancelBookedCourse(user.id(), course.getBookingIdTac()))
-                 .orElse(CourseCancelResult.COURSE_NOT_CANCELED);
+                 .orElse(CourseCancelResultDetails.notCanceled());
       }
    }
 

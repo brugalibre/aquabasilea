@@ -2,6 +2,7 @@ package com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros;
 
 import com.aquabasilea.application.security.service.AuthenticationContainerService;
 import com.aquabasilea.domain.course.model.Course;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros.mapping.MigrosCourseMapper;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
@@ -188,10 +189,10 @@ class MigrosApiFacadeImplTest {
               () -> Duration.ZERO);
 
       // When
-      CourseCancelResult courseCancelResult = courseBookerFacade.cancelCourses(bookingId);
+      CourseCancelResultDetails courseCancelResultDetails = courseBookerFacade.cancelCourses(bookingId);
 
       // Then
-      assertThat(courseCancelResult, is(CourseCancelResult.COURSE_CANCELED));
+      assertThat(courseCancelResultDetails.courseCancelResult(), is(CourseCancelResult.COURSE_CANCELED));
    }
 
    @Test
@@ -205,10 +206,10 @@ class MigrosApiFacadeImplTest {
               () -> Duration.ZERO);
 
       // When
-      CourseCancelResult courseCancelResult = courseBookerFacade.cancelCourses(bookingId);
+      CourseCancelResultDetails courseCancelResultDetails = courseBookerFacade.cancelCourses(bookingId);
 
       // Then
-      assertThat(courseCancelResult, is(CourseCancelResult.COURSE_CANCEL_FAILED));
+      assertThat(courseCancelResultDetails.courseCancelResult(), is(CourseCancelResult.COURSE_CANCEL_FAILED));
    }
 
    @Test

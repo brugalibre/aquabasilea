@@ -4,7 +4,7 @@ package com.aquabasilea.domain.coursebooker.states.booking.facade;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
-import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.web.bookcourse.impl.select.result.CourseBookingEndResult;
 import com.aquabasilea.web.bookcourse.model.CourseBookDetails;
@@ -33,7 +33,7 @@ public interface CourseBookerFacade extends CourseDefExtractorFacade {
     * Cancel a previously booked {@link Course} for the given booking-id
     *
     * @param bookingId the id of the booking which represents the booking arrangement
-    * @return a {@link CourseCancelResult} which indicates weather or not the cancel was successful
+    * @return a {@link CourseCancelResultDetails} which indicates weather or not the cancel was successful
     */
-   CourseCancelResult cancelCourses(String bookingId);
+   CourseCancelResultDetails cancelCourses(String bookingId);
 }

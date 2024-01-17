@@ -2,7 +2,7 @@ package com.aquabasilea.rest.service.coursebooker;
 
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.CourseComparator;
-import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOverview;
@@ -10,6 +10,7 @@ import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookerEndResultDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
 import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
+import com.aquabasilea.rest.model.coursebooker.cancel.CourseCancelResultDto;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,13 +79,14 @@ public class AquabasileaCourseBookerRestService {
     }
 
     /**
-     * Cancels the course which is associated with the given booking id and returns a {@link CourseCancelResult}
+     * Cancels the course which is associated with the given booking id and returns a {@link CourseCancelResultDto}
      *
      * @param userId    the id of the user for whom the given booking is going to be canceled
      * @param bookingId the id of the booking which should be canceled
-     * @return a {@link CourseCancelResult}
+     * @return a {@link CourseCancelResultDto}
      */
-    public CourseCancelResult cancelCourse(String userId, String bookingId) {
-        return aquabasileaCourseBookerService.cancelBookedCourse(userId, bookingId);
+    public CourseCancelResultDto cancelCourse(String userId, String bookingId) {
+        CourseCancelResultDetails courseCancelResult = aquabasileaCourseBookerService.cancelBookedCourse(userId, bookingId);
+        return CourseCancelResultDto.of(courseCancelResult);
     }
 }

@@ -4,13 +4,13 @@ import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.application.security.model.UserContext;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.Course.CourseBuilder;
+import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
-import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResult;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.config.TestAquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
@@ -673,8 +673,8 @@ class AquabasileaCourseBookerTest {
       }
 
       @Override
-      public CourseCancelResult cancelCourses(String bookingId) {
-         return CourseCancelResult.COURSE_CANCELED;
+      public CourseCancelResultDetails cancelCourses(String bookingId) {
+         return CourseCancelResultDetails.notCanceled();
       }
 
       @Override

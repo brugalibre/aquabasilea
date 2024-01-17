@@ -4,8 +4,8 @@ import com.aquabasilea.migrosapi.model.book.response.MigrosCancelCourseResponse;
 
 public record MigrosApiCancelCourseResponse(CourseCancelResult courseCancelResult) {
     public static MigrosApiCancelCourseResponse of(MigrosCancelCourseResponse migrosCancelCourseResponse, String bookingIdTac) {
-        CourseCancelResult courseCancelResult1 = getCourseCancelResult(migrosCancelCourseResponse, bookingIdTac);
-        return new MigrosApiCancelCourseResponse(courseCancelResult1);
+        CourseCancelResult courseCancelResult = getCourseCancelResult(migrosCancelCourseResponse, bookingIdTac);
+        return new MigrosApiCancelCourseResponse(courseCancelResult);
     }
 
     private static CourseCancelResult getCourseCancelResult(MigrosCancelCourseResponse migrosCancelCourseResponse, String expectedBookingIdTac) {
