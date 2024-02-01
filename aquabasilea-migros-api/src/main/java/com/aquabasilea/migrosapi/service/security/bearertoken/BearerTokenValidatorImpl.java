@@ -32,11 +32,15 @@ public class BearerTokenValidatorImpl implements BearerTokenValidator {
 
    @Override
    public boolean isBearerTokenUnauthorized(String bearerToken) {
-      LOG.info("Validate token {}", bearerToken);
+      LOG.info("Validate token {}", toString(bearerToken));
       if (bearerToken == null) {
          return true;
       }
       HttpRequest httpGetCourseRequest = bookCourseHelper.getBookedCoursesRequest(bearerToken);
       return httpService.callRequestAndParse(new MigrosGetBookedCoursesResponseReader(), httpGetCourseRequest).statusCode() == 401;
+   }
+
+   private static String toString(String bearerToken) {
+      return bearerToken == null ? "null" : bearerToken.substring(bearerToken.length() - 100);
    }
 }
