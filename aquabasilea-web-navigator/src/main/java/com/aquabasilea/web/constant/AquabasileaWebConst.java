@@ -39,16 +39,14 @@ public class AquabasileaWebConst {
 
    // Login fields
    // on login page
-   public static final String WEB_ELEMENT_PWD_FIELD_ID = "password";
-   public static final String WEB_ELEMENT_USER_NAME_FIELD_ID = "username";
+   public static final String WEB_ELEMENT_PWD_FIELD_ID = "input-password";
+   public static final String WEB_ELEMENT_USER_NAME_FIELD_ID = "input-email";
    public static final String WEB_ELEMENT_ANMELDE_BUTTON_TEXT = "ANMELDEN";
+   public static final String ABMELDEN_BUTTON_ID = "m-logout";
    public static final String LOGIN_FAILED_ERROR_MSG_ID = "error-message";
 
-   public static final String MIGROS_ACOUNT_LOGIN_ICON = "a-accountloginicon__icon";
-   public static final String MIGROS_ACCOUNT_TILE_PROFILE_LINK = "m-tile__profile-link";
 
    // on select-course page
-   public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID_TEXT = "Jetzt einloggen";
    public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ABMELDEN_BUTTON_ATTR_ID_TEXT = "Abmelden";
    public static final String WEB_ELEMENT_LOGIN_SELECT_COURSE_ANMELDE_BUTTON_ATTR_ID = "aria-label";
 

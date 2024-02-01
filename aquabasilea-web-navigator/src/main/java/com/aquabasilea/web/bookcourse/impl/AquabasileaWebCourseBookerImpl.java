@@ -16,13 +16,11 @@ import com.aquabasilea.web.navigate.AbstractAquabasileaWebNavigator;
 import com.aquabasilea.web.util.ErrorUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import static com.aquabasilea.web.bookcourse.impl.select.result.CourseClickedResult.COURSE_NOT_SELECTED_EXCEPTION_OCCURRED;
@@ -156,9 +154,8 @@ public class AquabasileaWebCourseBookerImpl extends AbstractAquabasileaWebNaviga
    }
 
    private boolean isAlreadyLoggedIn() {
-      Optional<WebElement> accountLoginIconOpt = webNavigatorHelper.findWebElementBy(null, By.className(MIGROS_ACOUNT_LOGIN_ICON));
-      Optional<WebElement> accountTitleProfileLinkOpt = webNavigatorHelper.findWebElementBy(null, By.className(MIGROS_ACCOUNT_TILE_PROFILE_LINK));
-      return accountLoginIconOpt.isPresent() || accountTitleProfileLinkOpt.isPresent();
+      return webNavigatorHelper.findWebElementById(ABMELDEN_BUTTON_ID)
+              .isPresent();
    }
 
    private boolean isUsernameInputFieldNotPresent() {

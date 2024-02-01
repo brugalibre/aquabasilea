@@ -49,7 +49,7 @@ public class AquabasileaLoginHelper {
    /**
     * Small hack: After the user is logged in, using the login page and returned to the booking page, we have to click
     * the 'Jetzt einloggen' Button in order to make the previous login effective.
-    * If a {@link TimeoutException} occurs and we first log out and try to log in again. Sometimes a logout is not possible (since something is blocking the button)
+    * If a {@link TimeoutException} occurs, and we first log out and try to log in again. Sometimes a logout is not possible (since something is blocking the button)
     * In that case, a login is not necessary and also this click on the login-button
     */
    public void navigateMemberareaAndClickLoginButton() {
