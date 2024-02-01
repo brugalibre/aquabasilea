@@ -1,5 +1,6 @@
 package com.aquabasilea.domain.coursebooker.states.booking;
 
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
@@ -19,8 +20,7 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.Optional;
 
-import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.BOOKED;
-import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.BOOKING_SKIPPED;
+import static com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult.*;
 import static com.aquabasilea.test.TestConstants.FITNESSPARK_GLATTPARK;
 import static com.aquabasilea.test.TestConstants.MIGROS_FITNESSCENTER_AQUABASILEA;
 import static org.hamcrest.CoreMatchers.is;
@@ -85,6 +85,65 @@ class BookingStateHandlerTest {
 
       // When
       assertThat(actualCourseBookingResultDetails.getCourseBookResult(), is(BOOKED));
+      WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.getByUserId(USER_ID);
+      // Earliest course must be resumed
+      assertThat(weeklyCourses.getCourseById(courseId2).getIsPaused(), is(false));
+      // But the last not
+      assertThat(weeklyCourses.getCourseById(courseId3).getIsPaused(), is(true));
+   }
+
+   @Test
+   void testBookCourseWithExceptionStillResume() {
+
+      // Given
+      LocalDateTime courseDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 15));
+      String courseName1 = "Kurs-99";
+      String courseName2 = "Kurs-88";
+      String courseName3 = "Kurs-77";
+      String courseId1 = "1";
+      String courseId2 = "2";
+      String courseId3 = "3";
+      CourseBookerFacade courseBookerFacade = mock(CourseBookerFacade.class);
+      CourseBookContainer expectedCourseBookContainer = new CourseBookContainer(new CourseBookDetails(courseName1, COURSE_INSTRUCTOR,
+              courseDate, FITNESSPARK_GLATTPARK), new BookingContext(false)); String errorMsg = "Halt stop so nicht!";
+      when(courseBookerFacade.bookCourse(eq(expectedCourseBookContainer))).thenThrow(new IllegalStateException(errorMsg));
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withCourse(CourseBuilder.builder()
+                      .withCourseDate(courseDate)
+                      .withCourseName(courseName1)
+                      .withId(courseId1)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withHasCourseDef(true)
+                      .withIsPaused(false)
+                      .build())
+              .withCourse(CourseBuilder.builder()
+                      .withCourseDate(courseDate.minusHours(5))
+                      .withCourseName(courseName2)
+                      .withId(courseId2)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .withCourse(CourseBuilder.builder()
+                      .withCourseDate(courseDate.plusHours(5))
+                      .withCourseName(courseName3)
+                      .withId(courseId3)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .withCourseBookingFacade(courseBookerFacade)
+              .build();
+
+      // When
+      CourseBookingResultDetails actualCourseBookingResultDetails = tcb.bookingStateHandler.bookCourse(USER_ID, tcb.weeklyCourses.getCourses().get(0).getId(), tcb.currentBookingState);
+
+      // When
+      assertThat(actualCourseBookingResultDetails.getCourseBookResult(), is(NOT_BOOKED_UNEXPECTED_ERROR));
+      assertThat(actualCourseBookingResultDetails.getErrorMessage(), is(TextResources.COURSE_BOOKING_FAILED.formatted(courseName1)));
       WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.getByUserId(USER_ID);
       // Earliest course must be resumed
       assertThat(weeklyCourses.getCourseById(courseId2).getIsPaused(), is(false));

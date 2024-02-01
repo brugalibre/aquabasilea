@@ -1,5 +1,6 @@
 package com.aquabasilea.domain.coursebooker.states.booking;
 
+import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.CourseComparator;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
@@ -72,11 +73,26 @@ public class BookingStateHandler {
               currentCourse.getCourseName());
       CourseBookContainer courseBookContainer = createCourseBookContainer(currentCourse, state);
       PlUtil.INSTANCE.startLogInfo("Course booker");
-      CourseBookingResultDetails courseBookingEndResult = courseBookerFacade.bookCourse(courseBookContainer);
+      CourseBookingResultDetails courseBookingEndResult = bookCourse(courseBookContainer);
       LOG.info("Course booking  is done. Result is '{}'", courseBookingEndResult);
       PlUtil.INSTANCE.endLogInfo();
       resumeCoursesUntil(userId, currentCourse);
       return courseBookingEndResult;
+   }
+
+   private CourseBookingResultDetails bookCourse(CourseBookContainer courseBookContainer) {
+      try {
+         return courseBookerFacade.bookCourse(courseBookContainer);
+      } catch (Exception e) {
+         String courseName = courseBookContainer.courseBookDetails().courseName();
+         LOG.error("Error while booking course {}", courseName, e);
+         return createErrorCourseBookingResultDetails(courseBookContainer.bookingContext(), courseName);
+      }
+   }
+
+   private static CourseBookingResultDetailsImpl createErrorCourseBookingResultDetails(BookingContext bookingContext, String courseName) {
+      CourseBookResult courseBookResult = bookingContext.dryRun() ? CourseBookResult.DRY_RUN_FAILED : CourseBookResult.NOT_BOOKED_UNEXPECTED_ERROR;
+      return CourseBookingResultDetailsImpl.of(courseBookResult, courseName, TextResources.COURSE_BOOKING_FAILED.formatted(courseName));
    }
 
    /**

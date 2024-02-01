@@ -34,8 +34,8 @@ public class TextResources {
    public static final String COURSE_BOOKING_RESULTS = "ACTIV Fitness Kurs Bucher: Ergebnisse für Kurs '%s' (Buchung)";
    public static final String COURSE_SUCCESSFULLY_BOOKED = "Kurs '%s' erfolgreich gebucht!";
    public static final String COURSE_NOT_BOOKABLE = "Kurs '%s' konnte nicht gebucht werden!";
+   public static final String COURSE_BOOKING_FAILED = "Kurs '%s' konnte aufgrund einem Schnittstellen Fehler nicht gebucht werden!";
    public static final String COURSE_NOT_BOOKABLE_FULLY_BOOKED = "Kurs '%s' konnte nicht gebucht werden, da er bereits ausgebucht ist";
-   public static final String COURSE_NOT_BOOKABLE_NO_SINGLE_RESULT = "Kurs '%s' konnte nicht gebucht werden, da nicht eindeutig gefiltert werden konnte!";
    public static final String
            COURSE_NOT_BOOKABLE_EXCEPTION = "Kurs '%s' konnte nicht gebucht werden, da ein interner Fehler aufgetreten ist ('%s')";
    public static final String COURSE_BOOKING_SKIPPED_COURSE_NO_COURSE_DEF = "Kurs '%s' wurde nicht gebucht! Der Kurs existiert im offiziellen Migros-Kursprogramm nicht";
