@@ -120,23 +120,22 @@ public class MigrosApiImpl implements MigrosApi {
    @Override
    public MigrosApiGetCoursesResponse getCourses(AuthenticationContainer authenticationContainer,
                                                  MigrosApiGetCoursesRequest migrosApiGetCoursesRequest) {
-      List<MigrosResponseCourse> migrosResponseCourses = getMigrosCourses(authenticationContainer, MigrosGetCoursesRequest.of(migrosApiGetCoursesRequest));
-      return new MigrosApiGetCoursesResponse(migrosMapper.mapToMigrosCourses(migrosResponseCourses));
+      return getMigrosCourses(authenticationContainer, MigrosGetCoursesRequest.of(migrosApiGetCoursesRequest));
    }
 
-   private List<MigrosResponseCourse> getMigrosCourses(AuthenticationContainer authenticationContainer,
-                                                       MigrosGetCoursesRequest migrosGetCoursesRequest) {
+   private MigrosApiGetCoursesResponse getMigrosCourses(AuthenticationContainer authenticationContainer,
+                                                     MigrosGetCoursesRequest migrosGetCoursesRequest) {
       LOG.info("Evaluating courses for request {}", migrosGetCoursesRequest);
       if (migrosGetCoursesRequest.isEmptyRequest()) {
          LOG.warn("No center-ids provided! Need at least one center id in order to fetch courses");
-         return List.of();
+         return MigrosApiGetCoursesResponse.empty();
       }
       String bearerAuthentication = getBearerAuthentication(authenticationContainer);
       HttpRequest httpGetCourseRequest = getMigrosGetAllCourseHttpRequest(migrosGetCoursesRequest, bearerAuthentication);
       ResponseWrapper<MigrosGetCoursesResponse> responseWrapper = httpService.callRequestAndParse(new MigrosGetCoursesResponseReader(), httpGetCourseRequest);
       MigrosGetCoursesResponse migrosGetCoursesResponse = responseWrapper.httpResponse();
       LOG.info("Got response {}, evaluated {} courses ", responseWrapper, migrosGetCoursesResponse.getResultCount());
-      return migrosGetCoursesResponse.getCourses();
+      return new MigrosApiGetCoursesResponse(migrosMapper.mapToMigrosCourses(migrosGetCoursesResponse.getCourses()), responseWrapper.successful());
    }
 
    private HttpRequest getMigrosGetAllCourseHttpRequest(MigrosGetCoursesRequest migrosGetCoursesRequest, String bearerAuthentication) {

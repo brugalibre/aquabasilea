@@ -11,6 +11,7 @@ import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseDefExtractorFacade;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.domain.coursedef.update.CourseDefExtractionResult;
 import com.aquabasilea.domain.userconfig.model.UserConfig;
 import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.service.statistics.StatisticsService;
@@ -91,8 +92,8 @@ public class Migration_V_05_01_2024 implements AppInitializer {
    }
 
    private void migrateCourseDefs(String userId) {
-      List<CourseDef> courseDefs = courseDefExtractorFacade.getCourseDefs(userId, userConfigRepository.getDefaultCourseLocations());
-      courseDefRepository.saveAll(courseDefs);
+      CourseDefExtractionResult courseDefExtractionResult = courseDefExtractorFacade.getCourseDefs(userId, userConfigRepository.getDefaultCourseLocations());
+      courseDefRepository.saveAll(courseDefExtractionResult.courseDefs());
       statisticsService.setLastCourseDefUpdate(userId, LocalDateTime.now());
    }
 

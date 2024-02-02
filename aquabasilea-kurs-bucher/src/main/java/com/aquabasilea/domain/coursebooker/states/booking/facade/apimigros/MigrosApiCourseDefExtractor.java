@@ -1,6 +1,7 @@
 package com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros;
 
 import com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros.mapping.MigrosCourseMapper;
+import com.aquabasilea.domain.coursedef.update.CourseDefExtractionResult;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseDefExtractorFacade;
 import com.aquabasilea.domain.coursedef.model.CourseDef;
@@ -26,7 +27,7 @@ public class MigrosApiCourseDefExtractor implements CourseDefExtractorFacade {
       this.migrosApi = migrosApi;
    }
 
-   public List<CourseDef> getCourseDefs(String userId, List<CourseLocation> courseLocations) {
+   public CourseDefExtractionResult getCourseDefs(String userId, List<CourseLocation> courseLocations) {
       AuthenticationContainer authenticationContainer = authenticationContainerRegistry.getAuthenticationContainerForUserId(userId);
       MigrosApiGetCoursesRequest migrosApiGetCoursesRequest = getMigrosApiGetCoursesRequest(courseLocations);
       MigrosApiGetCoursesResponse migrosApiGetCoursesResponse = migrosApi.getCourses(authenticationContainer, migrosApiGetCoursesRequest);
@@ -40,15 +41,16 @@ public class MigrosApiCourseDefExtractor implements CourseDefExtractorFacade {
       return MigrosApiGetCoursesRequest.of(courseCenterIds);
    }
 
-   private List<CourseDef> map2CourseDefsAndSetUserId(String userId, MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {
-      return setUserId(userId, map2CourseDefs(migrosApiGetCoursesResponse));
+   private CourseDefExtractionResult map2CourseDefsAndSetUserId(String userId, MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {
+      return setUserId(userId, map2CourseDefs(migrosApiGetCoursesResponse), migrosApiGetCoursesResponse.successful());
    }
 
-   private List<CourseDef> setUserId(String userId, List<CourseDef> courseDefs) {
-      return courseDefs
+   private CourseDefExtractionResult setUserId(String userId, List<CourseDef> courseDefs, boolean successful) {
+      List<CourseDef> updatedCourseDefs = courseDefs
               .stream()
               .map(courseDef -> courseDef.setUserId(userId))
               .toList();
+      return new CourseDefExtractionResult(updatedCourseDefs, successful);
    }
 
    private List<CourseDef> map2CourseDefs(MigrosApiGetCoursesResponse migrosApiGetCoursesResponse) {

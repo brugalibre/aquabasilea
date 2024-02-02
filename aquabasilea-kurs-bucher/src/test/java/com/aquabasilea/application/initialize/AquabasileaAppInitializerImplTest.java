@@ -23,8 +23,8 @@ import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFac
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacadeFactory;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseDefExtractorFacade;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseLocationExtractorFacade;
-import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
+import com.aquabasilea.domain.coursedef.update.CourseDefExtractionResult;
 import com.aquabasilea.domain.coursedef.update.CourseDefUpdater;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.courselocation.model.repository.CourseLocationRepository;
@@ -279,8 +279,8 @@ class AquabasileaAppInitializerImplTest {
       }
 
       @Override
-      public List<CourseDef> getCourseDefs(String userId, List<CourseLocation> courseLocations) {
-         return List.of();
+      public CourseDefExtractionResult getCourseDefs(String userId, List<CourseLocation> courseLocations) {
+         return CourseDefExtractionResult.empty();
       }
    }
 }

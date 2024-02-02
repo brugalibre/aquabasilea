@@ -5,6 +5,7 @@ import com.aquabasilea.application.security.model.UserContext;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.course.model.Course.CourseBuilder;
 import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
+import com.aquabasilea.domain.coursedef.update.CourseDefExtractionResult;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.course.model.WeeklyCourses;
 import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
@@ -678,8 +679,8 @@ class AquabasileaCourseBookerTest {
       }
 
       @Override
-      public List<CourseDef> getCourseDefs(String userId, List<CourseLocation> courseLocations) {
-         return List.of();
+      public CourseDefExtractionResult getCourseDefs(String userId, List<CourseLocation> courseLocations) {
+         return CourseDefExtractionResult.empty();
       }
    }
 

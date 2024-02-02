@@ -111,7 +111,12 @@ public class CourseDefUpdater {
    }
 
    private void updateCourseDefsInternal(String userId, List<CourseLocation> courseLocations, LocalDateTime dateWhenUpdateStarted) {
-      List<CourseDef> courseDefs = courseBookerFacade.getCourseDefs(userId, courseLocations);
+      CourseDefExtractionResult courseDefExtractionResult = courseBookerFacade.getCourseDefs(userId, courseLocations);
+      if (!courseDefExtractionResult.successful()) {
+         LOG.warn("CourseDefs not successful extracted, abort!");
+         return;
+      }
+      List<CourseDef> courseDefs = courseDefExtractionResult.courseDefs();
       courseDefRepository.deleteAllByUserId(userId);
       courseDefRepository.saveAll(courseDefs);
       OnCourseDefsUpdatedContext onCourseDefsUpdatedContext = new OnCourseDefsUpdatedContext(userId, courseDefs, dateWhenUpdateStarted, courseDefUpdaterScheduler.calcDelayUntilNextUpdate());

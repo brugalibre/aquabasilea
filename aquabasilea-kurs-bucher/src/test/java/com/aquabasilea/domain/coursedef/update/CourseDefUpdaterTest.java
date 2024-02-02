@@ -33,13 +33,12 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.aquabasilea.test.TestConstants.*;
-import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = TestAquabasileaCourseBookerPersistenceConfig.class)
 class CourseDefUpdaterTest {
@@ -100,7 +99,7 @@ class CourseDefUpdaterTest {
       // Given
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
-      TestCourseDefExtractorFacade testCourseDefExtractorFacade = createTestCourseDefExtractorFacade(aquabasileaFitnessCenter, courseDate, courseName, "peter");
+      TestCourseDefExtractorFacade testCourseDefExtractorFacade = createTestCourseDefExtractorFacade(aquabasileaFitnessCenter, courseDate, courseName, "peter", true);
       testCourseDefExtractorFacade.extractingDuration = 2000;
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(testCourseDefExtractorFacade, statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
       addCourseDefStatisticsUpdater(courseDefUpdater);
@@ -139,13 +138,12 @@ class CourseDefUpdaterTest {
       CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(updateTime.getDayOfWeek(), timeOfTheDayAsString);
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
-      TestCourseDefExtractorFacade testCourseDefExtractorFacade = createTestCourseDefExtractorFacade(aquabasileaFitnessCenter, courseDate, courseName, "karl");
+      TestCourseDefExtractorFacade testCourseDefExtractorFacade = createTestCourseDefExtractorFacade(aquabasileaFitnessCenter, courseDate, courseName, "karl", true);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(testCourseDefExtractorFacade, statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository, courseDefUpdateDate);
       addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       courseDefUpdater.startScheduler(USER_ID_WITH_PREV_AND_TO_OLD_UPDATE);
-      await().atMost(new Duration(1, TimeUnit.MINUTES)).until(() -> testCourseDefExtractorFacade.amountOfInvocations == 1);
 
       // Then
       Statistics statistics = statisticsRepository.getByUserId(USER_ID_WITH_PREV_AND_TO_OLD_UPDATE);
@@ -167,13 +165,12 @@ class CourseDefUpdaterTest {
       LocalDateTime expectedNextCourseDefUpdate = getExpectedNextCourseDefUpdate(now);
       LocalDateTime courseDate = LocalDateTime.of(2022, Month.JUNE, 1, 10, 15);
       String courseName = "Test";
-      TestCourseDefExtractorFacade testCourseDefExtractorFacade = createTestCourseDefExtractorFacade(aquabasileaFitnessCenter, courseDate, courseName, "karl");
+      TestCourseDefExtractorFacade testCourseDefExtractorFacade = createTestCourseDefExtractorFacade(aquabasileaFitnessCenter, courseDate, courseName, "karl", true);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(testCourseDefExtractorFacade, statisticsService::needsCourseDefUpdate, courseDefRepository, userConfigRepository);
       addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       courseDefUpdater.startScheduler(USER_ID_WITH_PREV_AND_VALID_UPDATE);
-      await().atMost(new Duration(10, TimeUnit.SECONDS)).until(() -> courseDefUpdater.calcDelayUntilNextUpdate() != null);
 
       // Then
       Statistics statistics = statisticsRepository.getByUserId(USER_ID_WITH_PREV_AND_VALID_UPDATE);
@@ -208,14 +205,13 @@ class CourseDefUpdaterTest {
       String timeOfTheDayAsString = localDateTimeAsString.substring(localDateTimeAsString.indexOf(", ") + 1);
       CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(now.getDayOfWeek(), timeOfTheDayAsString);
       MigrosCourse defaultAquabasileaCourse = createDefaultMigrosCourse();
-      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseDefExtractorFacade(List.of(defaultAquabasileaCourse)), statisticsService::needsCourseDefUpdate,
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(getCourseDefExtractorFacade(List.of(defaultAquabasileaCourse), true), statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository, courseDefUpdateDate);
       addCourseDefStatisticsUpdater(courseDefUpdater);
 
       // When
       // start scheduler and execute update immediately, although the update is scheduled one day from one. But since there was no update at all, do it initially
       courseDefUpdater.startScheduler(USER_ID);
-      await().atMost(new Duration(5, TimeUnit.SECONDS)).until(() -> nonNull(statisticsService.getStatisticsByUserId(USER_ID).getLastCourseDefUpdate()));
 
       // Then
       List<CourseDef> allCourseDefs = courseDefRepository.getAll();
@@ -235,7 +231,7 @@ class CourseDefUpdaterTest {
       LocalDateTime expectedNextCourseDefUpdate = nowPlusOneDay.plusMinutes(1);
       String localDateTimeAsString = DateUtil.getTimeAsString(nowPlusOneDay);
       CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(nowPlusOneDay.getDayOfWeek(), localDateTimeAsString);
-      TestCourseDefExtractorFacade testCourseDefExtractorFacade = getCourseDefExtractorFacade(List.of(createDefaultMigrosCourse()));
+      TestCourseDefExtractorFacade testCourseDefExtractorFacade = getCourseDefExtractorFacade(List.of(createDefaultMigrosCourse()), true);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(testCourseDefExtractorFacade, statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository, courseDefUpdateDate);
       addCourseDefStatisticsUpdater(courseDefUpdater);
@@ -255,6 +251,36 @@ class CourseDefUpdaterTest {
    }
 
    @Test
+   void startSchedulerScheduleNextUpdateSinceThereIsPreviousUpdate_CourseDefExtractionFailedNoStatisticUpdate() {
+
+      // Given
+      LocalDateTime now = LocalDateTime.now();
+      courseDefRepository.deleteAll();
+      this.statisticsService.setLastCourseDefUpdate(USER_ID_WITH_PREV_AND_TO_OLD_UPDATE, now);
+      LocalDateTime expectedNextCourseDefUpdate = now.plusMinutes(1);
+      String localDateTimeAsString = DateUtil.getTimeAsString(now);
+      CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(now.getDayOfWeek(), localDateTimeAsString);
+      TestCourseDefExtractorFacade testCourseDefExtractorFacade = getCourseDefExtractorFacade(List.of(createDefaultMigrosCourse()), false);
+      CourseDefUpdater courseDefUpdater = new CourseDefUpdater(testCourseDefExtractorFacade, statisticsService::needsCourseDefUpdate,
+              courseDefRepository, userConfigRepository, courseDefUpdateDate);
+
+      CourseDefStatisticsUpdater courseDefStatisticsUpdaterSpy = spy(new CourseDefStatisticsUpdater(statisticsService));
+      addCourseDefStatisticsUpdater(courseDefUpdater, courseDefStatisticsUpdaterSpy);
+
+      // When
+      courseDefUpdater.startScheduler(USER_ID);
+
+      // Then
+      // no scheduler started, since there is already an update in the statistic-table
+      List<CourseDef> allCourseDefs = courseDefRepository.getAll();
+      assertThat(allCourseDefs.size(), is(0));
+      Statistics statistics = statisticsRepository.getByUserId(USER_ID_WITH_PREV_AND_TO_OLD_UPDATE);
+      assertThat(statistics.getNextCourseDefUpdate(), is(nullValue()));
+      verify(courseDefStatisticsUpdaterSpy, never()).courseDefsUpdated(any());
+      verify(courseDefStatisticsUpdaterSpy).onSchedulerStarted(any());
+   }
+
+   @Test
    void startSchedulerDontUpdateNowAndScheduleNextUpdateSinceThereIsPreviousUpdate() {
 
       // Given
@@ -264,7 +290,7 @@ class CourseDefUpdaterTest {
       LocalDateTime expectedNextCourseDefUpdate = lastUpdate.plusDays(1);
       String localDateTimeAsString = DateUtil.getTimeAsString(lastUpdate);
       CourseDefUpdateDate courseDefUpdateDate = new CourseDefUpdateDate(lastUpdate.getDayOfWeek(), localDateTimeAsString);
-      TestCourseDefExtractorFacade testCourseDefExtractorFacade = getCourseDefExtractorFacade(List.of(createDefaultMigrosCourse()));
+      TestCourseDefExtractorFacade testCourseDefExtractorFacade = getCourseDefExtractorFacade(List.of(createDefaultMigrosCourse()), true);
       CourseDefUpdater courseDefUpdater = new CourseDefUpdater(testCourseDefExtractorFacade, statisticsService::needsCourseDefUpdate,
               courseDefRepository, userConfigRepository, courseDefUpdateDate);
       addCourseDefStatisticsUpdater(courseDefUpdater);
@@ -284,6 +310,10 @@ class CourseDefUpdaterTest {
 
    private void addCourseDefStatisticsUpdater(CourseDefUpdater courseDefUpdater) {
       CourseDefStatisticsUpdater courseDefStatisticsUpdater = new CourseDefStatisticsUpdater(statisticsService);
+      addCourseDefStatisticsUpdater(courseDefUpdater, courseDefStatisticsUpdater);
+   }
+
+   private static void addCourseDefStatisticsUpdater(CourseDefUpdater courseDefUpdater, CourseDefStatisticsUpdater courseDefStatisticsUpdater) {
       courseDefUpdater.addCourseDefUpdatedNotifier(courseDefStatisticsUpdater);
       courseDefUpdater.addCourseDefStartedNotifier(courseDefStatisticsUpdater);
    }
@@ -291,9 +321,9 @@ class CourseDefUpdaterTest {
    private TestCourseDefExtractorFacade createTestCourseDefExtractorFacade(CourseLocation courseLocation,
                                                                            LocalDateTime courseDate,
                                                                            String courseName,
-                                                                           String courseInstructor) {
+                                                                           String courseInstructor, boolean successful) {
       List<MigrosCourse> migrosCourses = List.of(createMigrosCourse(courseLocation, courseDate, courseName, courseInstructor));
-      return getCourseDefExtractorFacade(migrosCourses);
+      return getCourseDefExtractorFacade(migrosCourses, successful);
    }
 
    private static MigrosCourse createMigrosCourse(CourseLocation courseLocation, LocalDateTime courseDate, String courseName, String courseInstructor) {
@@ -305,8 +335,8 @@ class CourseDefUpdaterTest {
       return new MigrosCourse(courseDate, FITNESSPARK_HEUWAAGE.centerId(), "test", "heinz", "2344");
    }
 
-   private TestCourseDefExtractorFacade getCourseDefExtractorFacade(List<MigrosCourse> migrosCourses) {
-      MigrosApi migrosApi = mockMigrosApi(migrosCourses);
+   private TestCourseDefExtractorFacade getCourseDefExtractorFacade(List<MigrosCourse> migrosCourses, boolean successful) {
+      MigrosApi migrosApi = mockMigrosApi(migrosCourses, successful);
       AuthenticationContainerService authenticationContainerService = mockAuthenticationContainerService();
       return new TestCourseDefExtractorFacade(migrosApi, authenticationContainerService, courseLocationRepository);
    }
@@ -317,9 +347,9 @@ class CourseDefUpdaterTest {
       return authenticationContainerService;
    }
 
-   private static MigrosApi mockMigrosApi(List<MigrosCourse> migrosCourses) {
+   private static MigrosApi mockMigrosApi(List<MigrosCourse> migrosCourses, boolean successful) {
       MigrosApi migrosApi = mock(MigrosApi.class);
-      when(migrosApi.getCourses(any(), any())).thenReturn(new MigrosApiGetCoursesResponse(migrosCourses));
+      when(migrosApi.getCourses(any(), any())).thenReturn(new MigrosApiGetCoursesResponse(migrosCourses, successful));
       return migrosApi;
    }
 
@@ -336,15 +366,15 @@ class CourseDefUpdaterTest {
       }
 
       @Override
-      public List<CourseDef> getCourseDefs(String userId, List<CourseLocation> courseLocations) {
+      public CourseDefExtractionResult getCourseDefs(String userId, List<CourseLocation> courseLocations) {
          try {
             Thread.sleep(extractingDuration);
          } catch (InterruptedException e) {
             e.printStackTrace();
          }
-         List<CourseDef> courseDefs = super.getCourseDefs(userId, courseLocations);
+         CourseDefExtractionResult courseDefExtractionResult = super.getCourseDefs(userId, courseLocations);
          this.amountOfInvocations++;
-         return courseDefs;
+         return courseDefExtractionResult;
       }
    }
 }

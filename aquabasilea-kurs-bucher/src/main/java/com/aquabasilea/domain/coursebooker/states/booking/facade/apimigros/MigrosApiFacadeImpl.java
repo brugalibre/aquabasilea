@@ -4,6 +4,7 @@ import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros.mapping.MigrosCourseMapper;
+import com.aquabasilea.domain.coursedef.update.CourseDefExtractionResult;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
@@ -12,7 +13,6 @@ import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.CourseBookerFacade;
-import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiBookCourseRequest;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosApiCancelCourseRequest;
 import com.aquabasilea.migrosapi.api.v1.model.book.request.MigrosBookContext;
@@ -65,7 +65,7 @@ public class MigrosApiFacadeImpl implements CourseBookerFacade {
    }
 
    @Override
-   public List<CourseDef> getCourseDefs(String userId, List<CourseLocation> courseLocations) {
+   public CourseDefExtractionResult getCourseDefs(String userId, List<CourseLocation> courseLocations) {
       return migrosApiCourseDefExtractor.getCourseDefs(userId, courseLocations);
    }
 

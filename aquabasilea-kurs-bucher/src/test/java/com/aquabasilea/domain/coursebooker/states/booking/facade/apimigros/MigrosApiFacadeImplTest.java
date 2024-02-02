@@ -4,6 +4,7 @@ import com.aquabasilea.application.security.service.AuthenticationContainerServi
 import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResultDetails;
 import com.aquabasilea.domain.coursebooker.states.booking.facade.apimigros.mapping.MigrosCourseMapper;
+import com.aquabasilea.domain.coursedef.update.CourseDefExtractionResult;
 import com.aquabasilea.domain.courselocation.model.CourseLocation;
 import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
@@ -167,7 +168,8 @@ class MigrosApiFacadeImplTest {
               () -> Duration.ZERO);
 
       // When
-      List<CourseDef> courseDefs = courseBookerFacade.getCourseDefs(userId1, List.of());
+      CourseDefExtractionResult courseDefExtractionResult = courseBookerFacade.getCourseDefs(userId1, List.of());
+      List<CourseDef> courseDefs = courseDefExtractionResult.courseDefs();
 
       // Then
       assertThat(courseDefs.size(), is(1));
@@ -284,7 +286,7 @@ class MigrosApiFacadeImplTest {
 
    private static void mockGetCourses(MigrosApi migrosApi, String courseInstructor, String courseName, String centerId) {
       List<MigrosCourse> courses = List.of(new MigrosCourse(LocalDateTime.now(), centerId, courseName, courseInstructor, null));
-      MigrosApiGetCoursesResponse migrosApiGetCoursesResponse = new MigrosApiGetCoursesResponse(courses);
+      MigrosApiGetCoursesResponse migrosApiGetCoursesResponse = new MigrosApiGetCoursesResponse(courses, true);
       when(migrosApi.getCourses(any(), any())).thenReturn(migrosApiGetCoursesResponse);
    }
 

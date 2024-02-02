@@ -5,11 +5,6 @@ CREATE TABLE IF NOT EXISTS weeklycourses
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS coursedef;
-DROP TABLE IF EXISTS course;
-DROP TABLE IF EXISTS user_config_entity_course_locations;
-DROP TABLE IF EXISTS user_config;
-
 CREATE TABLE IF NOT EXISTS courselocation
 (
     center_id VARCHAR(255) NOT NULL,

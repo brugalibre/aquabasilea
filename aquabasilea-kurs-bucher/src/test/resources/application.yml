@@ -7,6 +7,7 @@ application:
     aquabasileaKeyStoreName: "..\test-aquabasilea.keystore"
     jwtSecret: '3'
     jwtExpirationMs: 1
+  prevVersion: 1
 logging:
   file.name: logs/aquabasilea.log
   title: Aquabasilea Kurs-Bucher
