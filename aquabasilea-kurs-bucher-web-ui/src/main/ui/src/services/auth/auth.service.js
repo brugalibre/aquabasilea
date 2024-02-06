@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authHeader from "@/services/auth/auth-header";
 
-const API_URL = '/api/auth/';
+const API_URL = '/api/brugalibre/common/v1/auth/';
 
 class AuthService {
     login(user) {
@@ -15,7 +15,7 @@ class AuthService {
     }
 
     changePassword(changeUserPasswordRequest) {
-        return axios.post(API_URL + 'changePassword', changeUserPasswordRequest, {headers: authHeader()});
+        return axios.put(API_URL + 'changePassword', changeUserPasswordRequest, {headers: authHeader()});
     }
 
     logout() {

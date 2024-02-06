@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authHeader from "@/services/auth/auth-header";
 
-const API_URL = '/api/mobilephone/';
+const API_URL = '/api/brugalibre/common/v1/mobilephone/';
 
 class MobilePhoneService {
 

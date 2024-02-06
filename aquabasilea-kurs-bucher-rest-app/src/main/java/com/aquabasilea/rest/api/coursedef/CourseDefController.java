@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/aquabasilea-course-booker/coursedef")
+@RequestMapping("/api/activfitness/v1/course-booker/coursedef")
 @RestController
 public class CourseDefController {
 

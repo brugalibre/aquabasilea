@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/v1/aquabasilea-course-booker")
+@RequestMapping("/api/activfitness/v1/course-booker")
 @RestController
 public class StatisticsController {
 

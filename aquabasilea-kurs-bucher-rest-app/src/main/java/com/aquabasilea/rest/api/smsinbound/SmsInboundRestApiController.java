@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class SmsInboundRestApiController {
 
    private static final Logger LOG = LoggerFactory.getLogger(SmsInboundRestApiController.class);
-   public static final String API_V_1_SMS_INBOUND = "/api/v1/sms-inbound";
+   public static final String API_V_1_SMS_INBOUND = "/api/activfitness/v1/sms-inbound";
    private final SmsInboundRestService smsInboundRestService;
 
    @Autowired

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authHeader from "@/services/auth/auth-header";
 
-const API_URL = '/api/v1/admin/';
+const API_URL = '/api/activfitness/v1/admin/';
 
 class AdminService {
     getAdminOverview(store) {

@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/aquabasilea-course-booker/weekly-courses")
+@RequestMapping("/api/activfitness/v1/course-booker/weekly-courses")
 @RestController
 public class WeeklyCoursesController {
 

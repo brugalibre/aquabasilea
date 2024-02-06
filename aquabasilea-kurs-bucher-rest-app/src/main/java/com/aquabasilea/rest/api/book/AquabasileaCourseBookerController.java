@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/aquabasilea-course-booker")
+@RequestMapping("/api/activfitness/v1/course-booker")
 @RestController
 public class AquabasileaCourseBookerController {
 

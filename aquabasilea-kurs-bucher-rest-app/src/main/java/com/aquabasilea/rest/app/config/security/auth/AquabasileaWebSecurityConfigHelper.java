@@ -13,8 +13,8 @@ public class AquabasileaWebSecurityConfigHelper implements WebSecurityConfigHelp
    @Value("server:servlet:context-path:'/'")
    private String loginProcessingUrl;
 
-   private static final String V_1_AQUABASILEA_COURSE_BOOKER = "/api/v1/aquabasilea-course-booker/**";
-   private static final String API_V_1_ADMIN = "/api/v1/admin/**";
+   private static final String V_1_AQUABASILEA_COURSE_BOOKER = "/api/activfitness/v1/course-booker/**";
+   private static final String API_V_1_ADMIN = "/api/activfitness/v1/admin/**";
 
    @Override
    public String[] getRequestMatcherForRole(String role) {

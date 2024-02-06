@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-export const AQUABASILEA_COURSE_BOOKER_API_URL = '/api/v1/aquabasilea-course-booker';
+export const AQUABASILEA_COURSE_BOOKER_API_URL = '/api/activfitness/v1/course-booker';
 
 export default {
     name: 'CommonAquabasileaRestApi',
