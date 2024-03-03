@@ -2,7 +2,6 @@ package com.aquabasilea.persistence.healthcheck;
 
 
 import com.brugalibre.common.domain.persistence.DomainEntity;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -13,10 +12,8 @@ import java.util.Objects;
 @Table(name = "healthcheck")
 public class HealthCheckEntity extends DomainEntity {
 
-    @Nullable
     private LocalDateTime lastFailed;
 
-    @Nullable
     private LocalDateTime lastSuccessful;
 
     public HealthCheckEntity(String id) {
