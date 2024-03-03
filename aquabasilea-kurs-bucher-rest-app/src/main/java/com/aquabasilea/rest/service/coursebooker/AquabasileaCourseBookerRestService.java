@@ -12,6 +12,7 @@ import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
 import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
 import com.aquabasilea.rest.model.coursebooker.cancel.CourseCancelResultDto;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
+import com.aquabasilea.service.coursebooker.DryRunInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,7 @@ public class AquabasileaCourseBookerRestService {
      * @return a {@link CourseBookerEndResultDto} with details about the booking
      */
     public CourseBookerEndResultDto bookCourseDryRun(String userId, String courseId) {
-        CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerService.bookCourseDryRun(userId, courseId);
+        CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerService.bookCourseDryRun(new DryRunInfo(userId, courseId, true));
         return CourseBookerEndResultDto.of(courseBookingEndResult);
     }
 

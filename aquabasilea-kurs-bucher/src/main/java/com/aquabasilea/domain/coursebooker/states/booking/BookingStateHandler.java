@@ -76,7 +76,9 @@ public class BookingStateHandler {
       CourseBookingResultDetails courseBookingEndResult = bookCourse(courseBookContainer);
       LOG.info("Course booking  is done. Result is '{}'", courseBookingEndResult);
       PlUtil.INSTANCE.endLogInfo();
-      resumeCoursesUntil(userId, currentCourse);
+      if (state == CourseBookingState.BOOKING) {
+         resumeCoursesUntil(userId, currentCourse);
+      }
       return courseBookingEndResult;
    }
 

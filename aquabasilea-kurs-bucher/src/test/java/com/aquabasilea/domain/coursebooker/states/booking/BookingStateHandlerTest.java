@@ -8,6 +8,7 @@ import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.model.booking.BookingContext;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookContainer;
 import com.aquabasilea.domain.coursebooker.model.booking.CourseBookDetails;
+import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookResult;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetailsImpl;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
@@ -152,6 +153,63 @@ class BookingStateHandlerTest {
    }
 
    @Test
+   void testBookCourseDryRunDontResume() {
+      // Given
+      LocalDateTime courseDate = LocalDateTime.of(LocalDate.now(), LocalTime.of(15, 15));
+      String courseName1 = "Kurs-99";
+      String courseName2 = "Kurs-88";
+      String courseName3 = "Kurs-77";
+      String courseId1 = "1";
+      String courseId2 = "2";
+      String courseId3 = "3";
+      CourseBookerFacade courseBookerFacade = mock(CourseBookerFacade.class);
+      CourseBookContainer expectedCourseBookContainer = new CourseBookContainer(new CourseBookDetails(courseName1, COURSE_INSTRUCTOR,
+              courseDate, FITNESSPARK_GLATTPARK), new BookingContext(true));
+      CourseBookingResultDetails courseBookingResultDetails = new CourseBookingResultDetailsImpl(DRY_RUN_SUCCESSFUL, courseName1, null);
+      when(courseBookerFacade.bookCourse(eq(expectedCourseBookContainer))).thenReturn(courseBookingResultDetails);
+      TestCaseBuilder tcb = new TestCaseBuilder()
+              .withCourseBookingState(CourseBookingState.BOOKING_DRY_RUN)
+              .withCourse(CourseBuilder.builder()
+                      .withCourseDate(courseDate)
+                      .withCourseName(courseName1)
+                      .withId(courseId1)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withHasCourseDef(true)
+                      .withIsPaused(false)
+                      .build())
+              .withCourse(CourseBuilder.builder()
+                      .withCourseDate(courseDate.minusHours(5))
+                      .withCourseName(courseName2)
+                      .withId(courseId2)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .withCourse(CourseBuilder.builder()
+                      .withCourseDate(courseDate.plusHours(5))
+                      .withCourseName(courseName3)
+                      .withId(courseId3)
+                      .withCourseInstructor(COURSE_INSTRUCTOR)
+                      .withCourseLocation(FITNESSPARK_GLATTPARK)
+                      .withHasCourseDef(true)
+                      .withIsPaused(true)
+                      .build())
+              .withCourseBookingFacade(courseBookerFacade)
+              .build();
+
+      // When
+      CourseBookingResultDetails actualCourseBookingResultDetails = tcb.bookingStateHandler.bookCourse(USER_ID, courseId1, tcb.currentBookingState);
+
+      // When
+      assertThat(actualCourseBookingResultDetails.getCourseBookResult(), is(DRY_RUN_SUCCESSFUL));
+      WeeklyCourses weeklyCourses = tcb.weeklyCoursesRepository.getByUserId(USER_ID);
+      // Earliest course must be resumed
+      assertThat(weeklyCourses.getCourseById(courseId2).getIsPaused(), is(true));
+   }
+
+   @Test
    void testBookCourseWithoutCourseDef() {
 
       // Given
@@ -255,7 +313,7 @@ class BookingStateHandlerTest {
    private static class TestCaseBuilder {
       private final WeeklyCoursesRepository weeklyCoursesRepository;
       private final WeeklyCourses weeklyCourses;
-      private final CourseBookingState currentBookingState;
+      private CourseBookingState currentBookingState;
       private CourseBookerFacade courseBookerFacade;
       private BookingStateHandler bookingStateHandler;
 
@@ -268,6 +326,11 @@ class BookingStateHandlerTest {
 
       private TestCaseBuilder withCourse(Course course) {
          this.weeklyCourses.addCourse(course);
+         return this;
+      }
+
+      private TestCaseBuilder withCourseBookingState(CourseBookingState courseBookingState) {
+         this.currentBookingState = courseBookingState;
          return this;
       }
 

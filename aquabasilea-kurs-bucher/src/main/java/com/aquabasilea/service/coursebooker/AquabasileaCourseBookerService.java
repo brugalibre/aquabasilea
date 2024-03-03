@@ -130,13 +130,12 @@ public class AquabasileaCourseBookerService {
    /**
     * Does a dry-run booking of the current Course. Additionally, all consumers are notified about the result
     *
-    * @param courseId the id of the {@link Course} to book
-    * @return a {@link CourseBookingResultDetails} which contains details about the result
+    * @param dryRunInfo@return a {@link CourseBookingResultDetails} which contains details about the result
     */
-   public CourseBookingResultDetails bookCourseDryRun(String userId, String courseId) {
-      LOG.info("Start dry run for course {}", courseId);
-      AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(userId);
-      return aquabasileaCourseBooker.bookCourse(BOOKING_DRY_RUN, courseId, true);
+   public CourseBookingResultDetails bookCourseDryRun(DryRunInfo dryRunInfo) {
+      LOG.info("Start dry run for course {}", dryRunInfo.courseId());
+      AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(dryRunInfo.userId());
+      return aquabasileaCourseBooker.bookCourse(BOOKING_DRY_RUN, dryRunInfo.courseId(), dryRunInfo.sendNotification());
    }
 
    private CourseBookingState map2CourseBookingState(AquabasileaCourseBooker aquabasileaCourseBooker) {
