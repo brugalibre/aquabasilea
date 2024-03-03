@@ -5,6 +5,7 @@ import com.brugalibre.persistence.user.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import static com.aquabasilea.rest.api.healthcheck.HealthCheckController.V_1_AQUABASILEA_HEALTH_CHECK;
 import static com.aquabasilea.rest.api.smsinbound.SmsInboundRestApiController.API_V_1_SMS_INBOUND;
 
 @Service
@@ -28,7 +29,7 @@ public class AquabasileaWebSecurityConfigHelper implements WebSecurityConfigHelp
 
    @Override
    public String[] getOptionalPermittedPatterns() {
-      return new String[]{API_V_1_SMS_INBOUND + "/**"};
+      return new String[]{API_V_1_SMS_INBOUND + "/**", V_1_AQUABASILEA_HEALTH_CHECK + "/**"};
    }
 
    @Override

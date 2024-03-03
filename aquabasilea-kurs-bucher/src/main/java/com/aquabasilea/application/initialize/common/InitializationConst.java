@@ -12,6 +12,7 @@ public final class InitializationConst {
    }
 
    public static final int COURSE_LOCATIONS = 1;
+   public static final int HEALTH_CHECK = 10;
    public static final int USER_CREDENTIALS = 100;
    public static final int AQUABASILEA_PERSISTENCE = 200;
    public static final int USER_CONFIG = 300;

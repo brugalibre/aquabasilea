@@ -93,3 +93,11 @@ CREATE TABLE IF NOT EXISTS contact_point_entity
     PRIMARY KEY (id),
     CONSTRAINT FK_CONTACT_POINT_ENTITY_USERS FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+CREATE TABLE IF NOT EXISTS healthcheck
+(
+    id                  VARCHAR(255) NOT NULL,
+    last_failed         timestamp(6),
+    last_successful     timestamp(6),
+    PRIMARY KEY (id)
+);

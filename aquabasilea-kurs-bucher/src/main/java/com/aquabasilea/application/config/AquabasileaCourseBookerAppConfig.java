@@ -39,7 +39,7 @@ import static com.aquabasilea.service.courses.WeeklyCoursesService.WEEKLY_COURSE
 @Configuration
 @ComponentScan(basePackages = {"com.aquabasilea.application.initialize",
         "com.aquabasilea.notification", "com.aquabasilea.persistence", "com.aquabasilea.service"})
-@Import({AquabasileaCourseBookerPersistenceConfig.class})
+@Import({AquabasileaCourseBookerPersistenceConfig.class, HealthCheckConfig.class})
 public class AquabasileaCourseBookerAppConfig {
 
    /**
