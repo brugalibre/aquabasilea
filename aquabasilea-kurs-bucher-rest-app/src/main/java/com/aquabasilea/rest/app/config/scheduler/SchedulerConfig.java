@@ -13,24 +13,24 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 public class SchedulerConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SchedulerConfig.class);
-    private final HealthCheckService healthCheckService;
+   private static final Logger LOG = LoggerFactory.getLogger(SchedulerConfig.class);
+   private final HealthCheckService healthCheckService;
 
-    public SchedulerConfig(HealthCheckService healthCheckService) {
-        this.healthCheckService = healthCheckService;
-    }
+   public SchedulerConfig(HealthCheckService healthCheckService) {
+      this.healthCheckService = healthCheckService;
+   }
 
 
-    @EventListener
-    public void onApplicationEvent(ApplicationStartedEvent event) {
-        LOG.info("Do health-check persist results on start-up");
-        healthCheckService.doHealthCheckAndPersist();
-    }
+   @EventListener
+   public void onApplicationEvent(ApplicationStartedEvent event /*unused*/) {
+      LOG.info("Do health-check persist results on start-up");
+      healthCheckService.doHealthCheckAndPersist();
+   }
 
-    @Scheduled(cron = "0 0 3, 10, 19 * * *")
-    public void scheduleTaskUsingCronExpression() {
-        LOG.info("Do health-check and persist results");
-        healthCheckService.doHealthCheckAndPersist();
-    }
+   @Scheduled(cron = "* * */6 * * *")
+   public void scheduleTaskUsingCronExpression() {
+      LOG.info("Do health-check and persist results");
+      healthCheckService.doHealthCheckAndPersist();
+   }
 }
 
