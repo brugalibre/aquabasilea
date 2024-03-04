@@ -27,7 +27,7 @@ public class SchedulerConfig {
       healthCheckService.doHealthCheckAndPersist();
    }
 
-   @Scheduled(cron = "* * */6 * * *")
+   @Scheduled(cron = "0 0 1,5,13 * * *")
    public void scheduleTaskUsingCronExpression() {
       LOG.info("Do health-check and persist results");
       healthCheckService.doHealthCheckAndPersist();
