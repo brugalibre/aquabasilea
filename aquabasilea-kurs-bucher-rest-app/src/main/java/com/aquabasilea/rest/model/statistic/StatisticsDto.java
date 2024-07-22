@@ -3,7 +3,7 @@ package com.aquabasilea.rest.model.statistic;
 import com.aquabasilea.application.i18n.TextResources;
 import com.aquabasilea.domain.statistics.model.Statistics;
 import com.aquabasilea.domain.statistics.model.StatisticsOverview;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import java.time.LocalDateTime;

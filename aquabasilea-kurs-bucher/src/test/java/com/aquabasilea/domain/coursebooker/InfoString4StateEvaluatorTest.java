@@ -4,7 +4,7 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.application.i18n.TextResources;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;

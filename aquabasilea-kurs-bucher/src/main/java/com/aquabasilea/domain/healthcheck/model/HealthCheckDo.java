@@ -1,7 +1,7 @@
 package com.aquabasilea.domain.healthcheck.model;
 
-import com.aquabasilea.util.DateUtil;
 import com.brugalibre.common.domain.model.DomainModel;
+import com.brugalibre.util.date.DateUtil;
 
 import java.time.LocalDateTime;
 import java.util.Locale;

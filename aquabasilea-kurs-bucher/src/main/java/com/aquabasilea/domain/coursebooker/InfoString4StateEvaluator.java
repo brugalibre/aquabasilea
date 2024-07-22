@@ -5,7 +5,7 @@ import com.aquabasilea.domain.course.model.Course;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.model.state.init.InitializationResult;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

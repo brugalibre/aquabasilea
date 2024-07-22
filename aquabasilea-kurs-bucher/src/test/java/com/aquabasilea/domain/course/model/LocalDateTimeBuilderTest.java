@@ -1,6 +1,6 @@
 package com.aquabasilea.domain.course.model;
 
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

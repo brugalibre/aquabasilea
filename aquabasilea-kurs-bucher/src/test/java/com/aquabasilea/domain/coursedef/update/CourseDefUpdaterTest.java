@@ -19,7 +19,7 @@ import com.aquabasilea.migrosapi.api.v1.model.getcourse.response.MigrosCourse;
 import com.aquabasilea.migrosapi.api.v1.service.MigrosApi;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.service.statistics.StatisticsService;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import org.awaitility.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

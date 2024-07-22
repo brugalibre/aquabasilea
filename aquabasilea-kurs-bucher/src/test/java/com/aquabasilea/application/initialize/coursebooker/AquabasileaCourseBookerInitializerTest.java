@@ -13,10 +13,10 @@ import com.aquabasilea.domain.courselocation.model.repository.CourseLocationRepo
 import com.aquabasilea.domain.statistics.model.repository.StatisticsRepository;
 import com.aquabasilea.domain.userconfig.repository.UserConfigRepository;
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
-import com.aquabasilea.util.DateUtil;
 import com.brugalibre.domain.user.model.User;
 import com.brugalibre.domain.user.repository.UserRepository;
 import com.brugalibre.persistence.user.Role;
+import com.brugalibre.util.date.DateUtil;
 import org.awaitility.Duration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

@@ -22,7 +22,7 @@ import com.aquabasilea.domain.coursebooker.model.state.init.InitializationResult
 import com.aquabasilea.domain.coursedef.model.CourseDef;
 import com.aquabasilea.domain.coursedef.model.repository.CourseDefRepository;
 import com.aquabasilea.application.security.model.UserContext;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

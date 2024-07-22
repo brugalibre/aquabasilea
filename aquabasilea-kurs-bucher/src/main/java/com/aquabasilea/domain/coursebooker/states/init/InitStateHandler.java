@@ -6,8 +6,8 @@ import com.aquabasilea.domain.course.repository.WeeklyCoursesRepository;
 import com.aquabasilea.domain.coursebooker.config.AquabasileaCourseBookerConfig;
 import com.aquabasilea.domain.coursebooker.model.state.init.InitializationResult;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
-import com.aquabasilea.util.DateUtil;
 import com.brugalibre.domain.user.model.User;
+import com.brugalibre.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

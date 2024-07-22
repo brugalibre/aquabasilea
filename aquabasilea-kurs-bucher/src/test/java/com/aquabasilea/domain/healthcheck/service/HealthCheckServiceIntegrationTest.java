@@ -8,7 +8,7 @@ import com.aquabasilea.domain.healthcheck.model.repository.HealthCheckRepository
 import com.aquabasilea.persistence.config.TestAquabasileaCourseBookerPersistenceConfig;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
 import com.aquabasilea.service.coursebooker.DryRunInfo;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

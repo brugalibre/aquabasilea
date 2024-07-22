@@ -6,7 +6,7 @@ import com.aquabasilea.domain.courselocation.model.repository.CourseLocationRepo
 import com.aquabasilea.rest.i18n.LocaleProvider;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseLocationDto;
-import com.aquabasilea.util.DateUtil;
+import com.brugalibre.util.date.DateUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.format.TextStyle;
