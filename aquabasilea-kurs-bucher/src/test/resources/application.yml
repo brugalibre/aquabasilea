@@ -1,4 +1,6 @@
 application:
+  healthcheck:
+    tech-user-name: michel
   configuration:
     alertNotification: 'config/alert/test-aquabasilea-alert-notification.yaml'
     courseBookerConfig: 'config/test-aquabasilea-kurs-bucher-config.yml'

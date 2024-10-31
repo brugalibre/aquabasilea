@@ -1,4 +1,3 @@
-!!com.aquabasilea.alerting.config
 originator: "0041791234567"
 alertServiceName: "clicksend"
 receivers:
