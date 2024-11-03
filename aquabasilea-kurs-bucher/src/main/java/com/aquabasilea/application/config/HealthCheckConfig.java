@@ -16,9 +16,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HealthCheckConfig {
 
+   public static final String HEALTHCHECK_TECH_USER_NAME = "${application.healthcheck.tech-user-name:}";
    public static final String HEALTH_CHECK_REPOSITORY_BEAN = "healthCheckRepository";
    public static final String HEALTH_CHECK_SERVICE = "healthCheckService";
    public static final String HEALTH_CHECK_COURSE_EVALUATOR = "healthCheckCourseEvaluator";
+   public static final String USER_ID_EVALUATOR = "UserIdEvaluator";
 
    @Bean(name = HEALTH_CHECK_REPOSITORY_BEAN)
    public HealthCheckRepository getHealthCheckRepository(@Autowired HealthCheckDao healthCheckDao) {
@@ -38,8 +40,9 @@ public class HealthCheckConfig {
                                                                    @Autowired WeeklyCoursesRepository weeklyCoursesRepository) {
       return new HealthCheckCourseEvaluator(healthCheckUserIdEvaluator, weeklyCoursesRepository);
    }
-   @Bean(name = "UserIdEvaluator")
-   public HealthCheckUserIdEvaluator getHealthCheckUserIdEvaluator(@Value("${application.healthcheck.tech-user-name}") String userName,
+
+   @Bean(name = USER_ID_EVALUATOR)
+   public HealthCheckUserIdEvaluator getHealthCheckUserIdEvaluator(@Value(HEALTHCHECK_TECH_USER_NAME) String userName,
                                                                    @Autowired UserRepository userRepository) {
       return new HealthCheckUserIdEvaluator(userName, userRepository);
    }

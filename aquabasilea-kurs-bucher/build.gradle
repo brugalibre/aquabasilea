@@ -10,7 +10,7 @@ apply from: '../publish-boot.gradle'
 apply from: '../aquabasilea-dependencies.gradle'
 
 group 'com.aquabasilea'
-version '1.3.3-SNAPSHOT'
+version '1.3.4-SNAPSHOT'
 
 mainClassName = 'com.aquabasilea.run.RunAquabasileaCourseBookerRunner'
 
