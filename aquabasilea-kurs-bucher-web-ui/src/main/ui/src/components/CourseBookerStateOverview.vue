@@ -21,8 +21,15 @@
         color="info"
         class="container-element-left"
         :disabled="courseBookingStateDto.state === 'BOOKING' || !this.getCurrentCourse?.id"
-        v-on:click="bookCurrentCourseDryRun(this.getCurrentCourse.id)">
+        v-on:click="bookCourseDryRun(this.getCurrentCourse.id)">
       Starte Testlauf
+    </CButton>
+    <CButton v-if="this.hasCurrentUserRole('ADMIN')"
+        color="info"
+        class="container-element-left"
+        :disabled="courseBookingStateDto.state === 'BOOKING' || !this.getCurrentCourse?.id"
+        v-on:click="bookCourse(this.getCurrentCourse.id)">
+      Starte Buchung
     </CButton>
     <CAccordion>
       <CAccordionItem :item-key="1">
@@ -55,10 +62,11 @@ import statisticsApi from '../mixins/StatisticsDefApi';
 import ErrorBox from "@/components/error/ErrorBox.vue";
 import '@coreui/coreui/dist/css/coreui.css';
 import ErrorHandlingService from "@/services/error/error-handling.service";
+import UserService from "../mixins/UserService";
 
 export default {
   name: 'CourseBookerStateOverview',
-  mixins: [aquabasileaCourseBookerApi, statisticsApi],
+  mixins: [aquabasileaCourseBookerApi, statisticsApi, UserService],
   components: {
     ErrorBox
   },

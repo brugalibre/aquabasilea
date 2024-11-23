@@ -47,12 +47,23 @@ public class AquabasileaCourseBookerController {
    }
 
    /**
-    * Does a dry-run booking of the current Course. Additionally, all consumers are notified about the result
+    * Does a dry-run booking of the {@link Course} with the given id.
+    * Additionally, all consumers are notified about the result
     *
-    * @param courseId the id of the {@link Course} to book
+    * @param courseId the id of the {@link Course} to do the dry-run booking
     */
    @PutMapping(path = "/bookCourseDryRun/{courseId}")
    public void bookCourseDryRun(@PathVariable String courseId) {
       aquabasileaCourseBookerRestService.bookCourseDryRun(userProvider.getCurrentUserId(), courseId);
+   }
+
+   /**
+    * Books the of the {@link Course}. No consumers are notified about the result
+    *
+    * @param courseId the id of the {@link Course} to book
+    */
+   @PutMapping(path = "/bookCourse/{courseId}")
+   public void bookCourse(@PathVariable String courseId) {
+      aquabasileaCourseBookerRestService.bookCourse(userProvider.getCurrentUserId(), courseId);
    }
 }

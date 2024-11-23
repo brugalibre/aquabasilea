@@ -6,13 +6,14 @@ import com.aquabasilea.domain.coursebooker.model.booking.cancel.CourseCancelResu
 import com.aquabasilea.domain.coursebooker.model.booking.result.CourseBookingResultDetails;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingState;
 import com.aquabasilea.domain.coursebooker.model.state.CourseBookingStateOverview;
+import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
 import com.aquabasilea.rest.model.course.weeklycourses.CourseDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookerEndResultDto;
 import com.aquabasilea.rest.model.coursebooker.CourseBookingStateDto;
-import com.aquabasilea.rest.model.course.mapper.CourseDtoMapper;
 import com.aquabasilea.rest.model.coursebooker.cancel.CourseCancelResultDto;
 import com.aquabasilea.service.coursebooker.AquabasileaCourseBookerService;
 import com.aquabasilea.service.coursebooker.DryRunInfo;
+import com.brugalibre.domain.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,18 @@ public class AquabasileaCourseBookerRestService {
      */
     public CourseBookerEndResultDto bookCourseDryRun(String userId, String courseId) {
         CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerService.bookCourseDryRun(new DryRunInfo(userId, courseId, true));
+        return CourseBookerEndResultDto.of(courseBookingEndResult);
+    }
+
+    /**
+     * Books the of the {@link Course}. No consumers are notified about the result
+     *
+     * @param userId the id of the {@link User}
+     * @param courseId the id of the {@link Course} to book
+     * @return a {@link CourseBookerEndResultDto} with details about the booking
+     */
+    public CourseBookerEndResultDto bookCourse(String userId, String courseId) {
+        CourseBookingResultDetails courseBookingEndResult = aquabasileaCourseBookerService.bookCourse(userId, courseId);
         return CourseBookerEndResultDto.of(courseBookingEndResult);
     }
 

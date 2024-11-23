@@ -52,8 +52,11 @@
 <script>
 
 import RouterConstants from "@/router-constants";
+import UserService from "./mixins/UserService";
 
 export default {
+
+  mixins: [UserService],
   data() {
     return {
       courseOverview: RouterConstants.COURSE_OVERVIEW_PATH,
@@ -63,20 +66,11 @@ export default {
       registerPath: RouterConstants.REGISTER_PATH,
     }
   },
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    }
-  },
   methods: {
     logOut() {
       this.$store.dispatch('auth/logout');
       this.$router.push(this.loginPath);
     },
-    hasCurrentUserRole(role) {
-      return this.currentUser?.roles
-          .find(currentUserRole => currentUserRole === role);
-    }
   }
 };
 </script>

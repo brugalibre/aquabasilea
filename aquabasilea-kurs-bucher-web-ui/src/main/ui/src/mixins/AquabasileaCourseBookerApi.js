@@ -15,7 +15,11 @@ export default {
                     onErrorCallback(LoggingService.extractErrorText(error));
                 });
         },
-        bookCurrentCourseDryRun: function (courseId) {
+        bookCourseDryRun: function (courseId) {
+            axios.put(AQUABASILEA_COURSE_BOOKER_API_URL + '/bookCourseDryRun/' + courseId, null, {headers: authHeader()})
+                .catch(error => console.error("Error occurred while pausing or resuming", error));
+        },
+        bookCourse: function (courseId) {
             axios.put(AQUABASILEA_COURSE_BOOKER_API_URL + '/bookCourseDryRun/' + courseId, null, {headers: authHeader()})
                 .catch(error => console.error("Error occurred while pausing or resuming", error));
         },

@@ -138,6 +138,19 @@ public class AquabasileaCourseBookerService {
       return aquabasileaCourseBooker.bookCourse(BOOKING_DRY_RUN, dryRunInfo.courseId(), dryRunInfo.sendNotification());
    }
 
+   /**
+    * Books the of the {@link Course}. No consumers are notified about the result
+    *
+    * @param userId the id of the {@link User}
+    * @param courseId the id of the {@link Course} to book
+    * @return a {@link CourseBookingResultDetails} with details about the booking
+    */
+   public CourseBookingResultDetails bookCourse(String userId, String courseId) {
+      LOG.info("Start booking course {}", courseId);
+      AquabasileaCourseBooker aquabasileaCourseBooker = getAquabasileaCourseBooker4CurrentUser(courseId);
+      return aquabasileaCourseBooker.bookCourse(BOOKING_DRY_RUN, courseId, false);
+   }
+
    private CourseBookingState map2CourseBookingState(AquabasileaCourseBooker aquabasileaCourseBooker) {
       CourseBookingState state = CourseBookingState.IDLE_BEFORE_BOOKING;
       if (aquabasileaCourseBooker.isPaused()) {
